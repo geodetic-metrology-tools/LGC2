@@ -2254,137 +2254,70 @@ pointSigmaContrib TContributionsGenerator::getPointSigmaContrib(LGCAdjustablePoi
 	return pointSigmaContrib({rotOffset});
 }
 
-SagElementContrib TContributionsGenerator::getSagElementContrib(const LGCAdjustableSag sagElement, const TLGCData &data)
-{
-	SagElementContrib contrib;
-	// compute the bearing constraint
-	// the bearing describes the angle between y root and the y sag-element subframe axis projected to x/z root plane
-	// motivation:
-	// 0 bearing corresponds to an element that is stretched along the y-axis (which is the longitudinal component of accelerator elements).
-	// the amount of sag grows with the y subframe axis coordinate
-
-	// compute p in root coordinates
-	TLOR2LOR sub2Root(data.locateNode(sagElement.getBaseFrame()), data.getTree().begin(), "sub2Root");
-	TFreeVector ey_root(0, 1, 0, TCoordSysFactory::ECoordSys::k3DCartesian);
-	sub2Root.transform(ey_root);
-	double bearing = sagElement.getBearing().getEstimatedValue().getRadiansValue();
-	Eigen::Vector3d p = ey_root.toRealVector();
-	// constraint we want is: sin / cos = px / py
-	contrib.constraintMisclosure = cosq(bearing) * p(0) - sinq(bearing) * p(1);
-	contrib.dBearing = -sinq(bearing) * p(0) - cosq(bearing) * p(1);
-	// derivatives with respect to transformations
-	// first compute d constraint / d p
-	Eigen::Vector3d Aline;
-	Aline << cosq(bearing), -sinq(bearing), 0;
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> trafoContrib;
-	TFreeVector ey_sub(0, 1, 0, TCoordSysFactory::ECoordSys::k3DCartesian);
-	addTransformationsContributions(sub2Root, ey_sub, Aline, trafoContrib);
-	contrib.TransformContrib = trafoContrib;
-
-	return contrib;
-}
-
 SagPairContrib TContributionsGenerator::getSagPairContrib(const TLGCSagConstraintPair sagPair, const TLGCData &data)
 {
 	SagPairContrib contrib;
 	LGCAdjustableSag sagObject = sagPair.fSag;
-	// evaluate the constraint
-	// get reference and associated points in root coordinates
+
 	LGCAdjustablePoint assocPt = data.getPoints().getObject(sagPair.assocPoint);
-	LGCAdjustablePoint refPt = LGCAdjustablePoint::createUninitialized(sagPair.refPoint);
-	if (sagPair.isAssociatedToProvisionalCoordinates)
-	{
-		if (assocPt.getNumUnkn() != 3)
-			throw std::logic_error(
-				"To identify a point with its sagged provisional coordinates, the point must have 3 degrees of freedom (must be defined as *POIN). Point \""
-				+ assocPt.getName() + "\"");
-		// create temporary "CALA" point with coordinates equal to the provisional coordinates
-		LGCAdjustablePoint dummyPoint(assocPt.getProvisionalValue(), true, true, true, sagPair.refPoint, assocPt.getReferenceFrame(), assocPt.getFrameTreePosition());
-		refPt = dummyPoint;
-	}
-	else
-	{
-		refPt = data.getPoints().getObject(sagPair.refPoint);
-	}
-	TLOR2LOR ref2Root(refPt.getFrameTreePosition(), data.getTree().begin(), "ref2Root");
-	TLOR2LOR assoc2Root(assocPt.getFrameTreePosition(), data.getTree().begin(), "assoc2Root");
-	// transform to root coordinates, keep also subframe coordinates
+	LGCAdjustablePoint refPt = data.getPoints().getObject(sagPair.refPoint);
+
+	// Transform both points to the sag element's base frame
+	TDataTreeIterator sagFramePos = data.locateNode(sagObject.getBaseFrame());
+	TLOR2LOR ref2Sag(refPt.getFrameTreePosition(), sagFramePos, "ref2Sag");
+	TLOR2LOR assoc2Sag(assocPt.getFrameTreePosition(), sagFramePos, "assoc2Sag");
+
 	TPositionVector refSub = refPt.getEstimatedValue();
 	TPositionVector assocSub = assocPt.getEstimatedValue();
-	TPositionVector refRoot = refSub;
-	TPositionVector assocRoot = assocSub;
-	ref2Root.transform(refRoot);
-	assoc2Root.transform(assocRoot);
+	TPositionVector refSag = refSub;
+	TPositionVector assocSag = assocSub;
+	ref2Sag.transform(refSag);
+	assoc2Sag.transform(assocSag);
 
-	double bearing = sagObject.getBearing().getEstimatedValue().getRadiansValue();
 	double vertSag = sagObject.getVertSag().getEstimatedValue().getMetresValue();
 	double vertCurv = sagObject.getVertCurv().getEstimatedValue().getMetresValue();
 	double radSag = sagObject.getRadSag().getEstimatedValue().getMetresValue();
 	double radCurv = sagObject.getRadCurv().getEstimatedValue().getMetresValue();
 
-	// the low point is the origin of the frame where the sag is defined
-	TLOR2LOR sagFrame2Root(data.locateNode(sagObject.getBaseFrame()), data.getTree().begin(), "sag2Root");
-	// low point subframe coordinates, it is the origin of the frame
-	TPositionVector lowPointSub(0, 0, 0, TCoordSysFactory::k3DCartesian);
-	// we need also its root coordinates, take a copy and transform to root
-	TPositionVector lowPointRoot = lowPointSub;
-	sagFrame2Root.transform(lowPointRoot);
-	// vector needed for distance computation determining vertical and radial sag
-	Eigen::Vector3d low2Ref = (refRoot - lowPointRoot).toRealVector();
+	// dy = y coordinate of reference point in sag frame (longitudinal distance)
+	double dy = refSag.getY().getMetresValue();
+	double dy2 = pow2q(dy);
 
-	// the y subframe axis is projected to the root x/y plane -> the angle between y root and this projection is the bearing
-	// this defines dir_y. dir_yT is orthogonal to dir_y in the x/y plane
-	// dir_y not needed for computation but included for the understanding of dir_yT
-	Eigen::Vector3d dir_y(sinq(bearing), cosq(bearing), 0);
-	Eigen::Vector3d dir_yT(cosq(bearing), -sinq(bearing), 0);
-	// for later: derivatives
-	Eigen::Vector3d dDir_yTdBear(-sinq(bearing), -cosq(bearing), 0);
+	// offset in sag frame: radial along x, vertical along z
+	Eigen::Vector3d ex(1, 0, 0);
+	Eigen::Vector3d ez(0, 0, 1);
+	double relVertOffset = vertSag + vertCurv * dy2;
+	double relRadOffset = radSag + radCurv * dy2;
+	Eigen::Vector3d offset = relRadOffset * ex + relVertOffset * ez;
 
-	Eigen::Vector3d uz(0, 0, 1);
-	// the plane relevant for vertical and radial sag is spanned by uz and dir_yT, we compute the associated normal -> vertPlane
-	Eigen::Vector3d normalPlane = uz.cross(dir_yT);
-	// compute the signed distances to the plane (normal vectors have length 1 by definition via the bearing)
-	double dist2Plane = normalPlane.dot(low2Ref);
-	// compute the relative offsets
-	double relVertOffset = vertSag + vertCurv * pow2q(dist2Plane);
-	double relRadOffset = radSag + radCurv * pow2q(dist2Plane);
-	// compute the absolute offsets (vertical offset is along uz direction, radial offset is along dir_yT direction)
-	Eigen::Vector3d vertOffset = relVertOffset * uz;
-	Eigen::Vector3d radOffset = relRadOffset * dir_yT;
-	Eigen::Vector3d offset = vertOffset + radOffset;
+	// constraint: refSag + offset - assocSag = 0
+	contrib.constraintMisclosure = refSag.toRealVector() + offset - assocSag.toRealVector();
 
-	contrib.constraintMisclosure = refRoot.toRealVector() + offset - assocRoot.toRealVector();
+	// derivatives wrt sag parameters
+	contrib.dOffsetdVertSag = ez;
+	contrib.dOffsetdVertCurv = dy2 * ez;
+	contrib.dOffsetdRadSag = ex;
+	contrib.dOffsetdRadCurv = dy2 * ex;
 
-	// derivative contributions
+	// derivatives wrt point coordinates
+	// d(offset)/d(refSag) is a rank-1 3x3 matrix: d(offset)/d(dy) * ey^T
+	// d(offset)/d(dy) = 2*dy * (radCurv * ex + vertCurv * ez)
+	Eigen::Vector3d dOffsetdDy = 2 * dy * (radCurv * ex + vertCurv * ez);
+	Eigen::Vector3d ey(0, 1, 0);
+	Eigen::Matrix3d AOffset = dOffsetdDy * ey.transpose(); // rank-1 matrix
+
 	Eigen::Matrix3d id3 = Eigen::Matrix3d::Identity();
-	// point subframe coordinates for assoc and ref point
-	contrib.dAssocRootdAssocSub = {assoc2Root.getPartialDerivativeWrtPosition()};
-	contrib.dRefRootdRefSub = {ref2Root.getPartialDerivativeWrtPosition()};
-	// transformations for assoc and ref point
-	addTransformationsContributions3D(ref2Root, refSub, id3, contrib.dRefRootdRefHelmert);
-	addTransformationsContributions3D(assoc2Root, assocSub, -id3, contrib.dAssocRootdAssocHelmert);
-	// sag adjustable element parameters: bearing, and curvature, sag for vertical and radial
-	Eigen::Vector3d dNormalPlanedBear = uz.cross(dDir_yTdBear);
-	contrib.dVertOffsetdBear = 2 * vertCurv * dist2Plane * dNormalPlanedBear.dot(low2Ref) * uz;
-	// radial offset needs product rule because it is the product of relative offset and radial direction which both depend on the bearing
-	// (for vertical offset this is not the case because the vertical offset direction is the root z direction, which is independent of the bearing)
-	contrib.dRadOffsetdBear = 2 * radCurv * dist2Plane * dNormalPlanedBear.dot(low2Ref) * dir_yT + relRadOffset * dDir_yTdBear;
-	contrib.dVertOffsetdVertSag = uz;
-	contrib.dVertOffsetdVertCurv = pow2q(dist2Plane) * uz;
-	contrib.dRadOffsetdRadSag = dir_yT;
-	contrib.dRadOffsetdRadCurv = pow2q(dist2Plane) * dir_yT;
+	Eigen::Matrix3d R_ref2sag = ref2Sag.getPartialDerivativeWrtPosition();
+	Eigen::Matrix3d R_assoc2sag = assoc2Sag.getPartialDerivativeWrtPosition();
 
-	// reference and sagFrame origin point and transformation contributions to the vertical and radial offsets
-	Eigen::Matrix3d AVertOffsetRef = uz * normalPlane.transpose() * 2 * vertCurv * dist2Plane;
-	Eigen::Matrix3d ARadOffsetRef = dir_yT * normalPlane.transpose() * 2 * radCurv * dist2Plane;
-	Eigen::Matrix3d AVertOffsetLow = -AVertOffsetRef;
-	Eigen::Matrix3d ARadOffsetLow = -ARadOffsetRef;
-	contrib.dVertOffsetdRefSub = {AVertOffsetRef * ref2Root.getPartialDerivativeWrtPosition()};
-	contrib.dRadOffsetdRefSub = {ARadOffsetRef * ref2Root.getPartialDerivativeWrtPosition()};
-	addTransformationsContributions3D(ref2Root, refSub, AVertOffsetRef, contrib.dVertOffsetdRefHelmert);
-	addTransformationsContributions3D(sagFrame2Root, lowPointSub, AVertOffsetLow, contrib.dVertOffsetdSagframeHelmert);
-	addTransformationsContributions3D(ref2Root, refSub, ARadOffsetRef, contrib.dRadOffsetdRefHelmert);
-	addTransformationsContributions3D(sagFrame2Root, lowPointSub, ARadOffsetLow, contrib.dRadOffsetdSagframeHelmert);
+	// d(constraint)/d(refSub) = (I + AOffset) * R_ref2sag
+	contrib.dConstraintdRefSub = {(id3 + AOffset) * R_ref2sag};
+	// d(constraint)/d(assocSub) = -R_assoc2sag
+	contrib.dConstraintdAssocSub = {-R_assoc2sag};
+
+	// Frame transformation derivatives
+	addTransformationsContributions3D(ref2Sag, refSub, id3 + AOffset, contrib.dConstraintdRefHelmert);
+	addTransformationsContributions3D(assoc2Sag, assocSub, -id3, contrib.dConstraintdAssocHelmert);
 
 	return contrib;
 }

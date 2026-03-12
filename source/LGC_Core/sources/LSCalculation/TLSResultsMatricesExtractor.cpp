@@ -752,6 +752,8 @@ bool TLSResultsMatricesExtractor::extractSagParams(const TLSResultsMatrices &rm,
 
 	for (auto &sagElement : fDataSet->getSags())
 	{
+		if (sagElement.isFixed())
+			continue;
 		for (int unknIdx = sagElement.getFirstUidx(); unknIdx <= sagElement.getLastUidx(); unknIdx++)
 		{
 			if (unknIdx >= rm.getSolutionVectByConst()->size())
@@ -963,7 +965,7 @@ void TLSResultsMatricesExtractor::extractSagVarCovar(const TLSResultsMatrices &r
 		std::vector<int> relUnkIdx = sagObj.getRelativeUnknIndices();
 		const TSparseMatrix *covMat = rm.getUnkCovarMtrxByConst();
 		int dimSag = sagObj.getNumUnkn();
-		TDenseMatrix fullCovar(5, 5);
+		TDenseMatrix fullCovar(4, 4);
 		fullCovar.setZero();
 		if (dimSag > 0)
 		{
@@ -971,12 +973,6 @@ void TLSResultsMatricesExtractor::extractSagVarCovar(const TLSResultsMatrices &r
 			fullCovar(relUnkIdx, relUnkIdx) = (covMat->block(firstIdx, firstIdx, dimSag, dimSag)).toDense();
 		}
 		sagObj.setCovar(fullCovar);
-		auto &bearing = sagObj.getBearing();
-		if (!bearing.isFixed())
-		{
-			int unknIdx = bearing.getFirstUidx();
-			bearing.setEstimatedPrecision(bearing.getFirstUidx(), sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx)));
-		}
 		auto &vertCurv = sagObj.getVertCurv();
 		if (!vertCurv.isFixed())
 		{

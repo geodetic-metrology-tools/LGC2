@@ -135,10 +135,10 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyHLSR(project)));
 	finterpreters.emplace_back(UPK(new TKeyWPSR(project)));
 
-	finterpreters.emplace_back(UPK(new TKeySAG(project)));
+	finterpreters.emplace_back(UPK(new TKeySAGELEMENT(project)));
 	finterpreters.emplace_back(UPK(new TASagConstraintPairKey(project)));
 
-	// Observations Section	
+	// Observations Section
 	/*TSTN*/
 	TAKeyWord *tstn = new TKeyTSTN(project);
 	TAKeyWord *v0 = new TKeyV0(project);
@@ -454,6 +454,9 @@ bool TReader::read(std::istream &lgcStream)
 			project.getConfig().obsIDwidth = obsIdPair.first.size();
 	}
 
+	// Expand DEFORM directives (must happen after all frames and points are read)
+	expandDeformDirectives();
+
 	project.setLGCv1(false);
 
 	return !outputMessages.hasErrors();
@@ -656,6 +659,205 @@ bool TReader::isLgc2File(std::istream &lgcStream)
 	}
 	lgcStream.seekg(originalPos); // Reset position
 	return false;
+}
+
+bool TReader::expandDeformDirectives()
+{
+	auto &outputMessages(project.getFileLogger());
+
+	// Phase A: Collect frame-level directives and validate no nesting
+	struct FrameDeform
+	{
+		TDataTreeIterator position;
+		std::string sagElementName;
+		int line;
+	};
+
+	// Helper: check if 'node' is in the subtree rooted at 'root' (inclusive of root itself)
+	// by walking up the parent chain from node
+	auto isInSubtreeOf = [&](const TDataTreeIterator &node, const TDataTreeIterator &root) -> bool
+	{
+		if (node == root)
+			return true;
+		auto current = node;
+		while (current.node != nullptr && current.node->parent != nullptr)
+		{
+			current = project.getTree().parent(current);
+			if (current == root)
+				return true;
+		}
+		return false;
+	};
+
+	std::vector<FrameDeform> frameDeforms;
+	for (auto it = project.getTree().begin(); it != project.getTree().end(); ++it)
+	{
+		if (!it->get()->deformSagElementName.empty())
+			frameDeforms.push_back({it, it->get()->deformSagElementName, it->get()->deformLine});
+	}
+
+	for (size_t i = 0; i < frameDeforms.size(); ++i)
+	{
+		for (size_t j = i + 1; j < frameDeforms.size(); ++j)
+		{
+			if (isInSubtreeOf(frameDeforms[i].position, frameDeforms[j].position) ||
+				isInSubtreeOf(frameDeforms[j].position, frameDeforms[i].position))
+			{
+				std::string nameI = frameDeforms[i].position.node->data.get()->frame.getName();
+				std::string nameJ = frameDeforms[j].position.node->data.get()->frame.getName();
+				outputMessages << TFileLogger::e_logType::LOG_ERROR
+							   << "Line " + std::to_string(frameDeforms[j].line) + ": DEFORM in frame '" + nameJ + "' overlaps with DEFORM in frame '" + nameI + "' (nested deforms are not allowed).";
+				return false;
+			}
+		}
+	}
+
+	// Phase B: Validate no overlap between frame-level and point-level deforms
+	for (const auto &point : project.getPoints())
+	{
+		if (point.getDeformSagElement().empty())
+			continue;
+		for (const auto &fd : frameDeforms)
+		{
+			if (isInSubtreeOf(point.getFrameTreePosition(), fd.position))
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR
+							   << "Point '" + point.getName() + "' has a DEFORM tag but is also inside frame-level DEFORM in frame '" + fd.position.node->data.get()->frame.getName() + "' (line " + std::to_string(fd.line) + "). Use one or the other, not both.";
+				return false;
+			}
+		}
+	}
+
+	// Helper lambda: expand a single point into a _ref + sagged pair.
+	// The original point object is kept in place (preserving any observation pointers)
+	// and converted to a free sagged point. A new _ref point is created with the original's fixed state.
+	auto expandPoint = [&](const std::string &originalName, const std::string &sagElementName, int lineNum) -> bool {
+		std::string refName = originalName + "_ref";
+
+		if (project.getPoints().doesObjectExist(refName))
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR
+						   << "Line " + std::to_string(lineNum) + ": DEFORM cannot create reference point '" + refName + "' because that name already exists.";
+			return false;
+		}
+
+		if (!project.getSags().doesObjectExist(sagElementName))
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR
+						   << "Line " + std::to_string(lineNum) + ": DEFORM references undefined sag element '" + sagElementName + "'.";
+			return false;
+		}
+
+		// Get the original point (observations already point to this object)
+		LGCAdjustablePoint &origPoint = project.getPoints().getObject(originalName);
+		TPositionVector provValue = origPoint.getProvisionalValue();
+		TDataTreeIterator framePos = origPoint.getFrameTreePosition();
+		TRefSystemFactory::ERefFrame refFrame = origPoint.getReferenceFrame();
+		bool fx = origPoint.isCoordinateFixed(0), fy = origPoint.isCoordinateFixed(1), fz = origPoint.isCoordinateFixed(2);
+
+		// Create the _ref point with the same fixed state as the original (preserving coordinates, frame position)
+		LGCAdjustablePoint refPoint(provValue, fx, fy, fz, refName, refFrame, framePos);
+		refPoint.setAutoGenerated(true);
+
+		// Transfer pointSigmaData from original to ref point if present
+		// (a-priori sigma observations belong on the reference point, not the sagged point)
+		if (origPoint.hasPointSigma())
+		{
+			refPoint.getPointSigmaData() = origPoint.getPointSigmaData();
+			refPoint.activatePointSigma();
+			origPoint.deactivatePointSigma();
+			origPoint.resetPointSigma();
+		}
+
+		project.getPoints().addObject(refPoint);
+
+		// Convert the original point in-place to a free sagged point (3 DOF).
+		// This preserves all existing observation pointers to this object.
+		origPoint.updateFixedState(false, false, false);
+
+		// Create sag constraint pair: refName (reference) -> originalName (sagged)
+		LGCAdjustableSag &sagObj = project.getSags().getObject(sagElementName);
+		TLGCSagConstraintPair newPair(refName, originalName, sagObj);
+		project.getSagPointPairs().push_back(newPair);
+
+		return true;
+	};
+
+	// Phase C: Expand frame-level deforms
+	for (size_t fdIdx = 0; fdIdx < frameDeforms.size(); ++fdIdx)
+	{
+		const auto &fd = frameDeforms[fdIdx];
+		std::vector<std::string> pointNames;
+		for (const auto &point : project.getPoints())
+		{
+			if (isInSubtreeOf(point.getFrameTreePosition(), fd.position))
+				pointNames.push_back(point.getName());
+		}
+
+		std::string frameName = fd.position.node->data.get()->frame.getName();
+
+		if (pointNames.empty())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_WARNING
+						   << "Line " + std::to_string(fd.line) + ": DEFORM in frame '" + frameName + "' found no points in subtree.";
+			continue;
+		}
+
+		for (size_t pi = 0; pi < pointNames.size(); ++pi)
+		{
+			if (!expandPoint(pointNames[pi], fd.sagElementName, fd.line))
+				return false;
+		}
+	}
+
+	// Phase D: Expand point-level deforms
+	{
+		// Collect names first since expansion modifies the collection
+		std::vector<std::pair<std::string, std::string>> pointDeforms; // (pointName, sagElementName)
+		for (const auto &point : project.getPoints())
+		{
+			if (!point.getDeformSagElement().empty())
+				pointDeforms.emplace_back(point.getName(), point.getDeformSagElement());
+		}
+
+		for (const auto &[pointName, sagName] : pointDeforms)
+		{
+			int lineNum = project.getPoints().getObject(pointName).line;
+			if (!expandPoint(pointName, sagName, lineNum))
+				return false;
+		}
+	}
+
+	// Phase E: Validate unique sag pair membership (across DEFORM-generated and manual SAGCONNECT pairs)
+	{
+		std::unordered_map<std::string, int> assocPointCount;
+		std::unordered_map<std::string, int> refPointCount;
+		for (const auto &pair : project.getSagPointPairs())
+		{
+			assocPointCount[pair.assocPoint]++;
+			refPointCount[pair.refPoint]++;
+		}
+		for (const auto &[name, count] : assocPointCount)
+		{
+			if (count > 1)
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR
+							   << "Point '" + name + "' appears as associated point in " + std::to_string(count) + " sag constraint pairs. A point may only appear in one sag constraint pair.";
+				return false;
+			}
+		}
+		for (const auto &[name, count] : refPointCount)
+		{
+			if (count > 1)
+			{
+				outputMessages << TFileLogger::e_logType::LOG_ERROR
+							   << "Point '" + name + "' appears as reference point in " + std::to_string(count) + " sag constraint pairs. A point may only appear in one sag constraint pair.";
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 /// Helper function to iterate through all measurements and apply a callback

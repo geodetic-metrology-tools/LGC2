@@ -363,16 +363,15 @@ void Moni::MoniImpl::setFixedSagParameter(const std::string &sagName, int idx, d
 	// this method will change the solution of the estimation, so reset of status necessary
 	estimationStatus = false;
 
-	// check if the associated parameter of the frame is really fixed
+	// check if the associated parameter is really fixed
 	LGCAdjustableSag &sagRef = paramRefs.SAGS.at(sagName);
-	// attention: for the user onyl variable 1,2,3,4 are visible, the bearing (0) is always free
-	bool isFree = isFreeVar(sagRef, idx + 1);
+	bool isFree = isFreeVar(sagRef, idx);
 	if (isFree)
 	{
 		throw std::runtime_error("Index " + std::to_string(idx) + " of sag element " + sagName + " is not a fixed variable. ");
 	}
 
-	sagRef.setEstValue(idx+1, val);
+	sagRef.setEstValue(idx, val);
 
 }
 
@@ -508,8 +507,7 @@ void Moni::MoniImpl::freezeSagParameter(const std::string &sagName, int idx, dou
 
 	// check if the associated parameter of the frame is really free
 	LGCAdjustableSag &sagRef = paramRefs.SAGS.at(sagName);
-	// +1 because bearing is hidden in interface
-	bool isFixed = !isFreeVar(sagRef, idx + 1);
+	bool isFixed = !isFreeVar(sagRef, idx);
 	if (isFixed)
 	{
 		// maybe not throw an error only a warning?
@@ -517,8 +515,8 @@ void Moni::MoniImpl::freezeSagParameter(const std::string &sagName, int idx, dou
 	}
 
 	// freeze the parameter
-	sagRef.setEstValue(idx + 1, val);
-	project->fParameterMask.insert(sagRef.getUnknIndex(idx+1));
+	sagRef.setEstValue(idx, val);
+	project->fParameterMask.insert(sagRef.getUnknIndex(idx));
 
 }
 
@@ -576,9 +574,9 @@ void Moni::MoniImpl::unfreezeSagParameter(const std::string &sagName, int idx)
 	// this method will potentially change the solution of the estimation, so reset of status necessary
 	estimationStatus = false;
 
-	// check if the associated parameter of the point is really free
+	// check if the associated parameter is really free
 	LGCAdjustableSag &sagRef = paramRefs.SAGS.at(sagName);
-	bool isFixed = !isFreeVar(sagRef, idx + 1);
+	bool isFixed = !isFreeVar(sagRef, idx);
 	if (isFixed)
 	{
 		// maybe not throw an error only a warning?
@@ -587,7 +585,7 @@ void Moni::MoniImpl::unfreezeSagParameter(const std::string &sagName, int idx)
 
 	// get the index of the variable
 	int frozenIndex = -1;
-	frozenIndex = sagRef.getUnknIndex(idx + 1);
+	frozenIndex = sagRef.getUnknIndex(idx);
 	// remove this index from the masked parameter indices
 
 	// Find the iterator to the element
@@ -1735,9 +1733,7 @@ Eigen::VectorXd Moni::MoniImpl::getSagEstimate(const std::string &sagId)
 		throw std::runtime_error("No Sag element with Id " + sagId + " found");
 	}
 
-	Eigen::VectorXd resultVector(4);
-	// bearing (index 0 is not wanted)
-	return paramRefs.SAGS.at(sagId).getEstVector().bottomRows(4);
+	return paramRefs.SAGS.at(sagId).getEstVector();
 }
 
 Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(const std::string &frameId)
@@ -1767,8 +1763,7 @@ Eigen::VectorXd Moni::MoniImpl::getSagEstimatePrec(const std::string &sagId)
 		throw std::runtime_error("No Sag element with Id " + sagId + " found");
 	}
 
-	// bearing (index 0 is not wanted)
-	Eigen::MatrixXd fullCovar = paramRefs.SAGS.at(sagId).getCovar().bottomRightCorner(4,4);
+	Eigen::MatrixXd fullCovar = paramRefs.SAGS.at(sagId).getCovar();
 
 	return fullCovar.diagonal().array().sqrt();
 }

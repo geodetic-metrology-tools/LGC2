@@ -2,19 +2,15 @@
 
 #include <LGCAdjustableSag.h>
 #include <TAdjustablePoint.h>
-#include <TAdjustableAngle.h>
 #include <TAdjustableLength.h>
 
 #include "LGCAdjustablePoint.h"
 
-// LGCAdjustableSag::LGCAdjustableSag(const TPositionVector &lowPoint, const std::string &name)
-// {};
-
 LGCAdjustableSag LGCAdjustableSag::createUninitialized(const std::string name)
 {
-	std::bitset<5> isFixed;
+	std::bitset<4> isFixed;
 	LGCAdjustableSag sag(name, "", TLength(), TLength(), TLength(), TLength(), isFixed);
-	sag.setCovar(Eigen::Matrix<double, 5, 5>::Constant(NO_VALf));
+	sag.setCovar(Eigen::Matrix<double, 4, 4>::Constant(NO_VALf));
 	sag.fInitialized = false;
 	return sag;
 }
@@ -29,7 +25,7 @@ inline int LGCAdjustableSag::getFirstUidx() const
 	if (isFixed())
 		throw std::logic_error("Trying to get unknown index of fixed element.");
 	int firstIdx = -1;
-	for (int j = 0; j < 5; j++)
+	for (int j = 0; j < 4; j++)
 	{
 		firstIdx = fUidx[j];
 		if (firstIdx != -1)
@@ -45,7 +41,7 @@ inline int LGCAdjustableSag::getLastUidx() const
 	if (isFixed())
 		throw std::logic_error("Trying to get unknown index of fixed element.");
 	int idx = -1;
-	for (int j = 4; j >= 0; j--)
+	for (int j = 3; j >= 0; j--)
 	{
 		idx = fUidx[j];
 		if (idx != -1)
@@ -58,9 +54,8 @@ inline int LGCAdjustableSag::getLastUidx() const
 
 const std::vector<int> LGCAdjustableSag::getRelativeUnknIndices() const
 {
-	// for now: bearing free always
 	std::vector<int> activeIndices;
-	for (int j = 0; j < 5; j++)
+	for (int j = 0; j < 4; j++)
 	{
 		if (!fIsFixed[j])
 			activeIndices.push_back(j);
@@ -80,20 +75,18 @@ void LGCAdjustableSag::setFirstUidx(int idx)
 		throw std::logic_error("Trying to assign unknown index to fixed sag element.");
 	// iterate over the bitset
 	int setIdx = idx;
-	for (int j = 0; j < 5; j++)
+	for (int j = 0; j < 4; j++)
 	{
 		if (!fIsFixed[j])
 		{
 			fUidx[j] = setIdx;
 			if (j == 0)
-				fBearing.setFirstUidx(setIdx);
-			else if (j == 1)
 				fVertSag.setFirstUidx(setIdx);
-			else if (j == 2)
+			else if (j == 1)
 				fVertCurv.setFirstUidx(setIdx);
-			else if (j == 3)
+			else if (j == 2)
 				fRadSag.setFirstUidx(setIdx);
-			else if (j == 4)
+			else if (j == 3)
 				fRadCurv.setFirstUidx(setIdx);
 			setIdx++;
 		}
@@ -102,29 +95,26 @@ void LGCAdjustableSag::setFirstUidx(int idx)
 
 Eigen::VectorXd LGCAdjustableSag::getEstVector() const
 {
-	Eigen::VectorXd estVect(5);
-	estVect << fBearing.getEstimatedValue().getRadiansValue(), fVertSag.getEstimatedValue().getMetresValue(), fVertCurv.getEstimatedValue().getMetresValue(),
+	Eigen::VectorXd estVect(4);
+	estVect << fVertSag.getEstimatedValue().getMetresValue(), fVertCurv.getEstimatedValue().getMetresValue(),
 		fRadSag.getEstimatedValue().getMetresValue(), fRadCurv.getEstimatedValue().getMetresValue();
 	return estVect;
 }
 
 TReal LGCAdjustableSag::getValue(int idx) const
-{	
-
+{
 	if (idx < getFirstUidx() || idx > getLastUidx())
 		throw std::logic_error("Attempting to get variable with wrong index.");
 	TReal value = 0;
 	if (fUidx[0] == idx)
-		value = fBearing.getValue(idx);
-	else if (fUidx[1] == idx)
 		value = fVertSag.getValue(idx);
-	else if (fUidx[2] == idx)
+	else if (fUidx[1] == idx)
 		value = fVertCurv.getValue(idx);
-	else if (fUidx[3] == idx)
+	else if (fUidx[2] == idx)
 		value = fRadSag.getValue(idx);
-	else if (fUidx[4] == idx)
+	else if (fUidx[3] == idx)
 		value = fRadCurv.getValue(idx);
-	
+
 	return value;
 }
 
@@ -134,53 +124,46 @@ void LGCAdjustableSag::setValue(int idx, TReal value)
 		throw std::logic_error("Attempting to set variable with wrong index.");
 
 	if (fUidx[0] == idx)
-		fBearing.setValue(idx, value);
-	else if (fUidx[1] == idx)
 		fVertSag.setValue(idx, value);
-	else if (fUidx[2] == idx)
+	else if (fUidx[1] == idx)
 		fVertCurv.setValue(idx, value);
-	else if (fUidx[3] == idx)
+	else if (fUidx[2] == idx)
 		fRadSag.setValue(idx, value);
-	else if (fUidx[4] == idx)
+	else if (fUidx[3] == idx)
 		fRadCurv.setValue(idx, value);
 }
 
 void LGCAdjustableSag::setEstValue(int idx, TReal value)
 {
-	//0,1,2,3,4=bear,vertsag,vertcurv,radsag,radcurv
+	//0,1,2,3=vertsag,vertcurv,radsag,radcurv
 	switch (idx)
 	{
 	case 0:
-		fBearing.setEstValue(value);
-		break;
-	case 1:
 		fVertSag.setEstValue(value);
 		break;
-	case 2:
+	case 1:
 		fVertCurv.setEstValue(value);
 		break;
-	case 3:
+	case 2:
 		fRadSag.setEstValue(value);
 		break;
-	case 4:
+	case 3:
 		fRadCurv.setEstValue(value);
 		break;
 	}
 }
 
-	
+
 #if USE_SERIALIZER
 void LGCAdjustableSag::serialize(ObjectSerializer &obj) const
 {
 	TVAdjustableObject::serialize(obj);
 	obj.addProperty("fName", fName);
 	obj.addProperty("fBaseFrame", fBaseFrame);
-	obj.addProperty("fVertCurv", fVertCurv);
 	obj.addProperty("fVertSag", fVertSag);
-	obj.addProperty("fRadCurv", fRadCurv);
+	obj.addProperty("fVertCurv", fVertCurv);
 	obj.addProperty("fRadSag", fRadSag);
+	obj.addProperty("fRadCurv", fRadCurv);
 	obj.addProperty("fCovar", fCovar);
-	obj.addProperty("firsCIndex", firstCIndex);
-
 }
 #endif // USE_SERIALIZER

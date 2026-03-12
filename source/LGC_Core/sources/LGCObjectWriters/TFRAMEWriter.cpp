@@ -397,32 +397,28 @@ void TFRAMEWriter::writeSagAdjustable()
 		(*stream) << "Sag adjustable element " << sagElement.getName() << endl;
 		(*stream) << "associated frame: " << sagElement.getBaseFrame() << endl;
 		(*stream).writeString(coordWidth, "");
-		(*stream).writeString(coordWidth, "Bearing [gon]");
 		(*stream).writeString(coordWidth, "VS [mm]");
 		(*stream).writeString(coordWidth, "VC []");
 		(*stream).writeString(coordWidth, "RS [mm]");
 		(*stream).writeString(coordWidth, "RC []");
 		(*stream) << endl;
 		(*stream).writeString(coordWidth, "");
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < 4; j++)
 			(*stream).writeString(coordWidth, (sagElement.isCoordinateFixed(j)) ? "fixed" : "free");
 		(*stream) << endl;
 		(*stream).writeString(coordWidth, "");
-		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getBearing().getEstimatedValue().getGonsValue());
 		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getVertSag().getEstimatedValue().getMMetresValue());
 		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getVertCurv().getEstimatedValue().getMetresValue());
 		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getRadSag().getEstimatedValue().getMMetresValue());
 		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getRadCurv().getEstimatedValue().getMetresValue());
-		(*stream) << endl;	
+		(*stream) << endl;
 		(*stream).writeString(coordWidth, "Precision unit");
-		(*stream).writeString(coordWidth, "[cc]");
 		(*stream).writeString(coordWidth, "[mm]");
 		(*stream).writeString(coordWidth, "[]");
 		(*stream).writeString(coordWidth, "[mm]");
 		(*stream).writeString(coordWidth, "[]");
 		(*stream) << endl;
 		(*stream).writeString(coordWidth, "");
-		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getBearing().getEstimatedPrecision().getGonsValue());
 		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getVertSag().getEstimatedPrecision().getMMetresValue());
 		(*stream).writeDouble(coordWidth, coordPrecision + 3, sagElement.getVertCurv().getEstimatedPrecision().getMetresValue());
 		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getRadSag().getEstimatedPrecision().getMMetresValue());
@@ -457,27 +453,12 @@ void TFRAMEWriter::writeSagPairs()
 		(*stream).writeStringLeft(nameWidth, sagPair.assocPoint);
 		//(*stream) << sagPair.refPoint << " <-" << sagPair.fSag.getName() << "-> " << sagPair.assocPoint;
 		double assocZ = assoc.getEstimatedValueInRoot().getZ().getMetresValue();
-		double refZ;
-		if (sagPair.isAssociatedToProvisionalCoordinates)
-		{
-			// transform the provisional value to root using the up-to-date transformation (relevant in this case)
-			TLOR2LOR assoc2Root(assoc.getFrameTreePosition(), fProjectData->getTree().begin(), "assoc2Root");
-			TPositionVector provRoot = assoc.getProvisionalValue();
-			assoc2Root.transform(provRoot);
-			refZ = provRoot.getZ().getMetresValue();
-			(*stream).writeDouble(coordWidth, 6, refZ);
-		}
-		else
-		{
-			LGCAdjustablePoint ref = fProjectData->getPoints().getObject(sagPair.refPoint);
-			refZ = ref.getEstimatedValueInRoot().getZ().getMetresValue();
-			(*stream).writeDouble(coordWidth, 6, refZ);
-		}
+		LGCAdjustablePoint ref = fProjectData->getPoints().getObject(sagPair.refPoint);
+		double refZ = ref.getEstimatedValueInRoot().getZ().getMetresValue();
+		(*stream).writeDouble(coordWidth, 6, refZ);
 		(*stream).writeDouble(coordWidth, 6, assocZ);
 		double zOffset = assocZ - refZ;
 		(*stream).writeDouble(coordWidth, 6, zOffset*M2MM);
-		if (sagPair.isAssociatedToProvisionalCoordinates)
-			(*stream).writeStringLeft(nameWidth, "(Point follows sagged provisional coordinates)");
 		(*stream) << endl;
 	}
 }

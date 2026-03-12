@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
+ï¿½ Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 #ifndef _TLGC_SAGCONSTRAINTPAIR_H
@@ -23,22 +23,12 @@ class TLGCSagConstraintPair
 #	endif // USE_SERIALIZER
 {
 public:
-	// constructor
-	// taking two point names
+	// constructor taking two point names: reference and associated (sagged) point
 	TLGCSagConstraintPair(std::string ref, std::string assoc, const LGCAdjustableSag &sag) : refPoint(ref), assocPoint(assoc), fSag(sag){};
-	// taking only one point name: in this case, a constraint will be added that identifies point with the sagged version of its provisional coordinates
-	TLGCSagConstraintPair(std::string pointName, const LGCAdjustableSag &sag) : assocPoint(pointName), fSag(sag)
-	{
-		isAssociatedToProvisionalCoordinates = true;
-		refPoint = pointName + "_provisional";
-	};
 
-	//everything public to begin with
 	std::string refPoint;
 	std::string assocPoint;
 	const LGCAdjustableSag &fSag;
-	// tells that this is a sag constraint pair between the point coordinates and the provisional coordinates of this point
-	bool isAssociatedToProvisionalCoordinates{false};
 
 	int firstCIndex{-1};
 	// constraint dimension is always 3

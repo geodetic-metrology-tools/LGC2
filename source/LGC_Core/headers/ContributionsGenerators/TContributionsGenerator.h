@@ -146,7 +146,6 @@ public:
 	LIBRPointGroupContrib getPointGroupConstraintContrib(const TLGCPointConstraintGroup pointConstraintGroup, const TLGCData &data);
 	pointSigmaContrib getPointSigmaContrib(LGCAdjustablePoint &, const TLGCData *);
 
-	SagElementContrib getSagElementContrib(const LGCAdjustableSag, const TLGCData &data);
 	SagPairContrib getSagPairContrib(const TLGCSagConstraintPair, const TLGCData &data);
 
 

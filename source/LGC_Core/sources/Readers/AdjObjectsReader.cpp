@@ -74,6 +74,14 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 	// Create a new level in the tree using the current transformation definition.
 	proj.addChild(&adjTrafo);
 
+	// check for DEFORM tag on the frame line
+	if (opts.has("DEFORM"))
+	{
+		auto &node = proj.getCurrentNode();
+		node.deformSagElementName = opts.getParam("DEFORM");
+		node.deformLine = line;
+	}
+
 	// check for "Slave" frames
 	if (opts.has("SLAVE"))
 	{
@@ -121,21 +129,20 @@ void TKeyENDFRAME::parse(const std::vector<std::string> &tokens, bool, int)
 	proj.moveUp();
 }
 
-// TODO: remove the bearing prov value and compute it in the datananalyzer
-TKeySAG::TKeySAG(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(SAGELEMENT, project), fSagAccess(proj.getSags())
+TKeySAGELEMENT::TKeySAGELEMENT(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(SAGELEMENT, project), fSagAccess(proj.getSags())
 {
 	for (int i(0); i < nb_allowed_keywords; i++)
 		allowed_keywords.emplace_back(keywords[i]);
 }
 
-void TKeySAG::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
+void TKeySAGELEMENT::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
 {
 	using namespace LGC;
 	auto numTokens = tokens.size();
 
 	// The asterisk and the keyword itself are already two tokens
 	if (numTokens <= 7)
-		throw std::runtime_error("Key *SAG takes at least 6 arguments: Name, Name of associated Frame, vertical and radial sag and curvature plus optionally the tags for free transformation parameters, VS, VC, RS, RC");
+		throw std::runtime_error("Key *SAGELEMENT takes at least 6 arguments: Name, Name of associated Frame, vertical and radial sag and curvature plus optionally the tags for free transformation parameters, VS, VC, RS, RC");
 
 
 	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
@@ -147,15 +154,15 @@ void TKeySAG::parse(const std::vector<std::string> &tokens, bool /*activeLine*/,
 	TLength vertCurv(std::stor(tokens[5]));
 	TLength radSag(std::stor(tokens[6]));
 	TLength radCurv(std::stor(tokens[7]));
-	std::bitset<5> fixedStates("11110");
+	std::bitset<4> fixedStates("1111");
 	if (opts.has("VS"))
-		fixedStates[1] = 0;
+		fixedStates[0] = 0;
 	if (opts.has("VC"))
-		fixedStates[2] = 0;
+		fixedStates[1] = 0;
 	if (opts.has("RS"))
-		fixedStates[3] = 0;
+		fixedStates[2] = 0;
 	if (opts.has("RC"))
-		fixedStates[4] = 0;
+		fixedStates[3] = 0;
 	LGCAdjustableSag sagObject(sagName, frameName, vertSag, vertCurv, radSag, radCurv, fixedStates);
 
 	// remember the line of the element definition
@@ -297,6 +304,10 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		}
 		pt.activatePointSigma();
 	}
+
+	// check if DEFORM tag is present
+	if (opts.has("DEFORM"))
+		pt.setDeformSagElement(opts.getParam("DEFORM"));
 
 	// check if one of the weights was set to zero
 	// if no angle was used we block the corresponding freedoms

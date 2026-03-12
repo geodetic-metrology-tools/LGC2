@@ -2106,73 +2106,39 @@ bool TLSInputMatricesFiller::fillSagConstraints(TLGCData *projData, TLSInputMatr
 	auto &outputMessages(projData->getFileLogger());
 	try
 	{
-		// first iterate through all adjustable sag elements to take care of the bearing constraint
-		for (auto sagElement : projData->getSags())
-		{
-			int cIdx = sagElement.getFirstCidx();
-			SagElementContrib contrib = fCGenerator.getSagElementContrib(sagElement, *projData);
-			fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx, contrib.constraintMisclosure);
-			// derivative wrt bearing
-			fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx, sagElement.getBearing().getFirstUidx(), contrib.dBearing);
-			// derivative wrt transformations
-			for (auto frameContribPair : contrib.TransformContrib)
-			{
-				fillOK = fillOK && addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second, cIdx, matrices);
-			}
-		}
-
-		// now iterate over all sag pairs
+		// iterate over all sag pairs
 		for (auto sagPair : projData->getSagPointPairs())
 		{
 			int cIdx = sagPair.firstCIndex;
 			SagPairContrib contrib = fCGenerator.getSagPairContrib(sagPair, *projData);
 			for (int j = 0; j < 3; j++)
 				fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx + j, contrib.constraintMisclosure(j));
-			// fill the jacobian of the constraint
-			LGCAdjustablePoint refPt = LGCAdjustablePoint::createUninitialized(sagPair.refPoint);
-			const LGCAdjustablePoint &assocPt = projData->getPoints().getObject(sagPair.assocPoint);
-	
-			if (sagPair.isAssociatedToProvisionalCoordinates)
-			{
-				// create temporary "CALA" point with coordinates equal to the provisional coordinates
-				LGCAdjustablePoint dummyPoint(assocPt.getProvisionalValue(), true, true, true, sagPair.refPoint, assocPt.getReferenceFrame(), assocPt.getFrameTreePosition());
-				refPt = dummyPoint;
-			}
-			else
-			{
-				refPt = projData->getPoints().getObject(sagPair.refPoint);
-			}
 
+			const LGCAdjustablePoint &assocPt = projData->getPoints().getObject(sagPair.assocPoint);
+			LGCAdjustablePoint refPt = projData->getPoints().getObject(sagPair.refPoint);
 			const LGCAdjustableSag &sagAdjustable = sagPair.fSag;
-			// derivative with respect to reference point subframe coordinates: 3 parts
-			Eigen::Matrix3d dConstraintWrtRefSub = contrib.dRefRootdRefSub.contrib + contrib.dVertOffsetdRefSub.contrib + contrib.dRadOffsetdRefSub.contrib;
-			//std::cout << "fixed to provval: " << sagPair.isAssociatedToProvisionalCoordinates << " dCdSubFrameCoord=" << dConstraintWrtRefSub << std::endl;
+
 			for (int rowIdx = 0; rowIdx < 3; rowIdx++)
 			{
-				// wrt to reference and associated point
+				// wrt reference and associated point subframe coordinates
 				for (int colIdx = 0; colIdx < 3; colIdx++)
 				{
 					if (!refPt.isCoordinateFixed(colIdx))
-						fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, refPt.getCoordinateUnknIndex(colIdx), dConstraintWrtRefSub(rowIdx, colIdx));
+						fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, refPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdRefSub.contrib(rowIdx, colIdx));
 					if (!assocPt.isCoordinateFixed(colIdx))
-						fillOK = fillOK
-							&& matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, assocPt.getCoordinateUnknIndex(colIdx), -contrib.dAssocRootdAssocSub.contrib(rowIdx, colIdx));
+						fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, assocPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdAssocSub.contrib(rowIdx, colIdx));
 				}
-				// wrt to sag adjustable element
-				Eigen::Vector3d dOffsetdBear = contrib.dVertOffsetdBear + contrib.dRadOffsetdBear;
-				// bearing
-				if (!sagAdjustable.getBearing().isFixed())
-					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getBearing().getFirstUidx(), dOffsetdBear(rowIdx));
+				// wrt sag parameters (VS, VC, RS, RC)
 				if (!sagAdjustable.getVertSag().isFixed())
-					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getVertSag().getFirstUidx(), contrib.dVertOffsetdVertSag(rowIdx));
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getVertSag().getFirstUidx(), contrib.dOffsetdVertSag(rowIdx));
 				if (!sagAdjustable.getVertCurv().isFixed())
-					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getVertCurv().getFirstUidx(), contrib.dVertOffsetdVertCurv(rowIdx));
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getVertCurv().getFirstUidx(), contrib.dOffsetdVertCurv(rowIdx));
 				if (!sagAdjustable.getRadSag().isFixed())
-					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getRadSag().getFirstUidx(), contrib.dRadOffsetdRadSag(rowIdx));
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getRadSag().getFirstUidx(), contrib.dOffsetdRadSag(rowIdx));
 				if (!sagAdjustable.getRadCurv().isFixed())
-					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getRadCurv().getFirstUidx(), contrib.dRadOffsetdRadCurv(rowIdx));
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getRadCurv().getFirstUidx(), contrib.dOffsetdRadCurv(rowIdx));
 			}
-			// the transformation contributions
+			// frame transformation contributions
 			for (int rowIdx = 0; rowIdx < 3; rowIdx++)
 			{
 				auto addTransformationContributionVector = [&](auto &contributions) {
@@ -2181,12 +2147,8 @@ bool TLSInputMatricesFiller::fillSagConstraints(TLGCData *projData, TLSInputMatr
 						fillOK = fillOK && addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.getContrib(rowIdx), cIdx + rowIdx, matrices);
 					}
 				};
-				addTransformationContributionVector(contrib.dAssocRootdAssocHelmert);
-				addTransformationContributionVector(contrib.dRefRootdRefHelmert);
-				addTransformationContributionVector(contrib.dVertOffsetdRefHelmert);
-				addTransformationContributionVector(contrib.dVertOffsetdSagframeHelmert);
-				addTransformationContributionVector(contrib.dRadOffsetdRefHelmert);
-				addTransformationContributionVector(contrib.dRadOffsetdSagframeHelmert);
+				addTransformationContributionVector(contrib.dConstraintdRefHelmert);
+				addTransformationContributionVector(contrib.dConstraintdAssocHelmert);
 			}
 		}
 	}
@@ -2195,7 +2157,6 @@ bool TLSInputMatricesFiller::fillSagConstraints(TLGCData *projData, TLSInputMatr
 		outputMessages << TFileLogger::e_logType::LOG_ERROR << excp.what();
 		fillOK = false;
 	}
-
 
 	return fillOK;
 }

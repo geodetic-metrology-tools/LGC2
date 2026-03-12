@@ -32,15 +32,15 @@ void TASagConstraintPairKey::parse(const std::vector<std::string> &tokens, bool 
 		TLength vertCurv(std::stor(tokens[5]));
 		TLength radSag(std::stor(tokens[6]));
 		TLength radCurv(std::stor(tokens[7]));
-		std::bitset<5> fixedStates("11110");
+		std::bitset<4> fixedStates("1111");
 		if (opts.has("VS"))
-			fixedStates[1] = 0;
+			fixedStates[0] = 0;
 		if (opts.has("VC"))
-			fixedStates[2] = 0;
+			fixedStates[1] = 0;
 		if (opts.has("RS"))
-			fixedStates[3] = 0;
+			fixedStates[2] = 0;
 		if (opts.has("RC"))
-			fixedStates[4] = 0;
+			fixedStates[3] = 0;
 		
 		LGCAdjustableSag sagObject(sagName, frameName, vertSag, vertCurv, radSag, radCurv, fixedStates);
 		// remember the line of the element definition
@@ -80,23 +80,13 @@ void TASagConstraintPairKey::parse(const std::vector<std::string> &tokens, bool 
 	}
 	else if (nTokens == 1)
 	{
-		// defining a sag-association, if only one point name is given, it will be a constraint between this point and its provisional coordinates
-		std::string assocPointName = tokens[0];
-		std::string sagElementName = fSagElementName;
-		if (proj.getSags().doesObjectExist(sagElementName))
-		{
-			LGCAdjustableSag &sagObject = proj.getSags().getObject(sagElementName);
-			TLGCSagConstraintPair newPair(assocPointName, sagObject);
-			proj.getSagPointPairs().push_back(newPair);
-			//fSagElementName = sagElementName;
-		}
-		else
-		{
-			throw std::runtime_error("Sag adjustable element " + sagElementName + " needs to be defined before it can be used.");
-		}
+		throw std::runtime_error("*SAGCONNECT with a single point name is no longer supported. "
+								 "Use the DEFORM tag on a *FRAME or point definition to create "
+								 "sag constraint pairs, or provide both reference and associated "
+								 "point names (2 names per line).");
 	}
 	else
 	{
-		throw std::runtime_error("Sag association parser expects either a sag adjustable object name (with or without definition) in the keyword line, a pair of pointnames or a single pointname in subsequent lines");
+		throw std::runtime_error("Sag association parser expects either a sag adjustable object name (with or without definition) in the keyword line, or a pair of point names (reference and associated) in subsequent lines");
 	}
 }

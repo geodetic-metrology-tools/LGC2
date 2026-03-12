@@ -490,34 +490,18 @@ struct PointGroupConstraintContrib
 	std::map<std::string, Eigen::Vector3d> PointContrib;
 };
 
-struct SagElementContrib
-{
-	// containing data for the bearing constraint
-	TReal constraintMisclosure;
-	// derivatives
-	// wrt bearing of sag adjustable
-	TReal dBearing;
-	// with respect to frame trafos (from associated frame to root)
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransformContrib;
-};
-
 struct SagPairContrib
 {
-	// containing data of a sag pair, i.e. two points connected via a sag connect constraint
-	// it is a 3D constraint expressed in Root
+	// 3D constraint evaluated in the sag element's base frame:
+	// refSag + offset - assocSag = 0
 	Eigen::Vector3d constraintMisclosure;
-	// derivatives
-	// for associated and reference point
-	Point3DContrib dAssocRootdAssocSub, dRefRootdRefSub;
-	TransformationContrib3DVector dAssocRootdAssocHelmert, dRefRootdRefHelmert;
-	// for the vertical and radial offset
-	// wrt to sag parameters
-	Eigen::Vector3d dVertOffsetdBear, dVertOffsetdVertSag, dVertOffsetdVertCurv;
-	Eigen::Vector3d dRadOffsetdBear, dRadOffsetdRadSag, dRadOffsetdRadCurv;
-	// wrt to ref point coordinates and helmert trafos + helmert trafo sagframe->root
-	Point3DContrib dVertOffsetdRefSub, dRadOffsetdRefSub;
-	TransformationContrib3DVector dVertOffsetdRefHelmert, dRadOffsetdRefHelmert;
-	TransformationContrib3DVector dVertOffsetdSagframeHelmert, dRadOffsetdSagframeHelmert;
+	// derivatives wrt point subframe coordinates (transformed to sag frame)
+	Point3DContrib dConstraintdAssocSub, dConstraintdRefSub;
+	// derivatives wrt frame transformations (point frames -> sag frame)
+	TransformationContrib3DVector dConstraintdAssocHelmert, dConstraintdRefHelmert;
+	// derivatives wrt sag parameters (VS, VC, RS, RC)
+	Eigen::Vector3d dOffsetdVertSag, dOffsetdVertCurv;
+	Eigen::Vector3d dOffsetdRadSag, dOffsetdRadCurv;
 };
 
 struct PointGroupConstraintContrib3D

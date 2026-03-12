@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
+Â© Copyright CERN 2000-2024. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -12,7 +12,6 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #include <TAngle.h>
 #include <TLength.h>
 #include <TAdjustablePoint.h>
-#include <TAdjustableAngle.h>
 #include <TAdjustableLength.h>
 #include <TVAdjustableObject.h>
 #include <TRefSystemFactory.h>
@@ -26,27 +25,28 @@ class LGCAdjustablePoint;
 
 /*!
 	\brief Adds adjustable information to a sag deformation.
+
+	The sag offset is evaluated in the base frame coordinates:
+	- dy = y coordinate of the reference point in the base frame
+	- vertical offset = (VS + VC * dy^2) along frame z-axis
+	- radial offset = (RS + RC * dy^2) along frame x-axis
 */
 class LGCAdjustableSag : public TVAdjustableObject
 {
 private:
 	std::string fName; /*!< Name of the adjustable sag element*/
-	std::string fBaseFrame;
-	 /*!< Name of the adjustable sag element*/
+	std::string fBaseFrame; /*!< Name of the base frame*/
 	// Number of the line in the input file where the sag element is introduced
-	int line = -1; 
+	int line = -1;
 
-
-	// total 5 parameters: bearing and sag+curvature for vertical and radial. Bearing however is constrained to match the y axis of the subframe to which the sag element is associated
-	TAdjustableAngle fBearing; // bearing angle of the sag, will be constrained to match the y axis of the frame in which the sag element is defined, this corresponds to a sag that gets bigger in y direction
-	TAdjustableLength fVertCurv; 
-	TAdjustableLength fVertSag; 
-	TAdjustableLength fRadCurv; 
-	TAdjustableLength fRadSag; 
-	Eigen::Matrix<double, 5, 5> fCovar;
-	std::bitset<5> fIsFixed;
-	int fUidx[5];
-	int firstCIndex{-1};
+	// 4 parameters: sag+curvature for vertical and radial
+	TAdjustableLength fVertSag;
+	TAdjustableLength fVertCurv;
+	TAdjustableLength fRadSag;
+	TAdjustableLength fRadCurv;
+	Eigen::Matrix<double, 4, 4> fCovar;
+	std::bitset<4> fIsFixed;
+	int fUidx[4];
 	bool fInitialized;
 
 public:
@@ -59,17 +59,15 @@ public:
 		const TLength &vertCurv,
 		const TLength &radSag,
 		const TLength &radCurv,
-		const std::bitset<5> &isFixed) :
+		const std::bitset<4> &isFixed) :
 		fName(name),
 		fBaseFrame(baseFrame),
 		fIsFixed(isFixed),
-		fUidx{-1, -1, -1, -1, -1},
-		// bearing always free
-		fBearing(TAdjustableAngle(TAngle(0), false, name + "_bearing")),
-		fVertSag(TAdjustableLength(vertSag, isFixed[1], name + "_VS")),
-		fVertCurv(TAdjustableLength(vertCurv, isFixed[2], name + "_VC")),
-		fRadSag(TAdjustableLength(radSag, isFixed[3], name + "_RS")),
-		fRadCurv(TAdjustableLength(radCurv, isFixed[4], name + "_RC")),
+		fUidx{-1, -1, -1, -1},
+		fVertSag(TAdjustableLength(vertSag, isFixed[0], name + "_VS")),
+		fVertCurv(TAdjustableLength(vertCurv, isFixed[1], name + "_VC")),
+		fRadSag(TAdjustableLength(radSag, isFixed[2], name + "_RS")),
+		fRadCurv(TAdjustableLength(radCurv, isFixed[3], name + "_RC")),
 		fInitialized(true)
 	{
 		fCovar.setConstant(NO_VALf);
@@ -80,10 +78,6 @@ public:
 	static LGCAdjustableSag createUninitialized(const std::string name);
 	/*!@name Access methods*/
 	//@{
-
-	/// Returns a constant reference of the bearing angle
-	inline const TAdjustableAngle &getBearing() const { return fBearing; }
-	inline TAdjustableAngle &getBearing() { return fBearing; }
 
 	/// getters
 	inline const TAdjustableLength &getVertSag() const { return fVertSag; }
@@ -107,7 +101,6 @@ public:
 
 	/*!
 		\brief Returns the number of unknowns for this sag element.
-
 	*/
 	inline virtual int getNumUnkn() const;
 
@@ -121,13 +114,8 @@ public:
 		return (fIsFixed[d]);
 	}
 	// vs,vc,rs,rc=0,1,2,3
-	// get the unknown index, returns -1 if variable is fixed 
+	// get the unknown index, returns -1 if variable is fixed
 	int getUnknIndex(int d) const;
-
-	
-	// returning the constraint index of the bearing constraint
-	inline int getFirstCidx() const { return firstCIndex; }
-	inline int getLastCidx() const { return firstCIndex; }
 
 	/// Returns Name of the sag element.
 	inline virtual const std::string &getName() const { return fName; }
@@ -154,17 +142,11 @@ public:
 		\throws Throws a logic_error if no component of the plane is variable.
 	*/
 	virtual void setFirstUidx(int idx);
-	// this adjustable element also contains a constraint (orthogonality between bearing and low point)
-	void setFirstCidx(int idx) { firstCIndex = idx; };
-
 
 	///	See \ref TVAdjustableObject::setCorrection
 	//virtual void setCorrection(int idx, TReal value);
-	void setCovar(Eigen::Matrix<double, 5, 5> covarMat) { fCovar = covarMat; }
-	const Eigen::Matrix<double, 5, 5> &getCovar() const { return fCovar; }
-
-	///// Sets the estimated precision after calculation
-	// void setEstimatedPrecision(int idx, TReal value);
+	void setCovar(Eigen::Matrix<double, 4, 4> covarMat) { fCovar = covarMat; }
+	const Eigen::Matrix<double, 4, 4> &getCovar() const { return fCovar; }
 
 	//@}
 #if USE_SERIALIZER

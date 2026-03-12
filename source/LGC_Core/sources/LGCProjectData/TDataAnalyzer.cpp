@@ -399,13 +399,8 @@ bool TDataAnalyzer::checkSagConnections()
 		// check if points are defined
 		if (!fData.getPoints().doesObjectExist(sagConnection.refPoint))
 		{
-			// if the point is associated to provisional coordinates, the reference point is represented by the provisional value and not by an independent LGC adjustable point
-			// Therefore the check for the reference point only applies when the point is not associated to its provisional coordinates.
-			if (!sagConnection.isAssociatedToProvisionalCoordinates)
-			{
-				outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection reference point " + sagConnection.refPoint + " is not defined.";
-				result = false;
-			}
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection reference point " + sagConnection.refPoint + " is not defined.";
+			result = false;
 		}
 		if (!fData.getPoints().doesObjectExist(sagConnection.assocPoint))
 		{
@@ -803,20 +798,11 @@ bool TDataAnalyzer::checkParameters()
 	// Run through list of adjustable sag elements
 	for (auto &sagElement : fData.getSags())
 	{
-		// assign unknown index for this element
-		sagElement.setFirstUidx(lastUidx);
-		lastUidx += sagElement.getNumUnkn();
-		// assign constraint index because the element contains a line which is defined as a point on the line and a bearing together with a orthogonality constraint
-		sagElement.setFirstCidx(lastCidx);
-		lastCidx += 1;
-		// compute the initial guess the sag bearing (= angle between y axis root and y xis subframe projected to xy plane in root)
-		TLOR2LOR sub2Root(fData.locateNode(sagElement.getBaseFrame()), fData.getTree().begin(), "base2Root");
-		TFreeVector ey_root(0, 1, 0, TCoordSysFactory::ECoordSys::k3DCartesian);
-		sub2Root.transform(ey_root);
-		Eigen::Vector3d p = ey_root.toRealVector();
-		double bearingAngle = atan2(p(0), p(1));
-		TAdjustableAngle &bearing = sagElement.getBearing();
-		bearing.setCorrection(bearing.getFirstUidx(), TAngle(bearingAngle));
+		if (sagElement.getNumUnkn() > 0)
+		{
+			sagElement.setFirstUidx(lastUidx);
+			lastUidx += sagElement.getNumUnkn();
+		}
 	}
 
 	// Save total number of unknowns
