@@ -1,0 +1,208 @@
+# Pre-commit hooks for LGC2
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+default_language_version:
+  python: python3
+
+repos:
+  # General pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Prevent large files from being committed
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      # Check for files that would conflict in case-insensitive filesystems
+      - id: check-case-conflict
+      # Check for merge conflicts
+      - id: check-merge-conflict
+      # Check YAML syntax
+      - id: check-yaml
+        args: ['--unsafe']  # Allow custom YAML tags used in GitLab CI
+      # Check JSON syntax
+      - id: check-json
+      # Check for files that don't end in a newline
+      - id: end-of-file-fixer
+        exclude: '\.txt$'  # Exclude test output files
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+        exclude: '\.txt$'  # Exclude test output files
+      # Ensure files use LF line endings
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      # Check for debugging statements
+      - id: debug-statements
+        exclude: '\.cpp$|\.h$'  # C++ files don't have Python debug statements
+
+
+  # CMake formatting (optional - uncomment if you want to enforce CMake formatting)
+  # - repo: https://github.com/cheshirekow/cmake-format-precommit
+  #   rev: v0.6.13
+  #   hooks:
+  #     - id: cmake-format
+  #       additional_dependencies: [pyyaml]
+  #     - id: cmake-lint
+  #       additional_dependencies: [pyyaml]
+
+  # Check for common C++ issues and project requirements
+  - repo: local
+    hooks:
+      # Format C++ code with clang-format using local .clang-format configuration
+      - id: clang-format
+        name: clang-format
+        entry: clang-format
+        language: system
+        types_or: [c++, c]
+        args: ['-i', '--style=file']  # Edit in-place, use .clang-format file
+
+      # Check REUSE compliance for committed files only
+      - id: check-reuse-compliance
+        name: Check REUSE compliance (committed files)
+        entry: python3
+        language: system
+        pass_filenames: true
+        args:
+          - -c
+          - |
+            import sys
+            import re
+            import os
+            from pathlib import Path
+
+            # Files being committed
+            files_to_check = sys.argv[1:]
+            if not files_to_check:
+                sys.exit(0)
+
+            # Patterns from REUSE.toml that are covered (don't need SPDX headers)
+            covered_patterns = [
+                # Documentation and metadata
+                r'^doc/',
+                r'^\.clang-format$',
+                r'^\.editorconfig$',
+                r'^\.gitignore$',
+                r'^\.gitlab-ci\.yml$',
+                r'^\.gitmodules$',
+                r'\.md$',
+                r'\.yaml$',
+                r'^DCO\.txt$',
+                r'^LGC\.ico$',
+                # Source, scripts, and build/config files
+                r'^source/.*/CMakeLists\.txt$',
+                r'^source/.*\.def$',
+                r'^source/.*\.in$',
+                r'^source/.*\.py$',
+                r'^source/.*\.cmake$',
+                r'^source/.*\.dox$',
+                r'^lib/cmake_common/',
+                # Test files
+                r'^source/LGC_Tests/testFiles/.*\.(inp|lgc|lgc2|sim|xml|pun|output|res|out|m)$',
+            ]
+
+            def is_covered_by_reuse_toml(filepath):
+                """Check if file is covered by REUSE.toml annotations"""
+                for pattern in covered_patterns:
+                    if re.search(pattern, filepath):
+                        return True
+                return False
+
+            def has_spdx_headers(filepath):
+                """Check if file has SPDX license and copyright headers"""
+                try:
+                    with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                        content = f.read(2000)  # Check first 2000 chars
+                        has_copyright = 'SPDX-FileCopyrightText:' in content or 'Copyright' in content
+                        has_license = 'SPDX-License-Identifier:' in content
+                        return has_copyright and has_license
+                except:
+                    return False
+
+            failed_files = []
+
+            for filepath in files_to_check:
+                # Normalize path separators
+                filepath_normalized = filepath.replace('\\', '/')
+
+                # Check if covered by REUSE.toml or has SPDX headers
+                if not is_covered_by_reuse_toml(filepath_normalized) and not has_spdx_headers(filepath):
+                    failed_files.append(filepath)
+
+            if failed_files:
+                print("\nREUSE compliance check FAILED!")
+                print("\nThe following committed files are missing copyright/licensing information:\n")
+                for f in failed_files:
+                    print(f"  - {f}")
+                print("\nEach file must either:")
+                print("  1. Be covered by REUSE.toml annotations, OR")
+                print("  2. Have SPDX headers in the file:")
+                print("     SPDX-FileCopyrightText: <copyright holder>")
+                print("     SPDX-License-Identifier: <license>")
+                print("\nSee REUSE.toml for currently covered file patterns.\n")
+                sys.exit(1)
+
+            print(f"All {len(files_to_check)} committed file(s) are REUSE compliant")
+
+      # Check that text files are UTF-8 encoded
+      - id: check-utf8-encoding
+        name: Check UTF-8 encoding
+        entry: python3
+        language: system
+        files: '\.(cpp|h|hpp|c|md|cmake|sh|yml|yaml|json)$'
+        exclude: 'test_files/.*\.txt$'  # Exclude test output files
+        args:
+          - -c
+          - |
+            import sys
+            for filepath in sys.argv[1:]:
+                try:
+                    with open(filepath, 'rb') as f:
+                        f.read().decode('utf-8')
+                except UnicodeDecodeError:
+                    print(f"ERROR: {filepath} is not valid UTF-8")
+                    sys.exit(1)
+
+      # Check for Signed-off-by in commit message (recommended, required for MR)
+      - id: check-signoff
+        name: Check for Signed-off-by line (recommended)
+        entry: bash
+        language: system
+        stages: [commit-msg]
+        always_run: true
+        args:
+          - -c
+          - |
+            if ! grep -q "^Signed-off-by:" "$1"; then
+              echo ""
+              echo "Warning: Commit message does not include a Signed-off-by line."
+              echo ""
+              echo "This is not required for development commits, but ALL commits"
+              echo "must be signed-off before creating a merge request."
+              echo ""
+              echo "To sign this commit: git commit -s"
+              echo "To sign later: git commit --amend -s --no-edit"
+              echo ""
+              echo "To skip this check: git commit --no-verify"
+              echo ""
+              exit 1
+            fi
+          - --
+
+      # Check for TODO/FIXME comments (informational only - won't fail)
+      - id: check-todos
+        name: Check for TODO/FIXME comments
+        entry: bash -c 'git diff --cached --name-only --diff-filter=ACM | grep -E "\.(cpp|h|hpp|c)$" | xargs -r grep -nH "TODO\|FIXME" || true'
+        language: system
+        pass_filenames: false
+        verbose: true
+
+      # Prevent commits to master/appwidevs branches
+      - id: prevent-direct-master-commit
+        name: Prevent direct commits to master/appwidevs
+        entry: bash -c 'BRANCH=$(git rev-parse --abbrev-ref HEAD); if [[ "$BRANCH" == "master" || "$BRANCH" == "appwidevs" ]]; then echo "Direct commits to $BRANCH are not allowed. Please create a feature branch."; exit 1; fi'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+# Configuration
+fail_fast: false  # Run all hooks even if one fails
