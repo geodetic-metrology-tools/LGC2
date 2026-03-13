@@ -1,5 +1,5 @@
 /*
-© Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
+ï¿½ Copyright CERN 2000-2023. All rigths reserved. This software is released under a CERN proprietary software licence.
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
@@ -26,14 +26,13 @@ P_Right 0 1 1 SX 1 SY 1 SZ 1
 P_Left_Sagged 0 -1 1 SX 1 SY 1 SZ 1
 P_Middle_Sagged 0 0 0.5 SX 1 SY 1 SZ 1
 P_Right_Sagged 0 1 1 1 SX 1 SY 1 SZ 1
-P_provisional_deformed 0 0 0
 *CALA
 dummy 0 0 0
+P_provisional_deformed 0 0 0 DEFORM sag0
 *SAGCONNECT sag0
 P_Left  P_Left_Sagged
 P_Middle P_Middle_Sagged
 P_Right P_Right_Sagged
-P_provisional_deformed
 *END
 )";
 
@@ -158,28 +157,16 @@ testing sag connection with provisional value
 *JSON
 *CONSI
 *INSTR
-*POIN
-P_Left 0 -1 1 
-P_Middle 0 0 1 
-P_Right 0 1 1 
-
-P_will_be_fixed_to_sagged_provisional 0 0 0
+*SAGELEMENT sag0 ROOT 0 0 0 0 VS VC
+*CALA
+P_Left 0 -1 1 DEFORM sag0
+P_Middle 0 0 1 DEFORM sag0
+P_Right 0 1 1 DEFORM sag0
+P_will_be_fixed_to_sagged_provisional 0 0 0 DEFORM sag0
 *OBSXYZ
-P_Left 0 -1 1  0.01 0.01 0.01 
-P_Middle 0 0 0.5   0.01 0.01 0.01 
-P_Right 0 1 1   0.01 0.01 0.01 
-*SAGCONNECT sag0 ROOT 0 0 0 0 0 VS VC
-P_Left  
-P_Middle 
-P_Right 
-% only one point in a sagconnect line will have the following effect:
-% a constraint is added that forces this point to the coordinates that correspond to the sagged version of the provisional coordinates of this point.
-% the point will need 3 degrees of freedom but is constrained
-% If this point is defined before, lets say as CALA, there will be a logical conflict: CALA is already compeletely fixed at provisional coordinates 
-% and sagconnect will try to constrain it also to the sagged version of the provisional coordinates. This most likely is only possible if the sag parameters are all zero. => we raise an error in this case
-P_will_be_fixed_to_sagged_provisional
-% demonstrating error message:
-% fixedPoint
+P_Left 0 -1 1  0.01 0.01 0.01
+P_Middle 0 0 0.5   0.01 0.01 0.01
+P_Right 0 1 1   0.01 0.01 0.01
 *END)";
 
 

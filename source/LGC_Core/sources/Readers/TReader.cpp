@@ -675,6 +675,23 @@ bool TReader::expandDeformDirectives()
 		std::string sagElementName;
 		int line;
 	};
+
+	// Helper: check if 'node' is in the subtree rooted at 'root' (inclusive of root itself)
+	// by walking up the parent chain from node
+	auto isInSubtreeOf = [&](const TDataTreeIterator &node, const TDataTreeIterator &root) -> bool
+	{
+		if (node == root)
+			return true;
+		auto current = node;
+		while (current.node != nullptr && current.node->parent != nullptr)
+		{
+			current = project.getTree().parent(current);
+			if (current == root)
+				return true;
+		}
+		return false;
+	};
+
 	std::vector<FrameDeform> frameDeforms;
 	for (auto it = project.getTree().begin(); it != project.getTree().end(); ++it)
 	{
@@ -686,8 +703,8 @@ bool TReader::expandDeformDirectives()
 	{
 		for (size_t j = i + 1; j < frameDeforms.size(); ++j)
 		{
-			if (project.getTree().is_in_subtree(frameDeforms[i].position, frameDeforms[j].position) ||
-				project.getTree().is_in_subtree(frameDeforms[j].position, frameDeforms[i].position))
+			if (isInSubtreeOf(frameDeforms[i].position, frameDeforms[j].position) ||
+				isInSubtreeOf(frameDeforms[j].position, frameDeforms[i].position))
 			{
 				std::string nameI = frameDeforms[i].position.node->data.get()->frame.getName();
 				std::string nameJ = frameDeforms[j].position.node->data.get()->frame.getName();
@@ -705,7 +722,7 @@ bool TReader::expandDeformDirectives()
 			continue;
 		for (const auto &fd : frameDeforms)
 		{
-			if (project.getTree().is_in_subtree(point.getFrameTreePosition(), fd.position))
+			if (isInSubtreeOf(point.getFrameTreePosition(), fd.position))
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR
 							   << "Point '" + point.getName() + "' has a DEFORM tag but is also inside frame-level *DEFORM in frame '" + fd.position.node->data.get()->frame.getName() + "' (line " + std::to_string(fd.line) + "). Use one or the other, not both.";
@@ -759,26 +776,28 @@ bool TReader::expandDeformDirectives()
 	};
 
 	// Phase C: Expand frame-level deforms
-	for (const auto &fd : frameDeforms)
+	for (size_t fdIdx = 0; fdIdx < frameDeforms.size(); ++fdIdx)
 	{
+		const auto &fd = frameDeforms[fdIdx];
 		std::vector<std::string> pointNames;
 		for (const auto &point : project.getPoints())
 		{
-			if (project.getTree().is_in_subtree(point.getFrameTreePosition(), fd.position))
+			if (isInSubtreeOf(point.getFrameTreePosition(), fd.position))
 				pointNames.push_back(point.getName());
 		}
 
+		std::string frameName = fd.position.node->data.get()->frame.getName();
+
 		if (pointNames.empty())
 		{
-			std::string frameName = fd.position.node->data.get()->frame.getName();
 			outputMessages << TFileLogger::e_logType::LOG_WARNING
 						   << "Line " + std::to_string(fd.line) + ": *DEFORM in frame '" + frameName + "' found no points in subtree.";
 			continue;
 		}
 
-		for (const auto &name : pointNames)
+		for (size_t pi = 0; pi < pointNames.size(); ++pi)
 		{
-			if (!expandPoint(name, fd.sagElementName, fd.line))
+			if (!expandPoint(pointNames[pi], fd.sagElementName, fd.line))
 				return false;
 		}
 	}
