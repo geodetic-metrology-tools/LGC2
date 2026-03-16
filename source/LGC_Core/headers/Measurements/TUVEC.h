@@ -33,8 +33,9 @@ class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 		virtual void setObsVector(const Eigen::VectorXd &obsVect) override
 		{
 			// internally UVEC has 2 residuals: x,y
-			// zcomp is such that x,y,z is normalized
-			double zObs = sqrt(1 - pow2(obsVect(0)) - pow2(obsVect(1)));
+			// z is reconstructed here for consistency but is not used in the adjustment
+			double xyNormSq = pow2(obsVect(0)) + pow2(obsVect(1));
+			double zObs = sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
 			TFreeVector direction(obsVect(0), obsVect(1), zObs, TCoordSysFactory::k3DCartesian);
 			setVectorMeasurement(direction);
 		}

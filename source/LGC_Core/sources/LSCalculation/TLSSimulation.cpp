@@ -382,12 +382,8 @@ void TLSSimulation::updateUVDSimValues(TCAM &camera)
 		// Reconstruct z so that (x, y, z) approximates a unit vector; z is not used in the adjustment
 		TReal xyNormSq = simX * simX + simY * simY;
 		if (xyNormSq > 1.0)
-			logWarning() << "UVD simulation: noise made x^2+y^2 > 1 (=" << xyNormSq
-						 << ") for target " << itUVD->targetPos->getName() << "; z component is clamped to 0.";
-		// Sign of z follows the sign of dz (target behind or in front of camera)
-		TReal dz = itUVD->targetPos->getEstimatedValue().getZ().getMetresValue()
-				 - camera.instrumentPos->getEstimatedValue().getZ().getMetresValue();
-		TReal simZ = std::copysign(sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0)), dz);
+			logWarning() << "UVD simulation: noise made x^2+y^2 > 1 (=" << xyNormSq << ") for target " << itUVD->targetPos->getName() << "; z component is clamped to 0.";
+		TReal simZ = sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
 
 		TFreeVector measVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
 		itUVD->setVectorMeasurement(measVect);
@@ -412,12 +408,8 @@ void TLSSimulation::updateUVECSimValues(TCAM &camera)
 		// Reconstruct z so that (x, y, z) approximates a unit vector; z is not used in the adjustment
 		TReal xyNormSq = simX * simX + simY * simY;
 		if (xyNormSq > 1.0)
-			logWarning() << "UVEC simulation: noise made x^2+y^2 > 1 (=" << xyNormSq
-			             << ") for target " << itUVEC->targetPos->getName() << "; z component is clamped to 0.";
-		// Sign of z follows the sign of dz (target behind or in front of camera)
-		TReal dz = itUVEC->targetPos->getEstimatedValue().getZ().getMetresValue()
-		         - camera.instrumentPos->getEstimatedValue().getZ().getMetresValue();
-		TReal simZ = std::copysign(sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0)), dz);
+			logWarning() << "UVEC simulation: noise made x^2+y^2 > 1 (=" << xyNormSq << ") for target " << itUVEC->targetPos->getName() << "; z component is clamped to 0.";
+		TReal simZ = sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
 
 		TFreeVector measVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
 		itUVEC->setVectorMeasurement(measVect);

@@ -192,7 +192,7 @@ void TKeyUVEC::parse(const std::vector<std::string> &tokens, bool activeLine, in
 				throw std::runtime_error("UVEC measurement input values are not correct: "
 										 "Given vector is not a unit vector. "
 										 "Note: only the x and y components are used in the adjustment; "
-										 "the z component is ignored but all three must form a unit vector.");
+										 "the z component is ignored but all three should approximately form a unit vector.");
 
 			uvec.setVectorMeasurement(vectorMeasurement);
 		}
@@ -262,7 +262,7 @@ void TKeyUVD::parse(const std::vector<std::string> &tokens, bool activeLine, int
 				throw std::runtime_error("UVD measurement input values are not correct: "
 										 "Given vector is not a unit vector. "
 										 "Note: only the x and y components are used in the adjustment; "
-										 "the z component is ignored but all three must form a unit vector.");
+										 "the z component is ignored but all three should approximately form a unit vector.");
 
 			uvd.setVectorMeasurement(vectorMeasurement);
 			uvd.setDistance(TLength(std::stor(tokens.at(4))));
