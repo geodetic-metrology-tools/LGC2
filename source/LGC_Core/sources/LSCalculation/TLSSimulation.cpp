@@ -385,8 +385,8 @@ void TLSSimulation::updateUVDSimValues(TCAM &camera)
 			logWarning() << "UVD simulation: noise made x^2+y^2 > 1 (=" << xyNormSq << ") for target " << itUVD->targetPos->getName() << "; z component is clamped to 0.";
 		TReal simZ = sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
 
-		TFreeVector measVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
-		itUVD->setVectorMeasurement(measVect);
+		TFreeVector simVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
+		itUVD->setVectorMeasurement(simVect);
 		itUVD->setDistance(TLength(simDist));
 	}
 }
@@ -411,8 +411,8 @@ void TLSSimulation::updateUVECSimValues(TCAM &camera)
 			logWarning() << "UVEC simulation: noise made x^2+y^2 > 1 (=" << xyNormSq << ") for target " << itUVEC->targetPos->getName() << "; z component is clamped to 0.";
 		TReal simZ = sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
 
-		TFreeVector measVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
-		itUVEC->setVectorMeasurement(measVect);
+		TFreeVector simVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
+		itUVEC->setVectorMeasurement(simVect);
 	}
 }
 
