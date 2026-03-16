@@ -74,6 +74,14 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 	// Create a new level in the tree using the current transformation definition.
 	proj.addChild(&adjTrafo);
 
+	// check for DEFORM tag on the frame line
+	if (opts.has("DEFORM"))
+	{
+		auto &node = proj.getCurrentNode();
+		node.deformSagElementName = opts.getParam("DEFORM");
+		node.deformLine = line;
+	}
+
 	// check for "Slave" frames
 	if (opts.has("SLAVE"))
 	{

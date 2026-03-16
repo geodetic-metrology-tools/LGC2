@@ -14,7 +14,6 @@
 #include "OptionReaders.h"
 #include "TReader.h"
 #include "SagConstraintReader.h"
-#include "DeformReader.h"
 
 namespace
 {
@@ -139,9 +138,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeySAGELEMENT(project)));
 	finterpreters.emplace_back(UPK(new TASagConstraintPairKey(project)));
 
-	finterpreters.emplace_back(UPK(new TADeformKey(project)));
-
-	// Observations Section	
+	// Observations Section
 	/*TSTN*/
 	TAKeyWord *tstn = new TKeyTSTN(project);
 	TAKeyWord *v0 = new TKeyV0(project);
@@ -457,7 +454,7 @@ bool TReader::read(std::istream &lgcStream)
 			project.getConfig().obsIDwidth = obsIdPair.first.size();
 	}
 
-	// Expand *DEFORM directives (must happen after all frames and points are read)
+	// Expand DEFORM directives (must happen after all frames and points are read)
 	expandDeformDirectives();
 
 	project.setLGCv1(false);
@@ -709,7 +706,7 @@ bool TReader::expandDeformDirectives()
 				std::string nameI = frameDeforms[i].position.node->data.get()->frame.getName();
 				std::string nameJ = frameDeforms[j].position.node->data.get()->frame.getName();
 				outputMessages << TFileLogger::e_logType::LOG_ERROR
-							   << "Line " + std::to_string(frameDeforms[j].line) + ": *DEFORM in frame '" + nameJ + "' overlaps with *DEFORM in frame '" + nameI + "' (nested deforms are not allowed).";
+							   << "Line " + std::to_string(frameDeforms[j].line) + ": DEFORM in frame '" + nameJ + "' overlaps with DEFORM in frame '" + nameI + "' (nested deforms are not allowed).";
 				return false;
 			}
 		}
@@ -725,7 +722,7 @@ bool TReader::expandDeformDirectives()
 			if (isInSubtreeOf(point.getFrameTreePosition(), fd.position))
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR
-							   << "Point '" + point.getName() + "' has a DEFORM tag but is also inside frame-level *DEFORM in frame '" + fd.position.node->data.get()->frame.getName() + "' (line " + std::to_string(fd.line) + "). Use one or the other, not both.";
+							   << "Point '" + point.getName() + "' has a DEFORM tag but is also inside frame-level DEFORM in frame '" + fd.position.node->data.get()->frame.getName() + "' (line " + std::to_string(fd.line) + "). Use one or the other, not both.";
 				return false;
 			}
 		}
@@ -791,7 +788,7 @@ bool TReader::expandDeformDirectives()
 		if (pointNames.empty())
 		{
 			outputMessages << TFileLogger::e_logType::LOG_WARNING
-						   << "Line " + std::to_string(fd.line) + ": *DEFORM in frame '" + frameName + "' found no points in subtree.";
+						   << "Line " + std::to_string(fd.line) + ": DEFORM in frame '" + frameName + "' found no points in subtree.";
 			continue;
 		}
 

@@ -49,7 +49,7 @@ class TReader {
 	/// Register observation IDs from current frame and check for duplicates across all frames
 	bool checkAndRegisterObsId(TDataTreeIterator itTree, std::unordered_map<std::string, int>& globalObsIdMap, TFileLogger& outputMessages);
 
-	/// Expand all *DEFORM directives (frame-level and point-level) into point renames, new POINs, and sag constraint pairs
+	/// Expand all DEFORM directives (frame-level and point-level) into point renames, new POINs, and sag constraint pairs
 	bool expandDeformDirectives();
 };
 #endif

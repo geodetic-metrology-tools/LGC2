@@ -81,7 +81,7 @@ void TASagConstraintPairKey::parse(const std::vector<std::string> &tokens, bool 
 	else if (nTokens == 1)
 	{
 		throw std::runtime_error("*SAGCONNECT with a single point name is no longer supported. "
-								 "Use *DEFORM or the DEFORM tag on a point definition to create "
+								 "Use the DEFORM tag on a *FRAME or point definition to create "
 								 "sag constraint pairs, or provide both reference and associated "
 								 "point names (2 names per line).");
 	}
