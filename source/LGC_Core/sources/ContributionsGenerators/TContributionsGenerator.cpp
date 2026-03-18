@@ -1764,6 +1764,7 @@ UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TU
 	const TFreeVector &unitVec = uvec.getVectorValue(); // observed vector (X and Y), Z is not observed
 	TReal i = unitVec.getX().getMetresValue();
 	TReal j = unitVec.getY().getMetresValue();
+	// k should not be an observation
 	TReal k = unitVec.getZ().getMetresValue();
 
 	const TPositionVector &instrEstimValue = camera.instrumentPos->getEstimatedValue();
