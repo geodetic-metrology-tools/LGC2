@@ -2,7 +2,7 @@ include(FetchContent)
 
 FetchContent_Declare(
 	treehh
-	GIT_REPOSITORY "https://github.com/kpeeters/tree.hh"
+	GIT_REPOSITORY "https://gitlab.cern.ch/apc/susofts/thirdparty/tree.hh.git"
 	GIT_TAG ba91aab1a9642585d747b8d2371ab69290b36664 # Commit on July 19, 2024
 	GIT_SHALLOW	OFF
 )
