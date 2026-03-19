@@ -18,11 +18,72 @@
 
 namespace tut
 {
-	struct test_SAG 
+	struct test_SAG
 	{
 		test_SAG() : projTest(std::make_shared<TLGCData>()), reader(projTest) {}
 		std::shared_ptr<TLGCData> projTest;
 		TReader reader;
+
+		// Helper: run and verify DEFORM expansion tests common to both point-level and frame-level syntax
+		void runDeformExpansionChecks(const char *inputData, const std::string &testLabel)
+		{
+			projTest->getFileLogger().setOutputfileLocation("C:/Temp/SAG.txt");
+			std::stringstream infiler(inputData);
+			projTest->getFileLogger().writeReportHeader("LGC output file");
+
+			bool succesReading = reader.read(infiler);
+			ensure_equals(testLabel + ": Reading file successful", succesReading, true);
+			TLGCCalculation calcul(projTest);
+			std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+			Behavior succesCalc = calcul.computeResults(fileWriter);
+			ensure_equals(testLabel + ": Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+			// Test a-posteriori sigma
+			ensure_equals(testLabel + ": a-posteriori sigma must be 0", projTest->getS0APosteriori(), 0.0, 1e-9);
+
+			// Test estimated sag parameters
+			LGCAdjustableSag &testSag = projTest->getSags().getObject("mySag1");
+			ensure_equals(testLabel + ": Vertical sag must be 0", testSag.getVertSag().getEstimatedValue().getMetresValue(), 0.0, 1e-9);
+			ensure_equals(testLabel + ": Vertical curvature must be -1", testSag.getVertCurv().getEstimatedValue().getMetresValue(), -1.0, 1e-9);
+
+			// Test P1_1 (sagged point): fully free, no pointSigma
+			LGCAdjustablePoint &P1_1 = projTest->getPoints().getObject("P1_1");
+			ensure_equals(testLabel + ": P1_1 X should be free", P1_1.isCoordinateFixed(0), false);
+			ensure_equals(testLabel + ": P1_1 Y should be free", P1_1.isCoordinateFixed(1), false);
+			ensure_equals(testLabel + ": P1_1 Z should be free", P1_1.isCoordinateFixed(2), false);
+			ensure_equals(testLabel + ": P1_1 should have no pointSigma", P1_1.hasPointSigma(), false);
+
+			// Test P1_1_ref: fully free (original was *POIN with SX 1 SY 1 SZ 1), has pointSigma
+			LGCAdjustablePoint &P1_1_ref = projTest->getPoints().getObject("P1_1_ref");
+			ensure_equals(testLabel + ": P1_1_ref X should be free", P1_1_ref.isCoordinateFixed(0), false);
+			ensure_equals(testLabel + ": P1_1_ref Y should be free", P1_1_ref.isCoordinateFixed(1), false);
+			ensure_equals(testLabel + ": P1_1_ref Z should be free", P1_1_ref.isCoordinateFixed(2), false);
+			ensure_equals(testLabel + ": P1_1_ref should have pointSigma", P1_1_ref.hasPointSigma(), true);
+
+			// Test P5_1 (sagged point): fully free
+			LGCAdjustablePoint &P5_1 = projTest->getPoints().getObject("P5_1");
+			ensure_equals(testLabel + ": P5_1 X should be free", P5_1.isCoordinateFixed(0), false);
+			ensure_equals(testLabel + ": P5_1 Y should be free", P5_1.isCoordinateFixed(1), false);
+			ensure_equals(testLabel + ": P5_1 Z should be free", P5_1.isCoordinateFixed(2), false);
+
+			// Test P5_1_ref: only Y free (SX 0, SY 1, SZ 0), has pointSigma
+			LGCAdjustablePoint &P5_1_ref = projTest->getPoints().getObject("P5_1_ref");
+			ensure_equals(testLabel + ": P5_1_ref X should be fixed", P5_1_ref.isCoordinateFixed(0), true);
+			ensure_equals(testLabel + ": P5_1_ref Y should be free", P5_1_ref.isCoordinateFixed(1), false);
+			ensure_equals(testLabel + ": P5_1_ref Z should be fixed", P5_1_ref.isCoordinateFixed(2), true);
+			ensure_equals(testLabel + ": P5_1_ref should have pointSigma", P5_1_ref.hasPointSigma(), true);
+
+			// Test that sag constraint pairs have correct structure
+			for (const auto &pair : projTest->getSagPointPairs())
+			{
+				ensure(testLabel + ": Ref point should end with _ref suffix",
+					pair.refPoint.size() > 4 && pair.refPoint.substr(pair.refPoint.size() - 4) == "_ref");
+				ensure(testLabel + ": Assoc point should not have _ref suffix",
+					pair.assocPoint.find("_ref") == std::string::npos);
+				ensure(testLabel + ": Reference point should exist", projTest->getPoints().doesObjectExist(pair.refPoint));
+				ensure(testLabel + ": Associated point should exist", projTest->getPoints().doesObjectExist(pair.assocPoint));
+			}
+		}
 	};
 	typedef test_group<test_SAG> factory;
 	typedef factory::object object;
@@ -303,69 +364,16 @@ namespace tut
 	template<>
 	void object::test<8>()
 	{
-		set_test_name("Testing DEFORM syntax with point sigma transfer to _ref points");
+		set_test_name("Testing point-level DEFORM syntax with point sigma transfer to _ref points");
+		runDeformExpansionChecks(Sag::SAG_test_DEFORM_syntax, "point-level DEFORM");
+	}
 
-		projTest->getFileLogger().setOutputfileLocation("C:/Temp/SAG.txt");
-		std::stringstream infiler(Sag::SAG_test_DEFORM_syntax);
-		projTest->getFileLogger().writeReportHeader("LGC output file");
-
-		bool succesReading = reader.read(infiler);
-		ensure_equals("Reading file successful", succesReading, true);
-		TLGCCalculation calcul(projTest);
-		std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-		Behavior succesCalc = calcul.computeResults(fileWriter);
-		ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
-		// Test a-posteriori sigma
-		ensure_equals("a-posteriori sigma must be 0", projTest->getS0APosteriori(), 0.0, 1e-9);
-
-		// Test estimated sag parameters
-		LGCAdjustableSag &testSag = projTest->getSags().getObject("mySag1");
-		ensure_equals("Vertical sag must be 0", testSag.getVertSag().getEstimatedValue().getMetresValue(), 0.0, 1e-9);
-		ensure_equals("Vertical curvature must be -1", testSag.getVertCurv().getEstimatedValue().getMetresValue(), -1.0, 1e-9);
-
-		// Test P1_1 (sagged point): fully free, no pointSigma
-		LGCAdjustablePoint &P1_1 = projTest->getPoints().getObject("P1_1");
-		ensure_equals("P1_1 X should be free", P1_1.isCoordinateFixed(0), false);
-		ensure_equals("P1_1 Y should be free", P1_1.isCoordinateFixed(1), false);
-		ensure_equals("P1_1 Z should be free", P1_1.isCoordinateFixed(2), false);
-		ensure_equals("P1_1 should have no pointSigma", P1_1.hasPointSigma(), false);
-
-		// Test P1_1_ref: fully free (original was *POIN with SX 1 SY 1 SZ 1), has pointSigma
-		LGCAdjustablePoint &P1_1_ref = projTest->getPoints().getObject("P1_1_ref");
-		ensure_equals("P1_1_ref X should be free", P1_1_ref.isCoordinateFixed(0), false);
-		ensure_equals("P1_1_ref Y should be free", P1_1_ref.isCoordinateFixed(1), false);
-		ensure_equals("P1_1_ref Z should be free", P1_1_ref.isCoordinateFixed(2), false);
-		ensure_equals("P1_1_ref should have pointSigma", P1_1_ref.hasPointSigma(), true);
-
-		// Test P5_1 (sagged point): fully free
-		LGCAdjustablePoint &P5_1 = projTest->getPoints().getObject("P5_1");
-		ensure_equals("P5_1 X should be free", P5_1.isCoordinateFixed(0), false);
-		ensure_equals("P5_1 Y should be free", P5_1.isCoordinateFixed(1), false);
-		ensure_equals("P5_1 Z should be free", P5_1.isCoordinateFixed(2), false);
-
-		// Test P5_1_ref: only Y free (SX 0, SY 1, SZ 0), has pointSigma
-		LGCAdjustablePoint &P5_1_ref = projTest->getPoints().getObject("P5_1_ref");
-		ensure_equals("P5_1_ref X should be fixed", P5_1_ref.isCoordinateFixed(0), true);
-		ensure_equals("P5_1_ref Y should be free", P5_1_ref.isCoordinateFixed(1), false);
-		ensure_equals("P5_1_ref Z should be fixed", P5_1_ref.isCoordinateFixed(2), true);
-		ensure_equals("P5_1_ref should have pointSigma", P5_1_ref.hasPointSigma(), true);
-
-		// Test that sag constraint pairs have correct structure:
-		// - refPoint should end with "_ref"
-		// - assocPoint should be the original name (sagged point, no "_ref" suffix)
-		for (const auto &pair : projTest->getSagPointPairs())
-		{
-			// Reference point should end with "_ref"
-			ensure("Ref point should end with _ref suffix",
-				pair.refPoint.size() > 4 && pair.refPoint.substr(pair.refPoint.size() - 4) == "_ref");
-			// Associated (sagged) point should NOT have "_ref" suffix
-			ensure("Assoc point should not have _ref suffix",
-				pair.assocPoint.find("_ref") == std::string::npos);
-			// Both points should exist
-			ensure("Reference point should exist", projTest->getPoints().doesObjectExist(pair.refPoint));
-			ensure("Associated point should exist", projTest->getPoints().doesObjectExist(pair.assocPoint));
-		}
+	template<>
+	template<>
+	void object::test<9>()
+	{
+		set_test_name("Testing frame-level DEFORM syntax with point sigma transfer to _ref points");
+		runDeformExpansionChecks(Sag::SAG_test_DEFORM_frame_syntax, "frame-level DEFORM");
 	}
 
 };
