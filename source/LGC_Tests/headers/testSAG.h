@@ -151,6 +151,32 @@ P5_ref P5_sag
 *END)";
 
 
+char const *const SAG_test_DEFORM_syntax = R"(*TITR
+Deformation Illustration - 5 points with vertical sag and curvature
+*OLOC
+*CONSI
+*PREC 6
+*INSTR
+% SAG ELEMENT DEFINITION
+*SAGELEMENT mySag1 sagFrame1  0.5 0.6 0 0 VS VC
+*FRAME test1 0 0 0 0 0 0 1
+*FRAME sagFrame1 0 0 0 0 0 0 1
+*ENDFRAME
+*POIN
+P1_1    0.0000 -2 0.0000 SX 1 SY 1 SZ 1 DEFORM mySag1
+P2_1    0.0000 -1 0.0000 SX 1 SY 1 SZ 1 DEFORM mySag1
+P3_1    0.0000  0 0.0000 SX 1 SY 1 SZ 1 DEFORM mySag1
+P4_1    0.0000  1 0.0000 SX 1 SY 1 SZ 1 DEFORM mySag1
+P5_1    0.0000  2 0.0000 SX 0 SY 1 SZ 0 DEFORM mySag1
+*ENDFRAME
+*OBSXYZ
+P1_1 0.0000  -2 -4.0000 1 1 0.001
+P2_1 0.0000  -1 -1 1 1 0.001
+P3_1 0.0000   0 0 1 1 0.001
+P4_1 0.0000   1 -1 1 1 0.001
+P5_1 0.0000   2 -4 1 1 0.001
+*END)";
+
 char const *const SAG_test_Provisional= R"(*TITR
 testing sag connection with provisional value
 *OLOC
