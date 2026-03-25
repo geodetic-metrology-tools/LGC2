@@ -4,7 +4,7 @@ Testing Input Matrices Filler.
 *FAUT
 *INSTR
 *POLAR TS1 T1 0.0 0.1 0.1 0
-T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0 
+T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0
 *CALA
 	STN  0 0 0
 	REF  100 0 0
@@ -13,7 +13,7 @@ T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0
 	PT2  100 100 0
 *TSTN STN TS1 IHFIX
   *V0
-	*ANGL 
+	*ANGL
 		PT2 60
 		REF 110
 		PT  10
@@ -27,7 +27,7 @@ T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0
 		PT  100
 *TSTN PT2 TS1 IHFIX
   *V0
-	*ANGL 
+	*ANGL
 		STN 240
 		REF 190
 		PT  290

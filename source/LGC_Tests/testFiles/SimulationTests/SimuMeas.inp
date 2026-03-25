@@ -7,7 +7,7 @@ Testing Input Matrices Filler.
 
 *INSTR
 *POLAR TS1 T1 0.0 0.1 0.1 0
-T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0 
+T1  5  5  0.1  0.0	  0  0.0  0.0  0.0  0.0  0.0
 *EDM ed1 t2 0 0.1 0.1
 t2 0.1 0 0 0 0.1 0.1 0 0.0
 *LEVEL lev1 t3 0 0
@@ -24,44 +24,44 @@ t3 0.01 0 0 0.1 0 0.0
 
 *TSTN STN TS1 IHFIX
   *V0
-	*ANGL 
-		PT2 
-		REF 
-		PT  
+	*ANGL
+		PT2
+		REF
+		PT
 	*ZEND
-		PT2 
-		REF 
-		PT  
+		PT2
+		REF
+		PT
 	*DHOR
-		PT2 
-		REF 
-		PT  
+		PT2
+		REF
+		PT
 
 *TSTN PT2 TS1 IHFIX
   *V0
-	*PLR3D 
-		STN 
-		REF 
-		PT  
-		
+	*PLR3D
+		STN
+		REF
+		PT
+
 *DSPT PT2 ed1
-	STN    
-	REF    
-	PT     
+	STN
+	REF
+	PT
 
 *ECHO  scl
-	STN 
-	REF 
+	STN
+	REF
 	PT
 	PT2
-		
+
 %*DLEV lev1 %RefPt STN
 %	PT2  DHOR 141.4 DSE 0.1
 %	REF  DHOR 100 DSE 0.1
 %	PT   DHOR 100 DSE 0.1
 %
 %*DLEV lev1 RefPt REF
-%STN  
-%PT  
+%STN
+%PT
 %PT2  DHOR 100.001 DSE 0.1
 *END

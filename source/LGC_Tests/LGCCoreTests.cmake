@@ -73,4 +73,3 @@ file(GLOB_RECURSE test_files_to_copy RELATIVE ${TEST_FILE_DIR} ${TEST_FILE_DIR}/
 foreach(test_file ${test_files_to_copy})
 configure_file(${TEST_FILE_DIR}/${test_file} test_files/${test_file} COPYONLY)
 endforeach()
-

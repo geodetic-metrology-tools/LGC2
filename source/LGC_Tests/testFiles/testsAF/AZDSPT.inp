@@ -5,7 +5,7 @@ Testing parametric measurements.
 *ALLFIXED
 *INSTR
 *POLAR TS1 T1 0.0 0.0 0.0 0
-T1  5  5  0.5  0.5	  0  0.0  0.0  0.0  0.0  0.0 
+T1  5  5  0.5  0.5	  0  0.0  0.0  0.0  0.0  0.0
 *EDM EDM1 ET1 0.0 0.0 0.0
 ET1  0.5  0.5 1 0.0 0.0 0.0 0 0.0
 *CALA
@@ -16,7 +16,7 @@ ET1  0.5  0.5 1 0.0 0.0 0.0 0 0.0
 	PT  0 100 0
 *TSTN STN TS1 IHFIX
   *V0
-  *ANGL 
+  *ANGL
 		PT2    50.0001917
 		REF   100.0001205
 		PT   399.9994507
@@ -27,5 +27,5 @@ ET1  0.5  0.5 1 0.0 0.0 0.0 0 0.0
 *DSPT STN EDM1
 		PT2 141.4214861
 		REF 100.0000132
-		PT  99.9995687  
+		PT  99.9995687
 *END

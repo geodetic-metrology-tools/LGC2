@@ -37,8 +37,6 @@ struct test_WPSR
 	bool succesReading;
 };
 
-
-
 typedef test_group<test_WPSR> factory;
 typedef factory::object object;
 
@@ -51,7 +49,6 @@ tut::factory tf("WPSR tests");
 
 namespace tut
 {
-
 //------------------------------------------ ECWI -------------------------------------------------//
 
 template<>
@@ -728,7 +725,6 @@ void object::test<20>()
 	ensure_equals("LHC.MQXB.B2R8.A Y coordinate should match", PT3.getY().getMetresValue(), 4974.880233, 1.5e-5);
 	ensure_equals("LHC.MQXB.B2R8.A Z coordinate should match", PT3.getZ().getMetresValue(), 2330.734785, 1.5e-5);
 }
-
 
 template<>
 template<>

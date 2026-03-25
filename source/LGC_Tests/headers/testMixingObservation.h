@@ -1268,22 +1268,22 @@ char const *const TSTN_FrameContribTest = R"(*TITR
 *FAUT     .01     .10
 *INSTR
 *POLAR Station1 Target1 0 0 0 0
-Target1 10 10 10 0 0 0 0 0 0 0   
+Target1 10 10 10 0 0 0 0 0 0 0
 *CALA
 yInRoot 0 1 0
 *FRAME yTranslationFrame 0 0 0 0 0 0 1  TY
 *POIN
 p2 0 1 1
 *CALA
-zeroInFrame 0 0 0 
+zeroInFrame 0 0 0
 *OBSXYZ
 p2 0 1 1 100 100 100
 *ENDFRAME
-*TSTN  zeroInFrame    Station1    IHFIX     TRGT Target1  
-*V0 
+*TSTN  zeroInFrame    Station1    IHFIX     TRGT Target1
+*V0
 % these measurements are independent from TY because station and target both move with the frame
 *DIST
-% slightly perturbed observation, perfect fit would be 2^0.5 
+% slightly perturbed observation, perfect fit would be 2^0.5
 p2 1.41
 *ANGL
 p2 0

@@ -169,13 +169,13 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	// (VV) If the tokens are more than five, e.g., "*SIMU N S %comment" or
 	// (VV) if the tokens are four without a comment at the end, e.g., "*SIMU N S",
 	// (VV) then create a simulation object with the number of simulations and the seed number provided by the user
-	
+
 	if (numTokens >= 5 || (numTokens == 4 && !(fOfLastToken == '$' || fOfLastToken == '%')))
 	{
 		// (VV) Get the seed number from the input file
 		int inputSeedNum = std::stoi(tokens.at(3));
 		// (VV) Create a simulation object with the number of simulations and the seed number provided by the user
-		fconfig.sim = TLGCConfig::TSimulation(numSimulation, inputSeedNum ,fconfig.sim.writeLGCFile);
+		fconfig.sim = TLGCConfig::TSimulation(numSimulation, inputSeedNum, fconfig.sim.writeLGCFile);
 		fconfig.sim.setActive(activeLine);
 	}
 	// (VV) If the tokens are four with a comment, e.g., "*SIMU N %comment" or
@@ -194,7 +194,6 @@ void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	{
 		throw std::runtime_error("*SIMU accepts either 1 or 2 arguments but zero (0) arguments were provided.");
 	}
-
 }
 
 ////////////////////
@@ -526,4 +525,3 @@ void TKeySOBS::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		throw std::runtime_error("Invalid argument for the keyword *SOBS. No argument needed");
 	}
 }
-

@@ -9,51 +9,50 @@
 
 #include "TFautFileWriter.h"
 
-#include	<ctime>
-#include	<TLGCData.h>
-#include	"TScalar.h"
-#include	"TSeparatedFormatTStream.h"
-#include "TLGCApp.h"
-#include "TFRAMEWriter.h"
+#include <ctime>
 
+#include <TLGCData.h>
+
+#include "TFRAMEWriter.h"
+#include "TLGCApp.h"
+#include "TScalar.h"
+#include "TSeparatedFormatTStream.h"
 
 /////////////////////////////////////////////////////////////////////////////
-//constructor / destructor
+// constructor / destructor
 /////////////////////////////////////////////////////////////////////////////
 TFautFileWriter::TFautFileWriter() : TAFileWriter()
-{// default constructor
+{ // default constructor
 	fAlpha = LITERAL(0.01);
 	fBeta = LITERAL(0.1);
 }
 
-TFautFileWriter::TFautFileWriter(TAStreamFormatter* stream, const TLGCData* project) :
-TAFileWriter(stream, project)
-{//constructor
+TFautFileWriter::TFautFileWriter(TAStreamFormatter *stream, const TLGCData *project) : TAFileWriter(stream, project)
+{ // constructor
 	fAlpha = project->getConfig().faut.alpha;
 	fBeta = project->getConfig().faut.beta;
 }
 
 TFautFileWriter::~TFautFileWriter()
-{// Destructor
+{ // Destructor
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // PUBLIC: WRITING RESULTS
 //////////////////////////////////////////////////////////////////////////////////////////
-void	TFautFileWriter::writeFile(TLGCData const * const ds)
+void TFautFileWriter::writeFile(TLGCData const *const ds)
 {
-
-	TAStreamFormatter*	stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	TFRAMEWriter frameWriter(*stream, fProjectData);
 
 	// write headers
 	this->writeTitle();
 	this->writeDataSummary();
 
-	//Tteration through the tree nodes
-	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++){	
-		frameWriter.writeFRAMEAllReliability(itTree);	//Writes 
+	// Tteration through the tree nodes
+	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
+	{
+		frameWriter.writeFRAMEAllReliability(itTree); // Writes
 	}
 
 	this->writeOverallReliability(ds);
@@ -61,7 +60,7 @@ void	TFautFileWriter::writeFile(TLGCData const * const ds)
 }
 
 void TFautFileWriter::writeFile(const std::string error)
-{//write error messages from project
+{ // write error messages from project
 	writeTitle();
 	writeError(error);
 }
@@ -69,57 +68,59 @@ void TFautFileWriter::writeFile(const std::string error)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE: TITLE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-void	TFautFileWriter::writeTitle()
+void TFautFileWriter::writeTitle()
 {
-	TAStreamFormatter* stream =	getStream();
+	TAStreamFormatter *stream = getStream();
 
-	//write main title
-	//write software id.
-	(*stream)<<(TLGCApp::getProgId())<<endl;
+	// write main title
+	// write software id.
+	(*stream) << (TLGCApp::getProgId()) << endl;
 
-	//write software copyright
-	(*stream)<<(TLGCApp::getCopyright())<<endl;
+	// write software copyright
+	(*stream) << (TLGCApp::getCopyright()) << endl;
 
-	//last compilation
-	(*stream)<<"Last compilation : "<<__DATE__<<endl<<endl<<endl;
+	// last compilation
+	(*stream) << "Last compilation : " << __DATE__ << endl << endl << endl;
 
-	//write title
-	(*stream)<<"*********************************************************************************************************************************** "<<endl;
-	(*stream)<<(fProjectData->getConfig().title)<<endl;
-	(*stream)<<"RELIABILITY PARAMETERS"<<endl<<endl;
-	(*stream)<<endl;
+	// write title
+	(*stream) << "*********************************************************************************************************************************** " << endl;
+	(*stream) << (fProjectData->getConfig().title) << endl;
+	(*stream) << "RELIABILITY PARAMETERS" << endl << endl;
+	(*stream) << endl;
 
 	// write date and time
 	(*stream) << "CALCULATED " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
-	(*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
+	(*stream) << "*********************************************************************************************************************************** " << endl
+			  << endl
+			  << endl
+			  << endl;
 }
 
-void	TFautFileWriter::writeDataSummary()
+void TFautFileWriter::writeDataSummary()
 {
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string separator = getSeparator();
 
 	TReal S0Aposteriori = fProjectData->getS0APosteriori();
 	TReal S0LowLimit = fProjectData->getChiS0LowLimit();
 	TReal S0UpLimit = fProjectData->getChiS0UpLimit();
 
-
-	//SIGMA ZERO A POSTERIORI
+	// SIGMA ZERO A POSTERIORI
 	stream->precision(5);
-	stream->width( stream->getObsFormat()->getObsResidualWidth() );
-	(*stream)<<"SIGMA ZERO A POSTERIORI ="<<S0Aposteriori;
+	stream->width(stream->getObsFormat()->getObsResidualWidth());
+	(*stream) << "SIGMA ZERO A POSTERIORI =" << S0Aposteriori;
 
-	(*stream)<<", VALEUR CRITIQUE = (";
+	(*stream) << ", VALEUR CRITIQUE = (";
 	stream->precision(5);
-	stream->width( stream->getObsFormat()->getObsResidualWidth() );
-	(*stream)<<S0LowLimit<<", ";
+	stream->width(stream->getObsFormat()->getObsResidualWidth());
+	(*stream) << S0LowLimit << ", ";
 
 	stream->precision(5);
-	stream->width( stream->getObsFormat()->getObsResidualWidth() );
-	(*stream)<<S0UpLimit<<")";
-	(*stream)<<endl<<endl;
+	stream->width(stream->getObsFormat()->getObsResidualWidth());
+	(*stream) << S0UpLimit << ")";
+	(*stream) << endl << endl;
 
-	//SIGNIFICANCE LEVEL
+	// SIGNIFICANCE LEVEL
 	(*stream) << "SIGNIFICANCE LEVEL FOR TESTING WI, ALPHA =";
 	stream->setf(std::ios::fixed, std::ios::floatfield);
 	stream->width(5);
@@ -129,47 +130,47 @@ void	TFautFileWriter::writeDataSummary()
 	stream->width(5);
 	stream->precision(1);
 	(*stream) << right << (100 - (fAlpha * 100)) << " %";
-	(*stream)<< endl << endl;
-	
+	(*stream) << endl << endl;
+
 	// POWER OF TEST (1-beta)
 	(*stream) << "POWER OF TEST TO DETERMINE NABLA AND DELTY, (1-BETA) = ";
 	stream->width(5);
 	stream->precision(1);
 	(*stream) << right << (100 - (fBeta * 100)) << " %";
-	(*stream)<< endl << endl << endl << endl;
-
+	(*stream) << endl << endl << endl << endl;
 }
 
-
-void	TFautFileWriter::writeOverallReliability(TLGCData const* const project)
+void TFautFileWriter::writeOverallReliability(TLGCData const *const project)
 {
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string separator = getSeparator();
 
 	TDouble F(project->getStatistics().getOVERALL());
 
 	if (!isnan(F.getValue()))
 	{
-		(*stream) << "\n\n" << "* * * OVERALL NETWORK RELIABILITY FACTOR: " << separator;
+		(*stream) << "\n\n"
+				  << "* * * OVERALL NETWORK RELIABILITY FACTOR: " << separator;
 		stream->width(stream->getObsFormat()->getObsResidualWidth());
 		stream->precision(4);
 		(*stream) << right << F.getValue() << " * * *";
 	}
 	else
 	{
-		(*stream) << "\n\n" << "* * * INDETERMINATE OVERALL NETWORK RELIABILITY FACTOR * * *";
+		(*stream) << "\n\n"
+				  << "* * * INDETERMINATE OVERALL NETWORK RELIABILITY FACTOR * * *";
 	}
 }
 
-
-void	TFautFileWriter::writeNetworkDOF(TLGCData const* const project)
+void TFautFileWriter::writeNetworkDOF(TLGCData const *const project)
 {
-	TAStreamFormatter* stream = getStream();
+	TAStreamFormatter *stream = getStream();
 	std::string separator = getSeparator();
 
 	TDouble F(project->getStatistics().getDOF());
 
-	(*stream) << "\n\n" << "* * * NETWORK DEGREES OF FREEDOM: " << separator;
+	(*stream) << "\n\n"
+			  << "* * * NETWORK DEGREES OF FREEDOM: " << separator;
 	stream->width(stream->getObsFormat()->getObsResidualWidth());
 	stream->precision(0);
 	(*stream) << right << F.getValue() << " * * *";

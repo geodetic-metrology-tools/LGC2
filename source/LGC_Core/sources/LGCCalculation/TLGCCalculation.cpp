@@ -16,7 +16,8 @@
 //////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS / DESTRUCTOR
 //////////////////////////////////////////////////////////////////////
-TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat, int maxIterations) : fData(dat), fMaxIterations(maxIterations), fResultsMtr(std::shared_ptr<const TLSResultsMatrices>{})
+TLGCCalculation::TLGCCalculation(std::shared_ptr<TLGCData> dat, int maxIterations) :
+	fData(dat), fMaxIterations(maxIterations), fResultsMtr(std::shared_ptr<const TLSResultsMatrices>{})
 {
 }
 

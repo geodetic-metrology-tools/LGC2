@@ -5,6 +5,7 @@
 #include "TReader.h"
 
 #include <unordered_map>
+
 #include <StringManager.h>
 
 #include "AdjObjectsReader.h"
@@ -442,7 +443,7 @@ bool TReader::read(std::istream &lgcStream)
 	}
 
 	// Calculate obsIDwidth from all registered observation IDs
-	for (const auto& obsIdPair : globalObsIdMap)
+	for (const auto &obsIdPair : globalObsIdMap)
 	{
 		if (obsIdPair.first.size() > project.getConfig().obsIDwidth)
 			project.getConfig().obsIDwidth = obsIdPair.first.size();
@@ -711,24 +712,27 @@ bool TReader::checkAndRegisterObsId(TDataTreeIterator itTree, std::unordered_map
 	std::string duplicateId;
 	int duplicateLine = -1;
 	int firstOccurrenceLine = -1;
-	
+
 	// Use the shared iteration helper to check for duplicates across all frames
 	iterateAllMeasurements(itTree, [&globalObsIdMap, &duplicateId, &duplicateLine, &firstOccurrenceLine](auto const &meas) {
-		if (!meas.obsID.empty() && duplicateId.empty()) {  // Only record first duplicate
+		if (!meas.obsID.empty() && duplicateId.empty())
+		{ // Only record first duplicate
 			auto result = globalObsIdMap.insert({meas.obsID, meas.line});
-			if (!result.second) {  // Insertion failed - duplicate found across frames!
+			if (!result.second)
+			{ // Insertion failed - duplicate found across frames!
 				duplicateId = meas.obsID;
 				duplicateLine = meas.line;
 				firstOccurrenceLine = result.first->second;
 			}
 		}
 	});
-	
+
 	// If duplicate was found, report it with both line numbers
 	if (!duplicateId.empty())
 	{
 		const std::string lineStr = "Line " + std::to_string(duplicateLine) + ": ";
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << lineStr + "Observation ID \"" + duplicateId + "\" is duplicated (first occurrence at line " + std::to_string(firstOccurrenceLine) + ").";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR
+					   << lineStr + "Observation ID \"" + duplicateId + "\" is duplicated (first occurrence at line " + std::to_string(firstOccurrenceLine) + ").";
 		return true;
 	}
 

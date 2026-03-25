@@ -60,14 +60,13 @@ public:
 		setAngle(TAngle(obsVect(0)), kANGL);
 		setAngle(TAngle(obsVect(1)), kZEND);
 		setDistance(TLength(obsVect(2)));
-	}	
+	}
 	virtual Eigen::VectorXd getObsVector() const override
 	{
 		Eigen::VectorXd result(3);
 		result << getAngle(kANGL).getRadiansValue(), getAngle(kZEND).getRadiansValue(), getDistance().getMetresValue();
 		return result;
 	}
-
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -141,7 +140,7 @@ public:
 	/// Allfixed parameter: instrument heigth - Hi
 	TLength fAllFixedHi;
 	// distance sensibility
-	TReal fDistSensi;	
+	TReal fDistSensi;
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
 	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
@@ -199,7 +198,7 @@ public:
 	//@}
 
 	/// Allfixed parameter: V0
-	TAngle fAllFixedV0[2];	
+	TAngle fAllFixedV0[2];
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
 	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
@@ -253,7 +252,7 @@ public:
 	/// Allfixed parameter: distance correction
 	TLength fAllFixedCs;
 	// distance sensibility
-	TReal fDistSensi;	
+	TReal fDistSensi;
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); }
 	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); }
 
@@ -394,7 +393,6 @@ public:
 	TAngle fAllFixedCollimation;
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setDistance(TLength(obsVect(0))); };
 	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getDistance().getMetresValue()); };
-
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -591,8 +589,11 @@ public:
 	inline void setYResidual(TLength res) { fYResidual = res; }
 	inline void setZResidual(TLength res) { fZResidual = res; }
 	//@}
-	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { TPositionVector obsVector(obsVect(0), obsVect(1), obsVect(2), TCoordSysFactory::ECoordSys::k3DCartesian); }
-	virtual Eigen::VectorXd getObsVector() const override 
+	virtual void setObsVector(const Eigen::VectorXd &obsVect) override
+	{
+		TPositionVector obsVector(obsVect(0), obsVect(1), obsVect(2), TCoordSysFactory::ECoordSys::k3DCartesian);
+	}
+	virtual Eigen::VectorXd getObsVector() const override
 	{
 		Eigen::VectorXd result(3);
 		result << obsValue.getX().getMetresValue(), obsValue.getY().getMetresValue(), obsValue.getZ().getMetresValue();
@@ -712,12 +713,12 @@ public:
 
 	/// Destructor
 	~TECWI() override = default;
-	//@}virtual 
+	//@}virtual
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override
 	{
 		setDistance(TLength(obsVect(0)), EECWIDistances::kX);
 		setDistance(TLength(obsVect(1)), EECWIDistances::kZ);
-	}	
+	}
 	virtual Eigen::VectorXd getObsVector() const override
 	{
 		Eigen::VectorXd result(2);

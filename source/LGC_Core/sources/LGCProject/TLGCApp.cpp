@@ -30,7 +30,7 @@
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
 const std::string TLGCApp::copyright = "CERN";
-const std::string TLGCApp::license= "GPL-3.0-or-later";
+const std::string TLGCApp::license = "GPL-3.0-or-later";
 
 std::string TLGCApp::startProcessingTimestampISO = "";
 std::string TLGCApp::startProcessingTimestampOUT = "";
@@ -307,7 +307,7 @@ void TLGCApp::writeFautFile(TLGCData const *const dat, const std::string &output
 	}
 }
 
-void TLGCApp::writeDefaFile(TLGCData const * const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
+void TLGCApp::writeDefaFile(TLGCData const *const dat, const std::string &outputFileLocation, const TLSResultsMatrices &fResMtrx, std::shared_ptr<TAStreamFormatter> &stream)
 {
 	stream->resetStreamName(outputFileLocation + ".def");
 	TDefaFileWriter defaFileWriter(stream.get(), dat);
@@ -412,7 +412,7 @@ const std::string TLGCApp::getProgId()
 
 // return the software copyright string
 const std::string TLGCApp::getCopyright()
-{	
+{
 	std::stringstream cop;
 	cop << "Copyright (C) " << copyright << ", licensed under " << license;
 	return cop.str();

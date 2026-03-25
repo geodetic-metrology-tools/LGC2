@@ -111,7 +111,6 @@ void TSimFileWriter::writeHeader()
 		}
 	}
 
-
 	if (data->getConfig().covar.isActive())
 		(*stream) << "*COVAR " << endl;
 
@@ -513,10 +512,10 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 		if (!frameIt->get()->measurements.radiActive)
 			(*stream) << DEACTIVATION_CHAR;
 
-		//RADI has not a structure of a round of measurement 
-		//initialization with the precision of the first value by default
+		// RADI has not a structure of a round of measurement
+		// initialization with the precision of the first value by default
 		auto romSig = frameIt->get()->measurements.fRADI.begin()->getObservedStDev().getMMetresValue();
-		(*stream) << "*RADI" << sep << romSig << sep  << "\n";
+		(*stream) << "*RADI" << sep << romSig << sep << "\n";
 		for (auto &meas : frameIt->get()->measurements.fRADI)
 			writeRADIMeas(&meas);
 	}
@@ -1442,22 +1441,22 @@ void TSimFileWriter::writeROLLYMeas(TROLLYROM *meas)
 
 /*
  * Common INCL Measurement Simulation Helper
- * 
+ *
  * Unified template function that handles both INCLY and ROLLY measurement simulation output.
  * Eliminates code duplication by accepting the measurement list, ROM, and header keyword.
- * 
+ *
  * Generates simulation input files in standard LGC format with:
  * - Header line with measurement type keyword and default instrument ID
  * - Individual measurement lines with target points and observed angles
  * - Optional parameters only when they differ from default instrument values
  * - Proper deactivation character handling for inactive measurements
- * 
+ *
  * @param measurements: List of measurements (INCLY or ROLLY) to write
  * @param rom: Round of measurements object containing measurement data and state
  * @param keyword: Header keyword string ("*INCLY" or "*ROLLY") for measurement type identification
  */
 template<typename MeasurementList, typename ROMType>
-void TSimFileWriter::writeINCLMeasHelper(const MeasurementList& measurements, const ROMType* rom, const std::string& keyword)
+void TSimFileWriter::writeINCLMeasHelper(const MeasurementList &measurements, const ROMType *rom, const std::string &keyword)
 {
 	// Get output stream and configure separator for consistent formatting
 	TAStreamFormatter *stream = getStream();

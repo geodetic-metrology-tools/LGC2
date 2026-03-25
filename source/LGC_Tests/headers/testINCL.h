@@ -16,7 +16,7 @@ char const *const INCLY_ROOT_1 = R"(*TITR
 T1
 *OLOC
 *INSTR
-*INCL test 35 0 0 0 0 0 
+*INCL test 35 0 0 0 0 0
 *INCLY test
 PT1	 10
 *FRAME	RSTR_SPS.MBB.33130	20	0	0	0	0	0	1 RY
@@ -196,235 +196,235 @@ BEAM_XT03.BDB.0900.E -0.0070028174960434
 )";
 
 /*Testing the INCLY contributions and the angle and scale partial derivatives with TFreeVector */
-char const *const INCLY_CONTRIB = R"(*TITR 
-test Contrib Incl 
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*CALA 
-PT1 0 1000 100 
-PT2 0 1000 101 
-PT3 1 1001 101 
-*FRAME TEST 500 500 500 10 10 80 0.8 TX TY TZ RX RY RZ SCL 
-*OBSXYZ 
-PT1 1 1001 101 0.1 0.1 0.1 
-PT2 1 1001 102 0.1 0.1 0.1 
-PT3 2 1002 102 0.1 0.1 0.1 
-*INCLY I 
-PT3 0.0000 
-*FRAME TEST2 20 30 10 0 0 100 1 
-*INCLY I 
-PT1 0.0000 
-*ENDFRAME 
-*ENDFRAME 
-*END 
+char const *const INCLY_CONTRIB = R"(*TITR
+test Contrib Incl
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*CALA
+PT1 0 1000 100
+PT2 0 1000 101
+PT3 1 1001 101
+*FRAME TEST 500 500 500 10 10 80 0.8 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+PT1 1 1001 101 0.1 0.1 0.1
+PT2 1 1001 102 0.1 0.1 0.1
+PT3 2 1002 102 0.1 0.1 0.1
+*INCLY I
+PT3 0.0000
+*FRAME TEST2 20 30 10 0 0 100 1
+*INCLY I
+PT1 0.0000
+*ENDFRAME
+*ENDFRAME
+*END
 )";
 
 /*Testing the AC and RF flags on INCLY */
-char const *const INCLY_SUBF_6 = R"(*TITR 
+char const *const INCLY_SUBF_6 = R"(*TITR
 test AC RF Flags
-*OLOC 
-*INSTR 
-*INCL I   5  0  0  0  0  0 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-*INCLY I 
+*OLOC
+*INSTR
+*INCL I   5  0  0  0  0  0
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+*INCLY I
 PT1 1 AC 0.5 RF 0.3 ACSE 1 RFSE 2 OBSE 4 PPM 3
-*ENDFRAME 
+*ENDFRAME
 *END )";
 
 /*Testing the AC and RF flags on INCL */
-char const *const INCLY_SUBF_7 = R"(*TITR 
-test Corrections 
-*OLOC 
-*INSTR 
-*INCL I   4  3  0.5  1  0.3  2 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-*INCLY I 
-PT1 1  
-*ENDFRAME 
-*END 
+char const *const INCLY_SUBF_7 = R"(*TITR
+test Corrections
+*OLOC
+*INSTR
+*INCL I   4  3  0.5  1  0.3  2
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+*INCLY I
+PT1 1
+*ENDFRAME
+*END
 )";
 
 /*Testing the INSTR keyword */
-char const *const INCLY_SUBF_8 = R"(*TITR 
-test Corrections 
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*INCL I2   5  4  0.6  2  0.4  3 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
+char const *const INCLY_SUBF_8 = R"(*TITR
+test Corrections
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*INCL I2   5  4  0.6  2  0.4  3
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
 *INCLY I1
-PT1 1   
+PT1 1
 PT2 1  INSTR I2
-PT3 1  
-*ENDFRAME 
-*END 
+PT3 1
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY vs ROLLY mathematical model differences - Direct comparison*/
-char const *const INCLY_VS_ROLLY_MODEL_TEST = R"(*TITR 
+char const *const INCLY_VS_ROLLY_MODEL_TEST = R"(*TITR
 Mathematical Model Comparison Test - Direct Output Comparison
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*CALA 
-PT1 0 0 0 
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*CALA
+PT1 0 0 0
 PT2 0.1 0 0.1
 PT3 -0.05 0 0.05
-*FRAME TEST 0 0 0 0.1 0.2 0 1 RY 
-*INCLY I 
-PT1 0.0000 
+*FRAME TEST 0 0 0 0.1 0.2 0 1 RY
+*INCLY I
+PT1 0.0000
 PT2 0.1000
 PT3 -0.0500
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY vs ROLLY with different rotation values - Test Case 1*/
-char const *const INCLY_VS_ROLLY_TEST_CASE_1 = R"(*TITR 
+char const *const INCLY_VS_ROLLY_TEST_CASE_1 = R"(*TITR
 Mathematical Model Comparison - Test Case 1 (Small Angles)
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*CALA 
-PT1 0 0 0 
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*CALA
+PT1 0 0 0
 PT2 0.05 0 0.05
 PT3 -0.025 0 0.025
-*FRAME TEST 0 0 0 0.05 0.1 0 1 RY 
-*INCLY I 
-PT1 0.0000 
+*FRAME TEST 0 0 0 0.05 0.1 0 1 RY
+*INCLY I
+PT1 0.0000
 PT2 0.0500
 PT3 -0.0250
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY vs ROLLY with different rotation values - Test Case 2*/
-char const *const INCLY_VS_ROLLY_TEST_CASE_2 = R"(*TITR 
+char const *const INCLY_VS_ROLLY_TEST_CASE_2 = R"(*TITR
 Mathematical Model Comparison - Test Case 2 (Medium Angles)
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*CALA 
-PT1 0 0 0 
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*CALA
+PT1 0 0 0
 PT2 0.2 0 0.2
 PT3 -0.1 0 0.1
-*FRAME TEST 0 0 0 0.2 0.5 0 1 RY 
-*INCLY I 
-PT1 0.0000 
+*FRAME TEST 0 0 0 0.2 0.5 0 1 RY
+*INCLY I
+PT1 0.0000
 PT2 0.2000
 PT3 -0.1000
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY vs ROLLY with different rotation values - Test Case 3*/
-char const *const INCLY_VS_ROLLY_TEST_CASE_3 = R"(*TITR 
+char const *const INCLY_VS_ROLLY_TEST_CASE_3 = R"(*TITR
 Mathematical Model Comparison - Test Case 3 (Large Angles)
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*CALA 
-PT1 0 0 0 
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*CALA
+PT1 0 0 0
 PT2 0.5 0 0.5
 PT3 -0.25 0 0.25
-*FRAME TEST 0 0 0 0.5 1.0 0 1 RY 
-*INCLY I 
-PT1 0.0000 
+*FRAME TEST 0 0 0 0.5 1.0 0 1 RY
+*INCLY I
+PT1 0.0000
 PT2 0.5000
 PT3 -0.2500
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY arcsin model with small angles*/
-char const *const INCLY_ARCSIN_MODEL_TEST = R"(*TITR 
+char const *const INCLY_ARCSIN_MODEL_TEST = R"(*TITR
 INCLY Arcsin Model Validation
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
 PT2 0.1 0 0.1
 PT3 -0.05 0 0.05
-*INCLY I 
-PT1 0.0000 
+*INCLY I
+PT1 0.0000
 PT2 0.1000
 PT3 -0.0500
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing ROLLY atan2 model with small angles*/
-char const *const ROLLY_ATAN2_MODEL_TEST = R"(*TITR 
+char const *const ROLLY_ATAN2_MODEL_TEST = R"(*TITR
 ROLLY Atan2 Model Validation
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
 PT2 0.1 0 0.1
 PT3 -0.05 0 0.05
-*ROLLY I 
-PT1 0.0000 
+*ROLLY I
+PT1 0.0000
 PT2 0.1000
 PT3 -0.0500
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing contribution compatibility between INCLY and ROLLY*/
-char const *const INCLY_ROLLY_CONTRIBUTION_TEST = R"(*TITR 
+char const *const INCLY_ROLLY_CONTRIBUTION_TEST = R"(*TITR
 Contribution Compatibility Test
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*FRAME TEST 100 100 100 5 5 40 0.9 TX TY TZ RX RY RZ SCL 
-*CALA 
-PT1 0 500 50 
-PT2 0 500 51 
-PT3 0.5 500.5 50.5 
-*OBSXYZ 
-PT1 0.5 500.5 50.5 0.05 0.05 0.05 
-PT2 0.5 500.5 51.5 0.05 0.05 0.05 
-PT3 1 501 51 0.05 0.05 0.05 
-*INCLY I 
-PT3 0.0000 
-*ROLLY I 
-PT3 0.0000 
-*ENDFRAME 
-*END 
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*FRAME TEST 100 100 100 5 5 40 0.9 TX TY TZ RX RY RZ SCL
+*CALA
+PT1 0 500 50
+PT2 0 500 51
+PT3 0.5 500.5 50.5
+*OBSXYZ
+PT1 0.5 500.5 50.5 0.05 0.05 0.05
+PT2 0.5 500.5 51.5 0.05 0.05 0.05
+PT3 1 501 51 0.05 0.05 0.05
+*INCLY I
+PT3 0.0000
+*ROLLY I
+PT3 0.0000
+*ENDFRAME
+*END
 )";
 
 /*Testing S0 calculation with INCLY measurements*/
-char const *const INCLY_S0_VALIDATION_TEST = R"(*TITR 
+char const *const INCLY_S0_VALIDATION_TEST = R"(*TITR
 INCLY S0 Validation Test
-*OLOC 
-*INSTR 
-*INCL I   2  0  0   0  0  0 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
+*OLOC
+*INSTR
+*INCL I   2  0  0   0  0  0
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
 PT2 0.05 0 0.05
 PT3 -0.03 0 0.03
 PT4 0.02 0 0.02
-*INCLY I 
-PT1 0.0000 
+*INCLY I
+PT1 0.0000
 PT2 0.0500
 PT3 -0.0300
 PT4 0.0200
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 //=== EXACT COPIES OF ALL INCLY TESTS FOR ROLLY (Legacy Model) ===//
@@ -435,7 +435,7 @@ char const *const ROLLY_LEGACY_ROOT_1 = R"(*TITR
 T1
 *OLOC
 *INSTR
-*INCL test 35 0 0 0 0 0 
+*INCL test 35 0 0 0 0 0
 *ROLLY test
 PT1	 10
 *FRAME	RSTR_SPS.MBB.33130	20	0	0	0	0	0	1 RY
@@ -609,251 +609,251 @@ BEAM_XT03.BDB.0900.E -0.0070028174960434
 )";
 
 /*Testing the ROLLY contributions and the angle and scale partial derivatives with TFreeVector*/
-char const *const ROLLY_LEGACY_CONTRIB = R"(*TITR 
-test Contrib ROLLY 
-*OLOC 
-*INSTR 
-*INCL I   5  0  0   0  0  0 
-*CALA 
-PT1 0 1000 100 
-PT2 0 1000 101 
-PT3 1 1001 101 
-*FRAME TEST 500 500 500 10 10 80 0.8 TX TY TZ RX RY RZ SCL 
-*OBSXYZ 
-PT1 1 1001 101 0.1 0.1 0.1 
-PT2 1 1001 102 0.1 0.1 0.1 
-PT3 2 1002 102 0.1 0.1 0.1 
-*ROLLY I 
-PT3 0.0000 
-*FRAME TEST2 20 30 10 0 0 100 1 
-*ROLLY I 
-PT1 0.0000 
-*ENDFRAME 
-*ENDFRAME 
-*END 
+char const *const ROLLY_LEGACY_CONTRIB = R"(*TITR
+test Contrib ROLLY
+*OLOC
+*INSTR
+*INCL I   5  0  0   0  0  0
+*CALA
+PT1 0 1000 100
+PT2 0 1000 101
+PT3 1 1001 101
+*FRAME TEST 500 500 500 10 10 80 0.8 TX TY TZ RX RY RZ SCL
+*OBSXYZ
+PT1 1 1001 101 0.1 0.1 0.1
+PT2 1 1001 102 0.1 0.1 0.1
+PT3 2 1002 102 0.1 0.1 0.1
+*ROLLY I
+PT3 0.0000
+*FRAME TEST2 20 30 10 0 0 100 1
+*ROLLY I
+PT1 0.0000
+*ENDFRAME
+*ENDFRAME
+*END
 )";
 
 /*Testing the AC and RF flags on ROLLY*/
-char const *const ROLLY_LEGACY_SUBF_6 = R"(*TITR 
+char const *const ROLLY_LEGACY_SUBF_6 = R"(*TITR
 test AC RF Flags
-*OLOC 
-*INSTR 
-*INCL I   5  0  0  0  0  0 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-*ROLLY I 
+*OLOC
+*INSTR
+*INCL I   5  0  0  0  0  0
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+*ROLLY I
 PT1 1 AC 0.5 RF 0.3 ACSE 1 RFSE 2 OBSE 4 PPM 3
-*ENDFRAME 
+*ENDFRAME
 *END )";
 
 /*Testing the AC and RF flags on INCL*/
-char const *const ROLLY_LEGACY_SUBF_7 = R"(*TITR 
-test Corrections 
-*OLOC 
-*INSTR 
-*INCL I   4  3  0.5  1  0.3  2 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-*ROLLY I 
-PT1 1  
-*ENDFRAME 
-*END 
+char const *const ROLLY_LEGACY_SUBF_7 = R"(*TITR
+test Corrections
+*OLOC
+*INSTR
+*INCL I   4  3  0.5  1  0.3  2
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+*ROLLY I
+PT1 1
+*ENDFRAME
+*END
 )";
 
 /*Testing the INSTR keyword*/
-char const *const ROLLY_LEGACY_SUBF_8 = R"(*TITR 
-test Corrections 
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*INCL I2   5  4  0.6  2  0.4  3 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
+char const *const ROLLY_LEGACY_SUBF_8 = R"(*TITR
+test Corrections
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*INCL I2   5  4  0.6  2  0.4  3
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
 *ROLLY I1
-PT1 1   
+PT1 1
 PT2 1  INSTR I2
-PT3 1  
-*ENDFRAME 
-*END 
+PT3 1
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY keyword parsing and parameter validation*/
-char const *const INCLY_KEYWORD_VALIDATION_TEST = R"(*TITR 
+char const *const INCLY_KEYWORD_VALIDATION_TEST = R"(*TITR
 INCLY Keyword Validation Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*INCL I2   5  4  0.6  2  0.4  3 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
-PT4 0 0 0 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*INCL I2   5  4  0.6  2  0.4  3
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
+PT4 0 0 0
 *INCLY I1
 PT1 1.0 AC 0.5 RF 0.3 ACSE 1 RFSE 2 OBSE 4 PPM 3 ID TEST1
 PT2 1.0 AC 0.6 RF 0.4 ACSE 2 RFSE 3 OBSE 5 PPM 4 ID TEST2
 PT3 1.0 ID TEST3
 PT4 1.0 INSTR I2 ID TEST4
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing ROLLY keyword parsing and parameter validation*/
-char const *const ROLLY_KEYWORD_VALIDATION_TEST = R"(*TITR 
+char const *const ROLLY_KEYWORD_VALIDATION_TEST = R"(*TITR
 ROLLY Keyword Validation Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*INCL I2   5  4  0.6  2  0.4  3 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
-PT4 0 0 0 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*INCL I2   5  4  0.6  2  0.4  3
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
+PT4 0 0 0
 *ROLLY I1
 PT1 1.0 AC 0.5 RF 0.3 ACSE 1 RFSE 2 OBSE 4 PPM 3 ID TEST1
 PT2 1.0 AC 0.6 RF 0.4 ACSE 2 RFSE 3 OBSE 5 PPM 4 ID TEST2
 PT3 1.0 ID TEST3
 PT4 1.0 INSTR I2 ID TEST4
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY edge cases - extreme angle values*/
-char const *const INCLY_EDGE_CASE_EXTREME_ANGLES = R"(*TITR 
+char const *const INCLY_EDGE_CASE_EXTREME_ANGLES = R"(*TITR
 INCLY Edge Case - Extreme Angles Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
 *INCLY I1
 PT1 0.001 AC 0.5 RF 0.3 ID SMALL_ANGLE    # Very small angle (near 0)
 PT2 89.999 AC 0.5 RF 0.3 ID LARGE_ANGLE   # Very large angle (near 90�)
 PT3 179.999 AC 0.5 RF 0.3 ID EXTREME_ANGLE # Extreme angle (near 180�)
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing ROLLY edge cases - extreme angle values*/
-char const *const ROLLY_EDGE_CASE_EXTREME_ANGLES = R"(*TITR 
+char const *const ROLLY_EDGE_CASE_EXTREME_ANGLES = R"(*TITR
 ROLLY Edge Case - Extreme Angles Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
 *ROLLY I1
 PT1 0.001 AC 0.5 RF 0.3 ID SMALL_ANGLE    # Very small angle (near 0)
 PT2 89.999 AC 0.5 RF 0.3 ID LARGE_ANGLE   # Very large angle (near 90�)
 PT3 179.999 AC 0.5 RF 0.3 ID EXTREME_ANGLE # Extreme angle (near 180�)
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY edge cases - unusual parameter combinations*/
-char const *const INCLY_EDGE_CASE_UNUSUAL_PARAMS = R"(*TITR 
+char const *const INCLY_EDGE_CASE_UNUSUAL_PARAMS = R"(*TITR
 INCLY Edge Case - Unusual Parameter Combinations Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
 *INCL I2   0.1  0.1  0.1  0.1  0.1  0.1
 *INCL I3   50.0  50.0  50.0  50.0  50.0  50.0
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
 *INCLY I1
 PT1 1.0 AC 0.1 RF 0.1 ACSE 0.1 RFSE 0.1 OBSE 0.1 PPM 0.1 ID SMALL_PARAMS
 PT2 1.0 AC 50.0 RF 50.0 ACSE 50.0 RFSE 50.0 OBSE 50.0 PPM 50.0 ID LARGE_PARAMS
 PT3 1.0 INSTR I2 ID SMALL_INSTR
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing ROLLY edge cases - unusual parameter combinations*/
-char const *const ROLLY_EDGE_CASE_UNUSUAL_PARAMS = R"(*TITR 
+char const *const ROLLY_EDGE_CASE_UNUSUAL_PARAMS = R"(*TITR
 ROLLY Edge Case - Unusual Parameter Combinations Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
 *INCL I2   0.1  0.1  0.1  0.1  0.1  0.1
 *INCL I3   50.0  50.0  50.0  50.0  50.0  50.0
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-PT3 0 0 0 
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+PT3 0 0 0
 *ROLLY I1
 PT1 1.0 AC 0.1 RF 0.1 ACSE 0.1 RFSE 0.1 OBSE 0.1 PPM 0.1 ID SMALL_PARAMS
 PT2 1.0 AC 50.0 RF 50.0 ACSE 50.0 RFSE 50.0 OBSE 50.0 PPM 50.0 ID LARGE_PARAMS
 PT3 1.0 INSTR I2 ID SMALL_INSTR
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY edge cases - complex frame transformations*/
-char const *const INCLY_EDGE_CASE_COMPLEX_FRAMES = R"(*TITR 
+char const *const INCLY_EDGE_CASE_COMPLEX_FRAMES = R"(*TITR
 INCLY Edge Case - Complex Frame Transformations Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-*FRAME OUTER 0 0 0 0.1 0.2 0.3 1  RY 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+*FRAME OUTER 0 0 0 0.1 0.2 0.3 1  RY
 *INCLY I1
 PT1 1.0 ID OUTER_FRAME
-*FRAME MIDDLE 10 20 30 0.05 0.1 0.15 1  RY 
+*FRAME MIDDLE 10 20 30 0.05 0.1 0.15 1  RY
 *INCLY I1
 PT2 1.0 ID INNER_FRAME
 *ENDFRAME
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing ROLLY edge cases - complex frame transformations*/
-char const *const ROLLY_EDGE_CASE_COMPLEX_FRAMES = R"(*TITR 
+char const *const ROLLY_EDGE_CASE_COMPLEX_FRAMES = R"(*TITR
 ROLLY Edge Case - Complex Frame Transformations Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*CALA 
-PT1 0 0 0 
-PT2 0 0 0 
-*FRAME OUTER 0 0 0 0.1 0.2 0.3 1  RY 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*CALA
+PT1 0 0 0
+PT2 0 0 0
+*FRAME OUTER 0 0 0 0.1 0.2 0.3 1  RY
 *ROLLY I1
 PT1 1.0 ID OUTER_FRAME
-*FRAME MIDDLE 10 20 30 0.05 0.1 0.15 1  RY 
+*FRAME MIDDLE 10 20 30 0.05 0.1 0.15 1  RY
 *ROLLY I1
 PT2 1.0 ID INNER_FRAME
 *ENDFRAME
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing INCLY edge cases - reference point scenarios*/
-char const *const INCLY_EDGE_CASE_REF_POINTS = R"(*TITR 
+char const *const INCLY_EDGE_CASE_REF_POINTS = R"(*TITR
 INCLY Edge Case - Reference Point Scenarios Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
 REF_PT 0 0 0      # Reference point at origin
 FAR_PT 1000 1000 1000  # Far away point
 NEAR_PT 0.001 0.001 0.001  # Very close point
@@ -861,18 +861,18 @@ NEAR_PT 0.001 0.001 0.001  # Very close point
 REF_PT 1.0 ID REF_ORIGIN
 FAR_PT 1.0 ID FAR_MEASUREMENT
 NEAR_PT 1.0 ID NEAR_MEASUREMENT
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 
 /*Testing ROLLY edge cases - reference point scenarios*/
-char const *const ROLLY_EDGE_CASE_REF_POINTS = R"(*TITR 
+char const *const ROLLY_EDGE_CASE_REF_POINTS = R"(*TITR
 ROLLY Edge Case - Reference Point Scenarios Test
-*OLOC 
-*INSTR 
-*INCL I1   4  3  0.5  1  0.3  2 
-*FRAME TEST 0 0 0 0 0 0 1  RY 
-*CALA 
+*OLOC
+*INSTR
+*INCL I1   4  3  0.5  1  0.3  2
+*FRAME TEST 0 0 0 0 0 0 1  RY
+*CALA
 REF_PT 0 0 0      # Reference point at origin
 FAR_PT 1000 1000 1000  # Far away point
 NEAR_PT 0.001 0.001 0.001  # Very close point
@@ -880,8 +880,8 @@ NEAR_PT 0.001 0.001 0.001  # Very close point
 REF_PT 1.0 ID REF_ORIGIN
 FAR_PT 1.0 ID FAR_MEASUREMENT
 NEAR_PT 1.0 ID NEAR_MEASUREMENT
-*ENDFRAME 
-*END 
+*ENDFRAME
+*END
 )";
 /*Testing inclinometer reference angle: comparing subframe approach vs RF keyword*/
 char const *const INCLY_REF_ANGLE_TEST = R"(*TITR

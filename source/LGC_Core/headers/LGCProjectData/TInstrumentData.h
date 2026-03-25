@@ -81,7 +81,7 @@ public:
 				sigmaCombinedAngle(sigmaCombinedAngle),
 				sigmaCombinedPLRAngl(sigmaCombinedPLRAngl),
 				sigmaCombinedPLRZenD(sigmaCombinedPLRZenD),
-				sigmaCombinedPLRDist(sigmaCombinedPLRDist) {};
+				sigmaCombinedPLRDist(sigmaCombinedPLRDist){};
 
 			std::string ID;
 			TAngle sigmaAngl; // [rad]
@@ -184,7 +184,7 @@ public:
 				line(line),
 				sigmaCombinedX(sigmaCombinedX),
 				sigmaCombinedY(sigmaCombinedY),
-				sigmaCombinedDist(sigmaCombinedDist) {};
+				sigmaCombinedDist(sigmaCombinedDist){};
 
 			std::string ID;
 			TReal sigmaX; // [] unitless
@@ -278,7 +278,7 @@ public:
 				sigmaTargetHt(sigmaTargetHt),
 				distCorrectionAdjustable(distCorrectionAdjustable),
 				line(line),
-				sigmaCombinedDist(sigmaCombinedDist) {};
+				sigmaCombinedDist(sigmaCombinedDist){};
 
 			std::string ID;
 			TLength sigmaDSpt; // [m] sigma of the distance
@@ -381,7 +381,7 @@ public:
 				dhorCorrectionValue(dhorCorrectionValue),
 				line(line),
 				sigmaCombinedDist(sigmaCombinedDist),
-				sigmaCombinedDHor(sigmaCombinedDHor) {};
+				sigmaCombinedDHor(sigmaCombinedDHor){};
 
 			std::string ID;
 			TLength sigmaD; // [m]
@@ -487,7 +487,7 @@ public:
 			sigmaDCorr(sigmaDCorr),
 			sigmaInstrCentering(sigmaInstrCentering),
 			line(line),
-			sigmaCombinedDist(sigmaCombinedDist) {};
+			sigmaCombinedDist(sigmaCombinedDist){};
 
 		std::string ID;
 		TLength sigmaD; // [m]
@@ -527,7 +527,7 @@ public:
 			refAngleCorrectionValue(refAngleCorrectionValue),
 			refSigmaCorrectionValue(refSigmaCorrectionValue),
 			line(line),
-			sigmaCombinedAngle(sigmaCombinedAngle) {};
+			sigmaCombinedAngle(sigmaCombinedAngle){};
 
 		std::string ID;
 		TAngle sigmaAngl; // [rad]
@@ -558,7 +558,7 @@ public:
 			int line = 0,
 			TLength sigmaWS = TLength(),
 			TLength sigmaCombinedDist = TLength()) :
-			ID(ID), sigmaDist(sigmaDist), sigmaInstrHeight(sigmaInstrHeight), sigmaInstrCentering(sigmaInstrCentering), line(line), sigmaWS(sigmaWS), sigmaCombinedDist(sigmaCombinedDist) {};
+			ID(ID), sigmaDist(sigmaDist), sigmaInstrHeight(sigmaInstrHeight), sigmaInstrCentering(sigmaInstrCentering), line(line), sigmaWS(sigmaWS), sigmaCombinedDist(sigmaCombinedDist){};
 
 		std::string ID;
 		TLength sigmaDist;
@@ -601,7 +601,7 @@ public:
 			sigmaWire(sigmaWire),
 			sigmaCombinedX(sigmaCombinedX),
 			sigmaCombinedZ(sigmaCombinedZ),
-			line(line) {};
+			line(line){};
 
 		std::string ID;
 		TLength sigmaX; // [m]

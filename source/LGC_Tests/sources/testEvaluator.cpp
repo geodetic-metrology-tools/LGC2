@@ -10,7 +10,6 @@
 #include <Behavior.h>
 
 #include "TLSEvaluator.h"
-#include "TLSTrustRegionLM.h"
 #include "TLSInputMatrices.h"
 #include "TLSTrustRegionLM.h"
 #include "testEvaluator.h"
@@ -73,7 +72,6 @@ void object::test<2>()
 
 	ensure_equals("Lgc solve method should have succeeded.", lgcSuccess, true);
 	ensure("LGC solution and regularized Gauss Newton solution should be equal.", (lgcSol - result.sol).norm() < 1e-8);
-
 }
 
 }; // namespace tut

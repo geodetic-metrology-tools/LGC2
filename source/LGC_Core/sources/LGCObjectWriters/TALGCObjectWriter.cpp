@@ -2,31 +2,31 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include	<TALGCObjectWriter.h>
-#include	"TAStreamFormatter.h"
+#include <TALGCObjectWriter.h>
+
+#include "TAStreamFormatter.h"
 
 /////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
-//constructor / destructor
+// constructor / destructor
 /////////////////////////////////////////////////////////////////////////////
-//default constructor
-TALGCObjectWriter::TALGCObjectWriter(): TAConverter()
-{}
-
-
-TALGCObjectWriter::TALGCObjectWriter(TAStreamFormatter& stream):TAConverter(stream)
+// default constructor
+TALGCObjectWriter::TALGCObjectWriter() : TAConverter()
 {
 }
 
+TALGCObjectWriter::TALGCObjectWriter(TAStreamFormatter &stream) : TAConverter(stream)
+{
+}
 
 TALGCObjectWriter::~TALGCObjectWriter()
-{//destructor
+{ // destructor
 }
 
-void	TALGCObjectWriter::writeKeyWord(const std::string &keyword)
+void TALGCObjectWriter::writeKeyWord(const std::string &keyword)
 {
-	TAStreamFormatter& stream = this->getStreamRef();
+	TAStreamFormatter &stream = this->getStreamRef();
 
 	// Ouput the keyword to the stream
 	stream << keyword;
@@ -35,6 +35,3 @@ void	TALGCObjectWriter::writeKeyWord(const std::string &keyword)
 
 	return;
 }
-
-
-

@@ -76,8 +76,10 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 
 	// legend of tables for the points in ROOT
 	if (frameIt->get()->isROOTNode())
-		(*stream) << TABs + "SFP = Sub-Frame Point; * = TRUE" << "\n";
-	(*stream) << "\n" << "\n";
+		(*stream) << TABs + "SFP = Sub-Frame Point; * = TRUE"
+				  << "\n";
+	(*stream) << "\n"
+			  << "\n";
 
 	// Start to write the measurements
 	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
@@ -103,14 +105,20 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 	if (frameIt->get()->isROOTNode())
 	{
 		initialiseAllObsSummaries();
-		(*stream) << TABs << "*** RESUME DES MESURES ***" << "\n" << "\n";
+		(*stream) << TABs << "*** RESUME DES MESURES ***"
+				  << "\n"
+				  << "\n";
 		writeMeasurementsSummaryRootOnly();
 		if (fProjectData->getConfig().histo.isActive())
 			writeHistogrammeRootOnly();
 	}
 
 	// Measures
-	(*stream) << "\n" << "\n" << TABs << "*** MESURES ***" << "\n" << "\n";
+	(*stream) << "\n"
+			  << "\n"
+			  << TABs << "*** MESURES ***"
+			  << "\n"
+			  << "\n";
 	for (auto &itTSTN : tmeas.fTSTN)
 		tstnWriter.writeTSTNResults(itTSTN);
 
@@ -884,9 +892,11 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 	else
 	{
 		writePoints(frameIt); // Write points for SIMU only in ROOT, not in local nodes
-		(*stream) << "SFP = Sub-Frame Point; * = TRUE" << "\n";
+		(*stream) << "SFP = Sub-Frame Point; * = TRUE"
+				  << "\n";
 	}
-	(*stream) << "\n" << "\n";
+	(*stream) << "\n"
+			  << "\n";
 
 	TTSTNWriter tstnWriter(*stream, fProjectData->getConfig().histo.isActive());
 	TCAMWriter camWriter(*stream, fProjectData->getConfig().histo.isActive());
@@ -905,7 +915,11 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 		otherMeasWriter.writePDORResults(tmeas.fPDOR);
 
 	// Measures
-	(*stream) << "\n" << "\n" << TABs << "*** MESURES ***" << "\n" << "\n";
+	(*stream) << "\n"
+			  << "\n"
+			  << TABs << "*** MESURES ***"
+			  << "\n"
+			  << "\n";
 	for (auto &itTSTN : tmeas.fTSTN)
 		tstnWriter.writeTSTNResultsSIMU(itTSTN);
 
@@ -918,7 +932,9 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 	// No instrument for DVER, so no loop to have each instrument.
 	if (!tmeas.fDVER.empty())
 	{
-		(*stream) << TABs << "DVER" << "\n" << "\n";
+		(*stream) << TABs << "DVER"
+				  << "\n"
+				  << "\n";
 		otherMeasWriter.writeDVERSIMUResults(tmeas);
 	}
 
@@ -972,7 +988,9 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 
 	if (!tmeas.fDVER.empty())
 	{
-		(*stream) << "\n" << "DVER observations" << "\n";
+		(*stream) << "\n"
+				  << "DVER observations"
+				  << "\n";
 		otherMeasWriter.writeDVERReliabilityHeader();
 		otherMeasWriter.writeDVERReliabilityData(tmeas.fDVER, fProjectData->getStatistics());
 	}
@@ -988,7 +1006,9 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 	{
 		if (!ORIEheaderWritten)
 		{
-			(*stream) << "\n" << "ORIE observations" << "\n";
+			(*stream) << "\n"
+					  << "ORIE observations"
+					  << "\n";
 			otherMeasWriter.writeORIEReliabilityHeader();
 			ORIEheaderWritten = true;
 		}
@@ -997,14 +1017,18 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 
 	if (!tmeas.fRADI.empty())
 	{
-		(*stream) << "\n" << "RADI observations" << "\n";
+		(*stream) << "\n"
+				  << "RADI observations"
+				  << "\n";
 		otherMeasWriter.writeRADIReliabilityHeader();
 		otherMeasWriter.writeRADIReliabilityData(tmeas.fRADI, fProjectData->getStatistics());
 	}
 
 	if (!frameIt->get()->measurements.fOBSXYZ.empty())
 	{
-		(*stream) << "\n" << "OBSXYZ observations" << "\n";
+		(*stream) << "\n"
+				  << "OBSXYZ observations"
+				  << "\n";
 		otherMeasWriter.writeOBSXYZReliabilityHeader();
 		otherMeasWriter.writeOBSXYZReliabilityData(frameIt->get()->measurements.fOBSXYZ, fProjectData->getStatistics());
 	}
@@ -1014,7 +1038,9 @@ void TFRAMEWriter::writeFRAMEAllReliability(TDataTreeIterator frameIt)
 	{
 		if (!EDMheaderWritten)
 		{
-			(*stream) << "\n" << "DSPT observations" << "\n";
+			(*stream) << "\n"
+					  << "DSPT observations"
+					  << "\n";
 			edmWriter.writeReliabilityHeader();
 			EDMheaderWritten = true;
 		}
@@ -1050,7 +1076,8 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string &name, const std::vector<i
 		}
 	}
 
-	(*stream) << "\n" << "\n";
+	(*stream) << "\n"
+			  << "\n";
 	(*stream) << TABs;
 	std::string namestring = "FRAME\t" + name;
 	if (ID.size() > 0)
@@ -1149,7 +1176,8 @@ void TFRAMEWriter::writeFRAMEDefinition(const TAdjustableHelmertTransformation &
 
 	if (!frame.isFixed())
 	{
-		(*stream) << "\n" << "\n";
+		(*stream) << "\n"
+				  << "\n";
 		TDenseMatrix frameCovar = frame.getCovar();
 
 		if (!frame.isRotationFixed(0) && !frame.isRotationFixed(1))
@@ -1381,7 +1409,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			{
 				if (isANGL == false)
 				{
-					(*stream) << "\n" << "ANGL observations" << "\n";
+					(*stream) << "\n"
+							  << "ANGL observations"
+							  << "\n";
 					tstnWriter.writeANGLReliabilityHeader();
 					isANGL = true;
 				}
@@ -1400,7 +1430,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			{
 				if (isZEND == false)
 				{
-					(*stream) << "\n" << "ZEND observations" << "\n";
+					(*stream) << "\n"
+							  << "ZEND observations"
+							  << "\n";
 					tstnWriter.writeZENDReliabilityHeader();
 					isZEND = true;
 				}
@@ -1419,7 +1451,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			{
 				if (isDIST == false)
 				{
-					(*stream) << "\n" << "DIST observations" << "\n";
+					(*stream) << "\n"
+							  << "DIST observations"
+							  << "\n";
 					tstnWriter.writeDISTReliabilityHeader();
 					isDIST = true;
 				}
@@ -1438,7 +1472,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			{
 				if (isPLR == false)
 				{
-					(*stream) << "\n" << "PLR3D observations" << "\n";
+					(*stream) << "\n"
+							  << "PLR3D observations"
+							  << "\n";
 					tstnWriter.writePLRReliabilityHeader();
 					isPLR = true;
 				}
@@ -1457,7 +1493,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			{
 				if (isECTH == false)
 				{
-					(*stream) << "\n" << "ECTH observations" << "\n";
+					(*stream) << "\n"
+							  << "ECTH observations"
+							  << "\n";
 					tstnWriter.writeECTHReliabilityHeader();
 					isECTH = true;
 				}
@@ -1476,7 +1514,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			{
 				if (isECDIR == false)
 				{
-					(*stream) << "\n" << "ECDIR observations" << "\n";
+					(*stream) << "\n"
+							  << "ECDIR observations"
+							  << "\n";
 					tstnWriter.writeECTHReliabilityHeader();
 					isECDIR = true;
 				}
@@ -1495,7 +1535,9 @@ void TFRAMEWriter::writeTSTNReliability(TDataTreeIterator frameIt)
 			{
 				if (isDHOR == false)
 				{
-					(*stream) << "\n" << "DHOR observations" << "\n";
+					(*stream) << "\n"
+							  << "DHOR observations"
+							  << "\n";
 					tstnWriter.writeDHORReliabilityHeader();
 					isDHOR = true;
 				}
@@ -1520,7 +1562,9 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 		{
 			if (isuvec == false)
 			{
-				(*stream) << "\n" << "UVEC observations" << "\n";
+				(*stream) << "\n"
+						  << "UVEC observations"
+						  << "\n";
 				camWriter.writeUVECReliabilityHeader();
 				isuvec = true;
 			}
@@ -1536,7 +1580,9 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 		{
 			if (isuvd == false)
 			{
-				(*stream) << "\n" << "UVD observations" << "\n";
+				(*stream) << "\n"
+						  << "UVD observations"
+						  << "\n";
 				camWriter.writeUVDReliabilityHeader();
 				isuvd = true;
 			}
@@ -1560,7 +1606,9 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 		{
 			if (isdlev == false)
 			{
-				(*stream) << "\n" << "DLEV observations" << "\n";
+				(*stream) << "\n"
+						  << "DLEV observations"
+						  << "\n";
 				levelWriter.writeReliabilityHeader();
 				isdlev = true;
 			}
@@ -1578,7 +1626,9 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 		{
 			if (isdhor == false)
 			{
-				(*stream) << "\n" << "DHOR observations from a DLEV observations" << "\n";
+				(*stream) << "\n"
+						  << "DHOR observations from a DLEV observations"
+						  << "\n";
 				levelWriter.writeReliabilityHeader();
 				isdhor = true;
 			}
@@ -1602,7 +1652,9 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 		{
 			if (isecho == false)
 			{
-				(*stream) << "\n" << "ECHO observations" << "\n";
+				(*stream) << "\n"
+						  << "ECHO observations"
+						  << "\n";
 				scaleWriter.writeECHOReliabilityHeader();
 				isecho = true;
 			}
@@ -1618,7 +1670,9 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 		{
 			if (isecve == false)
 			{
-				(*stream) << "\n" << "ECVE observations" << "\n";
+				(*stream) << "\n"
+						  << "ECVE observations"
+						  << "\n";
 				scaleWriter.writeECVEReliabilityHeader();
 				isecve = true;
 			}
@@ -1634,7 +1688,9 @@ void TFRAMEWriter::writeSCALEReliability(TDataTreeIterator frameIt)
 		{
 			if (isecsp == false)
 			{
-				(*stream) << "\n" << "ECSP observations" << "\n";
+				(*stream) << "\n"
+						  << "ECSP observations"
+						  << "\n";
 				scaleWriter.writeECSPReliabilityHeader();
 				isecsp = true;
 			}
@@ -1739,7 +1795,9 @@ void TFRAMEWriter::writeHLSRReliability(TDataTreeIterator frameIt)
 		{
 			if (isecws == false)
 			{
-				(*stream) << "\n" << "ECWS observations" << "\n";
+				(*stream) << "\n"
+						  << "ECWS observations"
+						  << "\n";
 				hlsrWriter.writeECWSReliabilityHeader();
 				isecws = true;
 			}
@@ -1763,7 +1821,9 @@ void TFRAMEWriter::writeWPSRReliability(TDataTreeIterator frameIt)
 		{
 			if (isecwi == false)
 			{
-				(*stream) << "\n" << "ECWI observations" << "\n";
+				(*stream) << "\n"
+						  << "ECWI observations"
+						  << "\n";
 				wpsrWriter.writeECWIReliabilityHeader();
 				isecwi = true;
 			}
@@ -1877,7 +1937,8 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	(*stream).writeString(coordResWidth, "(MM)"); // X offset units
 	(*stream).writeString(coordResWidth, "(MM)"); // Y offset units
 	(*stream).writeString(coordResWidth, "(MM)"); // Z offset units
-	(*stream) << "\n" << "\n";
+	(*stream) << "\n"
+			  << "\n";
 }
 
 void TFRAMEWriter::writeEllipsHeader()
@@ -1888,7 +1949,9 @@ void TFRAMEWriter::writeEllipsHeader()
 	int nameWidth = getNameWidth();
 	int coordWidth = getCoordWidth();
 
-	*stream << "\n" << "ABSOLUTE ERROR ELLIPSES" << "\n";
+	*stream << "\n"
+			<< "ABSOLUTE ERROR ELLIPSES"
+			<< "\n";
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line
@@ -1920,7 +1983,9 @@ void TFRAMEWriter::writeEllipsoidHeader()
 	int nameWidth = getNameWidth();
 	int coordWidth = getCoordWidth();
 
-	*stream << "\n" << "ABSOLUTE ERROR ELLIPSOIDS" << "\n";
+	*stream << "\n"
+			<< "ABSOLUTE ERROR ELLIPSOIDS"
+			<< "\n";
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line

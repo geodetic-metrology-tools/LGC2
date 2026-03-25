@@ -9,11 +9,11 @@
 #include <TLGCData.h>
 #include <TLOR2LOR.h>
 #include <TReader.h>
-#include "TLGCCalculation.h"
-#include "Logger.hpp"
 
+#include "Logger.hpp"
 #include "TDirectTransformation.h"
 #include "TInverseTransformation.h"
+#include "TLGCCalculation.h"
 
 #pragma warning(disable : 4224)
 
@@ -56,7 +56,7 @@ void object::test<1>()
 	//         ROOT (1)
 	//        /    |    \
 		//    P0     P1    P2
-	//      / \     \        
+	//      / \     \
 		// P3    P4    P5
 	//   |
 	//   P6
@@ -587,10 +587,10 @@ void object::test<6>()
 			TLGCData proj;
 			TReader r(&proj);
 			stringstream infile(LOR2LORInputFiles::testTransformations);
-			r.read(infile);				
+			r.read(infile);
 			TDataTree tree = proj.tree;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 			TLOR2LOR FPT2ToFREF(tree,"FPT2","FREF","FPT2FREF");
 			TCoordSysFactory::ECoordSys k3DCartesian(TCoordSysFactory::ECoordSys::k3DCartesian);
 			TPositionVector p(50, 60, 70,k3DCartesian);
@@ -600,7 +600,7 @@ void object::test<6>()
 			ensure_equals("PD (0) should match",pdOmega.getX().getMetresValue(), 0,1e-8);
 			ensure_equals("PD (1) should match",pdOmega.getY().getMetresValue(),70,1e-8);
 			ensure_equals("PD (2) should match",pdOmega.getZ().getMetresValue(), 50,1e-8);
-			
+
 			TFreeVector pdPhi = FPT2ToFREF.partialDerivativesAngle("FREF2", p, 1);
 			ensure_equals("PD (0) should match",pdPhi.getX().getMetresValue(), -70,1e-8);
 			ensure_equals("PD (1) should match",pdPhi.getY().getMetresValue(),0,1e-8);
@@ -615,7 +615,7 @@ void object::test<6>()
 			//Testing with scales included
 		}
 #endif
-		
+
 template<>
 template<>
 void object::test<7>()
@@ -638,7 +638,6 @@ void object::test<7>()
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 	Behavior succesCalc = calcul.computeResults(fileWriter);
 	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
-
 
 	// the transformation chains need to be updated as the values of the involved adj helmert trafos have changed due to the computation
 	upTrafo.updateTree();
@@ -672,7 +671,6 @@ void object::test<7>()
 	identity.setIdentity();
 	Eigen::MatrixXd computedDerivative = derWRTFrames.at(0).second;
 	ensure("Derivative of composed Helmert parameter should be the identity as the chain is defined by a single Frame.", identity.isApprox(computedDerivative));
-
 }
 
 template<>
@@ -681,7 +679,7 @@ void object::test<8>()
 {
 	using namespace LGC;
 	set_test_name("Testing derivative of helmert parameters representing a chain of several Helmert transformations.");
-	std::vector<const char*> fileStrings;
+	std::vector<const char *> fileStrings;
 	// two slightly different files
 	fileStrings.push_back(LOR2LORInputFiles::composedHelmertParameter1);
 	fileStrings.push_back(LOR2LORInputFiles::composedHelmertParameter2);
@@ -729,7 +727,6 @@ void object::test<8>()
 
 		ensure("Frame parameter covariance should be equal for the composed frame and the equivalent single frame.", (composedCovar - singleCovar).norm() < 1e-8);
 	}
-
 }
 
 template<>
@@ -773,6 +770,5 @@ void object::test<9>()
 
 	ensure_equals("In Gimbal lock case, rz=0 should be applied per convention.", composedFrameParams.kappa, 0, 1e-12);
 }
-
 
 } // namespace tut

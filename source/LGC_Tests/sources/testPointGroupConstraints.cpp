@@ -38,7 +38,6 @@ tut::factory tf("Test point group constraints");
 
 namespace tut
 {
-
 template<>
 template<>
 void object::test<1>()

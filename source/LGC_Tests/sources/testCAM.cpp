@@ -36,7 +36,6 @@ tut::factory tf("CAM tests");
 
 namespace tut
 {
-
 //------------------------------------------ UVD -------------------------------------------------//
 
 template<>
@@ -594,11 +593,11 @@ void object::test<18>()
 	template<>
 	template<>
 	void object::test<19>()
-	{ 
+	{
 		set_test_name("Testing UVEC, 2 STATIONS in root, points in subf");
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STROOT_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
-		
+
 		std::stringstream infiler(TestCAM::UVEC_2STROOT_SUBF);
 
 		bool succesReading = r.read(infiler);

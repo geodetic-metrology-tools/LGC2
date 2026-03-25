@@ -37,7 +37,6 @@ tut::factory tf("Testing SIMU option");
 
 namespace tut
 {
-
 template<>
 template<>
 void object::test<1>()

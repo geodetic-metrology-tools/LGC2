@@ -7,23 +7,24 @@
 #ifndef _TA_ANGLE_MEAS_H_
 #define _TA_ANGLE_MEAS_H_
 
-
-//STL
+// STL
 #include <array>
-//SURVEYLIB
+// SURVEYLIB
 #include <TFreeVector.h>
 #include <UEOIndices.h>
-//LGC
+// LGC
 #include <TInstrumentData.h>
-
 
 class LGCAdjustablePoint;
 
 /// Enum for the case that no value of a certain type is measured in \ref TAScalarMeas.
-enum ENoValues {};
+enum ENoValues
+{
+};
 
 /// Enum for the case that only a single value of a certain type is measured in \ref TAScalarMeas.
-enum ESingleValue {
+enum ESingleValue
+{
 	kValue ///< Symbolic access to a single value in a measurement
 };
 
@@ -59,90 +60,82 @@ struct MeasIdx
 template<typename TTarget>
 class TAMeas : public TStatusObject
 {
-    private:
-        
-        static int measCounter;
+private:
+	static int measCounter;
 
-	protected:
+protected:
+	// measurement indices: first equation/observation index, equation and observation dimension
+	MeasIdx fMeasIdx;
 
-		// measurement indices: first equation/observation index, equation and observation dimension
-		MeasIdx fMeasIdx;
+public:
+	/// A copy of the target with individual properties
+	TTarget target;
 
-	public:
-		/// A copy of the target with individual properties
-		TTarget target;
-			
-		/// Pointer to the observed point on which the target is positioned
-		const LGCAdjustablePoint* targetPos; 
+	/// Pointer to the observed point on which the target is positioned
+	const LGCAdjustablePoint *targetPos;
 
-		/// Line in the input file where this measurement was defined
-		int line;
+	/// Line in the input file where this measurement was defined
+	int line;
 
-		/// Observation identifier: identification of specific measurement
-		std::string obsID;
+	/// Observation identifier: identification of specific measurement
+	std::string obsID;
 
-		/// DB comment after the measurement definition
-		std::string eolcomment;
+	/// DB comment after the measurement definition
+	std::string eolcomment;
 
-        int measId{ measCounter++ };
+	int measId{measCounter++};
 
-		/*!@name Constructors */
-		//@{				
-			/*!
-				\brief Constructs an uninitialized measurement.
+	/*!@name Constructors */
+	//@{
+	/*!
+		\brief Constructs an uninitialized measurement.
 
-				\param targetPos The observed point on which the target is positioned.
-				\param tgt The target which is used. A copy of the target is made to store it.
-			*/
-			TAMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
-				target(tgt),
-				targetPos(&targetPos),
-				line(NO_VALi), fMeasIdx()
-			{};
+		\param targetPos The observed point on which the target is positioned.
+		\param tgt The target which is used. A copy of the target is made to store it.
+	*/
+	TAMeas(const LGCAdjustablePoint &targetPos, const TTarget &tgt) : target(tgt), targetPos(&targetPos), line(NO_VALi), fMeasIdx(){};
 
-		//@}
+	//@}
 
-		/*!@name Access methods*/
-		//@{
-			/// Returns LS-matrices index of the first equation of the model.
-			MatrixIndex getFirstEquationIndex() const { return fMeasIdx.fFirstEquationIndex; }
+	/*!@name Access methods*/
+	//@{
+	/// Returns LS-matrices index of the first equation of the model.
+	MatrixIndex getFirstEquationIndex() const { return fMeasIdx.fFirstEquationIndex; }
 
-			/// Returns LS-matrices observation index of a first observation of this measurement
-			MatrixIndex getFirstObservationIndex() const { return fMeasIdx.fFirstObservationIndex; }
-			/// observation dimension
-			MatrixIndex getObsDim() const { return fMeasIdx.obsDim; }	
-			/// equation dimension
-			MatrixIndex getEqDim() const { return fMeasIdx.eqDim; }
+	/// Returns LS-matrices observation index of a first observation of this measurement
+	MatrixIndex getFirstObservationIndex() const { return fMeasIdx.fFirstObservationIndex; }
+	/// observation dimension
+	MatrixIndex getObsDim() const { return fMeasIdx.obsDim; }
+	/// equation dimension
+	MatrixIndex getEqDim() const { return fMeasIdx.eqDim; }
 
+	/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
+	MatrixIndex getLastEquationIndex() const { return fMeasIdx.fFirstEquationIndex + fMeasIdx.eqDim - 1; }
 
-			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
-			MatrixIndex getLastEquationIndex() const { return fMeasIdx.fFirstEquationIndex + fMeasIdx.eqDim - 1; }
-
-			/// get observation vector
-			virtual Eigen::VectorXd getObsVector() const = 0;
-			virtual void setObsVector(const Eigen::VectorXd &) = 0;
-
+	/// get observation vector
+	virtual Eigen::VectorXd getObsVector() const = 0;
+	virtual void setObsVector(const Eigen::VectorXd &) = 0;
 
 #if USE_SERIALIZER
-			// Inherited via Serializable
-			virtual void serialize(ObjectSerializer &obj) const;
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const;
 #endif
 
-		//@}
+	//@}
 
-		/*!@name Setting methods */
-		//@{
-			/// Sets LS matrices EQUATION index of the first equation in the measurement model
-			void setFirstEquationIndex(MatrixIndex firstEquationIndex){fMeasIdx.fFirstEquationIndex = firstEquationIndex;}
+	/*!@name Setting methods */
+	//@{
+	/// Sets LS matrices EQUATION index of the first equation in the measurement model
+	void setFirstEquationIndex(MatrixIndex firstEquationIndex) { fMeasIdx.fFirstEquationIndex = firstEquationIndex; }
 
-			/// Sets LS matrices OBSERVATION index of the first observation of this measurement
-			void setFirstObservationIndex(MatrixIndex firstObservationIndex){fMeasIdx.fFirstObservationIndex = firstObservationIndex;}
-		//@}
+	/// Sets LS matrices OBSERVATION index of the first observation of this measurement
+	void setFirstObservationIndex(MatrixIndex firstObservationIndex) { fMeasIdx.fFirstObservationIndex = firstObservationIndex; }
+	//@}
 };
 
 template<typename TTarget>
 int TAMeas<TTarget>::measCounter = 0;
-	
+
 /*!
 	\ingroup Measurements
 
@@ -152,112 +145,91 @@ int TAMeas<TTarget>::measCounter = 0;
 	\tparam TTarget Target type of the measurement. The measurement receives a deep copy
 			of the observed target. May be set to int and supplied with 0 if no target is used.
 
-	\tparam TEnumDistance The type-safe range of indices to access the array of real valued distance measurement values. 
+	\tparam TEnumDistance The type-safe range of indices to access the array of real valued distance measurement values.
 			The default parameter \ref ESingleValue allows to pass the value 0 to access a single measurement.
 
 	\tparam numDistances The number of real valued distances in this measurement. Must match the number of entries in TEnumDistance.
 
-	\tparam TEnumAngle The type-safe range of indices to access the array of angle measurement values. 
+	\tparam TEnumAngle The type-safe range of indices to access the array of angle measurement values.
 			The default parameter \ref ENoValues disables the access to angle measurements
 
 	\tparam numAngles The number of angles in this measurement. Must match the number of entries in TEnumAngle.
 */
-template<typename TTarget, 
-		 typename TEnumDistance = ESingleValue, int numDistances = 1, 
-		 typename TEnumAngle = ENoValues, int numAngles = 0>
-class TAScalarMeas : public TAMeas<TTarget> 
+template<typename TTarget, typename TEnumDistance = ESingleValue, int numDistances = 1, typename TEnumAngle = ENoValues, int numAngles = 0>
+class TAScalarMeas : public TAMeas<TTarget>
 {
-	protected:
-		/// Typed container of real valued (distance) measurements.
-		std::array<TLength, numDistances> distances; 
-		/// Typed container of angle valued measurements.
-		std::array<TAngle, numAngles> angles;
-			
-		/// Typed container of real valued measurement residuals. Stored in meters [m].
-      std::array<TLength, numDistances> distancesResiduals;
-		/// Typed container of angle valued measurements residuals.
-		std::array<TAngle, numAngles> anglesResiduals; 
+protected:
+	/// Typed container of real valued (distance) measurements.
+	std::array<TLength, numDistances> distances;
+	/// Typed container of angle valued measurements.
+	std::array<TAngle, numAngles> angles;
 
-	public:				
-		/*!
-			\brief Constructs an uninitialized measurement
+	/// Typed container of real valued measurement residuals. Stored in meters [m].
+	std::array<TLength, numDistances> distancesResiduals;
+	/// Typed container of angle valued measurements residuals.
+	std::array<TAngle, numAngles> anglesResiduals;
 
-			\param targetPos The observed point on which the Target (tgt) is positioned.
-			\param tgt The observed target. A copy of the target is made to store it.
-		*/
-		TAScalarMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
-			TAMeas<TTarget>(targetPos, tgt)
-		{
-			for (int i = 0; i < numDistances; i++)
-				distances[i] = TLength();
-		}
+public:
+	/*!
+		\brief Constructs an uninitialized measurement
 
-		/*!
-			\brief Constructs an measurement that is initialized with a single real value
+		\param targetPos The observed point on which the Target (tgt) is positioned.
+		\param tgt The observed target. A copy of the target is made to store it.
+	*/
+	TAScalarMeas(const LGCAdjustablePoint &targetPos, const TTarget &tgt) : TAMeas<TTarget>(targetPos, tgt)
+	{
+		for (int i = 0; i < numDistances; i++)
+			distances[i] = TLength();
+	}
 
-			\param targetPos The observed point
-			\param tgt The observed target. A copy of the target is made to store it.
-			\param value The measured value.
-		*/
-      TAScalarMeas(const LGCAdjustablePoint& targetPos, TTarget tgt, TLength value) :
-			TAMeas<TTarget>(targetPos, tgt)
-		{
-			if constexpr (std::is_same_v<TEnumDistance, ESingleValue>)
-				distances[0] = value;
-		}
+	/*!
+		\brief Constructs an measurement that is initialized with a single real value
 
-		/// The virtual base destructor does nothing.
-		virtual ~TAScalarMeas() {}
-		/*!@name Access methods*/
-		//@{
-			/// Returns a distance value for a given ID
-			TLength getDistance(TEnumDistance id=kValue) const {
-				return distances[id];
-			}
+		\param targetPos The observed point
+		\param tgt The observed target. A copy of the target is made to store it.
+		\param value The measured value.
+	*/
+	TAScalarMeas(const LGCAdjustablePoint &targetPos, TTarget tgt, TLength value) : TAMeas<TTarget>(targetPos, tgt)
+	{
+		if constexpr (std::is_same_v<TEnumDistance, ESingleValue>)
+			distances[0] = value;
+	}
 
-			/// Returns an angle value for a given ID
-			const TAngle& getAngle(TEnumAngle id=kValue) const {
-				return angles[id];
-			}
+	/// The virtual base destructor does nothing.
+	virtual ~TAScalarMeas() {}
+	/*!@name Access methods*/
+	//@{
+	/// Returns a distance value for a given ID
+	TLength getDistance(TEnumDistance id = kValue) const { return distances[id]; }
 
-			/// Returns a residual of observed distances
-			TLength getDistanceResidual(TEnumDistance id=kValue) const {
-				return distancesResiduals[id];
-			}
+	/// Returns an angle value for a given ID
+	const TAngle &getAngle(TEnumAngle id = kValue) const { return angles[id]; }
 
-			/// Returns residual of the observed angle
-			const TAngle& getAngleResidual(TEnumAngle id=kValue) const {
-				return anglesResiduals[id];
-			}
-		//@}
+	/// Returns a residual of observed distances
+	TLength getDistanceResidual(TEnumDistance id = kValue) const { return distancesResiduals[id]; }
 
-		/*!@name Setting methods */
-		//@{
-			/// Sets a distance value
-			void setDistance(TLength v, TEnumDistance id=kValue) {
-				distances[id] = v;
-			}
+	/// Returns residual of the observed angle
+	const TAngle &getAngleResidual(TEnumAngle id = kValue) const { return anglesResiduals[id]; }
+	//@}
 
+	/*!@name Setting methods */
+	//@{
+	/// Sets a distance value
+	void setDistance(TLength v, TEnumDistance id = kValue) { distances[id] = v; }
 
-			/// Sets an angle value
-			void setAngle(const TAngle& a, TEnumAngle id=kValue) {
-				angles[id] = a;
-			}
+	/// Sets an angle value
+	void setAngle(const TAngle &a, TEnumAngle id = kValue) { angles[id] = a; }
 
-			/// Sets a residual of observed distance
-			void setDistanceResidual(TLength v, TEnumDistance id = kValue) {
-				distancesResiduals[id] = v;
-			}
+	/// Sets a residual of observed distance
+	void setDistanceResidual(TLength v, TEnumDistance id = kValue) { distancesResiduals[id] = v; }
 
-			/// Sets a residual of observed angle
-			void setAngleResidual(const TAngle& a, TEnumAngle id=kValue) {
-				anglesResiduals[id] = a;
-			}
+	/// Sets a residual of observed angle
+	void setAngleResidual(const TAngle &a, TEnumAngle id = kValue) { anglesResiduals[id] = a; }
 
 #if USE_SERIALIZER
-			virtual void serialize(ObjectSerializer &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
-		//@}
+	//@}
 };
 
 /*!
@@ -266,84 +238,63 @@ class TAScalarMeas : public TAMeas<TTarget>
 	\tparam TTarget Target type of the measurement. The measurement receives a deep copy
 			of the observed target. May be set to int and supplied with 0 if no target is used.
 */
-template <typename TTarget>
+template<typename TTarget>
 class TAVectorMeas : public TAMeas<TTarget>
 {
-		
-	protected:
+protected:
+	/// FreeVector containing measurment value
+	TFreeVector vector;
+	/// X-component residual
+	TReal XcompResidual;
+	/// Y-component residual
+	TReal YcompResidual;
 
-		/// FreeVector containing measurment value
-		TFreeVector vector;
-		/// X-component residual
-		TReal XcompResidual;
-		/// Y-component residual
-		TReal YcompResidual;
-	public:
+public:
+	/*!
+		\brief Constructs an uninitialized measurement
 
+		\param targetPos The observed point
+		\param tgt The observed target. A copy of the target is made to store it.
+	*/
+	TAVectorMeas(const LGCAdjustablePoint &targetPos, const TTarget &tgt) :
+		TAMeas<TTarget>(targetPos, tgt), vector(NO_VALf, NO_VALf, NO_VALf, TCoordSysFactory::ECoordSys::k3DCartesian), XcompResidual(NO_VALf), YcompResidual(NO_VALf)
+	{
+	}
 
-		/*!
-			\brief Constructs an uninitialized measurement
+	/*!
+		\brief Constructs an measurement that is initialized with a FreeVector
 
-			\param targetPos The observed point
-			\param tgt The observed target. A copy of the target is made to store it.
-		*/
-		TAVectorMeas(const LGCAdjustablePoint& targetPos, const TTarget& tgt) :
-			TAMeas<TTarget>(targetPos, tgt),
-			vector(NO_VALf, NO_VALf, NO_VALf,TCoordSysFactory::ECoordSys::k3DCartesian),
-			XcompResidual(NO_VALf),
-			YcompResidual(NO_VALf)
-		{
-		}
+		\param targetPos The observed point
+		\param tgt The observed target. A copy of the target is made to store it.
+		\param value The measured vector
+	*/
+	TAVectorMeas(const LGCAdjustablePoint &targetPos, TTarget tgt, const TFreeVector &value) :
+		TAMeas<TTarget>(targetPos, tgt), vector(value), XcompResidual(NO_VALf), YcompResidual(NO_VALf)
+	{
+	}
 
-		/*!
-			\brief Constructs an measurement that is initialized with a FreeVector
+	/// The virtual base destructor does nothing.
+	virtual ~TAVectorMeas() {}
 
-			\param targetPos The observed point
-			\param tgt The observed target. A copy of the target is made to store it.
-			\param value The measured vector
-		*/
-		TAVectorMeas(const LGCAdjustablePoint& targetPos, TTarget tgt, const TFreeVector& value) :
-			TAMeas<TTarget>(targetPos, tgt),
-			vector(value),
-			XcompResidual(NO_VALf),
-			YcompResidual(NO_VALf)
-		{
-		}
+	/// Sets a vector
+	void setVectorMeasurement(const TFreeVector &vec) { vector = vec; }
 
-		/// The virtual base destructor does nothing.
-		virtual ~TAVectorMeas() {}
+	/// Returns a vector value
+	const TFreeVector &getVectorValue() const { return vector; }
 
-		/// Sets a vector
-		void setVectorMeasurement(const TFreeVector& vec) {
-			vector = vec;
-		}
+	/// Sets a residual of an X component of observed vector
+	void setXVectorComponentResidual(TReal res) { XcompResidual = res; }
 
-		/// Returns a vector value
-		const TFreeVector& getVectorValue() const {
-			return vector;
-		}
+	/// Sets a residual of an Y component of observed vector
+	void setYVectorComponentResidual(TReal res) { YcompResidual = res; }
 
-		/// Sets a residual of an X component of observed vector
-		void setXVectorComponentResidual(TReal res) {
-			XcompResidual = res;
-		}
+	/// Returns a residual of an X component of observed vector
+	const TReal getXCompVectorResidual() const { return XcompResidual; }
 
-		/// Sets a residual of an Y component of observed vector
-		void setYVectorComponentResidual(TReal res) {
-			YcompResidual = res;
-		}
-
-		/// Returns a residual of an X component of observed vector
-		const TReal getXCompVectorResidual() const {
-			return XcompResidual;
-		}
-
-		/// Returns a residual of an Y component of observed vector
-		const TReal getYCompVectorResidual() const {
-			return YcompResidual;
-		}
+	/// Returns a residual of an Y component of observed vector
+	const TReal getYCompVectorResidual() const { return YcompResidual; }
 #if USE_SERIALIZER
-		virtual void serialize(ObjectSerializer &obj) const override;
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 };
 

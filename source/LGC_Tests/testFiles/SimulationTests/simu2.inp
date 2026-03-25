@@ -4,24 +4,24 @@ Testing Input Matrices Filler.
 *SIMU 30
 *INSTR
 *POLAR TS1 T1 0.0 0.1 0.1 0
-T1  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0 
+T1  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0
 
 *CALA
 	STN  0 0 0
 	REF  100 0 0
 *VZ
-	PT  10 110 10 
+	PT  10 110 10
 
 *TSTN STN TS1 IHFIX
 	*V0
 	*ANGL
-			REF 	
-			PT  	
+			REF
+			PT
 	*ZEND
-		REF  
-		PT   
+		REF
+		PT
 	*DIST
-		REF 
-		PT  
+		REF
+		PT
 
 *END

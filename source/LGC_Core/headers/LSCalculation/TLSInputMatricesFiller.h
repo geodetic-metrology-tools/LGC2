@@ -153,8 +153,7 @@ private:
 
 	/// Private helper function to unify INCLY and ROLLY contribution processing
 	template<typename TROM, typename TMeasList, typename TGetContrib>
-	void addINCLContributionsHelper(TROM &rom, TMeasList &measurements, TGetContrib getContrib, 
-		TLSInputMatrices *matrices, const std::string &measurementType);
+	void addINCLContributionsHelper(TROM &rom, TMeasList &measurements, TGetContrib getContrib, TLSInputMatrices *matrices, const std::string &measurementType);
 
 	/// Add the design matrices contributions for the ECWS measurement.
 	void addECWSContributions(TECWSROM &ecwsROM, TLSInputMatrices *matrices);

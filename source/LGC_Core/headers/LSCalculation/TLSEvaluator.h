@@ -39,7 +39,7 @@ public:
 	// construct with a prepared project data
 	TLSEvaluator(std::shared_ptr<TLGCData> data);
 	// construct with a lgc input file
-	TLSEvaluator(std::stringstream& fileStream);
+	TLSEvaluator(std::stringstream &fileStream);
 
 	~TLSEvaluator();
 
@@ -52,7 +52,7 @@ public:
 	Eigen::MatrixXd getFiniteDifferenceA(double finiteDiffEpsilon = 1e-6);
 
 	// this will attempt a normal LGC solve operation
-	bool tryLGCSolve(TVector& solution);
+	bool tryLGCSolve(TVector &solution);
 	// triggers evaluation at the current set parameter
 	bool evaluate();
 	// functions evaluations at current parameter (whch can be controlled by get/set)
@@ -75,12 +75,11 @@ private:
 	bool isUptoDate;
 	// helper method
 	void checkIsUptoDate() const;
-	
+
 	// a pointer to the data for manipulating parameters
 	std::shared_ptr<TLGCData> fData;
 	std::unique_ptr<TLSInputMatricesFiller> fMatFiller;
 	std::unique_ptr<TLSInputMatrices> iMat;
-
 };
 
 #endif

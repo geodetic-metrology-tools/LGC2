@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "LGC_Core/headers/Measurements/TAMeas.h"
-#include "LGC_Core/headers/Measurements/MeasDef.h"
 
 #include <LGCAdjustablePoint.h>
+
+#include "LGC_Core/headers/Measurements/MeasDef.h"
 
 #if USE_SERIALIZER
 template<typename TTarget>
@@ -19,7 +20,7 @@ void TAMeas<TTarget>::serialize(ObjectSerializer &obj) const
 	obj.addProperty("measId", measId);
 	obj.addProperty("target", target);
 	if (targetPos)
-		obj.addProperty("targetPos", targetPos->getName());	
+		obj.addProperty("targetPos", targetPos->getName());
 }
 // Explicit template instantiation
 template class TAMeas<TInstrumentData::TPOLAR::TTarget>;
@@ -33,8 +34,7 @@ template class TAMeas<TInstrumentData::TWPSR>;
 template class TAMeas<int>;
 
 template<typename TTarget, typename TEnumDistance, int numDistances, typename TEnumAngle, int numAngles>
-void TAScalarMeas<TTarget, TEnumDistance, numDistances, TEnumAngle, numAngles>::serialize(
-	ObjectSerializer &obj) const
+void TAScalarMeas<TTarget, TEnumDistance, numDistances, TEnumAngle, numAngles>::serialize(ObjectSerializer &obj) const
 {
 	TAMeas<TTarget>::serialize(obj);
 	obj.addProperty("angles", angles);

@@ -8,51 +8,48 @@
 ////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 // other forward declarations
-#include	"TAFileWriter.h"
-#include	"TSeparatedFormatTStream.h"
+#include "TAFileWriter.h"
 
+#include "TSeparatedFormatTStream.h"
 
 /////////////////////////////////////////////////////////////////////
 
-//ClassImp(TAFileWriter)
-
+// ClassImp(TAFileWriter)
 
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////////////
-//constructor / destructor
+// constructor / destructor
 /////////////////////////////////////////////////////////////////////////////
-//default constructor
-TAFileWriter::TAFileWriter() : TALGCObjectWriter(), fProjectData (nullptr)
+// default constructor
+TAFileWriter::TAFileWriter() : TALGCObjectWriter(), fProjectData(nullptr)
 {
 }
 
-//constructor
-TAFileWriter::TAFileWriter(TAStreamFormatter* stream, const TLGCData* projectData) : TALGCObjectWriter(*stream), fProjectData (projectData)
+// constructor
+TAFileWriter::TAFileWriter(TAStreamFormatter *stream, const TLGCData *projectData) : TALGCObjectWriter(*stream), fProjectData(projectData)
 {
 }
-
 
 TAFileWriter::~TAFileWriter()
-{//destructor
+{ // destructor
 	getStream()->close();
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // MEMBER PUBLIC FUNCTIONS
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-void	TAFileWriter::writeFile(const std::string error){
+void TAFileWriter::writeFile(const std::string error)
+{
 	writeError(error);
 }
 
-void	TAFileWriter::writeError(const std::string error)
-{//write error messages from project
-	(*getStream())<<error;
-} 
+void TAFileWriter::writeError(const std::string error)
+{ // write error messages from project
+	(*getStream()) << error;
+}
 ////////////////////////////////////////////////////////
-//END
+// END
 ////////////////////////////////////////////////////////

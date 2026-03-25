@@ -7,17 +7,16 @@
 #ifndef TDERIVATIVE_TRANSFORMATION
 #define TDERIVATIVE_TRANSFORMATION
 
-
-//STL
+// STL
 #include <memory>
-//SURVEYLIB
+// SURVEYLIB
 #include <TFreeVector.h>
-//OTHER
+// OTHER
 #include <Eigen/Dense>
 
 class TPositionVector;
 
-/** 
+/**
 	\ingroup LocalTransformations
 	\brief This class represents a partial derivatives of a transformation (TDirectTransformation or TInverseTransformation).
 
@@ -31,23 +30,23 @@ public:
 	TDerivativeTransformation();
 
 	/// Copy constructor
-	TDerivativeTransformation(const TDerivativeTransformation &derivTransform); 
+	TDerivativeTransformation(const TDerivativeTransformation &derivTransform);
 
-	//Constructor
-	TDerivativeTransformation(const Eigen::Matrix4d& mat);
+	// Constructor
+	TDerivativeTransformation(const Eigen::Matrix4d &mat);
 
 	/// Destructor
-	~TDerivativeTransformation() {};
+	~TDerivativeTransformation(){};
 
-	TDerivativeTransformation& operator=(const TDerivativeTransformation& rhs);
+	TDerivativeTransformation &operator=(const TDerivativeTransformation &rhs);
 
 	/// Return a constant reference on the matrix
-	const Eigen::Matrix4d& getMatrix() const;
+	const Eigen::Matrix4d &getMatrix() const;
 
 	/// Sets the matrix
-	void setMatrix(const Eigen::Matrix4d& mat);
+	void setMatrix(const Eigen::Matrix4d &mat);
 
-	/*! 
+	/*!
 		\brief Returns one element of the matrix
 
 		\param[in] row Row position of the element
@@ -56,13 +55,12 @@ public:
 	TReal getMmatrixIJPosition(int row, int column) const;
 
 	/// multiplication operator which transform a Point (TPositionVector) into a vector (TFreeVector)
-	TFreeVector operator*(const TPositionVector& pos) const;
+	TFreeVector operator*(const TPositionVector &pos) const;
 
 	/// transformation function which transform a Point (TPositionVector) into a vector (TFreeVector), does the same as multiplication operator
-	TFreeVector transform(const  TPositionVector& rm) const;
+	TFreeVector transform(const TPositionVector &rm) const;
 
 private:
-	
 	// Transformation matrix in homogeneous coordinates
 	std::unique_ptr<Eigen::Matrix4d> fTransM;
 };

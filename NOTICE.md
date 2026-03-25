@@ -6,12 +6,12 @@ This project, **LGC**, includes third-party software components with their own l
 
 ## LGC License
 
-- **Software License:** GNU General Public License v3.0 or later (GPL-3.0-or-later)  
+- **Software License:** GNU General Public License v3.0 or later (GPL-3.0-or-later)
   See [LICENSE](./LICENSE) for full terms.
-- **Documentation and Non-Code Assets:** Creative Commons Attribution 4.0 International (CC-BY-4.0)  
+- **Documentation and Non-Code Assets:** Creative Commons Attribution 4.0 International (CC-BY-4.0)
   See [LICENSES/CC-BY-4.0.txt](./LICENSES/CC-BY-4.0.txt).
 
-The project follows the [REUSE Specification](https://reuse.software/) to ensure clear and consistent attribution and license documentation.  
+The project follows the [REUSE Specification](https://reuse.software/) to ensure clear and consistent attribution and license documentation.
 All source and data files include SPDX headers or are declared in [`REUSE.toml`](./REUSE.toml).
 
 ---
@@ -35,7 +35,7 @@ All source and data files include SPDX headers or are declared in [`REUSE.toml`]
 - Source: https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib
 - Note: SurveyLib itself bundles additional third-party components under their own licenses.
   See SurveyLib’s NOTICE.md for details.
-  
+
 ### SUSoftCMakeCommon
 - License: GNU General Public License v3.0 or later
 - Source: https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon

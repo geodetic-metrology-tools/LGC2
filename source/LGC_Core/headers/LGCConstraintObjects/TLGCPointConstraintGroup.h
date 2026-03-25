@@ -5,7 +5,7 @@
  */
 
 #ifndef _TLGC_POINTCONSTRAINTGROUP_H
-#	define _TLGC_POINTCONSTRAINTGROUP_H
+#define _TLGC_POINTCONSTRAINTGROUP_H
 #include <algorithm>
 #include <iostream>
 #include <list>
@@ -15,22 +15,19 @@
 #include <TFileLogger.h>
 #include <TLGCData.h>
 #include <TLOR2LOR.h>
-#include <Logger.hpp>
 
 #if USE_SERIALIZER
 #	include <Serializer.hpp>
 #endif // USE_SERIALIZER
 
-
-
-#	if USE_SERIALIZER
+#if USE_SERIALIZER
 class TLGCPointConstraintGroup : public Serializable
-#	else
+#else
 class TLGCPointConstraintGroup
-#	endif // USE_SERIALIZER
+#endif // USE_SERIALIZER
 {
 public:
-	//using constraintSignature = std::array<bool, 7>;
+	// using constraintSignature = std::array<bool, 7>;
 	// constructor
 	// this will take all points as affected points
 	TLGCPointConstraintGroup(const TLGCData &projData, const std::array<bool, 7> &usedConstraints);
@@ -47,8 +44,8 @@ public:
 	int getFirstCIndex() { return firstCIndex; };
 	void setFirstCIndex(int j) { firstCIndex = j; };
 	// provisional positions in Root, claculated at initialization based on provisional values in subframe and provisional values of any frame transformation involved
-	Eigen::Vector3d getProvRootPos(std::string pointName) const; 
-	// center of gravity of provisional coordinates in Root 
+	Eigen::Vector3d getProvRootPos(std::string pointName) const;
+	// center of gravity of provisional coordinates in Root
 	Eigen::Vector3d getProvCOG() const { return provCOG; };
 	Eigen::Vector3d computeEstCOG() const;
 
@@ -57,10 +54,10 @@ public:
 	// plot information on the group and the constraints to the log2 file
 	void plotGroupData();
 
-#	if USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override;
-#	endif
+#endif
 
 private:
 	TLGCPointConstraintGroup(const TLGCData &projData) : data(projData){};
@@ -68,9 +65,9 @@ private:
 	void setAffectedPoints(const std::set<std::string> &affectedPoints);
 	// convenience method which adds all points to the affected points, equivalent to call setAffectedPoints with a set containing all points
 	void allPointsAreAffected();
-	void setConstraintSignature(const std::array<bool, 7>& usedConstraints);
+	void setConstraintSignature(const std::array<bool, 7> &usedConstraints);
 	//! Reference to a TLGCData
-	const TLGCData& data;
+	const TLGCData &data;
 	// the points of the group
 	std::set<std::string> fAffectedPoints;
 	// the coordinates of the points transformed to root (using provisional values)
@@ -79,10 +76,9 @@ private:
 	std::array<bool, 7> fConstraints;
 	int firstCIndex{-1};
 	int constraintDim{0};
-	//the center of gravity in root coordinates with provisional values.
+	// the center of gravity in root coordinates with provisional values.
 	Eigen::Vector3d provCOG;
 	double provScale = 0;
 };
 
 #endif
-

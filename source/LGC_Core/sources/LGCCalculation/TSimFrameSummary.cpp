@@ -8,7 +8,7 @@
 // that are necessary to write the summary of the simulations results file.
 //
 ////////////////////////////////////////////////////////////////////////////////////
-#include  "TSimFrameSummary.h"
+#include "TSimFrameSummary.h"
 
 //////////////////////
 // Default Constructor
@@ -22,11 +22,10 @@ TSimFrameSummary::TSimFrameSummary()
 	fSumRes2.scale = 0.0;
 }
 
-
 //////////////////////
 // Constructor taking a LSCPosVecIterator
 //////////////////////
-TSimFrameSummary::TSimFrameSummary(const TAdjustableHelmertTransformation& frame) :  fFrame(&frame)
+TSimFrameSummary::TSimFrameSummary(const TAdjustableHelmertTransformation &frame) : fFrame(&frame)
 {
 	fFirstSim = true;
 	fSumRes.scale = 0.0;
@@ -35,18 +34,16 @@ TSimFrameSummary::TSimFrameSummary(const TAdjustableHelmertTransformation& frame
 	fSumRes2.scale = 0.0;
 }
 
-
 ///////////////////
 // copy constructor
 ///////////////////
 ///////////////////
 // copy constructor
 ///////////////////
-TSimFrameSummary::TSimFrameSummary(const TSimFrameSummary& source)
+TSimFrameSummary::TSimFrameSummary(const TSimFrameSummary &source)
 {
 	*this = source;
 }
-
 
 /////////////
 // destructor
@@ -55,11 +52,10 @@ TSimFrameSummary::~TSimFrameSummary()
 {
 }
 
-
 ///////////////////////////
 // copy assignment operator
 ///////////////////////////
-TSimFrameSummary& TSimFrameSummary::operator=(const TSimFrameSummary& right)
+TSimFrameSummary &TSimFrameSummary::operator=(const TSimFrameSummary &right)
 {
 	if (this != &right)
 	{
@@ -79,14 +75,14 @@ TSimFrameSummary& TSimFrameSummary::operator=(const TSimFrameSummary& right)
 ////////////////////////////////////////////
 // add a new value in the sum of the residus
 ////////////////////////////////////////////
-void	TSimFrameSummary::addNewResValue(const TransformParameters& res)
+void TSimFrameSummary::addNewResValue(const TransformParameters &res)
 {
 	fSumRes += res;
-	
+
 	/*Because it is not an angle, but a square angle, we use double. Need to manage manually the units*/
-	fSumRes2.omega = fSumRes2.omega + res.omega.getRadiansValue()  *res.omega.getRadiansValue();
+	fSumRes2.omega = fSumRes2.omega + res.omega.getRadiansValue() * res.omega.getRadiansValue();
 	fSumRes2.phi = (fSumRes2.phi + res.phi.getRadiansValue() * res.phi.getRadiansValue());
-	fSumRes2.kappa = (fSumRes2.kappa + res.kappa.getRadiansValue()  *res.kappa.getRadiansValue());
+	fSumRes2.kappa = (fSumRes2.kappa + res.kappa.getRadiansValue() * res.kappa.getRadiansValue());
 	fSumRes2.tX += (res.tX * res.tX);
 	fSumRes2.tY += (res.tY * res.tY);
 	fSumRes2.tZ += (res.tZ * res.tZ);
@@ -110,7 +106,7 @@ void	TSimFrameSummary::addNewResValue(const TransformParameters& res)
 ////////////////////////////////////////////////////////////
 // update, if necessary, the value of the minimum of residus
 ////////////////////////////////////////////////////////////
-void	TSimFrameSummary::ifNecessarySetMin(const TransformParameters& res)
+void TSimFrameSummary::ifNecessarySetMin(const TransformParameters &res)
 {
 	if (res.omega < fResMin.omega)
 		fResMin.omega = res.omega;
@@ -133,7 +129,7 @@ void	TSimFrameSummary::ifNecessarySetMin(const TransformParameters& res)
 ////////////////////////////////////////////////////////////
 // update, if necessary, the value of the minimum of residus
 ////////////////////////////////////////////////////////////
-void	TSimFrameSummary::ifNecessarySetMax(const TransformParameters& res)
+void TSimFrameSummary::ifNecessarySetMax(const TransformParameters &res)
 {
 	if (res.omega > fResMax.omega)
 		fResMax.omega = res.omega;

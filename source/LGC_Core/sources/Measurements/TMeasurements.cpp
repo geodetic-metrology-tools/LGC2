@@ -4,7 +4,8 @@
 
 #include "TMeasurements.h"
 
-void TMeasurements::initialiseObsSummaries() {
+void TMeasurements::initialiseObsSummaries()
+{
 	// First clear the old contents away
 	dverSummary_.clear();
 	radiSummary_.clear();
@@ -39,161 +40,153 @@ void TMeasurements::initialiseObsSummaries() {
 	ecwiGlobalSummary_.xObsSum.clear();
 	ecwiGlobalSummary_.zObsSum.clear();
 
-    // Add the residuals of each measurement and initialise the summaries:
+	// Add the residuals of each measurement and initialise the summaries:
 
-    // DVER
-    if(fDVER.size() != 0){
-        for(auto &dver : fDVER)
-            dverSummary_.addNewResidual(dver.getDistanceResidual().getMMetresValue());
+	// DVER
+	if (fDVER.size() != 0)
+	{
+		for (auto &dver : fDVER)
+			dverSummary_.addNewResidual(dver.getDistanceResidual().getMMetresValue());
 
-        dverSummary_.initialise();
-    }
+		dverSummary_.initialise();
+	}
 
-    // RADI
-    if(fRADI.size() != 0){
-        for(auto &radi : fRADI)
-            radiSummary_.addNewResidual(radi.getResidual().getMMetresValue());
+	// RADI
+	if (fRADI.size() != 0)
+	{
+		for (auto &radi : fRADI)
+			radiSummary_.addNewResidual(radi.getResidual().getMMetresValue());
 
-        radiSummary_.initialise();
-    }
+		radiSummary_.initialise();
+	}
 
-    // OBSXYZ
-    if(fOBSXYZ.size() != 0) {
-        for(auto &obs : fOBSXYZ){
-            obsxyzSummary_.obsXObsSum.addNewResidual(obs.getXResidual().getMMetresValue());
-            obsxyzSummary_.obsYObsSum.addNewResidual(obs.getYResidual().getMMetresValue());
-            obsxyzSummary_.obsZObsSum.addNewResidual(obs.getZResidual().getMMetresValue());
-        }
+	// OBSXYZ
+	if (fOBSXYZ.size() != 0)
+	{
+		for (auto &obs : fOBSXYZ)
+		{
+			obsxyzSummary_.obsXObsSum.addNewResidual(obs.getXResidual().getMMetresValue());
+			obsxyzSummary_.obsYObsSum.addNewResidual(obs.getYResidual().getMMetresValue());
+			obsxyzSummary_.obsZObsSum.addNewResidual(obs.getZResidual().getMMetresValue());
+		}
 
-        obsxyzSummary_.obsXObsSum.initialise();
-        obsxyzSummary_.obsYObsSum.initialise();
-        obsxyzSummary_.obsZObsSum.initialise();
-    }
+		obsxyzSummary_.obsXObsSum.initialise();
+		obsxyzSummary_.obsYObsSum.initialise();
+		obsxyzSummary_.obsZObsSum.initialise();
+	}
 
-    // Initialise the observation summaries of
-    // measurements that use an instrument. Initialise
-    // also the global observation summaries.
+	// Initialise the observation summaries of
+	// measurements that use an instrument. Initialise
+	// also the global observation summaries.
 
-    std::list<const TLGCObsSummary*>
-        allPlrANGLSummaries,
-        allPlrZENDSummaries,
-        allPlrDISTSummaries,
-        allANGLSummaries,
-        allZENDSummaries,
-        allDISTSummaries,
-        allDHORSummaries,
-        allECTHSummaries,
-        allECDIRSummaries,
-        allUvdXSummaries,
-        allUvdYSummaries,
-        allUvdDSummaries,
-        allUvecXSummaries,
-        allUvecYSummaries,
-        allDSPTSummaries,
-        allDLEVSummaries,
-        allDlevDHORSummaries,
-        allORIESummaries,
-        allECHOSummaries,
-        allECVESummaries,
-        allECSPSummaries, 
-        allINCLYSummaries,
-        allROLLYSummaries,
-        allECWSSummaries, 
-        allEcwiXSummaries, 
-        allEcwiZSummaries;
+	std::list<const TLGCObsSummary *> allPlrANGLSummaries, allPlrZENDSummaries, allPlrDISTSummaries, allANGLSummaries, allZENDSummaries, allDISTSummaries,
+		allDHORSummaries, allECTHSummaries, allECDIRSummaries, allUvdXSummaries, allUvdYSummaries, allUvdDSummaries, allUvecXSummaries, allUvecYSummaries,
+		allDSPTSummaries, allDLEVSummaries, allDlevDHORSummaries, allORIESummaries, allECHOSummaries, allECVESummaries, allECSPSummaries, allINCLYSummaries,
+		allROLLYSummaries, allECWSSummaries, allEcwiXSummaries, allEcwiZSummaries;
 
-    // TSTN
-    for(auto &tstn : fTSTN)
-        for(auto &rom : tstn->roms){
-            rom->initialiseObsSummaries();
+	// TSTN
+	for (auto &tstn : fTSTN)
+		for (auto &rom : tstn->roms)
+		{
+			rom->initialiseObsSummaries();
 
-            // Add the initialised obs summaries of each rom to the global collection:
-            allPlrANGLSummaries.push_back(&rom->getPLR3DObsSummary().anglObsSum);
-            allPlrZENDSummaries.push_back(&rom->getPLR3DObsSummary().zendObsSum);
-            allPlrDISTSummaries.push_back(&rom->getPLR3DObsSummary().distObsSum);
-            allANGLSummaries.push_back(&rom->getANGLObsSummary());
-            allZENDSummaries.push_back(&rom->getZENDObsSummary());
-            allDISTSummaries.push_back(&rom->getDISTObsSummary());
-            allDHORSummaries.push_back(&rom->getDHORObsSummary());
-            allECTHSummaries.push_back(&rom->getECTHObsSummary());
-            allECDIRSummaries.push_back(&rom->getECDIRObsSummary());
-        }   
+			// Add the initialised obs summaries of each rom to the global collection:
+			allPlrANGLSummaries.push_back(&rom->getPLR3DObsSummary().anglObsSum);
+			allPlrZENDSummaries.push_back(&rom->getPLR3DObsSummary().zendObsSum);
+			allPlrDISTSummaries.push_back(&rom->getPLR3DObsSummary().distObsSum);
+			allANGLSummaries.push_back(&rom->getANGLObsSummary());
+			allZENDSummaries.push_back(&rom->getZENDObsSummary());
+			allDISTSummaries.push_back(&rom->getDISTObsSummary());
+			allDHORSummaries.push_back(&rom->getDHORObsSummary());
+			allECTHSummaries.push_back(&rom->getECTHObsSummary());
+			allECDIRSummaries.push_back(&rom->getECDIRObsSummary());
+		}
 
-    // CAM
-    for(auto &cam : fCAM){
-        cam.initialiseObsSummaries();
+	// CAM
+	for (auto &cam : fCAM)
+	{
+		cam.initialiseObsSummaries();
 
-        // Add the initialised obs summaries of each rom to the global collection:
-        allUvdXSummaries.push_back(&cam.getUVDObsSummary().xVectorCompObsSum);
-        allUvdYSummaries.push_back(&cam.getUVDObsSummary().yVectorCompObsSum);
-        allUvdDSummaries.push_back(&cam.getUVDObsSummary().distObsSum);
-        allUvecXSummaries.push_back(&cam.getUVECObsSummary().xVectorCompObsSum);
-        allUvecYSummaries.push_back(&cam.getUVECObsSummary().yVectorCompObsSum);
-    }
+		// Add the initialised obs summaries of each rom to the global collection:
+		allUvdXSummaries.push_back(&cam.getUVDObsSummary().xVectorCompObsSum);
+		allUvdYSummaries.push_back(&cam.getUVDObsSummary().yVectorCompObsSum);
+		allUvdDSummaries.push_back(&cam.getUVDObsSummary().distObsSum);
+		allUvecXSummaries.push_back(&cam.getUVECObsSummary().xVectorCompObsSum);
+		allUvecYSummaries.push_back(&cam.getUVECObsSummary().yVectorCompObsSum);
+	}
 
-    // DSPT
-    for(auto &edm : fEDM){
-        edm.initialiseObsSummaries();
+	// DSPT
+	for (auto &edm : fEDM)
+	{
+		edm.initialiseObsSummaries();
 
-        allDSPTSummaries.push_back(&edm.getDSPTObsSummary());
-    }
+		allDSPTSummaries.push_back(&edm.getDSPTObsSummary());
+	}
 
-    // DLEV
-    for(auto &level : fLEVEL){
-        level.initialiseObsSummaries();
+	// DLEV
+	for (auto &level : fLEVEL)
+	{
+		level.initialiseObsSummaries();
 
-        allDLEVSummaries.push_back(&level.getDLEVObsSummary());
-        allDlevDHORSummaries.push_back(&level.getDHORObsSummary());
-    }
+		allDLEVSummaries.push_back(&level.getDLEVObsSummary());
+		allDlevDHORSummaries.push_back(&level.getDHORObsSummary());
+	}
 
-    // ORIE
-    for(auto &orierom : fORIE){
-        orierom.initialiseObsSummaries();
+	// ORIE
+	for (auto &orierom : fORIE)
+	{
+		orierom.initialiseObsSummaries();
 
-        allORIESummaries.push_back(&orierom.getORIEObsSummary());
-    }
+		allORIESummaries.push_back(&orierom.getORIEObsSummary());
+	}
 
-    // ECHO
-    for(auto &echorom : fECHO){
-        echorom.initialiseObsSummaries();
+	// ECHO
+	for (auto &echorom : fECHO)
+	{
+		echorom.initialiseObsSummaries();
 
-        allECHOSummaries.push_back(&echorom.getECHOObsSummary());
-    }
+		allECHOSummaries.push_back(&echorom.getECHOObsSummary());
+	}
 
-    // ECVE
-    for(auto &ecverom : fECVE){
-        ecverom.initialiseObsSummaries();
+	// ECVE
+	for (auto &ecverom : fECVE)
+	{
+		ecverom.initialiseObsSummaries();
 
-        allECVESummaries.push_back(&ecverom.getECVEObsSummary());
-    }
+		allECVESummaries.push_back(&ecverom.getECVEObsSummary());
+	}
 
-    // ECSP
-    for(auto &ecsprom : fECSP){
-        ecsprom.initialiseObsSummaries();
+	// ECSP
+	for (auto &ecsprom : fECSP)
+	{
+		ecsprom.initialiseObsSummaries();
 
-        allECSPSummaries.push_back(&ecsprom.getECSPObsSummary());
-    }
+		allECSPSummaries.push_back(&ecsprom.getECSPObsSummary());
+	}
 
 	// INCLY
-	for (auto &inclyrom : fINCLY) {
+	for (auto &inclyrom : fINCLY)
+	{
 		inclyrom.initialiseObsSummaries();
 
 		allINCLYSummaries.push_back(&inclyrom.getINCLYObsSummary());
 	}
 
 	// ROLLY
-	for (auto &rollyrom : fROLLY) {
+	for (auto &rollyrom : fROLLY)
+	{
 		rollyrom.initialiseObsSummaries();
 
 		allROLLYSummaries.push_back(&rollyrom.getROLLYObsSummary());
 	}
 
-    // ECWS
-    for (auto& ecwsrom : fECWS) {
-        ecwsrom.initialiseObsSummaries();
+	// ECWS
+	for (auto &ecwsrom : fECWS)
+	{
+		ecwsrom.initialiseObsSummaries();
 
-        allECWSSummaries.push_back(&ecwsrom.getECWSObsSummary());
-    }
+		allECWSSummaries.push_back(&ecwsrom.getECWSObsSummary());
+	}
 
 	// ECWI
 	for (auto &ecwirom : fECWI)
@@ -203,108 +196,177 @@ void TMeasurements::initialiseObsSummaries() {
 		allEcwiZSummaries.push_back(&ecwirom.getECWIObsSummary().zObsSum);
 	}
 
-    // Create the global summaries from the collections:
+	// Create the global summaries from the collections:
 
-    // TSTN:
-    plrGlobalSummary_.anglObsSum = TLGCObsSummary::merge(allPlrANGLSummaries);
-    plrGlobalSummary_.zendObsSum = TLGCObsSummary::merge(allPlrZENDSummaries);
-    plrGlobalSummary_.distObsSum = TLGCObsSummary::merge(allPlrDISTSummaries);
-    anglGlobalSummary_ = TLGCObsSummary::merge(allANGLSummaries);
-    zendGlobalSummary_ = TLGCObsSummary::merge(allZENDSummaries);
-    distGlobalSummary_ = TLGCObsSummary::merge(allDISTSummaries);
-    dhorGlobalSummary_ = TLGCObsSummary::merge(allDHORSummaries);
-    ecthGlobalSummary_ = TLGCObsSummary::merge(allECTHSummaries);
-    ecdirGlobalSummary_ = TLGCObsSummary::merge(allECDIRSummaries);
+	// TSTN:
+	plrGlobalSummary_.anglObsSum = TLGCObsSummary::merge(allPlrANGLSummaries);
+	plrGlobalSummary_.zendObsSum = TLGCObsSummary::merge(allPlrZENDSummaries);
+	plrGlobalSummary_.distObsSum = TLGCObsSummary::merge(allPlrDISTSummaries);
+	anglGlobalSummary_ = TLGCObsSummary::merge(allANGLSummaries);
+	zendGlobalSummary_ = TLGCObsSummary::merge(allZENDSummaries);
+	distGlobalSummary_ = TLGCObsSummary::merge(allDISTSummaries);
+	dhorGlobalSummary_ = TLGCObsSummary::merge(allDHORSummaries);
+	ecthGlobalSummary_ = TLGCObsSummary::merge(allECTHSummaries);
+	ecdirGlobalSummary_ = TLGCObsSummary::merge(allECDIRSummaries);
 
-    // CAM:
-    uvdGlobalSummary_.xVectorCompObsSum = TLGCObsSummary::merge(allUvdXSummaries);
-    uvdGlobalSummary_.yVectorCompObsSum = TLGCObsSummary::merge(allUvdYSummaries);
-    uvdGlobalSummary_.distObsSum = TLGCObsSummary::merge(allUvdDSummaries);
-    uvecGlobalSummary_.xVectorCompObsSum = TLGCObsSummary::merge(allUvecXSummaries);
-    uvecGlobalSummary_.yVectorCompObsSum = TLGCObsSummary::merge(allUvecYSummaries);
+	// CAM:
+	uvdGlobalSummary_.xVectorCompObsSum = TLGCObsSummary::merge(allUvdXSummaries);
+	uvdGlobalSummary_.yVectorCompObsSum = TLGCObsSummary::merge(allUvdYSummaries);
+	uvdGlobalSummary_.distObsSum = TLGCObsSummary::merge(allUvdDSummaries);
+	uvecGlobalSummary_.xVectorCompObsSum = TLGCObsSummary::merge(allUvecXSummaries);
+	uvecGlobalSummary_.yVectorCompObsSum = TLGCObsSummary::merge(allUvecYSummaries);
 
-    // WPSR
+	// WPSR
 	ecwiGlobalSummary_.xObsSum = TLGCObsSummary::merge(allEcwiXSummaries);
 	ecwiGlobalSummary_.zObsSum = TLGCObsSummary::merge(allEcwiZSummaries);
 
-    // Other:
-    dsptGlobalSummary_ = TLGCObsSummary::merge(allDSPTSummaries);
-    dlevGlobalSummary_ = TLGCObsSummary::merge(allDLEVSummaries);
-    dlevDHORGlobalSummary_ = TLGCObsSummary::merge(allDlevDHORSummaries);
-    orieGlobalSummary_ = TLGCObsSummary::merge(allORIESummaries);
-    echoGlobalSummary_ = TLGCObsSummary::merge(allECHOSummaries);
-    ecveGlobalSummary_ = TLGCObsSummary::merge(allECVESummaries);
-    ecspGlobalSummary_ = TLGCObsSummary::merge(allECSPSummaries);
+	// Other:
+	dsptGlobalSummary_ = TLGCObsSummary::merge(allDSPTSummaries);
+	dlevGlobalSummary_ = TLGCObsSummary::merge(allDLEVSummaries);
+	dlevDHORGlobalSummary_ = TLGCObsSummary::merge(allDlevDHORSummaries);
+	orieGlobalSummary_ = TLGCObsSummary::merge(allORIESummaries);
+	echoGlobalSummary_ = TLGCObsSummary::merge(allECHOSummaries);
+	ecveGlobalSummary_ = TLGCObsSummary::merge(allECVESummaries);
+	ecspGlobalSummary_ = TLGCObsSummary::merge(allECSPSummaries);
 	inclyGlobalSummary_ = TLGCObsSummary::merge(allINCLYSummaries);
 	rollyGlobalSummary_ = TLGCObsSummary::merge(allROLLYSummaries);
 	ecwsGlobalSummary_ = TLGCObsSummary::merge(allECWSSummaries);
-
 }
 
-const TLGCObsSummary& TMeasurements::getDVERObsSummary() const { return dverSummary_; }
+const TLGCObsSummary &TMeasurements::getDVERObsSummary() const
+{
+	return dverSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getDVERObsSummary(std::string text) {
+const TLGCObsSummary &TMeasurements::getDVERObsSummary(std::string text)
+{
 	dverSummary_.setObsText(text);
 	return dverSummary_;
 }
 
-const TLGCObsSummary&  TMeasurements::getRADIObsSummary() const { return radiSummary_; }
+const TLGCObsSummary &TMeasurements::getRADIObsSummary() const
+{
+	return radiSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getRADIObsSummary(std::string text) {
+const TLGCObsSummary &TMeasurements::getRADIObsSummary(std::string text)
+{
 	radiSummary_.setObsText(text);
 	return radiSummary_;
 }
 
-const TOBSXYZObsSummary& TMeasurements::getOBSXYZObsSummary() const { return obsxyzSummary_; }
+const TOBSXYZObsSummary &TMeasurements::getOBSXYZObsSummary() const
+{
+	return obsxyzSummary_;
+}
 
-const TOBSXYZObsSummary& TMeasurements::getOBSXYZObsSummary(std::string text) {
+const TOBSXYZObsSummary &TMeasurements::getOBSXYZObsSummary(std::string text)
+{
 	obsxyzSummary_.obsXObsSum.setObsText(text);
 	obsxyzSummary_.obsYObsSum.setObsText(text);
 	obsxyzSummary_.obsZObsSum.setObsText(text);
 	return obsxyzSummary_;
 }
 
-const TPOLARObsSummary& TMeasurements::getPOLARGlobalObsSummary() const { return plrGlobalSummary_; }
+const TPOLARObsSummary &TMeasurements::getPOLARGlobalObsSummary() const
+{
+	return plrGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getANGLGlobalObsSummary() const { return anglGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getANGLGlobalObsSummary() const
+{
+	return anglGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getZENDGlobalObsSummary() const { return zendGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getZENDGlobalObsSummary() const
+{
+	return zendGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getDISTGlobalObsSummary() const { return distGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getDISTGlobalObsSummary() const
+{
+	return distGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getDHORGlobalObsSummary() const { return dhorGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getDHORGlobalObsSummary() const
+{
+	return dhorGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getECTHGlobalObsSummary() const { return ecthGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getECTHGlobalObsSummary() const
+{
+	return ecthGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getECDIRGlobalObsSummary() const { return ecdirGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getECDIRGlobalObsSummary() const
+{
+	return ecdirGlobalSummary_;
+}
 
+const TUVDObsSummary &TMeasurements::getUVDGlobalObsSummary() const
+{
+	return uvdGlobalSummary_;
+}
 
-const TUVDObsSummary& TMeasurements::getUVDGlobalObsSummary() const { return uvdGlobalSummary_; }
+const TUVECObsSummary &TMeasurements::getUVECGlobalObsSummary() const
+{
+	return uvecGlobalSummary_;
+}
 
-const TUVECObsSummary& TMeasurements::getUVECGlobalObsSummary() const { return uvecGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getDSPTGlobalObsSummary() const
+{
+	return dsptGlobalSummary_;
+}
 
+const TLGCObsSummary &TMeasurements::getDLEVGlobalObsSummary() const
+{
+	return dlevGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getDSPTGlobalObsSummary() const { return dsptGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getDlevDHORGlobalObsSummary() const
+{
+	return dlevDHORGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getDLEVGlobalObsSummary() const { return dlevGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getORIEGlobalObsSummary() const
+{
+	return orieGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getDlevDHORGlobalObsSummary() const { return dlevDHORGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getECHOGlobalObsSummary() const
+{
+	return echoGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getORIEGlobalObsSummary() const { return orieGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getECVEGlobalObsSummary() const
+{
+	return ecveGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getECHOGlobalObsSummary() const { return echoGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getECSPGlobalObsSummary() const
+{
+	return ecspGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getECVEGlobalObsSummary() const { return ecveGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getINCLYGlobalObsSummary() const
+{
+	return inclyGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getECSPGlobalObsSummary() const { return ecspGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getROLLYGlobalObsSummary() const
+{
+	return rollyGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getINCLYGlobalObsSummary() const { return inclyGlobalSummary_; }
+const TLGCObsSummary &TMeasurements::getECWSGlobalObsSummary() const
+{
+	return ecwsGlobalSummary_;
+}
 
-const TLGCObsSummary& TMeasurements::getROLLYGlobalObsSummary() const { return rollyGlobalSummary_; }
-
-const TLGCObsSummary& TMeasurements::getECWSGlobalObsSummary() const { return ecwsGlobalSummary_; }
-
-const TECWIObsSummary& TMeasurements::getECWIGlobalObsSummary() const {	return ecwiGlobalSummary_; }
+const TECWIObsSummary &TMeasurements::getECWIGlobalObsSummary() const
+{
+	return ecwiGlobalSummary_;
+}
 
 #if USE_SERIALIZER
 // Inherited via Serializable
@@ -353,17 +415,17 @@ void TMeasurements::serialize(ObjectSerializer &obj) const
 	obj.addProperty("obsxyzActive", obsxyzActive);
 	obj.addProperty("radiActive", radiActive);
 
-    if (obsxyzGlobalSummary_.obsXObsSum.getNumberOfObs())
-	    obj.addProperty("obsxyzGlobalSummary_", obsxyzGlobalSummary_);
-	
-    if (obsxyzSummary_.obsXObsSum.getNumberOfObs())
-        obj.addProperty("obsxyzSummary_", obsxyzSummary_);
-    if (plrGlobalSummary_.anglObsSum.getNumberOfObs())
-        obj.addProperty("plrGlobalSummary_", plrGlobalSummary_);
-    if (uvdGlobalSummary_.distObsSum.getNumberOfObs())
-        obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
-    if (uvecGlobalSummary_.xVectorCompObsSum.getNumberOfObs())
-        obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
+	if (obsxyzGlobalSummary_.obsXObsSum.getNumberOfObs())
+		obj.addProperty("obsxyzGlobalSummary_", obsxyzGlobalSummary_);
+
+	if (obsxyzSummary_.obsXObsSum.getNumberOfObs())
+		obj.addProperty("obsxyzSummary_", obsxyzSummary_);
+	if (plrGlobalSummary_.anglObsSum.getNumberOfObs())
+		obj.addProperty("plrGlobalSummary_", plrGlobalSummary_);
+	if (uvdGlobalSummary_.distObsSum.getNumberOfObs())
+		obj.addProperty("uvdGlobalSummary_", uvdGlobalSummary_);
+	if (uvecGlobalSummary_.xVectorCompObsSum.getNumberOfObs())
+		obj.addProperty("uvecGlobalSummary_", uvecGlobalSummary_);
 	if (ecwiGlobalSummary_.xObsSum.getNumberOfObs())
 		obj.addProperty("ecwiGlobalSummary_", ecwiGlobalSummary_);
 
@@ -392,13 +454,13 @@ void TMeasurements::serialize(ObjectSerializer &obj) const
 	if (!fORIE.empty())
 		obj.addProperty("fORIE", fORIE);
 	if (fPDOR.isInitialised())
-        obj.addProperty("fPDOR", fPDOR);
+		obj.addProperty("fPDOR", fPDOR);
 	if (!fRADI.empty())
-	    obj.addProperty("fRADI", fRADI);
+		obj.addProperty("fRADI", fRADI);
 	if (!fLEVEL.empty())
 		obj.addProperty("fLEVEL", fLEVEL);
 	if (!fTSTN.empty())
-	    obj.addProperty("fTSTN", fTSTN);
+		obj.addProperty("fTSTN", fTSTN);
 	if (!fECWI.empty())
 		obj.addProperty("fECWI", fECWI);
 }

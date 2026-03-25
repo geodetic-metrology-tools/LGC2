@@ -7,55 +7,49 @@
 #ifndef _TEDM_H
 #define _TEDM_H
 
-//LGC
+// LGC
 #include <MeasDef.h>
-#include "TLGCObsSummary.h"
 
+#include "TLGCObsSummary.h"
 
 /*!
 	\ingroup Measurements
 	\brief The EDM station, which groups TDSPT measurements made by a single instrument.
 */
-struct TEDM : public TStatusObject {
+struct TEDM : public TStatusObject
+{
+	// Constructor of the EDM station
+	TEDM(const LGCAdjustablePoint &pos, const TInstrumentData::TEDM &instrument) : instrument(instrument), instrumentPos(&pos), line(NO_VALi) {}
 
-		// Constructor of the EDM station
-		TEDM(const LGCAdjustablePoint& pos, const TInstrumentData::TEDM& instrument) :
-			instrument(instrument),
-			instrumentPos(&pos),
-			line(NO_VALi)
-			{}
+	/// All DSPT measurments made by this EDM station.
+	std::list<TDSPT> measDSPT;
 
-		/// All DSPT measurments made by this EDM station.
-		std::list<TDSPT> measDSPT;
+	/// The instrument that is used on this station
+	TInstrumentData::TEDM instrument;
 
-		/// The instrument that is used on this station
-		TInstrumentData::TEDM instrument;
+	/// The point on which the instrument resides
+	const LGCAdjustablePoint *instrumentPos;
 
-		/// The point on which the instrument resides
-		const LGCAdjustablePoint* instrumentPos; 	
+	//! Initialise the observation summaries
+	void initialiseObsSummaries();
 
-        //! Initialise the observation summaries
-        void initialiseObsSummaries();
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary &getDSPTObsSummary() const;
+	const TLGCObsSummary &getDSPTObsSummary(std::string text) noexcept;
 
-		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-        const TLGCObsSummary& getDSPTObsSummary() const;
-		const TLGCObsSummary& getDSPTObsSummary(std::string text) noexcept;
+	/// Line of the station definition
+	int line;
 
-
-		/// Line of the station definition
-		int  line;
-
-        int stnId{ stnCounter_++ };
+	int stnId{stnCounter_++};
 
 #if USE_SERIALIZER
-		// Inherited via Serializable
-		virtual void serialize(ObjectSerializer &obj) const override;
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
-    private:
+private:
+	static int stnCounter_;
 
-        static int stnCounter_;
-
-        TLGCObsSummary dsptSummary_;
+	TLGCObsSummary dsptSummary_;
 };
 #endif

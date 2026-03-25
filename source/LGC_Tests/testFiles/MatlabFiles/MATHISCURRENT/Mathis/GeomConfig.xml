@@ -2,12 +2,12 @@
 <!--
 Plates:
 # ID of the Plate
-# Pressure of calibration (Optional) - Pascal	
+# Pressure of calibration (Optional) - Pascal
 # Temperature of calibration (Optional) - degree celsius
 # Coordinates of the origin point of the frame in the parent frame - X Y Z in meters
 # Standard deviation for the Coordinates of the origin point of the frame -  dX dY dZ in meters
 # Rotation of the frame in the parent frame - rX rY rZ in degrees
-# Standard deviation for Rotation of the frame in the parent frame - drX drY drZ in degrees 
+# Standard deviation for Rotation of the frame in the parent frame - drX drY drZ in degrees
 # Formula acting on the Origin point and Rotation of the frame with respect to the difference of temperature (T_Now-T_Calib)  (Optional)
 # Temperature measured (Optional) - degree celsius
 # Pressure measured (Optional) - Pascal
@@ -25,37 +25,37 @@ Plates:
 <SYSTEM_DESC>
 
 	<OBJECT ID = "T2" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
-		<!-- PLATE "TABLE2": GEOMETRY (POSITION AND THERMAL EXPANSION) -->	
+		<!-- PLATE "TABLE2": GEOMETRY (POSITION AND THERMAL EXPANSION) -->
 		<GEOM>
-			<FRAME> 			
+			<FRAME>
 				<ORIGIN X = "15899.123" Y ="-0.15" Z="-416.084" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-				<ROTATION RX = "0.004444" RY="0.028111" RZ="0.007333" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />  
+				<ROTATION RX = "0.004444" RY="0.028111" RZ="0.007333" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
 			<EXPANSION>
 				<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-				<T_SENSOR ID="TXM077" T_CORR="15.4"/>   	
-				<P_CONST> 1.0004 </P_CONST>  				
-				<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+				<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+				<P_CONST> 1.0004 </P_CONST>
+				<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 			</EXPANSION>
 		</GEOM>
-		
+
 		<OBJECT ID = "T2M001" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X = "0.01875" Y ="472.022" Z="19.704" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="-0.04652" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X = "0.01875" Y ="472.022" Z="19.704" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="-0.04652" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
 		</GEOM>
 			<OBJECT ID = "T2M01" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -66,26 +66,26 @@ Plates:
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.5248" Y="-0.013" Z="0.009" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 					<BALL_COORD TYPE="P"  X="36.5313" Y="-20.99" Z="0.031" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="S"  X="36.5183" Y="21.016" Z="-0.049" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>					
-				</MOUNT>	
-			</OBJECT>	
+					<BALL_COORD TYPE="S"  X="36.5183" Y="21.016" Z="-0.049" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
 		</OBJECT>
 
 		<OBJECT ID = "T2M002" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X = "-0.0015" Y ="250.013" Z="0.02475" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="-0.028145" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X = "-0.0015" Y ="250.013" Z="0.02475" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="-0.028145" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
-		</GEOM>		
+		</GEOM>
 			<OBJECT ID = "T2M02" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -96,26 +96,26 @@ Plates:
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.5325" Y="-0.004" Z="-0.0028" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 					<BALL_COORD TYPE="P"  X="36.5435" Y="-20.998" Z="0.0293" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="S"  X="36.5215" Y="21.006" Z="-0.0238" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>					
-				</MOUNT>	
-			</OBJECT>	
+					<BALL_COORD TYPE="S"  X="36.5215" Y="21.006" Z="-0.0238" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
 		</OBJECT>
-		
+
 		<OBJECT ID = "T2M003" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X = "0.0005" Y ="-250.0505" Z="0.00525" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="0.012775" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X = "0.0005" Y ="-250.0505" Z="0.00525" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="0.012775" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
-		</GEOM>			
+		</GEOM>
 			<OBJECT ID = "T2M03" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -126,27 +126,27 @@ Plates:
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.5205" Y="-0.0245" Z="-0.0033" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 					<BALL_COORD TYPE="P"  X="36.5215" Y="21.0185" Z="0.0098" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="S"  X="36.5195" Y="-20.9695" Z="-0.0033" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>					
-				</MOUNT>	
-			</OBJECT>	
+					<BALL_COORD TYPE="S"  X="36.5195" Y="-20.9695" Z="-0.0033" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
 		</OBJECT>
 
 
 		<OBJECT ID = "T2M004" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X = "0.01225" Y ="-568.13175" Z="19.65" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="0.01783" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X = "0.01225" Y ="-568.13175" Z="19.65" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="0.01783" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
-		</GEOM>				
+		</GEOM>
 			<OBJECT ID = "T2M04" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -157,51 +157,51 @@ Plates:
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.5243" Y="-0.0503" Z="-0.015" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 					<BALL_COORD TYPE="P"  X="36.4978" Y="21.0528" Z="0.028" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="S"  X="36.5508" Y="-20.9522" Z="0.002" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>					
-				</MOUNT>	
-			</OBJECT>			
+					<BALL_COORD TYPE="S"  X="36.5508" Y="-20.9522" Z="0.002" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
 		</OBJECT>
 	</OBJECT>
 	<!--------------------------------------->
 	<!-- END OF PLATE "TABLE2" DESCRIPTION -->
 	<!--------------------------------------->
 
-	
+
 	<!-------------------->
-	<!-- PLATE "TABLE3" -->	
+	<!-- PLATE "TABLE3" -->
 	<!-------------------->
 	<OBJECT ID = "T3" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
-		<!-- PLATE "TABLE3": GEOMETRY (POSITION AND THERMAL EXPANSION) -->	
+		<!-- PLATE "TABLE3": GEOMETRY (POSITION AND THERMAL EXPANSION) -->
 		<GEOM>
-			<FRAME> 
+			<FRAME>
 				<ORIGIN X = "18559.659" Y ="0.118" Z="-415.92" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-				<ROTATION RX = "399.992444" RY="0.034222" RZ="399.970222" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+				<ROTATION RX = "399.992444" RY="0.034222" RZ="399.970222" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
 			<EXPANSION>
 				<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-				<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-				<P_CONST> 1.0004 </P_CONST> 
-				<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+				<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+				<P_CONST> 1.0004 </P_CONST>
+				<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 			</EXPANSION>
 		</GEOM>
-		
+
 		<OBJECT ID = "T3M001" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X = "0.0005" Y ="472.057" Z="-0.212" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="0.00312" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X = "0.0005" Y ="472.057" Z="-0.212" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="0.00312" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
 		</GEOM>
 			<OBJECT ID = "T3M01" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -212,26 +212,26 @@ Plates:
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.5255" Y="0.006" Z="-0.012" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 					<BALL_COORD TYPE="S"  X="36.5285" Y="20.997" Z="-0.012" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="P"  X="36.5225" Y="-21.009" Z="0.036" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>					
-				</MOUNT>	
-			</OBJECT>	
+					<BALL_COORD TYPE="P"  X="36.5225" Y="-21.009" Z="0.036" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
 		</OBJECT>
-		
+
 		<OBJECT ID = "T3M002" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X = "0.006" Y ="250.0295" Z="0.0055" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="0.003445" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X = "0.006" Y ="250.0295" Z="0.0055" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="0.003445" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
-		</GEOM>		
+		</GEOM>
 			<OBJECT ID = "T3M02" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -242,26 +242,26 @@ Plates:
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.523" Y="-0.0065" Z="-0.0015" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 					<BALL_COORD TYPE="P"  X="36.527" Y="-20.9895" Z="0.0135" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="S"  X="36.519" Y="21.0025" Z="-0.0105" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>					
-				</MOUNT>	
-			</OBJECT>	
+					<BALL_COORD TYPE="S"  X="36.519" Y="21.0025" Z="-0.0105" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
 		</OBJECT>
-		
+
 		<OBJECT ID = "T3M003" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X ="-0.00175" Y ="-250.03725" Z="0.0055" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="-0.01617" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X ="-0.00175" Y ="-250.03725" Z="0.0055" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="-0.01617" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
-		</GEOM>			
+		</GEOM>
 			<OBJECT ID = "T3M03" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -271,27 +271,27 @@ Plates:
 				<MOUNT>
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.5263" Y="-0.0078" Z="-0.0095" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="P"  X="36.5238" Y="21.0083" Z="0.0275" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>	
-					<BALL_COORD TYPE="S"  X="36.5288" Y="-20.9928" Z="-0.0085" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>				
-				</MOUNT>	
-			</OBJECT>	
-		</OBJECT>	
-		
+					<BALL_COORD TYPE="P"  X="36.5238" Y="21.0083" Z="0.0275" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+					<BALL_COORD TYPE="S"  X="36.5288" Y="-20.9928" Z="-0.0085" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
+		</OBJECT>
+
 		<OBJECT ID = "T3M004" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 			
-				<ORIGIN X = "-0.0355" Y ="-568.07225" Z="-0.3425" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/> 
-				<ROTATION RX = "0" RY="-0.03407" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+			<FRAME>
+				<ORIGIN X = "-0.0355" Y ="-568.07225" Z="-0.3425" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				<ROTATION RX = "0" RY="-0.03407" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
-			<EXPANSION>									
+			<EXPANSION>
 			</EXPANSION>
-		</GEOM>					
+		</GEOM>
 			<OBJECT ID = "T3M04" TYPE="MOUNT">
 				<GEOM>
-					<FRAME> 
-						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->					
+					<FRAME>
+						<!-- ORIGIN COORDINATES NOT NEEDED FOR MOUNTS -->
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
@@ -302,118 +302,118 @@ Plates:
 					<!-- 3 BALL COORDINATES ARE NEEDED TO LOCATE THE MOUNT -->
 					<BALL_COORD TYPE="C"  X="-36.5235" Y="0.0032" Z="-0.0185" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 					<BALL_COORD TYPE="S"  X="36.5215" Y="-21.0048" Z="-0.0115" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-					<BALL_COORD TYPE="P"  X="36.5255" Y="20.9983" Z="0.0485" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>					
-				</MOUNT>	
-			</OBJECT>			
+					<BALL_COORD TYPE="P"  X="36.5255" Y="20.9983" Z="0.0485" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
+				</MOUNT>
+			</OBJECT>
 		</OBJECT>
 	</OBJECT>
 	<!--------------------------------------->
 	<!-- END OF PLATE "TABLE3" DESCRIPTION -->
 	<!--------------------------------------->
 
-	
-	<OBJECT ID = "XLH0" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+
+	<OBJECT ID = "XLH0" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 		<GEOM>
-			<FRAME> 
+			<FRAME>
 				<ORIGIN X = "17258.765" Y ="0" Z="0" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-				<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+				<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 				<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 				<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 			</FRAME>
 			<EXPANSION>
 				<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-				<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-				<P_CONST> 1.0004 </P_CONST> 
-				<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+				<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+				<P_CONST> 1.0004 </P_CONST>
+				<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 			</EXPANSION>
 		</GEOM>
-			
+
 			<OBJECT ID="XLH0VUL" TYPE="VIEWPORT">
 				<GEOM>
-					<FRAME> 
+					<FRAME>
 						<ORIGIN X = "-1191.473" Y ="252.216" Z="-383.798" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-						<ROTATION RX = "200" RY="93.786889" RZ="200.102222" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+						<ROTATION RX = "200" RY="93.786889" RZ="200.102222" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N"/>
 					</FRAME>
 					<EXPANSION>
 						<CALIB T_CALIB = "19.0" P_CALIB="1.0012" />
 						<T_CONST> 25.4 </T_CONST>   	<!-- or <T_CONST> 22.4 </T_CONST> -->
 						<P_CONST> 1.0004 </P_CONST>  				<!-- or <P_SENSOR ID="P021" /> -->
-						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
-					</EXPANSION>			
-				</GEOM>	
+						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
+					</EXPANSION>
+				</GEOM>
 				<VIEWPORT THICKNESS = "6.55" INDEX = "1.45637"/>
 			</OBJECT>
-		
+
 			<OBJECT ID="XLH0VUR" TYPE="VIEWPORT">
 				<GEOM>
-					<FRAME> 
+					<FRAME>
 						<ORIGIN X = "16067.231" Y ="-253.612" Z="-378.894" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-						<ROTATION RX = "200" RY="92.940444" RZ="200.563111" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+						<ROTATION RX = "200" RY="92.940444" RZ="200.563111" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N"/>
 					</FRAME>
 					<EXPANSION>
 						<CALIB T_CALIB = "19.0" P_CALIB="1.0012" />
 						<T_CONST> 25.4 </T_CONST>   	<!-- or <T_CONST> 22.4 </T_CONST> -->
 						<P_CONST> 1.0004 </P_CONST>  				<!-- or <P_SENSOR ID="P021" /> -->
-						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
-					</EXPANSION>			
-				</GEOM>	
+						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
+					</EXPANSION>
+				</GEOM>
 				<VIEWPORT THICKNESS = "6.55" INDEX = "1.45637"/>
-			</OBJECT>		
-		
+			</OBJECT>
+
 			<OBJECT ID="XLH0VDL" TYPE="VIEWPORT">
 				<GEOM>
-					<FRAME> 
+					<FRAME>
 						<ORIGIN X = "18449.787" Y ="253.18" Z="-384.794" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-						<ROTATION RX = "200" RY="94.085667" RZ="0.023556" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+						<ROTATION RX = "200" RY="94.085667" RZ="0.023556" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N"/>
 					</FRAME>
 					<EXPANSION>
 						<CALIB T_CALIB = "19.0" P_CALIB="1.0012" />
 						<T_CONST> 25.4 </T_CONST>   	<!-- or <T_CONST> 22.4 </T_CONST> -->
 						<P_CONST> 1.0004 </P_CONST>  				<!-- or <P_SENSOR ID="P021" /> -->
-						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
-					</EXPANSION>			
-				</GEOM>	
+						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
+					</EXPANSION>
+				</GEOM>
 				<VIEWPORT THICKNESS = "6.55" INDEX = "1.45637"/>
-			</OBJECT>		
-		
+			</OBJECT>
+
 			<OBJECT ID="XLH0VDR" TYPE="VIEWPORT">
 				<GEOM>
-					<FRAME> 
+					<FRAME>
 						<ORIGIN X = "18451.646" Y ="-255.141" Z="-381.515" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-						<ROTATION RX = "200" RY="94.515111" RZ="399.783667" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+						<ROTATION RX = "200" RY="94.515111" RZ="399.783667" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N"/>
 					</FRAME>
 					<EXPANSION>
 						<CALIB T_CALIB = "19.0" P_CALIB="1.0012" />
 						<T_CONST> 25.4 </T_CONST>   	<!-- or <T_CONST> 22.4 </T_CONST> -->
 						<P_CONST> 1.0004 </P_CONST>  				<!-- or <P_SENSOR ID="P021" /> -->
-						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
-					</EXPANSION>			
-				</GEOM>	
+						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
+					</EXPANSION>
+				</GEOM>
 				<VIEWPORT THICKNESS = "6.55" INDEX = "1.45637"/>
-			</OBJECT>			
-		
-			<OBJECT ID = "XLH0C1I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			</OBJECT>
+
+			<OBJECT ID = "XLH0C1I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "-1071.909" Y ="0.327" Z="-2.484" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "0.025667" RY="0.448556" RZ="0.040667" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "0.025667" RY="0.448556" RZ="0.040667" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C1ILH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "50.087" Y ="230.816" Z="-407.166" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -421,16 +421,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C1ILL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "50.062" Y ="230.807" Z="-419.166" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -438,16 +438,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C1IRH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "49.810" Y ="-231.259" Z="-407.179" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -455,16 +455,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C1IRL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "49.816" Y ="-231.267" Z="-419.179" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -472,33 +472,33 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>							
+					</OBJECT>
 			</OBJECT>
 
-			<OBJECT ID = "XLH0C1O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			<OBJECT ID = "XLH0C1O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 				<GEOM>
-					<FRAME> 
+					<FRAME>
 						<ORIGIN X = "-742.074" Y ="0.129" Z="-2.447" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-						<ROTATION RX = "0.031333" RY="0.063222" RZ="0.108111" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+						<ROTATION RX = "0.031333" RY="0.063222" RZ="0.108111" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 						<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 						<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 					</FRAME>
 					<EXPANSION>
 						<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-						<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-						<P_CONST> 1.0004 </P_CONST> 
-						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+						<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+						<P_CONST> 1.0004 </P_CONST>
+						<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 					</EXPANSION>
 				</GEOM>
 					<OBJECT ID = "XLH0C1OLH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.466" Y ="260.070" Z="-332.043" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -506,16 +506,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C1OLL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.453" Y ="260.065" Z="-344.043" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -523,16 +523,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C1ORH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.528" Y ="-259.890" Z="-332.044" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -540,16 +540,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C1ORL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.526" Y ="-259.893" Z="-344.044" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -557,34 +557,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>					
+					</OBJECT>
 			</OBJECT>
 
-			
-			<OBJECT ID = "XLH0C2I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+
+			<OBJECT ID = "XLH0C2I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "-731.111" Y ="0.176" Z="-2.594" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "0.025444" RY="0.302333" RZ="0.064667" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "0.025444" RY="0.302333" RZ="0.064667" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C2ILH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.150" Y ="230.931" Z="-373.080" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -592,16 +592,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C2ILL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.131" Y ="230.930" Z="-385.080" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -609,16 +609,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C2IRH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.684" Y ="-230.988" Z="-373.078" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -626,16 +626,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C2IRL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.687" Y ="-230.989" Z="-385.078" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -643,33 +643,33 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>							
+					</OBJECT>
 				</OBJECT>
-		
-			<OBJECT ID = "XLH0C2O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+
+			<OBJECT ID = "XLH0C2O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "-401" Y ="0.202" Z="-2.666" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "0.004778" RY="0.135778" RZ="0.092444" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "0.004778" RY="0.135778" RZ="0.092444" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C2OLH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.986" Y ="280.968" Z="-381.087" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -677,16 +677,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C2OLL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-5.010" Y ="280.967" Z="-393.087" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -694,16 +694,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C2ORH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.155" Y ="-280.952" Z="-381.084" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -711,16 +711,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C2ORL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.128" Y ="-280.944" Z="-393.084" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -728,34 +728,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 				</OBJECT>
 
-			
-			<OBJECT ID = "XLH0SI" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+
+			<OBJECT ID = "XLH0SI" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "-372.162" Y ="0.188" Z="-2.673" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.957222" RY="0.087333" RZ="0.191111" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.957222" RY="0.087333" RZ="0.191111" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0SILH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.198" Y ="294.982" Z="-381.071" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -763,16 +763,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0SILL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.208" Y ="294.981" Z="-393.071" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -780,16 +780,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0SIRH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.279" Y ="-294.985" Z="-381.072" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -797,16 +797,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0SIRL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.250" Y ="-294.983" Z="-393.072" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -814,33 +814,33 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 				</OBJECT>
 
-			<OBJECT ID = "XLH0SO" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			<OBJECT ID = "XLH0SO" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "20.493" Y ="0.202" Z="-2.533" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.977556" RY="399.964333" RZ="0.001778" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.977556" RY="399.964333" RZ="0.001778" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0SOLH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.460" Y ="230.986" Z="-347.089" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -848,16 +848,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0SOLL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.455" Y ="230.984" Z="-359.089" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -865,16 +865,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0SORH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.381" Y ="-230.974" Z="-347.090" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -882,16 +882,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0SORL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.382" Y ="-230.976" Z="-359.090" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -899,34 +899,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 				</OBJECT>
 
-				
-			<OBJECT ID = "XLH0C3I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+
+			<OBJECT ID = "XLH0C3I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "51.261" Y ="0.24" Z="-2.479" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.944" RY="0.283889" RZ="0.106" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.944" RY="0.283889" RZ="0.106" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C3ILH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.627" Y ="270.947" Z="-347.016" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -934,16 +934,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C3ILL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.627" Y ="270.938" Z="-359.016" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -951,16 +951,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C3IRH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.336" Y ="-271.089" Z="-347.004" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -968,16 +968,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C3IRL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.290" Y ="-271.101" Z="-359.004" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -985,34 +985,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 				</OBJECT>
 
 
-			<OBJECT ID = "XLH0C3O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			<OBJECT ID = "XLH0C3O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "381.181" Y ="0.238" Z="-2.58" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.94" RY="0.034" RZ="0.071333" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.94" RY="0.034" RZ="0.071333" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C3OLH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.465" Y ="219.970" Z="-381.036" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1020,16 +1020,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C3OLL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.474" Y ="219.981" Z="-393.036" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1037,16 +1037,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C3ORH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.721" Y ="-220.010" Z="-381.031" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1054,16 +1054,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C3ORL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.701" Y ="-220.006" Z="-393.031" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1071,34 +1071,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 				</OBJECT>
 
 
-			<OBJECT ID = "XLH0C4I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			<OBJECT ID = "XLH0C4I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "392.198" Y ="0.209" Z="-2.524" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.923" RY="0.054444" RZ="399.980556" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.923" RY="0.054444" RZ="399.980556" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C4ILH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.452" Y ="206.999" Z="-381.075" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1106,16 +1106,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C4ILL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.420" Y ="207.003" Z="-393.075" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1123,16 +1123,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C4IRH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.876" Y ="-207.007" Z="-381.075" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1140,16 +1140,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C4IRL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.909" Y ="-207.011" Z="-393.075" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1157,34 +1157,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 				</OBJECT>
 
 
-			<OBJECT ID = "XLH0C4O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			<OBJECT ID = "XLH0C4O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "722.662" Y ="0.228" Z="-2.458" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.928" RY="0.209556" RZ="0.01" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.928" RY="0.209556" RZ="0.01" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C4OLH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.485" Y ="271.014" Z="-373.033" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1192,16 +1192,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C4OLL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.461" Y ="271.023" Z="-385.033" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1209,16 +1209,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C4ORH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.305" Y ="-270.920" Z="-373.029" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1226,16 +1226,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C4ORL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-4.288" Y ="-270.908" Z="-385.029" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1243,34 +1243,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 				</OBJECT>
 
 
-			<OBJECT ID = "XLH0C5I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			<OBJECT ID = "XLH0C5I" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "733.372" Y ="0.23" Z="-2.442" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.889556" RY="399.780111" RZ="0.000222" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.889556" RY="399.780111" RZ="0.000222" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C5ILH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.545" Y ="242.973" Z="-332.067" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1278,16 +1278,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C5ILL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.547" Y ="242.974" Z="-344.067" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1295,16 +1295,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C5IRH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.391" Y ="-242.994" Z="-332.066" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1312,16 +1312,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C5IRL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "4.358" Y ="-242.998" Z="-344.066" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1329,34 +1329,34 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 				</OBJECT>
 
 
-			<OBJECT ID = "XLH0C5O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->	
+			<OBJECT ID = "XLH0C5O" TYPE="DEFAULT"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 					<GEOM>
-						<FRAME> 
+						<FRAME>
 							<ORIGIN X = "1063.643" Y ="0.224" Z="-2.411" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
-							<ROTATION RX = "399.88" RY="399.642778" RZ="0.168889" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" /> 
+							<ROTATION RX = "399.88" RY="399.642778" RZ="0.168889" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 							<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
 							<CONSTRAINTS_ROT ALLOW_RX="N" ALLOW_RY="N" ALLOW_RZ="N"/>
 						</FRAME>
 						<EXPANSION>
 							<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-							<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-							<P_CONST> 1.0004 </P_CONST> 
-							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+							<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+							<P_CONST> 1.0004 </P_CONST>
+							<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 						</EXPANSION>
 					</GEOM>
 					<OBJECT ID = "XLH0C5OLH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-50.175" Y ="271.303" Z="-407.129" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1364,16 +1364,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C5OLL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-50.157" Y ="271.306" Z="-419.129" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1381,16 +1381,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
-					</OBJECT>	
+					</OBJECT>
 					<OBJECT ID = "XLH0C5ORH" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-50.967" Y ="-270.684" Z="-407.122" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1398,16 +1398,16 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
 					<OBJECT ID = "XLH0C5ORL" TYPE="SOURCE"> <!-- NB: TYPE = DEFAULT, VIEWPORT, MOUNT, SOURCE -->
 						<GEOM>
-							<FRAME> 
+							<FRAME>
 								<ORIGIN X = "-50.928" Y ="-270.669" Z="-419.122" SIG_X="0.01" SIG_Y="0.01" SIG_Z="0.01"/>
 								<ROTATION RX = "0" RY="0" RZ="0" SIG_RX="0.01" SIG_RY="0.01" SIG_RZ="0.01" />
 								<CONSTRAINTS_TRANS ALLOW_TX="N" ALLOW_TY="N" ALLOW_TZ="N" />
@@ -1415,14 +1415,14 @@ Plates:
 							</FRAME>
 							<EXPANSION>
 								<CALIB T_CALIB = "21.0" P_CALIB="1.0012" />
-								<T_SENSOR ID="TXM077" T_CORR="15.4"/> 
-								<P_CONST> 1.0004 </P_CONST> 
-								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />										
+								<T_SENSOR ID="TXM077" T_CORR="15.4"/>
+								<P_CONST> 1.0004 </P_CONST>
+								<COEFF C_X = "0.001" C_Y="0.0033" C_Z="0.0024" C_RX="0.0007" C_RY="-0.00076" C_RZ="0.00056" />
 							</EXPANSION>
-						</GEOM>	
+						</GEOM>
 						<SOURCE TYPE="GLB" DIAM="4.0" INDEX="1.999"/>
 					</OBJECT>
-				</OBJECT>	
+				</OBJECT>
 	</OBJECT>
-	
+
 </SYSTEM_DESC>

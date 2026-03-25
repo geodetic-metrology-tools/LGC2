@@ -7,22 +7,20 @@
 #ifndef _LGCDEFAULTS_H_
 #define _LGCDEFAULTS_H_
 
-
 /*!
    \file
    \ingroup LGCProject
    Default program constants shared among the classes.
 */
 
-//STL
+// STL
 #include <limits>
-//SURVEYLIB
+// SURVEYLIB
 #include <Quad.h>
-
 
 /*!
  *  \addtogroup ConstantsDefaults
- *  @{ 
+ *  @{
  */
 
 /*!@name Default values for LGC2 */
@@ -37,34 +35,40 @@ static const TReal FAUT_DEF_ALPHA = 0.01; //  1 %
 static const TReal FAUT_DEF_BETA = 0.1; // 10 %
 
 /// Allowed characters to separate fields in the input file.
-static const char* const INPUT_SEPERATOR_CHARS = " \t";
+static const char *const INPUT_SEPERATOR_CHARS = " \t";
 /// Comment characters for line comments
-static const char* const INPUT_COMMENT_CHARS = "%$";
+static const char *const INPUT_COMMENT_CHARS = "%$";
 /// Deactivate the oject defined in the line in front of which this character appears
-static const char* const DEACTIVATION_CHAR = "#";
+static const char *const DEACTIVATION_CHAR = "#";
 
 /// Default maximal number of iterations
 static const int MAX_ITERATIONS = 80;
 
-namespace LGC {
-	///Conversion factor for the unitless vector (UVEC and UVD)
-	static const TReal VECCONV = 0.001;
-	static const TReal VECCONVINV = 1000;
-}
+namespace LGC
+{
+/// Conversion factor for the unitless vector (UVEC and UVD)
+static const TReal VECCONV = 0.001;
+static const TReal VECCONVINV = 1000;
+} // namespace LGC
 
 /// Access coordinate axes or rotations around axes by their index
-enum { X, Y, Z, H = 2 };
+enum
+{
+	X,
+	Y,
+	Z,
+	H = 2
+};
 //@}
 
 /*! @} End of Doxygen Groups*/
 
-
 /*!
  *  \addtogroup ConstantsDefaults
- *  @{ 
+ *  @{
  */
-	static const TReal EPSILON = std::numeric_limits<TReal>::min();  //!< Smallest value of a real value, used for fuzzy comparison
-	static const TReal nullLimit = 1e-15;  //!< Limit below which a number is to small and treated as zero.
+static const TReal EPSILON = std::numeric_limits<TReal>::min(); //!< Smallest value of a real value, used for fuzzy comparison
+static const TReal nullLimit = 1e-15; //!< Limit below which a number is to small and treated as zero.
 
 /*! @} End of Doxygen Groups*/
 

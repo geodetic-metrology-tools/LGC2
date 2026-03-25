@@ -14,7 +14,7 @@
 static std::string getLGCVersion(void) {
 	std::stringstream ss;
 	ss << "v" << LGC_VERSION_MAJOR  << "." << LGC_VERSION_MINOR << "." << LGC_VERSION_PATCH;
-	
+
 	return ss.str();
 }
 

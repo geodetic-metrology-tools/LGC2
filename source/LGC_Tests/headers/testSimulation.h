@@ -5,7 +5,7 @@
  */
 
 #ifndef _SimuTest
-#	define _SimuTest
+#define _SimuTest
 
 /*Non TSTN and non CAM tests, like levelling, DLEV, ECHO, DVER, etc.*/
 namespace Simu

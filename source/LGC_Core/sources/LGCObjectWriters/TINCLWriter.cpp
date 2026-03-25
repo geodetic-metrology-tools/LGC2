@@ -47,7 +47,8 @@ void TINCLWriter::writeINCLResultsHeader()
 	(*stream).writeString(obsResWidth, "ACSE"); // ACSE Value
 	(*stream).writeString(obsWidth, "RF"); // RF value
 	(*stream).writeString(obsResWidth, "RFSE"); // RFSE value
-	if (obsIdWidth != 0) (*stream).writeString(obsIdWidth, "ID"); // Observation identifier
+	if (obsIdWidth != 0)
+		(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << "\n";
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -82,30 +83,30 @@ void TINCLWriter::writeROLLYResults(const TROLLYROM &rollyrom)
 
 /*
  * Common INCL Results Helper
- * 
+ *
  * Unified template function that handles both INCLY and ROLLY results output.
  * Eliminates code duplication by accepting the measurement list and type-specific parameters.
- * 
+ *
  * @param measurements: List of measurements (INCLY or ROLLY)
  * @param sectionTitle: Title to write in output ("INCLY" or "ROLLY")
  * @param obsType: Observation type identifier for descriptions
  */
 template<typename MeasurementList>
-void TINCLWriter::writeINCLResultsHelper(const MeasurementList& measurements, const char* sectionTitle, TALGCObjectWriter::ELGCObservations obsType)
+void TINCLWriter::writeINCLResultsHelper(const MeasurementList &measurements, const char *sectionTitle, TALGCObjectWriter::ELGCObservations obsType)
 {
 	// Get output stream and configure formatting parameters
 	TAStreamFormatter *stream = getStream();
-	
+
 	// Configure column widths for consistent tabular output
-	int nameWidth = getNameWidth();           // Width for target names and IDs
-	int obsWidth = getObsWidth();             // Width for observed/estimated values
-	int obsResWidth = getObsResWidth();       // Width for residual and uncertainty values
-	int obsIdWidth = getObsIdWidth();         // Width for observation identifiers
-	
+	int nameWidth = getNameWidth(); // Width for target names and IDs
+	int obsWidth = getObsWidth(); // Width for observed/estimated values
+	int obsResWidth = getObsResWidth(); // Width for residual and uncertainty values
+	int obsIdWidth = getObsIdWidth(); // Width for observation identifiers
+
 	// Configure precision for different value types
-	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);  // Precision for residuals (reduced by 4 for readability)
-	int anglePrecision = getAnglePrecision();                               // Precision for main angle values
-	
+	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0); // Precision for residuals (reduced by 4 for readability)
+	int anglePrecision = getAnglePrecision(); // Precision for main angle values
+
 	// Get indentation for consistent formatting
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
@@ -120,8 +121,8 @@ void TINCLWriter::writeINCLResultsHelper(const MeasurementList& measurements, co
 	// Process each measurement in the list
 	for (auto const &measurement : measurements)
 	{
-		(*stream) << TABs;  // Apply consistent indentation
-		
+		(*stream) << TABs; // Apply consistent indentation
+
 		// Column 1: TARGET POSITION - Name of the measured target point
 		(*stream).writeStringLeft(nameWidth, measurement.targetPos->getName());
 
@@ -160,34 +161,34 @@ void TINCLWriter::writeINCLResultsHelper(const MeasurementList& measurements, co
 
 		// Column 13: RFSE - Standard error of reference correction in cc (uncertainty in reference correction)
 		(*stream).writeDouble(obsResWidth, angleResPrecision, measurement.target.refSigmaCorrectionValue.getSignedCCValue());
-	
+
 		// Column 14: OBSERVATION ID - Unique identifier for this measurement
 		(*stream).writeString(obsIdWidth, measurement.obsID);
 
 		// End of measurement row
 		(*stream) << "\n";
 	}
-	
+
 	// Add final spacing for readability
 	(*stream) << "\n";
 }
 
 /*
  * ROLLY Simulation Results Writer
- * 
+ *
  * Generates simulation output reports for ROLLY inclinometer measurements. This function
  * is used during simulation runs to output predicted measurement values, quality metrics,
  * and statistical summaries without performing actual least squares adjustment.
- * 
+ *
  * The simulation output provides:
  * - Predicted measurement values based on current parameter estimates
  * - Quality indicators and uncertainty projections
  * - Statistical summaries for simulation validation and analysis
  * - Comparison data for simulation vs. actual measurement scenarios
- * 
+ *
  * @param rollyrom: ROLLY Round of Measurements object containing simulation data,
  *                   predicted values, and quality parameters for simulation analysis
- * 
+ *
  * @note This function is distinct from writeROLLYResults() as it outputs simulation
  *       predictions rather than actual measurement results. It uses the same formatting
  *       structure for consistency but focuses on simulated measurement scenarios.
@@ -196,18 +197,19 @@ void TINCLWriter::writeROLLYSIMUResults(const TROLLYROM &rollyrom)
 {
 	// Get output stream and configure formatting parameters
 	TAStreamFormatter *stream = getStream();
-	
+
 	// Get separator character for consistent formatting (typically space or tab)
 	std::string separator = getSeparator();
-	
+
 	// Configure indentation for simulation output formatting
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
 	// Write observation title with measurement count for simulation context
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kROLLY), (int)rollyrom.measROLLY.size());
-	
+
 	// Write simulation section header
-	(*stream) << TABs << "ROLLY" << "\n";
+	(*stream) << TABs << "ROLLY"
+			  << "\n";
 
 	// Generate comprehensive simulation results summary with enhanced indentation
 	// This includes predicted values, quality metrics, and statistical summaries
@@ -222,7 +224,8 @@ void TINCLWriter::writeINCLYSIMUResults(const TINCLYROM &inclyrom)
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
 	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kINCLY), (int)inclyrom.measINCLY.size());
-	(*stream) << TABs << "INCLY" << "\n";
+	(*stream) << TABs << "INCLY"
+			  << "\n";
 
 	writeAngleResultsSummary(inclyrom.getINCLYObsSummary(), stream->getCurrSpaceExtended(2));
 }
@@ -240,7 +243,6 @@ void TINCLWriter::writeINCLYReliabilityData(const TINCLYROM &inclyrom, const TLG
 	writeINCLReliabilityDataHelper(inclyrom, stat, measINCLY);
 }
 
-
 void TINCLWriter::writeROLLYReliabilityData(const TROLLYROM &rollyrom, const TLGCStatistic &stat, const std::list<TROLLY> &measROLLY)
 {
 	writeINCLReliabilityDataHelper(rollyrom, stat, measROLLY);
@@ -248,7 +250,7 @@ void TINCLWriter::writeROLLYReliabilityData(const TROLLYROM &rollyrom, const TLG
 
 /*
  * Common INCL Reliability Data Helper
- * 
+ *
  * Unified template function that handles both INCLY and ROLLY reliability data output.
 
  * @param rom: Round of measurements object (TINCLYROM or TROLLYROM)
@@ -256,19 +258,19 @@ void TINCLWriter::writeROLLYReliabilityData(const TROLLYROM &rollyrom, const TLG
  * @param measurements: List of measurements (INCLY or ROLLY) to process for reliability analysis
  */
 template<typename ROMType, typename MeasurementList>
-void TINCLWriter::writeINCLReliabilityDataHelper(const ROMType& rom, const TLGCStatistic& stat, const MeasurementList& measurements)
+void TINCLWriter::writeINCLReliabilityDataHelper(const ROMType &rom, const TLGCStatistic &stat, const MeasurementList &measurements)
 {
 	// Get output stream and configure formatting parameters
 	TAStreamFormatter *stream = getStream();
-	
+
 	// Configure column widths for consistent tabular output
-	int nameWidth = getNameWidth();           // Width for frame names, station points, and identifiers
-	int obsWidth = getObsWidth();             // Width for observed angle values
-	int obsResWidth = getObsResWidth();       // Width for uncertainty and residual values
-	
+	int nameWidth = getNameWidth(); // Width for frame names, station points, and identifiers
+	int obsWidth = getObsWidth(); // Width for observed angle values
+	int obsResWidth = getObsResWidth(); // Width for uncertainty and residual values
+
 	// Configure precision for different value types
-	int anglePrecision = getAnglePrecision();                               // Precision for main angle values
-	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);  // Precision for residuals (reduced by 4 for readability)
+	int anglePrecision = getAnglePrecision(); // Precision for main angle values
+	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0); // Precision for residuals (reduced by 4 for readability)
 
 	// Process each measurement in the list for reliability analysis
 	for (auto const &measurement : measurements)
@@ -281,16 +283,16 @@ void TINCLWriter::writeINCLReliabilityDataHelper(const ROMType& rom, const TLGCS
 
 		// Column 2: STATION POINT - Name of the measurement station/target point
 		(*stream).writeStringLeft(nameWidth, measurement.targetPos->getName());
-		
+
 		// Column 3: POINT 3 - Reserved for future use (currently empty)
 		(*stream).writeStringLeft(nameWidth, "");
 
 		// Column 4: OBSERVED ANGLE - Raw measured angle converted from radians to gon
 		(*stream).writeDouble(obsWidth, anglePrecision, measurement.getAngle().getGonsValue());
-		
+
 		// Column 5: STANDARD DEVIATION - Combined uncertainty (OBSE + PPM) in centesimal seconds [cc]
 		(*stream).writeDouble(obsResWidth, angleResPrecision, measurement.target.sigmaCombinedAngle.getSignedCCValue());
-		
+
 		// Column 6: RESIDUAL - Difference between observed and estimated angles in cc
 		(*stream).writeDouble(obsResWidth, angleResPrecision, measurement.getAngleResidual().getSignedCCValue());
 
@@ -347,44 +349,44 @@ void TINCLWriter::writeROLLYResultsSynthesis(std::list<const TLGCObsSummary *> &
 
 /*
  * Common INCL Results Synthesis Helper
- * 
+ *
  * Unified function that handles both INCLY and ROLLY results synthesis output.
  * Formats and outputs a summary table containing statistics including:
  * - Reference point names
  * - Maximum/minimum residuals in centesimal seconds (CC)
  * - Mean residuals and standard deviations
- * 
+ *
  * @param summaries: List of observation summaries containing measurement statistics
  */
 void TINCLWriter::writeINCLResultsSynthesisHelper(std::list<const TLGCObsSummary *> &summaries)
 {
 	// Get output stream and configure formatting parameters
 	TAStreamFormatter *stream = getStream();
-	int nameWidth = getNameWidth();           // Width for reference point names
-	int obsResWidth = getObsResWidth();       // Width for statistical values
-	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0);  // Precision for residuals (reduced by 4 for readability)
-	std::string TABs = stream->getCurrSpaceExtended(1);  // Indentation for consistent formatting
+	int nameWidth = getNameWidth(); // Width for reference point names
+	int obsResWidth = getObsResWidth(); // Width for statistical values
+	int angleResPrecision = std::max(getAngleResidualPrecision() - 4, 0); // Precision for residuals (reduced by 4 for readability)
+	std::string TABs = stream->getCurrSpaceExtended(1); // Indentation for consistent formatting
 
 	// Process each observation summary in the list
 	for (auto const &summary : summaries)
 	{
-		(*stream) << TABs;  // Apply consistent indentation
-		
+		(*stream) << TABs; // Apply consistent indentation
+
 		// Column 1: REFERENCE POINT - Name/identifier of the observation point
 		(*stream).writeStringLeft(nameWidth, summary->getObsText());
-		
+
 		// Column 2: MAXIMUM RESIDUAL - Largest residual value in CC
 		(*stream).writeDouble(obsResWidth, angleResPrecision, summary->getResMax());
-		
-		// Column 3: MINIMUM RESIDUAL - Smallest residual value in CC  
+
+		// Column 3: MINIMUM RESIDUAL - Smallest residual value in CC
 		(*stream).writeDouble(obsResWidth, angleResPrecision, summary->getResMin());
-		
+
 		// Column 4: MEAN RESIDUAL - Average residual value in CC
 		(*stream).writeDouble(obsResWidth, angleResPrecision, summary->getMean());
-		
+
 		// Column 5: STANDARD DEVIATION - Statistical spread of residuals in CC
 		(*stream).writeDouble(obsResWidth, angleResPrecision, summary->getStdev());
-		
+
 		// End of summary row
 		(*stream) << "\n";
 	}

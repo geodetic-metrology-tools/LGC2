@@ -105,49 +105,49 @@ void TWPSRWriter::writeECWIResults(const TECWIROM &ecwirom)
 		(*stream).writeStringLeft(nameWidth, ItECWI.targetPos->getName());
 
 		// write the observed X Distance
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX)); 
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX));
 
 		// write the sigma X Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedX.getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedX.getMMetresValue());
 
 		// write the estimated X Distance
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX) + ItECWI.getDistanceResidual(EECWIDistances::kX)); 
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kX) + ItECWI.getDistanceResidual(EECWIDistances::kX));
 
 		// write the residual for X Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kX).getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kX).getMMetresValue());
 
 		// write the residual/sigma for X Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kX) / ItECWI.target.sigmaCombinedX); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kX) / ItECWI.target.sigmaCombinedX);
 
 		// write the observed Z Distance
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ)); 
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ));
 
 		// write the sigma Z Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedZ.getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaCombinedZ.getMMetresValue());
 
 		// write the estimated Z Distance
-		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ) + ItECWI.getDistanceResidual(EECWIDistances::kZ)); 
+		(*stream).writeDouble(obsWidth, lengthPrecision, ItECWI.getDistance(EECWIDistances::kZ) + ItECWI.getDistanceResidual(EECWIDistances::kZ));
 
 		// write the residual for Z Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kZ).getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kZ).getMMetresValue());
 
 		// write the residual/sigma for Z Distance
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.getDistanceResidual(EECWIDistances::kZ) / ItECWI.target.sigmaCombinedZ);
 
 		// write the OBSE for X Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaX.getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaX.getMMetresValue());
 
 		// write the Instrument Centering for X Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaInstrCenteringX.getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaInstrCenteringX.getMMetresValue());
 
 		// write the OBSE for Z Distance
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaZ.getMMetresValue());
 
 		// write the Instrument Centering for Z Distance
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaInstrCenteringZ.getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaInstrCenteringZ.getMMetresValue());
 
 		// write the precision of the wire
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaWire.getMMetresValue()); 
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItECWI.target.sigmaWire.getMMetresValue());
 
 		// write the scale ID
 		(*stream).writeString(nameWidth, ItECWI.target.ID);

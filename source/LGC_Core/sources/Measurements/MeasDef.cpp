@@ -89,14 +89,7 @@ TPdorObs::TPdorObs(const LGCAdjustablePoint &cala, const LGCAdjustablePoint &ori
 }
 
 TPdorObs::TPdorObs() :
-	calaPt(nullptr),
-	orientationPt(nullptr),
-	fSigmaObsVal(0.0000001, TAngle::EUnits::kGons),
-	fbearing(NO_VALf),
-	TAMeas<int>(*orientationPt, 0),
-	fIsInitialise(false),
-	fDefined(false),
-	fbearingResidual(NO_VALf)
+	calaPt(nullptr), orientationPt(nullptr), fSigmaObsVal(0.0000001, TAngle::EUnits::kGons), fbearing(NO_VALf), TAMeas<int>(*orientationPt, 0), fIsInitialise(false), fDefined(false), fbearingResidual(NO_VALf)
 {
 	// Set TAMeas<int>::targetPos nullptr here, since the TAMeas
 	// constructor leaves an invalid reference as its value:
@@ -143,16 +136,7 @@ TOBSXYZ::TOBSXYZ() :
 }
 
 TOBSXYZ::TOBSXYZ(const LGCAdjustablePoint &point, TPositionVector pos, TLength sigX, TLength sigY, TLength sigZ, TDataTreeIterator itTree) :
-	station(&point),
-	obsValue(pos),
-	fXResidual(NO_VALf),
-	fYResidual(NO_VALf),
-	fZResidual(NO_VALf),
-	fXSigmaObsVal(sigX),
-	fYSigmaObsVal(sigY),
-	fZSigmaObsVal(sigZ),
-	positionInTree(itTree),
-	TAMeas<int>(point, 0)
+	station(&point), obsValue(pos), fXResidual(NO_VALf), fYResidual(NO_VALf), fZResidual(NO_VALf), fXSigmaObsVal(sigX), fYSigmaObsVal(sigY), fZSigmaObsVal(sigZ), positionInTree(itTree), TAMeas<int>(point, 0)
 {
 	fMeasIdx.eqDim = 3;
 	fMeasIdx.obsDim = 3;

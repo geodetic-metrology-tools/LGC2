@@ -1,32 +1,32 @@
 
 
-                          ****               ******              *****                                                              
-                          ****            ************        ***********                                                           
-                          ****           *****     ****      *****    ****                                                          
-                          ****          ****        ****    ****       ****       ****           ****                               
-                          ****          ****                ****                  ****           ****                               
-                          ****          ****                ****                  ****           ****                               
- ***********************  ****          ****      *******   ****              ************   ************   *********************** 
- ***********************  ****          ****      *******   ****              ************   ************   *********************** 
-                          ****          ****       ******   ****       ****       ****           ****                               
-                          ***********    ****     **** **    ****     ****        ****           ****                               
-                          ***********     ***********         ***********         ****           ****                               
-                          ***********        *****               *****                                                              
+                          ****               ******              *****
+                          ****            ************        ***********
+                          ****           *****     ****      *****    ****
+                          ****          ****        ****    ****       ****       ****           ****
+                          ****          ****                ****                  ****           ****
+                          ****          ****                ****                  ****           ****
+ ***********************  ****          ****      *******   ****              ************   ************   ***********************
+ ***********************  ****          ****      *******   ****              ************   ************   ***********************
+                          ****          ****       ******   ****       ****       ****           ****
+                          ***********    ****     **** **    ****     ****        ****           ****
+                          ***********     ***********         ***********         ****           ****
+                          ***********        *****               *****
 
 
 
-*********************************************************************************************************************************** 
+***********************************************************************************************************************************
 
 
 
 LGC++ v1.13.00 compiled against SurveyLib v3.03.07 on Nov 23 2015
 Copyright 2003-2013, CERN SU. All rights reserved.
-*********************************************************************************************************************************** 
+***********************************************************************************************************************************
 Testing Input Matrices Filler.
 
 
 CALCUL DU 25 November 2015 08:30:17
-*********************************************************************************************************************************** 
+***********************************************************************************************************************************
 
 
 
@@ -74,34 +74,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34887                    0.80                    2.94 
-
-
+PT              0.00000      0.00000   2049.34887                    0.80                    2.94
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -120,34 +120,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34733                    0.80                    1.40 
-
-
+PT              0.00000      0.00000   2049.34733                    0.80                    1.40
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -166,34 +166,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34559                    0.80                   -0.35 
-
-
+PT              0.00000      0.00000   2049.34559                    0.80                   -0.35
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -212,34 +212,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34675                    0.80                    0.82 
-
-
+PT              0.00000      0.00000   2049.34675                    0.80                    0.82
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -258,34 +258,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34512                    0.80                   -0.82 
-
-
+PT              0.00000      0.00000   2049.34512                    0.80                   -0.82
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -304,34 +304,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34623                    0.80                    0.30 
-
-
+PT              0.00000      0.00000   2049.34623                    0.80                    0.30
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -350,34 +350,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34515                    0.80                   -0.79 
-
-
+PT              0.00000      0.00000   2049.34515                    0.80                   -0.79
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -396,34 +396,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34591                    0.80                   -0.02 
-
-
+PT              0.00000      0.00000   2049.34591                    0.80                   -0.02
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -442,34 +442,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34551                    0.80                   -0.42 
-
-
+PT              0.00000      0.00000   2049.34551                    0.80                   -0.42
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -488,34 +488,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34513                    0.80                   -0.80 
-
-
+PT              0.00000      0.00000   2049.34513                    0.80                   -0.80
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -534,34 +534,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34631                    0.80                    0.37 
-
-
+PT              0.00000      0.00000   2049.34631                    0.80                    0.37
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -580,34 +580,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34577                    0.80                   -0.16 
-
-
+PT              0.00000      0.00000   2049.34577                    0.80                   -0.16
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -626,34 +626,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34543                    0.80                   -0.50 
-
-
+PT              0.00000      0.00000   2049.34543                    0.80                   -0.50
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -672,34 +672,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34622                    0.80                    0.29 
-
-
+PT              0.00000      0.00000   2049.34622                    0.80                    0.29
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -718,34 +718,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34633                    0.80                    0.39 
-
-
+PT              0.00000      0.00000   2049.34633                    0.80                    0.39
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -764,34 +764,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34571                    0.80                   -0.23 
-
-
+PT              0.00000      0.00000   2049.34571                    0.80                   -0.23
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -810,34 +810,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34786                    0.80                    1.93 
-
-
+PT              0.00000      0.00000   2049.34786                    0.80                    1.93
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -856,34 +856,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34512                    0.80                   -0.81 
-
-
+PT              0.00000      0.00000   2049.34512                    0.80                   -0.81
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -902,34 +902,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34569                    0.80                   -0.24 
-
-
+PT              0.00000      0.00000   2049.34569                    0.80                   -0.24
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -948,34 +948,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34727                    0.80                    1.34 
-
-
+PT              0.00000      0.00000   2049.34727                    0.80                    1.34
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -994,34 +994,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34505                    0.80                   -0.88 
-
-
+PT              0.00000      0.00000   2049.34505                    0.80                   -0.88
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1040,34 +1040,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34614                    0.80                    0.21 
-
-
+PT              0.00000      0.00000   2049.34614                    0.80                    0.21
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1086,34 +1086,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34600                    0.80                    0.07 
-
-
+PT              0.00000      0.00000   2049.34600                    0.80                    0.07
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1132,34 +1132,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34598                    0.80                    0.05 
-
-
+PT              0.00000      0.00000   2049.34598                    0.80                    0.05
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1178,34 +1178,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34583                    0.80                   -0.10 
-
-
+PT              0.00000      0.00000   2049.34583                    0.80                   -0.10
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1224,34 +1224,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34443                    0.80                   -1.50 
-
-
+PT              0.00000      0.00000   2049.34443                    0.80                   -1.50
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1270,34 +1270,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34642                    0.80                    0.49 
-
-
+PT              0.00000      0.00000   2049.34642                    0.80                    0.49
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1316,34 +1316,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34590                    0.80                   -0.03 
-
-
+PT              0.00000      0.00000   2049.34590                    0.80                   -0.03
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1362,34 +1362,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34562                    0.80                   -0.31 
-
-
+PT              0.00000      0.00000   2049.34562                    0.80                   -0.31
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1408,34 +1408,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34520                    0.80                   -0.74 
-
-
+PT              0.00000      0.00000   2049.34520                    0.80                   -0.74
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1454,34 +1454,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34501                    0.80                   -0.92 
-
-
+PT              0.00000      0.00000   2049.34501                    0.80                   -0.92
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1500,34 +1500,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34587                    0.80                   -0.06 
-
-
+PT              0.00000      0.00000   2049.34587                    0.80                   -0.06
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1546,34 +1546,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34606                    0.80                    0.13 
-
-
+PT              0.00000      0.00000   2049.34606                    0.80                    0.13
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1592,34 +1592,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34702                    0.80                    1.09 
-
-
+PT              0.00000      0.00000   2049.34702                    0.80                    1.09
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1638,34 +1638,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34659                    0.80                    0.66 
-
-
+PT              0.00000      0.00000   2049.34659                    0.80                    0.66
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1684,34 +1684,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34506                    0.80                   -0.87 
-
-
+PT              0.00000      0.00000   2049.34506                    0.80                   -0.87
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1730,34 +1730,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34544                    0.80                   -0.49 
-
-
+PT              0.00000      0.00000   2049.34544                    0.80                   -0.49
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1776,34 +1776,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34617                    0.80                    0.24 
-
-
+PT              0.00000      0.00000   2049.34617                    0.80                    0.24
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1822,34 +1822,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34585                    0.80                   -0.08 
-
-
+PT              0.00000      0.00000   2049.34585                    0.80                   -0.08
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1868,34 +1868,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34526                    0.80                   -0.67 
-
-
+PT              0.00000      0.00000   2049.34526                    0.80                   -0.67
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1914,34 +1914,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34430                    0.80                   -1.63 
-
-
+PT              0.00000      0.00000   2049.34430                    0.80                   -1.63
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -1960,34 +1960,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34692                    0.80                    0.99 
-
-
+PT              0.00000      0.00000   2049.34692                    0.80                    0.99
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2006,34 +2006,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34572                    0.80                   -0.22 
-
-
+PT              0.00000      0.00000   2049.34572                    0.80                   -0.22
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2052,34 +2052,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34653                    0.80                    0.60 
-
-
+PT              0.00000      0.00000   2049.34653                    0.80                    0.60
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2098,34 +2098,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34526                    0.80                   -0.68 
-
-
+PT              0.00000      0.00000   2049.34526                    0.80                   -0.68
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2144,34 +2144,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34601                    0.80                    0.08 
-
-
+PT              0.00000      0.00000   2049.34601                    0.80                    0.08
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2190,34 +2190,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34559                    0.80                   -0.34 
-
-
+PT              0.00000      0.00000   2049.34559                    0.80                   -0.34
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2236,34 +2236,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34506                    0.80                   -0.87 
-
-
+PT              0.00000      0.00000   2049.34506                    0.80                   -0.87
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2282,34 +2282,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34518                    0.80                   -0.75 
-
-
+PT              0.00000      0.00000   2049.34518                    0.80                   -0.75
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2328,34 +2328,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34589                    0.80                   -0.04 
-
-
+PT              0.00000      0.00000   2049.34589                    0.80                   -0.04
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2374,34 +2374,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34517                    0.80                   -0.76 
-
-
+PT              0.00000      0.00000   2049.34517                    0.80                   -0.76
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2420,34 +2420,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34684                    0.80                    0.91 
-
-
+PT              0.00000      0.00000   2049.34684                    0.80                    0.91
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2466,34 +2466,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34495                    0.80                   -0.98 
-
-
+PT              0.00000      0.00000   2049.34495                    0.80                   -0.98
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2512,34 +2512,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34648                    0.80                    0.55 
-
-
+PT              0.00000      0.00000   2049.34648                    0.80                    0.55
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2558,34 +2558,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34745                    0.80                    1.51 
-
-
+PT              0.00000      0.00000   2049.34745                    0.80                    1.51
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2604,34 +2604,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34746                    0.80                    1.53 
-
-
+PT              0.00000      0.00000   2049.34746                    0.80                    1.53
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2650,34 +2650,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34580                    0.80                   -0.13 
-
-
+PT              0.00000      0.00000   2049.34580                    0.80                   -0.13
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2696,34 +2696,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34445                    0.80                   -1.48 
-
-
+PT              0.00000      0.00000   2049.34445                    0.80                   -1.48
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2742,34 +2742,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34452                    0.80                   -1.41 
-
-
+PT              0.00000      0.00000   2049.34452                    0.80                   -1.41
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2788,34 +2788,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34671                    0.80                    0.78 
-
-
+PT              0.00000      0.00000   2049.34671                    0.80                    0.78
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2834,34 +2834,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34595                    0.80                    0.02 
-
-
+PT              0.00000      0.00000   2049.34595                    0.80                    0.02
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2880,34 +2880,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34494                    0.80                   -0.99 
-
-
+PT              0.00000      0.00000   2049.34494                    0.80                   -0.99
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2926,34 +2926,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34621                    0.80                    0.28 
-
-
+PT              0.00000      0.00000   2049.34621                    0.80                    0.28
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -2972,34 +2972,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34615                    0.80                    0.21 
-
-
+PT              0.00000      0.00000   2049.34615                    0.80                    0.21
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3018,34 +3018,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34558                    0.80                   -0.35 
-
-
+PT              0.00000      0.00000   2049.34558                    0.80                   -0.35
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3064,34 +3064,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34589                    0.80                   -0.04 
-
-
+PT              0.00000      0.00000   2049.34589                    0.80                   -0.04
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3110,34 +3110,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34657                    0.80                    0.63 
-
-
+PT              0.00000      0.00000   2049.34657                    0.80                    0.63
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3156,34 +3156,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34642                    0.80                    0.49 
-
-
+PT              0.00000      0.00000   2049.34642                    0.80                    0.49
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3202,34 +3202,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34595                    0.80                    0.01 
-
-
+PT              0.00000      0.00000   2049.34595                    0.80                    0.01
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3248,34 +3248,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A POSTERIORI
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34671                    1.80                    0.78 
-
-
+PT              0.00000      0.00000   2049.34671                    1.80                    0.78
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3294,34 +3294,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34734                    0.80                    1.40 
-
-
+PT              0.00000      0.00000   2049.34734                    0.80                    1.40
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3340,34 +3340,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34683                    0.80                    0.90 
-
-
+PT              0.00000      0.00000   2049.34683                    0.80                    0.90
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3386,34 +3386,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34620                    0.80                    0.27 
-
-
+PT              0.00000      0.00000   2049.34620                    0.80                    0.27
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3432,34 +3432,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A POSTERIORI
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34628                    1.67                    0.35 
-
-
+PT              0.00000      0.00000   2049.34628                    1.67                    0.35
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3478,34 +3478,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34666                    0.80                    0.72 
-
-
+PT              0.00000      0.00000   2049.34666                    0.80                    0.72
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3524,34 +3524,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34721                    0.80                    1.28 
-
-
+PT              0.00000      0.00000   2049.34721                    0.80                    1.28
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3570,34 +3570,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34550                    0.80                   -0.43 
-
-
+PT              0.00000      0.00000   2049.34550                    0.80                   -0.43
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3616,34 +3616,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34584                    0.80                   -0.09 
-
-
+PT              0.00000      0.00000   2049.34584                    0.80                   -0.09
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3662,34 +3662,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34549                    0.80                   -0.44 
-
-
+PT              0.00000      0.00000   2049.34549                    0.80                   -0.44
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3708,34 +3708,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34657                    0.80                    0.63 
-
-
+PT              0.00000      0.00000   2049.34657                    0.80                    0.63
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3754,34 +3754,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34433                    0.80                   -1.60 
-
-
+PT              0.00000      0.00000   2049.34433                    0.80                   -1.60
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3800,34 +3800,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34697                    0.80                    1.04 
-
-
+PT              0.00000      0.00000   2049.34697                    0.80                    1.04
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3846,34 +3846,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34630                    0.80                    0.36 
-
-
+PT              0.00000      0.00000   2049.34630                    0.80                    0.36
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3892,34 +3892,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34463                    0.80                   -1.30 
-
-
+PT              0.00000      0.00000   2049.34463                    0.80                   -1.30
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3938,34 +3938,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34625                    0.80                    0.31 
-
-
+PT              0.00000      0.00000   2049.34625                    0.80                    0.31
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -3984,34 +3984,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34575                    0.80                   -0.18 
-
-
+PT              0.00000      0.00000   2049.34575                    0.80                   -0.18
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4030,34 +4030,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34675                    0.80                    0.82 
-
-
+PT              0.00000      0.00000   2049.34675                    0.80                    0.82
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4076,34 +4076,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34501                    0.80                   -0.93 
-
-
+PT              0.00000      0.00000   2049.34501                    0.80                   -0.93
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4122,34 +4122,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34477                    0.80                   -1.16 
-
-
+PT              0.00000      0.00000   2049.34477                    0.80                   -1.16
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4168,34 +4168,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34518                    0.80                   -0.75 
-
-
+PT              0.00000      0.00000   2049.34518                    0.80                   -0.75
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4214,34 +4214,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34705                    0.80                    1.12 
-
-
+PT              0.00000      0.00000   2049.34705                    0.80                    1.12
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4260,34 +4260,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34672                    0.80                    0.79 
-
-
+PT              0.00000      0.00000   2049.34672                    0.80                    0.79
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4306,34 +4306,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34509                    0.80                   -0.84 
-
-
+PT              0.00000      0.00000   2049.34509                    0.80                   -0.84
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4352,34 +4352,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34560                    0.80                   -0.33 
-
-
+PT              0.00000      0.00000   2049.34560                    0.80                   -0.33
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4398,34 +4398,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34697                    0.80                    1.04 
-
-
+PT              0.00000      0.00000   2049.34697                    0.80                    1.04
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4444,34 +4444,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34513                    0.80                   -0.80 
-
-
+PT              0.00000      0.00000   2049.34513                    0.80                   -0.80
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4490,34 +4490,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34659                    0.80                    0.66 
-
-
+PT              0.00000      0.00000   2049.34659                    0.80                    0.66
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4536,34 +4536,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34509                    0.80                   -0.84 
-
-
+PT              0.00000      0.00000   2049.34509                    0.80                   -0.84
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4582,34 +4582,34 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34486                    0.80                   -1.07 
-
-
+PT              0.00000      0.00000   2049.34486                    0.80                   -1.07
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 ) 
+
+
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 0 )
 
        RESIDU MOYEN =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
-       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000) 
+       ECART-TYPE   =    0.000  MM :  LIMITES DE CONFIANCE A 95.0 = (0.000, 0.000)
 
 
 
@@ -4628,52 +4628,52 @@ LES ECARTS-TYPES SONT CALCULES PAR RAPPORT AU SIGMA ZERO A PRIORI (EGAL A 1)
 
 POINTS DE CALAGE (NB. = 4,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-STN             0.00000      0.00000   1999.34593                                                 
+STN             0.00000      0.00000   1999.34593
 
-REF             0.00000      0.00000   2199.34595                                                 
+REF             0.00000      0.00000   2199.34595
 
-PTCAL1        200.00000      0.00000   2129.40456                                                 
+PTCAL1        200.00000      0.00000   2129.40456
 
-PTCAL2        250.00000      0.00000   2799.41836                                                 
+PTCAL2        250.00000      0.00000   2799.41836
 
 
 
 POINTS VARIABLE EN Z UNIQUEMENT (NB. = 1,  REFERENTIEL = RS2K )
 
-       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ  
-                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM) 
+       NOM           X            Y            Z          H(G)     SX      SY      SZ      DX      DY      DZ
+                    (M)          (M)          (M)          (M)    (MM)    (MM)    (MM)    (MM)    (MM)    (MM)
 
-PT              0.00000      0.00000   2049.34541                    0.80                   -0.52 
-
-
+PT              0.00000      0.00000   2049.34541                    0.80                   -0.52
 
 
 
-DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 4 ) 
 
-POINT 1    POINT 2        OBSERVE   SIGMA     CALCULE  RESIDU     RES 
-                              (M)    (MM)         (M)    (MM)    /SIG 
 
-REF        STN         -199.99891    0.80  -200.00000   -1.09   -1.37 
+DISTANCES VERTICALES (DIGITAL LEVELING) (NB. = 4 )
 
-REF        PTCAL1       -70.00299    0.80   -70.00317   -0.19   -0.23 
+POINT 1    POINT 2        OBSERVE   SIGMA     CALCULE  RESIDU     RES
+                              (M)    (MM)         (M)    (MM)    /SIG
 
-REF        PTCAL2       599.99492    0.80   599.99512    0.20    0.24 
+REF        STN         -199.99891    0.80  -200.00000   -1.09   -1.37
 
-REF        PT          -150.00052    0.80  -150.00052    0.00    0.00 
+REF        PTCAL1       -70.00299    0.80   -70.00317   -0.19   -0.23
+
+REF        PTCAL2       599.99492    0.80   599.99512    0.20    0.24
+
+REF        PT          -150.00052    0.80  -150.00052    0.00    0.00
 
        RESIDU MOYEN =   -0.270  MM :  LIMITES DE CONFIANCE A 95.0 = (-0.906, 0.906)
-       ECART-TYPE   =    0.569  MM :  LIMITES DE CONFIANCE A 95.0 = (0.323, 2.123) 
+       ECART-TYPE   =    0.569  MM :  LIMITES DE CONFIANCE A 95.0 = (0.323, 2.123)
 
 
 
 
 
 
-*********************************************************************************************************************************** 
+***********************************************************************************************************************************
 
 
 
@@ -4683,19 +4683,15 @@ CALCUL DU 25 November 2015 08:30:17
 
 Testing Input Matrices Filler.
 
-*********************************************************************************************************************************** 
+***********************************************************************************************************************************
 
 
-    POINTS                                                                                              ECARTS-TYPES DES POINTS 
-                                                                                                         (SIG ZERO = 1          
-                                                                                                          R = SIGMA/ECART-TYPE) 
+    POINTS                                                                                              ECARTS-TYPES DES POINTS
+                                                                                                         (SIG ZERO = 1
+                                                                                                          R = SIGMA/ECART-TYPE)
 
-       NOM           DX              DX            DY              DY            DZ              DZ         SX      SY      SZ  
-                    (MM)            (MM)          (MM)            (MM)          (MM)            (MM)       (MM)    (MM)    (MM) 
-        PT                                                               MAX    2.94   MOYEN    0.00                       0.80 
-                                                                         MIN   -1.63   SIGMA    0.84  R                 1.05 
-OVERALL SIGMA = 0.84 
-
-
-
-
+       NOM           DX              DX            DY              DY            DZ              DZ         SX      SY      SZ
+                    (MM)            (MM)          (MM)            (MM)          (MM)            (MM)       (MM)    (MM)    (MM)
+        PT                                                               MAX    2.94   MOYEN    0.00                       0.80
+                                                                         MIN   -1.63   SIGMA    0.84  R                 1.05
+OVERALL SIGMA = 0.84

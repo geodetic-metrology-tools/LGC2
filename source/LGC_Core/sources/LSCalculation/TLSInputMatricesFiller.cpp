@@ -1300,11 +1300,11 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
 
 /*
  * Common INCL Contributions Helper
- * 
+ *
  * Unified template function that handles both INCLY and ROLLY contributions to the
  * least squares input matrices. Eliminates code duplication by accepting the ROM
  * object, measurement list, and contribution getter function as template parameters.
- * 
+ *
  * @param rom: Round of Measurements object (TINCLYROM or TROLLYROM)
  * @param measurements: List of measurements (measINCLY or measROLLY)
  * @param getContrib: Function to get contributions (getINCLYContrib or getROLLYContrib)
@@ -1312,12 +1312,7 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
  * @param measurementType: String identifier for error messages ("Incly" or "Rolly")
  */
 template<typename TROM, typename TMeasList, typename TGetContrib>
-void TLSInputMatricesFiller::addINCLContributionsHelper(
-	TROM &rom,
-	TMeasList &measurements,
-	TGetContrib getContrib,
-	TLSInputMatrices *matrices,
-	const std::string &measurementType)
+void TLSInputMatricesFiller::addINCLContributionsHelper(TROM &rom, TMeasList &measurements, TGetContrib getContrib, TLSInputMatrices *matrices, const std::string &measurementType)
 {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
@@ -1365,12 +1360,12 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 
 /*
  * ROLLY Contributions Matrix Filler
- * 
+ *
  * Integrates ROLLY inclinometer measurements into the least squares adjustment
  * system by populating the input design matrices with measurement contributions,
  * transformation parameters, and weight information. This function is a critical
  * component of the least squares calculation engine that processes ROLLY data.
- * 
+ *
  * The function performs the following operations for each ROLLY measurement:
  * - Retrieves observation contributions and transformation parameters
  * - Updates combined uncertainty (sigma) based on observation variance
@@ -1378,15 +1373,15 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
  * - Sets misclosure vector elements for residual calculations
  * - Populates weight matrix and its inverse for statistical weighting
  * - Validates matrix operations and error conditions
- * 
+ *
  * @param rollyROM: ROLLY Round of Measurements object containing all ROLLY
  *                   measurements, their parameters, and frame information
  * @param matrices: Pointer to the least squares input matrices that will be
  *                  populated with ROLLY measurement contributions
- * 
+ *
  * @throws std::runtime_error: When variance is zero/too small for weight matrix
  *                             or when matrix operations fail during processing
- * 
+ *
  * @note ROLLY measurements use the same contribution structure (INCLContrib) as
  *       INCLY measurements for consistency in the least squares system. The function
  *       processes each measurement individually, ensuring proper matrix indexing
