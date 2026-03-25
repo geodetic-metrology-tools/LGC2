@@ -13,7 +13,8 @@ path = [
     "*.md",
 	"DCO.txt",
 	"LGC.ico",
-]
+	".pre-commit-config.yaml",
+	]
 precedence = "override"
 SPDX-FileCopyrightText = "CERN"
 SPDX-License-Identifier = "CC-BY-4.0"
@@ -21,13 +22,14 @@ SPDX-License-Identifier = "CC-BY-4.0"
 # --- Source, scripts, and build/config files ---
 [[annotations]]
 path = [
-    "source/**/CMakeLists.txt", 
+    "source/**/CMakeLists.txt",
     "source/**/*.def",
     "source/**/*.in",
     "source/**/*.py",
     "source/**/*.cmake",
     "source/**/*.dox",
 	"lib/cmake_common/*",
+	"setup-pre-commit.sh",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "CERN"
@@ -50,4 +52,3 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "GPL-3.0-or-later"
-
