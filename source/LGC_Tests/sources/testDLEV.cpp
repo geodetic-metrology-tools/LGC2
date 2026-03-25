@@ -734,7 +734,7 @@ void object::test<24>()
 
 template<>
 template<>
-void object::test<21>()
+void object::test<25>()
 {
 	set_test_name("Checking the computation with negative values DLEV and DHOR");
 	readTest(TestDLEV::DLEV_OLOC_7, "DLEV_OLOC_7");

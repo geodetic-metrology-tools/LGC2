@@ -865,7 +865,7 @@ DistMeasContrib TContributionsGenerator::getDSPTContrib(const TEDM &edmST, const
 HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const TLEVEL &levelInstr, const TDLEV &dlev)
 {
 	const TDLEV::TDHOR dhor = *dlev.dhor;
-	const LGCAdjustablePoint referencePoint = *levelInstr.fMeasuredPlane->getReferencePoint();
+	const LGCAdjustablePoint &referencePoint = *levelInstr.fMeasuredPlane->getReferencePoint();
 
 	// Points can be defined everywhere, transform them in the root frame
 	TPositionVector refPointPos = levelInstr.fMeasuredPlane->getReferencePoint()->getEstimatedValue(); // Reference point
@@ -917,13 +917,13 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const TLEVEL &lev
 	TReal xTg = intersection.getX().getMetresValue();
 	TReal yTg = intersection.getY().getMetresValue();
 
-	calcMeas = dist(xSt, ySt, xTg, yTg) - dhor.target.dhorCorrectionValue.getMetresValue();
+	TReal calcMeas = dist(xSt, ySt, xTg, yTg) - dhor.target.dhorCorrectionValue.getMetresValue();
 
 	if (isZero(calcMeas))
 	{
 		generateContributionError("TContributionGenerator::getHorDistContrib: Division by zero because x and y coordinates of station and target are identical or the "
 								  "correction matches the distance defined by the coordinates. Points: "
-			+ getNameAndLine(*referencePoint) + " and " + getNameAndLine(*dhor.targetPos));
+			+ getNameAndLine(referencePoint) + " and " + getNameAndLine(*dhor.targetPos));
 	}
 	
 	//Compute contributions
@@ -954,7 +954,7 @@ HorDistContribLEVEL TContributionsGenerator::getHorDistContrib(const TLEVEL &lev
 	// Variance calculation
 	TReal variance = pow2q(dhor.target.sigmaDHor.getMetresValue() + calcMeas / 1000 * dhor.target.ppmDHor);
 
-	HorDistContribLEVEL contrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, variance};
+	HorDistContribLEVEL contrib = {calcMeas, staffContrib, referencePTContrib, staffTransfContributions, referencePTTransfContributions, distCorrection, variance};
 
 	return contrib;
 }
@@ -1009,7 +1009,7 @@ DLEVContrib TContributionsGenerator::getDLEVContrib(const TLEVEL &levelInstr, co
 	if (std::abs(vz) < nullLimit)
 	{
 		generateContributionError(
-			"TContributionGenerator::getHorDistContrib: No intersection found between the horizontal plane and the vertical vector at the level of the target. Points: "
+			"TContributionGenerator::getDLEVContrib: No intersection found between the horizontal plane and the vertical vector at the level of the target. Points: "
 			+ getNameAndLine(*levelInstr.fMeasuredPlane->getReferencePoint()) + " and " + getNameAndLine(*dlev.targetPos));
 	}
 
@@ -1104,7 +1104,7 @@ std::pair<DLEVContrib, HorDistContribLEVEL> TContributionsGenerator::getDLEVCont
 	if (std::abs(vz) < nullLimit)
 	{
 		generateContributionError(
-			"TContributionGenerator::getHorDistContrib: No intersection found between the horizontal plane and the vertical vector at the level of the target. Points: "
+			"TContributionGenerator::getDLEVContribCombined: No intersection found between the horizontal plane and the vertical vector at the level of the target. Points: "
 			+ getNameAndLine(*levelInstr.fMeasuredPlane->getReferencePoint()) + " and " + getNameAndLine(*dlev.targetPos));
 	}
 
@@ -1156,7 +1156,7 @@ std::pair<DLEVContrib, HorDistContribLEVEL> TContributionsGenerator::getDLEVCont
 		if (calcMeasDhor < nullLimit)
 		{
 			generateContributionError(
-				"TContributionGenerator::getHorDistContrib: Division by zero because x and y coordinates of station and target are identical. Points: "
+				"TContributionGenerator::getDLEVContribCombined: Division by zero because x and y coordinates of station and target are identical. Points: "
 				+ getNameAndLine(*levelInstr.fMeasuredPlane->getReferencePoint()) + " and " + getNameAndLine(*dlev.dhor->targetPos));
 		}
 		TReal vx = staffVerticalVector.getX().getMetresValue();
@@ -1181,7 +1181,8 @@ std::pair<DLEVContrib, HorDistContribLEVEL> TContributionsGenerator::getDLEVCont
 		// Contribution for the instrument height
 		TReal fRefPtDistContDhor = -cDhor;
 
-		dhorContrib = {calcMeasDhor, staffContribDhor, referencePTContribDhor, staffTransfContributionsDhor, referencePTTransfContributionsDhor, fRefPtDistContDhor};
+		TReal varianceDhor = pow2q(dlev.dhor->target.sigmaDHor.getMetresValue() + calcMeasDhor / 1000 * dlev.dhor->target.ppmDHor);
+		dhorContrib = {calcMeasDhor, staffContribDhor, referencePTContribDhor, staffTransfContributionsDhor, referencePTTransfContributionsDhor, fRefPtDistContDhor, varianceDhor};
 	}
 	return {dlevContrib, dhorContrib};
 }
