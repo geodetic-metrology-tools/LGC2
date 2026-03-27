@@ -1,0 +1,268 @@
+# SPDX-FileCopyrightText: CERN
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+"""Python bindings for LGC2 (ctypes wrapper around pyLGC_C)."""
+
+import ctypes
+import os
+import sys
+from collections import namedtuple
+
+import numpy as np
+
+# ---------------------------------------------------------------------------
+# Load the shared library
+# ---------------------------------------------------------------------------
+
+_dll_name = "pyLGC_C.dll" if sys.platform == "win32" else "libpyLGC_C.so"
+_dll_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), _dll_name)
+_lib = ctypes.CDLL(_dll_path)
+
+# ---------------------------------------------------------------------------
+# ctypes shorthand
+# ---------------------------------------------------------------------------
+
+_vp    = ctypes.c_void_p
+_cp    = ctypes.c_char_p
+_ip    = ctypes.POINTER(ctypes.c_int)
+_dp    = ctypes.POINTER(ctypes.c_double)
+_ipp   = ctypes.POINTER(_ip)
+_dpp   = ctypes.POINTER(_dp)
+_int   = ctypes.c_int
+_dbl   = ctypes.c_double
+
+# ---------------------------------------------------------------------------
+# Declare C function signatures
+# ---------------------------------------------------------------------------
+
+def _sig(name, restype, argtypes):
+    fn = getattr(_lib, name)
+    fn.restype  = restype
+    fn.argtypes = argtypes
+    return fn
+
+_get_last_error       = _sig("lgcGetLastError",       _cp,  [])
+_free_double          = _sig("lgcFreeDoubleArray",     None, [_dp])
+_free_int             = _sig("lgcFreeIntArray",        None, [_ip])
+
+_ev_create            = _sig("lgcEvaluatorCreate",      _vp,  [_cp])
+_ev_destroy           = _sig("lgcEvaluatorDestroy",     None, [_vp])
+_ev_evaluate          = _sig("lgcEvaluatorEvaluate",    _int, [_vp])
+_ev_set_params        = _sig("lgcEvaluatorSetParameters", _int, [_vp, _dp, _int])
+_ev_get_params        = _sig("lgcEvaluatorGetEstParams", _int, [_vp, _dpp, _ip])
+_ev_get_indices       = _sig("lgcEvaluatorGetIndices", _int, [_vp, _ip, _ip, _ip, _ip])
+_ev_get_misc          = _sig("lgcEvaluatorGetMisclosure", _int, [_vp, _dpp, _ip])
+_ev_get_cmisc         = _sig("lgcEvaluatorGetConstraintMisclosure", _int, [_vp, _dpp, _ip])
+_ev_get_A             = _sig("lgcEvaluatorGetAMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_B             = _sig("lgcEvaluatorGetBMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_invB          = _sig("lgcEvaluatorGetInvBMatrix", _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_A2            = _sig("lgcEvaluatorGetA2Matrix",    _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_P             = _sig("lgcEvaluatorGetPMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_fd            = _sig("lgcEvaluatorGetFiniteDifferenceA", _int, [_vp, _dbl, _dpp, _ip, _ip])
+_ev_solve             = _sig("lgcEvaluatorTrySolve",   _int, [_vp, _ip, _dpp, _ip])
+_ev_obs_map           = _sig("lgcEvaluatorGetObsIndexToLineNumber", _int, [_vp, _ipp, _ipp, _ip])
+
+_ev_get_point         = _sig("lgcEvaluatorGetPoint",   _vp,  [_vp, _cp])
+_pt_get_name          = _sig("lgcPointGetName",        _cp,  [_vp])
+_pt_get_uidx          = _sig("lgcPointGetFirstUidx",  _int, [_vp])
+_pt_get_rel           = _sig("lgcPointGetRelativeUnknIndices", _int, [_vp, _ipp, _ip])
+_pt_get_est           = _sig("lgcPointGetEstVector",  _int, [_vp, _dpp, _ip])
+
+_ev_get_frame         = _sig("lgcEvaluatorGetFrame",   _vp,  [_vp, _cp])
+_fr_get_name          = _sig("lgcFrameGetName",        _cp,  [_vp])
+_fr_get_uidx          = _sig("lgcFrameGetFirstUidx",  _int, [_vp])
+_fr_get_rel           = _sig("lgcFrameGetRelativeUnknIndices", _int, [_vp, _ipp, _ip])
+_fr_get_est           = _sig("lgcFrameGetEstVector",  _int, [_vp, _dpp, _ip])
+
+# ---------------------------------------------------------------------------
+# Error helpers
+# ---------------------------------------------------------------------------
+
+def _last_error():
+    msg = _get_last_error()
+    return msg.decode("utf-8") if msg else "Unknown error"
+
+def _check(result):
+    if result == -1:
+        raise RuntimeError(_last_error())
+    return result
+
+def _check_ptr(ptr):
+    if not ptr:
+        raise RuntimeError(_last_error())
+    return ptr
+
+# ---------------------------------------------------------------------------
+# Array extraction helpers
+# ---------------------------------------------------------------------------
+
+def _doubles(func, *args):
+    data = _dp()
+    n    = _int()
+    _check(func(*args, ctypes.byref(data), ctypes.byref(n)))
+    out = np.ctypeslib.as_array(data, shape=(n.value,)).copy()
+    _free_double(data)
+    return out
+
+def _ints(func, *args):
+    data = _ip()
+    n    = _int()
+    _check(func(*args, ctypes.byref(data), ctypes.byref(n)))
+    out = np.ctypeslib.as_array(data, shape=(n.value,)).copy()
+    _free_int(data)
+    return out
+
+def _sparse(func, *args):
+    rows  = _ip()
+    cols  = _ip()
+    vals  = _dp()
+    nnz   = _int()
+    nrows = _int()
+    ncols = _int()
+    _check(func(*args,
+                ctypes.byref(rows), ctypes.byref(cols), ctypes.byref(vals),
+                ctypes.byref(nnz), ctypes.byref(nrows), ctypes.byref(ncols)))
+    k = nnz.value
+    r = np.ctypeslib.as_array(rows, shape=(k,)).copy()
+    c = np.ctypeslib.as_array(cols, shape=(k,)).copy()
+    v = np.ctypeslib.as_array(vals, shape=(k,)).copy()
+    _free_int(rows)
+    _free_int(cols)
+    _free_double(vals)
+    return (r, c, v, nrows.value, ncols.value)
+
+# ---------------------------------------------------------------------------
+# Public types
+# ---------------------------------------------------------------------------
+
+UEOIndices = namedtuple("UEOIndices", ["UIndex", "EIndex", "OIndex", "CIndex"])
+
+
+class AdjustablePoint:
+    """Borrowed reference to an adjustable point (lifetime tied to Evaluator)."""
+
+    def __init__(self, handle):
+        self._h = handle
+
+    def getName(self):
+        return _pt_get_name(self._h).decode("utf-8")
+
+    def getFirstUidx(self):
+        return _pt_get_uidx(self._h)
+
+    def getRelativeUnknIndices(self):
+        return _ints(_pt_get_rel, self._h)
+
+    def getEstVector(self):
+        return _doubles(_pt_get_est, self._h)
+
+
+class AdjustableFrame:
+    """Borrowed reference to an adjustable frame (lifetime tied to Evaluator)."""
+
+    def __init__(self, handle):
+        self._h = handle
+
+    def getName(self):
+        return _fr_get_name(self._h).decode("utf-8")
+
+    def getFirstUidx(self):
+        return _fr_get_uidx(self._h)
+
+    def getRelativeUnknIndices(self):
+        return _ints(_fr_get_rel, self._h)
+
+    def getEstVector(self):
+        return _doubles(_fr_get_est, self._h)
+
+
+class Evaluator:
+    """Main LGC least-squares evaluator."""
+
+    def __init__(self, filePath):
+        self._h = _check_ptr(_ev_create(filePath.encode("utf-8")))
+
+    def __del__(self):
+        if getattr(self, "_h", None):
+            _ev_destroy(self._h)
+            self._h = None
+
+    def evaluate(self):
+        r = _ev_evaluate(self._h)
+        if r == -1:
+            raise RuntimeError(_last_error())
+        return bool(r)
+
+    def setParameters(self, para):
+        arr = (ctypes.c_double * len(para))(*para)
+        _check(_ev_set_params(self._h, arr, len(para)))
+
+    def getEstParams(self):
+        return _doubles(_ev_get_params, self._h)
+
+    def getIndices(self):
+        u, e, o, c = _int(), _int(), _int(), _int()
+        _check(_ev_get_indices(self._h,
+                               ctypes.byref(u), ctypes.byref(e),
+                               ctypes.byref(o), ctypes.byref(c)))
+        return UEOIndices(u.value, e.value, o.value, c.value)
+
+    def getMisclosure(self):
+        return _doubles(_ev_get_misc, self._h)
+
+    def getConstraintMisclosure(self):
+        return _doubles(_ev_get_cmisc, self._h)
+
+    def getAMatrix(self):
+        return _sparse(_ev_get_A, self._h)
+
+    def getBMatrix(self):
+        return _sparse(_ev_get_B, self._h)
+
+    def getInvBMatrix(self):
+        return _sparse(_ev_get_invB, self._h)
+
+    def getA2Matrix(self):
+        return _sparse(_ev_get_A2, self._h)
+
+    def getPMatrix(self):
+        return _sparse(_ev_get_P, self._h)
+
+    def getFiniteDifferenceA(self, finiteDiffEpsilon=1e-6):
+        data  = _dp()
+        nrows = _int()
+        ncols = _int()
+        _check(_ev_get_fd(self._h, finiteDiffEpsilon,
+                          ctypes.byref(data), ctypes.byref(nrows), ctypes.byref(ncols)))
+        nr, nc = nrows.value, ncols.value
+        result = np.ctypeslib.as_array(data, shape=(nr * nc,)).copy().reshape(nr, nc)
+        _free_double(data)
+        return result
+
+    def tryLGCSolve(self):
+        ok  = _int()
+        sol = _dp()
+        n   = _int()
+        _check(_ev_solve(self._h, ctypes.byref(ok), ctypes.byref(sol), ctypes.byref(n)))
+        solution = np.ctypeslib.as_array(sol, shape=(n.value,)).copy()
+        _free_double(sol)
+        return (bool(ok.value), solution)
+
+    def getObsIndexToLineNumber(self):
+        keys = _ip()
+        vals = _ip()
+        n    = _int()
+        _check(_ev_obs_map(self._h, ctypes.byref(keys), ctypes.byref(vals), ctypes.byref(n)))
+        result = {keys[i]: vals[i] for i in range(n.value)}
+        _free_int(keys)
+        _free_int(vals)
+        return result
+
+    def getPoint(self, name):
+        h = _check_ptr(_ev_get_point(self._h, name.encode("utf-8")))
+        return AdjustablePoint(h)
+
+    def getFrame(self, name):
+        h = _check_ptr(_ev_get_frame(self._h, name.encode("utf-8")))
+        return AdjustableFrame(h)
