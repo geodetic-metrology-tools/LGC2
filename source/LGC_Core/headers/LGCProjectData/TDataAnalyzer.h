@@ -55,6 +55,10 @@ private:
 	//! Assign observation and equation indices to measurements.
 	void assignEOIndices();
 
+	//! Sets observation index on a measurement and records the obs-to-line mapping.
+	template<typename TMeas>
+	void assignObsIndex(TMeas &meas);
+
 	void checkPDOR(TFileLogger &fileLog, bool dataConsistent);
 
 	//! Predetermine v0 for total station measurements in the root system
