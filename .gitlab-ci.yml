@@ -7,6 +7,8 @@ include:
 ##################
 
 # Run pre-commit hooks to enforce code quality
+# - Blocking for merge requests to master/appwidevs
+# - Warning only for regular branch commits
 pre-commit:
     stage: .pre
     image: python:3.11-slim
@@ -38,16 +40,27 @@ pre-commit:
           # Run pre-commit on changed files
           pre-commit run --files $FILES
     rules:
+        # Never run on direct commits to protected branches
         - if: '$CI_COMMIT_BRANCH == "master"'
           when: never
         - if: '$CI_COMMIT_BRANCH == "appwidevs"'
           when: never
+        # Blocking for merge requests to master/appwidevs
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "appwidevs")'
+          when: on_success
+          allow_failure: false
+        # Warning only for other merge requests
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
           when: on_success
+          allow_failure: true
+        # Warning only for regular branch pushes
         - if: '$CI_COMMIT_BRANCH'
           when: on_success
+          allow_failure: true
 
 # Check for Signed-off-by in all commits (only on merge requests)
+# - Blocking for merge requests to master/appwidevs
+# - Warning only for other merge requests
 check-signoff:
     stage: .pre
     image: alpine/git:latest
@@ -73,8 +86,14 @@ check-signoff:
             echo "All commits are properly signed-off"
           fi
     rules:
+        # Blocking for merge requests to master/appwidevs
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && ($CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "appwidevs")'
+          when: on_success
+          allow_failure: false
+        # Warning only for other merge requests
         - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
           when: on_success
+          allow_failure: true
 
 ##################
 # LINUX BUILDS   #
