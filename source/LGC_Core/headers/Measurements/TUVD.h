@@ -22,6 +22,9 @@
 class TUVD : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 {
 public:
+	/// Sign of the observed uz component (+1 or -1), used to select the correct unit-sphere hemisphere
+	TReal signUz = 1.0;
+
 	TUVD(const LGCAdjustablePoint &pos, TInstrumentData::TCAMD::TTarget tgt) : TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 	{
 		fMeasIdx.eqDim = 3;

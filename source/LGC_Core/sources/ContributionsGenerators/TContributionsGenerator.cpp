@@ -1756,9 +1756,11 @@ UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TU
 {
 	const auto [tg2stTrafo, rhat, d, invD, JacDir] = computeCamTargetGeometry(camera, *uvec.targetPos);
 
-	// Functional model: g1 = dx/d, g2 = dy/d (parametric direction cosines)
-	// Jacobian: top 2 rows of JacDir = (1/d)(I3 - rhat*rhat^T)
-	TDenseMatrix J = JacDir.topRows<2>();
+	// Functional model: g1 = s*dx/d, g2 = s*dy/d (parametric direction cosines)
+	// where s = sgn(uz_obs / pz) selects the correct unit-sphere hemisphere
+	// Jacobian: s * top 2 rows of JacDir = s * (1/d)(I3 - rhat*rhat^T)
+	TReal sign = uvec.signUz * ((rhat(2) >= 0.0) ? 1.0 : -1.0);
+	TDenseMatrix J = sign * JacDir.topRows<2>();
 
 	// Station contributions (negative Jacobian rows)
 	TFreeVector stFirstEqContrib(TFreeVector(-J.row(0)));
@@ -1787,17 +1789,20 @@ UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TU
 	Cobs(0, 0) += pow2q(uvec.target.sigmaX);
 	Cobs(1, 1) += pow2q(uvec.target.sigmaY);
 
-	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, tgFirstEqContrib, tgSecondEqContrib, targetTransfContributions, {rhat(0), rhat(1)}, {Cobs(0, 0), Cobs(1, 1)}};
+	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, tgFirstEqContrib, tgSecondEqContrib, targetTransfContributions, {sign * rhat(0), sign * rhat(1)}, {Cobs(0, 0), Cobs(1, 1)}};
 	return contrib;
 }
 UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD &uvd)
 {
 	const auto [tg2stTrafo, rhat, d, invD, JacDir] = computeCamTargetGeometry(camera, *uvd.targetPos);
 
-	// Functional model: g1 = dx/d, g2 = dy/d (direction), g3 = d (distance)
-	// Jacobian: rows 1-2 = JacDir (direction), row 3 = rhat^T (distance)
+	// Functional model: g1 = s*dx/d, g2 = s*dy/d (direction), g3 = s*d (signed distance)
+	// where s = sgn(uz_obs / pz) selects the correct unit-sphere hemisphere
+	// Jacobian: s * [JacDir; rhat^T]
+	TReal sign = uvd.signUz * ((rhat(2) >= 0.0) ? 1.0 : -1.0);
 	Eigen::Matrix3d J;
 	J << JacDir.topRows<2>(), rhat.transpose();
+	J *= sign;
 
 	// Station contribution: -J
 	Point3DContrib coordContribStation = {-J};
@@ -1822,7 +1827,7 @@ UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD
 	contrib.fStCoordContrib = coordContribStation;
 	contrib.fTgCoordContrib = coordContribTarget;
 	contrib.fTgTransformContrib = targetTransfContributions;
-	contrib.fCalcMeas = Eigen::Vector3d(rhat(0), rhat(1), d);
+	contrib.fCalcMeas = Eigen::Vector3d(sign * rhat(0), sign * rhat(1), sign * d);
 	contrib.fObsVariance = Cobs.diagonal();
 
 	return contrib;

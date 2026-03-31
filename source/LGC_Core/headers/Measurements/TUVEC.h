@@ -20,9 +20,12 @@
 	\ingroup Measurements
 	\brief Unit vector measurement made by a camera (TCAM).
 */
-class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget> 
+class TUVEC : public TAVectorMeas<TInstrumentData::TCAMD::TTarget>
 {
 	public:
+		/// Sign of the observed uz component (+1 or -1), used to select the correct unit-sphere hemisphere
+		TReal signUz = 1.0;
+
 		/// Constructor
 		TUVEC(const LGCAdjustablePoint &pos, TInstrumentData::TCAMD::TTarget tgt) : TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 		{

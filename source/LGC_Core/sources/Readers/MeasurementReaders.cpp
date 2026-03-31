@@ -195,6 +195,7 @@ void TKeyUVEC::parse(const std::vector<std::string> &tokens, bool activeLine, in
 										 "the z component is ignored but all three should approximately form a unit vector.");
 
 			uvec.setVectorMeasurement(vectorMeasurement);
+			uvec.signUz = (vectorMeasurement.getZ().getMetresValue() >= 0.0) ? 1.0 : -1.0;
 		}
 
 		// Store this UVEC measurement
@@ -265,6 +266,7 @@ void TKeyUVD::parse(const std::vector<std::string> &tokens, bool activeLine, int
 										 "the z component is ignored but all three should approximately form a unit vector.");
 
 			uvd.setVectorMeasurement(vectorMeasurement);
+			uvd.signUz = (vectorMeasurement.getZ().getMetresValue() >= 0.0) ? 1.0 : -1.0;
 			uvd.setDistance(TLength(std::stor(tokens.at(4))));
 		}
 

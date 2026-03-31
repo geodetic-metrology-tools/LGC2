@@ -366,6 +366,15 @@ void TLSSimulation::updateUVDSimValues(TCAM &camera)
 {
 	for (auto itUVD(camera.measUVD.begin()); itUVD != camera.measUVD.end(); ++itUVD)
 	{
+		// Compute sign of dz from approximate geometry so the model selects the correct hemisphere
+		fPointTransformer.setMLA(false);
+		const auto &lorTrafo = fPointTransformer.getLORTransformation(
+			itUVD->targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition());
+		TPositionVector tgtPos = itUVD->targetPos->getEstimatedValue();
+		lorTrafo.transform(tgtPos);
+		TReal dz = (tgtPos - camera.instrumentPos->getEstimatedValue()).toRealVector()(2);
+		itUVD->signUz = (dz >= 0.0) ? 1.0 : -1.0;
+
 		const auto contrib = fCGenerator.getUVDContrib(camera, *itUVD);
 
 		const auto calcX = contrib.fCalcMeas(0);
@@ -379,11 +388,11 @@ void TLSSimulation::updateUVDSimValues(TCAM &camera)
 		TReal simY = getSimulatedValue(calcY, sigmaY);
 		TReal simDist = getSimulatedValue(calcDist, sigmaDist);
 
-		// Reconstruct z so that (x, y, z) approximates a unit vector; z is not used in the adjustment
+		// Reconstruct z with the correct hemisphere sign
 		TReal xyNormSq = simX * simX + simY * simY;
 		if (xyNormSq > 1.0)
 			logWarning() << "UVD simulation: noise made x^2+y^2 > 1 (=" << xyNormSq << ") for target " << itUVD->targetPos->getName() << "; z component is clamped to 0.";
-		TReal simZ = sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
+		TReal simZ = itUVD->signUz * sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
 
 		TFreeVector simVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
 		itUVD->setVectorMeasurement(simVect);
@@ -395,6 +404,15 @@ void TLSSimulation::updateUVECSimValues(TCAM &camera)
 {
 	for (auto itUVEC(camera.measUVEC.begin()); itUVEC != camera.measUVEC.end(); ++itUVEC)
 	{
+		// Compute sign of dz from approximate geometry so the model selects the correct hemisphere
+		fPointTransformer.setMLA(false);
+		const auto &lorTrafo = fPointTransformer.getLORTransformation(
+			itUVEC->targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition());
+		TPositionVector tgtPos = itUVEC->targetPos->getEstimatedValue();
+		lorTrafo.transform(tgtPos);
+		TReal dz = (tgtPos - camera.instrumentPos->getEstimatedValue()).toRealVector()(2);
+		itUVEC->signUz = (dz >= 0.0) ? 1.0 : -1.0;
+
 		const auto contrib = fCGenerator.getUVECContrib(camera, *itUVEC);
 
 		const auto calcX = contrib.fCalcMeas[0];
@@ -405,11 +423,11 @@ void TLSSimulation::updateUVECSimValues(TCAM &camera)
 		TReal simX = getSimulatedValue(calcX, sigmaX);
 		TReal simY = getSimulatedValue(calcY, sigmaY);
 
-		// Reconstruct z so that (x, y, z) approximates a unit vector; z is not used in the adjustment
+		// Reconstruct z with the correct hemisphere sign
 		TReal xyNormSq = simX * simX + simY * simY;
 		if (xyNormSq > 1.0)
 			logWarning() << "UVEC simulation: noise made x^2+y^2 > 1 (=" << xyNormSq << ") for target " << itUVEC->targetPos->getName() << "; z component is clamped to 0.";
-		TReal simZ = sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
+		TReal simZ = itUVEC->signUz * sqrt(std::clamp(1.0 - xyNormSq, 0.0, 1.0));
 
 		TFreeVector simVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
 		itUVEC->setVectorMeasurement(simVect);
