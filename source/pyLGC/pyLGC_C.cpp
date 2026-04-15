@@ -52,9 +52,10 @@ static int extractSparse(const TSparseMatrix &mat, int **outRows, int **outCols,
 	return 0;
 }
 
+#include <TVAdjustableObject.h>
+
 #define EV(handle) (*static_cast<TLSEvaluator *>(handle))
-#define PT(handle) (*static_cast<LGCAdjustablePoint *>(handle))
-#define FR(handle) (*static_cast<TAdjustableHelmertTransformation *>(handle))
+#define ADJ(handle) (*static_cast<TVAdjustableObject *>(handle))
 
 #define CATCH_ERR \
 	catch (const std::exception &ex) \
@@ -297,9 +298,9 @@ extern "C"
 		CATCH_ERR
 	}
 
-	// --- Point access ----------------------------------------------------------
+	// --- Adjustable-object access (points & frames) ---------------------------
 
-	LGCPoint lgcEvaluatorGetPoint(LGCEvaluator ev, const char *name)
+	LGCAdjObj lgcEvaluatorGetPoint(LGCEvaluator ev, const char *name)
 	{
 		try
 		{
@@ -314,42 +315,7 @@ extern "C"
 		CATCH_NULL
 	}
 
-	const char *lgcPointGetName(LGCPoint pt)
-	{
-		return PT(pt).getName().c_str();
-	}
-
-	int lgcPointGetFirstUidx(LGCPoint pt)
-	{
-		return PT(pt).getFirstUidx();
-	}
-
-	int lgcPointGetRelativeUnknIndices(LGCPoint pt, int **outData, int *outLen)
-	{
-		try
-		{
-			auto indices = PT(pt).getRelativeUnknIndices();
-			*outLen = static_cast<int>(indices.size());
-			*outData = new int[*outLen];
-			std::copy(indices.begin(), indices.end(), *outData);
-			return 0;
-		}
-		CATCH_ERR
-	}
-
-	int lgcPointGetEstVector(LGCPoint pt, double **outData, int *outLen)
-	{
-		try
-		{
-			eigenVecToArray(PT(pt).getEstVector(), outData, outLen);
-			return 0;
-		}
-		CATCH_ERR
-	}
-
-	// --- Frame access ----------------------------------------------------------
-
-	LGCFrame lgcEvaluatorGetFrame(LGCEvaluator ev, const char *name)
+	LGCAdjObj lgcEvaluatorGetFrame(LGCEvaluator ev, const char *name)
 	{
 		try
 		{
@@ -359,21 +325,21 @@ extern "C"
 		CATCH_NULL
 	}
 
-	const char *lgcFrameGetName(LGCFrame fr)
+	const char *lgcAdjObjGetName(LGCAdjObj obj)
 	{
-		return FR(fr).getName().c_str();
+		return ADJ(obj).getName().c_str();
 	}
 
-	int lgcFrameGetFirstUidx(LGCFrame fr)
+	int lgcAdjObjGetFirstUidx(LGCAdjObj obj)
 	{
-		return FR(fr).getFirstUidx();
+		return ADJ(obj).getFirstUidx();
 	}
 
-	int lgcFrameGetRelativeUnknIndices(LGCFrame fr, int **outData, int *outLen)
+	int lgcAdjObjGetRelativeUnknIndices(LGCAdjObj obj, int **outData, int *outLen)
 	{
 		try
 		{
-			auto indices = FR(fr).getRelativeUnknIndices();
+			auto indices = ADJ(obj).getRelativeUnknIndices();
 			*outLen = static_cast<int>(indices.size());
 			*outData = new int[*outLen];
 			std::copy(indices.begin(), indices.end(), *outData);
@@ -382,11 +348,11 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int lgcFrameGetEstVector(LGCFrame fr, double **outData, int *outLen)
+	int lgcAdjObjGetEstVector(LGCAdjObj obj, double **outData, int *outLen)
 	{
 		try
 		{
-			eigenVecToArray(FR(fr).getEstVector(), outData, outLen);
+			eigenVecToArray(ADJ(obj).getEstVector(), outData, outLen);
 			return 0;
 		}
 		CATCH_ERR

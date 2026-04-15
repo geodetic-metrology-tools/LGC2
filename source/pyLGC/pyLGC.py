@@ -64,16 +64,11 @@ _ev_solve             = _sig("lgcEvaluatorTrySolve",   _int, [_vp, _ip, _dpp, _i
 _ev_obs_map           = _sig("lgcEvaluatorGetObsIndexToLineNumber", _int, [_vp, _ipp, _ipp, _ip])
 
 _ev_get_point         = _sig("lgcEvaluatorGetPoint",   _vp,  [_vp, _cp])
-_pt_get_name          = _sig("lgcPointGetName",        _cp,  [_vp])
-_pt_get_uidx          = _sig("lgcPointGetFirstUidx",  _int, [_vp])
-_pt_get_rel           = _sig("lgcPointGetRelativeUnknIndices", _int, [_vp, _ipp, _ip])
-_pt_get_est           = _sig("lgcPointGetEstVector",  _int, [_vp, _dpp, _ip])
-
 _ev_get_frame         = _sig("lgcEvaluatorGetFrame",   _vp,  [_vp, _cp])
-_fr_get_name          = _sig("lgcFrameGetName",        _cp,  [_vp])
-_fr_get_uidx          = _sig("lgcFrameGetFirstUidx",  _int, [_vp])
-_fr_get_rel           = _sig("lgcFrameGetRelativeUnknIndices", _int, [_vp, _ipp, _ip])
-_fr_get_est           = _sig("lgcFrameGetEstVector",  _int, [_vp, _dpp, _ip])
+_adj_get_name         = _sig("lgcAdjObjGetName",       _cp,  [_vp])
+_adj_get_uidx         = _sig("lgcAdjObjGetFirstUidx", _int, [_vp])
+_adj_get_rel          = _sig("lgcAdjObjGetRelativeUnknIndices", _int, [_vp, _ipp, _ip])
+_adj_get_est          = _sig("lgcAdjObjGetEstVector", _int, [_vp, _dpp, _ip])
 
 # ---------------------------------------------------------------------------
 # Error helpers
@@ -139,42 +134,28 @@ def _sparse(func, *args):
 UEOIndices = namedtuple("UEOIndices", ["UIndex", "EIndex", "OIndex", "CIndex"])
 
 
-class AdjustablePoint:
-    """Borrowed reference to an adjustable point (lifetime tied to Evaluator)."""
+class AdjustableObject:
+    """Borrowed reference to an adjustable object (lifetime tied to Evaluator).
+    Works for both points and frames."""
 
     def __init__(self, handle):
         self._h = handle
 
     def getName(self):
-        return _pt_get_name(self._h).decode("utf-8")
+        return _adj_get_name(self._h).decode("utf-8")
 
     def getFirstUidx(self):
-        return _pt_get_uidx(self._h)
+        return _adj_get_uidx(self._h)
 
     def getRelativeUnknIndices(self):
-        return _ints(_pt_get_rel, self._h)
+        return _ints(_adj_get_rel, self._h)
 
     def getEstVector(self):
-        return _doubles(_pt_get_est, self._h)
+        return _doubles(_adj_get_est, self._h)
 
-
-class AdjustableFrame:
-    """Borrowed reference to an adjustable frame (lifetime tied to Evaluator)."""
-
-    def __init__(self, handle):
-        self._h = handle
-
-    def getName(self):
-        return _fr_get_name(self._h).decode("utf-8")
-
-    def getFirstUidx(self):
-        return _fr_get_uidx(self._h)
-
-    def getRelativeUnknIndices(self):
-        return _ints(_fr_get_rel, self._h)
-
-    def getEstVector(self):
-        return _doubles(_fr_get_est, self._h)
+# Backwards-compatible aliases
+AdjustablePoint = AdjustableObject
+AdjustableFrame = AdjustableObject
 
 
 class Evaluator:
@@ -261,8 +242,8 @@ class Evaluator:
 
     def getPoint(self, name):
         h = _check_ptr(_ev_get_point(self._h, name.encode("utf-8")))
-        return AdjustablePoint(h)
+        return AdjustableObject(h)
 
     def getFrame(self, name):
         h = _check_ptr(_ev_get_frame(self._h, name.encode("utf-8")))
-        return AdjustableFrame(h)
+        return AdjustableObject(h)
