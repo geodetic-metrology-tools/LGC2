@@ -1382,7 +1382,11 @@ void TDataAnalyzer::assignEOIndices()
 			int nObservations = ptSigma.fRelObsIdx.size();
 			int nConstraints = ptSigma.fRelCIdx.size();
 			if (nObservations > 0)
+			{
 				ptSigma.firstObsIdx = fData.fUEOIndices.OIndex;
+				for (int i = 0; i < nObservations; ++i)
+					fData.fObsIndexToLineNumber[ptSigma.firstObsIdx + i] = pt.line;
+			}
 			if (nConstraints > 0)
 				ptSigma.firstCIdx = fData.fUEOIndices.CIndex;
 			fData.fUEOIndices.OIndex += nObservations;
