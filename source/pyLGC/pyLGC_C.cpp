@@ -17,7 +17,7 @@
 #include <TSparseMatrix.h>
 #include <UEOIndices.h>
 
-static thread_local std::string g_lastError;
+static thread_local std::string lastError;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -30,23 +30,23 @@ static void eigenVecToArray(const Eigen::VectorXd &vec, double **out, int *len)
 	std::copy(vec.data(), vec.data() + *len, *out);
 }
 
-static int extractSparse(const TSparseMatrix &mat, int **out_rows, int **out_cols, double **out_vals, int *out_nnz, int *out_nrows, int *out_ncols)
+static int extractSparse(const TSparseMatrix &mat, int **outRows, int **outCols, double **outVals, int *outNnz, int *outNrows, int *outNcols)
 {
 	int nnz = static_cast<int>(mat.nonZeros());
-	*out_nnz = nnz;
-	*out_nrows = static_cast<int>(mat.rows());
-	*out_ncols = static_cast<int>(mat.cols());
-	*out_rows = new int[nnz];
-	*out_cols = new int[nnz];
-	*out_vals = new double[nnz];
+	*outNnz = nnz;
+	*outNrows = static_cast<int>(mat.rows());
+	*outNcols = static_cast<int>(mat.cols());
+	*outRows = new int[nnz];
+	*outCols = new int[nnz];
+	*outVals = new double[nnz];
 
 	int idx = 0;
 	for (int k = 0; k < mat.outerSize(); ++k)
 		for (TSparseMatrix::InnerIterator it(mat, k); it; ++it)
 		{
-			(*out_rows)[idx] = static_cast<int>(it.row());
-			(*out_cols)[idx] = static_cast<int>(it.col());
-			(*out_vals)[idx] = it.value();
+			(*outRows)[idx] = static_cast<int>(it.row());
+			(*outCols)[idx] = static_cast<int>(it.col());
+			(*outVals)[idx] = it.value();
 			++idx;
 		}
 	return 0;
@@ -59,23 +59,23 @@ static int extractSparse(const TSparseMatrix &mat, int **out_rows, int **out_col
 #define CATCH_ERR \
 	catch (const std::exception &ex) \
 	{ \
-		g_lastError = ex.what(); \
+		lastError = ex.what(); \
 		return -1; \
 	} \
 	catch (...) \
 	{ \
-		g_lastError = "Unknown error"; \
+		lastError = "Unknown error"; \
 		return -1; \
 	}
 #define CATCH_NULL \
 	catch (const std::exception &ex) \
 	{ \
-		g_lastError = ex.what(); \
+		lastError = ex.what(); \
 		return nullptr; \
 	} \
 	catch (...) \
 	{ \
-		g_lastError = "Unknown error"; \
+		lastError = "Unknown error"; \
 		return nullptr; \
 	}
 
@@ -87,7 +87,7 @@ extern "C"
 {
 	const char *lgcGetLastError(void)
 	{
-		return g_lastError.c_str();
+		return lastError.c_str();
 	}
 
 	void lgcFreeDoubleArray(double *ptr)
@@ -101,14 +101,14 @@ extern "C"
 
 	// --- Evaluator lifecycle ---------------------------------------------------
 
-	LGCEvaluator lgcEvaluatorCreate(const char *file_path)
+	LGCEvaluator lgcEvaluatorCreate(const char *filePath)
 	{
 		try
 		{
-			std::ifstream file(file_path);
+			std::ifstream file(filePath);
 			if (!file.is_open())
 			{
-				g_lastError = std::string("Cannot open file: ") + file_path;
+				lastError = std::string("Cannot open file: ") + filePath;
 				return nullptr;
 			}
 			std::stringstream ss;
@@ -145,11 +145,11 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int lgcEvaluatorGetEstParams(LGCEvaluator ev, double **out_data, int *out_len)
+	int lgcEvaluatorGetEstParams(LGCEvaluator ev, double **outData, int *outLen)
 	{
 		try
 		{
-			eigenVecToArray(EV(ev).getEstParams(), out_data, out_len);
+			eigenVecToArray(EV(ev).getEstParams(), outData, outLen);
 			return 0;
 		}
 		CATCH_ERR
@@ -173,21 +173,21 @@ extern "C"
 
 	// --- Vectors ---------------------------------------------------------------
 
-	int lgcEvaluatorGetMisclosure(LGCEvaluator ev, double **out_data, int *out_len)
+	int lgcEvaluatorGetMisclosure(LGCEvaluator ev, double **outData, int *outLen)
 	{
 		try
 		{
-			eigenVecToArray(EV(ev).getMisclosure(), out_data, out_len);
+			eigenVecToArray(EV(ev).getMisclosure(), outData, outLen);
 			return 0;
 		}
 		CATCH_ERR
 	}
 
-	int lgcEvaluatorGetConstraintMisclosure(LGCEvaluator ev, double **out_data, int *out_len)
+	int lgcEvaluatorGetConstraintMisclosure(LGCEvaluator ev, double **outData, int *outLen)
 	{
 		try
 		{
-			eigenVecToArray(EV(ev).getConstraintMisclosure(), out_data, out_len);
+			eigenVecToArray(EV(ev).getConstraintMisclosure(), outData, outLen);
 			return 0;
 		}
 		CATCH_ERR
@@ -242,19 +242,19 @@ extern "C"
 
 	// --- Dense matrix ----------------------------------------------------------
 
-	int lgcEvaluatorGetFiniteDifferenceA(LGCEvaluator ev, double epsilon, double **out_data, int *out_nrows, int *out_ncols)
+	int lgcEvaluatorGetFiniteDifferenceA(LGCEvaluator ev, double epsilon, double **outData, int *outNrows, int *outNcols)
 	{
 		try
 		{
 			Eigen::MatrixXd A = EV(ev).getFiniteDifferenceA(epsilon);
-			*out_nrows = static_cast<int>(A.rows());
-			*out_ncols = static_cast<int>(A.cols());
-			int n = (*out_nrows) * (*out_ncols);
-			*out_data = new double[n];
+			*outNrows = static_cast<int>(A.rows());
+			*outNcols = static_cast<int>(A.cols());
+			int n = (*outNrows) * (*outNcols);
+			*outData = new double[n];
 			// row-major for easy consumption from Python
-			for (int i = 0; i < *out_nrows; ++i)
-				for (int j = 0; j < *out_ncols; ++j)
-					(*out_data)[i * (*out_ncols) + j] = A(i, j);
+			for (int i = 0; i < *outNrows; ++i)
+				for (int j = 0; j < *outNcols; ++j)
+					(*outData)[i * (*outNcols) + j] = A(i, j);
 			return 0;
 		}
 		CATCH_ERR
@@ -262,14 +262,14 @@ extern "C"
 
 	// --- Solve -----------------------------------------------------------------
 
-	int lgcEvaluatorTrySolve(LGCEvaluator ev, int *out_ok, double **out_solution, int *out_len)
+	int lgcEvaluatorTrySolve(LGCEvaluator ev, int *outOk, double **outSolution, int *outLen)
 	{
 		try
 		{
 			Eigen::VectorXd solution;
 			bool ok = EV(ev).tryLGCSolve(solution);
-			*out_ok = ok ? 1 : 0;
-			eigenVecToArray(solution, out_solution, out_len);
+			*outOk = ok ? 1 : 0;
+			eigenVecToArray(solution, outSolution, outLen);
 			return 0;
 		}
 		CATCH_ERR
@@ -277,19 +277,19 @@ extern "C"
 
 	// --- Obs index mapping -----------------------------------------------------
 
-	int lgcEvaluatorGetObsIndexToLineNumber(LGCEvaluator ev, int **out_keys, int **out_values, int *out_len)
+	int lgcEvaluatorGetObsIndexToLineNumber(LGCEvaluator ev, int **outKeys, int **outValues, int *outLen)
 	{
 		try
 		{
 			const auto &mapping = EV(ev).getObsIndexToLineNumber();
-			*out_len = static_cast<int>(mapping.size());
-			*out_keys = new int[*out_len];
-			*out_values = new int[*out_len];
+			*outLen = static_cast<int>(mapping.size());
+			*outKeys = new int[*outLen];
+			*outValues = new int[*outLen];
 			int i = 0;
 			for (const auto &kv : mapping)
 			{
-				(*out_keys)[i] = kv.first;
-				(*out_values)[i] = kv.second;
+				(*outKeys)[i] = kv.first;
+				(*outValues)[i] = kv.second;
 				++i;
 			}
 			return 0;
@@ -306,7 +306,7 @@ extern "C"
 			const std::string sname(name);
 			if (!EV(ev).getData().getPoints().doesObjectExist(sname))
 			{
-				g_lastError = "Point " + sname + " not found";
+				lastError = "Point " + sname + " not found";
 				return nullptr;
 			}
 			return const_cast<LGCAdjustablePoint *>(&EV(ev).getData().getPoints().getObject(sname));
@@ -324,24 +324,24 @@ extern "C"
 		return PT(pt).getFirstUidx();
 	}
 
-	int lgcPointGetRelativeUnknIndices(LGCPoint pt, int **out_data, int *out_len)
+	int lgcPointGetRelativeUnknIndices(LGCPoint pt, int **outData, int *outLen)
 	{
 		try
 		{
 			auto indices = PT(pt).getRelativeUnknIndices();
-			*out_len = static_cast<int>(indices.size());
-			*out_data = new int[*out_len];
-			std::copy(indices.begin(), indices.end(), *out_data);
+			*outLen = static_cast<int>(indices.size());
+			*outData = new int[*outLen];
+			std::copy(indices.begin(), indices.end(), *outData);
 			return 0;
 		}
 		CATCH_ERR
 	}
 
-	int lgcPointGetEstVector(LGCPoint pt, double **out_data, int *out_len)
+	int lgcPointGetEstVector(LGCPoint pt, double **outData, int *outLen)
 	{
 		try
 		{
-			eigenVecToArray(PT(pt).getEstVector(), out_data, out_len);
+			eigenVecToArray(PT(pt).getEstVector(), outData, outLen);
 			return 0;
 		}
 		CATCH_ERR
@@ -369,24 +369,24 @@ extern "C"
 		return FR(fr).getFirstUidx();
 	}
 
-	int lgcFrameGetRelativeUnknIndices(LGCFrame fr, int **out_data, int *out_len)
+	int lgcFrameGetRelativeUnknIndices(LGCFrame fr, int **outData, int *outLen)
 	{
 		try
 		{
 			auto indices = FR(fr).getRelativeUnknIndices();
-			*out_len = static_cast<int>(indices.size());
-			*out_data = new int[*out_len];
-			std::copy(indices.begin(), indices.end(), *out_data);
+			*outLen = static_cast<int>(indices.size());
+			*outData = new int[*outLen];
+			std::copy(indices.begin(), indices.end(), *outData);
 			return 0;
 		}
 		CATCH_ERR
 	}
 
-	int lgcFrameGetEstVector(LGCFrame fr, double **out_data, int *out_len)
+	int lgcFrameGetEstVector(LGCFrame fr, double **outData, int *outLen)
 	{
 		try
 		{
-			eigenVecToArray(FR(fr).getEstVector(), out_data, out_len);
+			eigenVecToArray(FR(fr).getEstVector(), outData, outLen);
 			return 0;
 		}
 		CATCH_ERR
