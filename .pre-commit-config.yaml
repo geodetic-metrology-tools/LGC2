@@ -35,7 +35,6 @@ repos:
       - id: debug-statements
         exclude: '\.cpp$|\.h$'  # C++ files don't have Python debug statements
 
-
   # CMake formatting (optional - uncomment if you want to enforce CMake formatting)
   # - repo: https://github.com/cheshirekow/cmake-format-precommit
   #   rev: v0.6.13
@@ -48,6 +47,43 @@ repos:
   # Check for common C++ issues and project requirements
   - repo: local
     hooks:
+      # Check REUSE compliance for committed files only
+      - id: reuse-committed-files
+        name: Check REUSE compliance (committed files only)
+        entry: bash
+        language: system
+        pass_filenames: true
+        args:
+          - -c
+          - |
+            # Check if reuse command is available, install if not
+            if ! command -v reuse &> /dev/null; then
+              echo "REUSE tool not found. Installing..."
+              pip install reuse
+              if [ $? -ne 0 ]; then
+                echo "Error: Failed to install reuse tool"
+                exit 1
+              fi
+            fi
+
+            # Check each committed file individually
+            echo "Checking REUSE compliance for committed files..."
+            FAILED=0
+            for file in "$@"; do
+              if ! reuse lint-file "$file" > /dev/null 2>&1; then
+                echo "REUSE compliance check failed for: $file"
+                reuse lint-file "$file"
+                FAILED=1
+              fi
+            done
+
+            if [ $FAILED -eq 0 ]; then
+              echo "All committed files are REUSE compliant"
+            else
+              exit 1
+            fi
+          - --
+
       # Format C++ code with clang-format using local .clang-format configuration
       - id: clang-format
         name: clang-format
@@ -55,93 +91,6 @@ repos:
         language: system
         types_or: [c++, c]
         args: ['-i', '--style=file']  # Edit in-place, use .clang-format file
-
-      # Check REUSE compliance for committed files only
-      - id: check-reuse-compliance
-        name: Check REUSE compliance (committed files)
-        entry: python3
-        language: system
-        pass_filenames: true
-        args:
-          - -c
-          - |
-            import sys
-            import re
-            import os
-            from pathlib import Path
-
-            # Files being committed
-            files_to_check = sys.argv[1:]
-            if not files_to_check:
-                sys.exit(0)
-
-            # Patterns from REUSE.toml that are covered (don't need SPDX headers)
-            covered_patterns = [
-                # Documentation and metadata
-                r'^doc/',
-                r'^\.clang-format$',
-                r'^\.editorconfig$',
-                r'^\.gitignore$',
-                r'^\.gitlab-ci\.yml$',
-                r'^\.gitmodules$',
-                r'\.md$',
-                r'\.yaml$',
-                r'^DCO\.txt$',
-                r'^LGC\.ico$',
-                # Source, scripts, and build/config files
-                r'^source/.*/CMakeLists\.txt$',
-                r'^source/.*\.def$',
-                r'^source/.*\.in$',
-                r'^source/.*\.py$',
-                r'^source/.*\.cmake$',
-                r'^source/.*\.dox$',
-                r'^lib/cmake_common/',
-                # Test files
-                r'^source/LGC_Tests/testFiles/.*\.(inp|lgc|lgc2|sim|xml|pun|output|res|out|m)$',
-            ]
-
-            def is_covered_by_reuse_toml(filepath):
-                """Check if file is covered by REUSE.toml annotations"""
-                for pattern in covered_patterns:
-                    if re.search(pattern, filepath):
-                        return True
-                return False
-
-            def has_spdx_headers(filepath):
-                """Check if file has SPDX license and copyright headers"""
-                try:
-                    with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
-                        content = f.read(2000)  # Check first 2000 chars
-                        has_copyright = 'SPDX-FileCopyrightText:' in content or 'Copyright' in content
-                        has_license = 'SPDX-License-Identifier:' in content
-                        return has_copyright and has_license
-                except:
-                    return False
-
-            failed_files = []
-
-            for filepath in files_to_check:
-                # Normalize path separators
-                filepath_normalized = filepath.replace('\\', '/')
-
-                # Check if covered by REUSE.toml or has SPDX headers
-                if not is_covered_by_reuse_toml(filepath_normalized) and not has_spdx_headers(filepath):
-                    failed_files.append(filepath)
-
-            if failed_files:
-                print("\nREUSE compliance check FAILED!")
-                print("\nThe following committed files are missing copyright/licensing information:\n")
-                for f in failed_files:
-                    print(f"  - {f}")
-                print("\nEach file must either:")
-                print("  1. Be covered by REUSE.toml annotations, OR")
-                print("  2. Have SPDX headers in the file:")
-                print("     SPDX-FileCopyrightText: <copyright holder>")
-                print("     SPDX-License-Identifier: <license>")
-                print("\nSee REUSE.toml for currently covered file patterns.\n")
-                sys.exit(1)
-
-            print(f"All {len(files_to_check)} committed file(s) are REUSE compliant")
 
       # Check that text files are UTF-8 encoded
       - id: check-utf8-encoding

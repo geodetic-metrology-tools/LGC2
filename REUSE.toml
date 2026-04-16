@@ -11,6 +11,7 @@ path = [
     ".gitlab-ci.yml",
     ".gitmodules",
     "*.md",
+    "*.yaml",
 	"DCO.txt",
 	"LGC.ico",
 ]
@@ -21,7 +22,7 @@ SPDX-License-Identifier = "CC-BY-4.0"
 # --- Source, scripts, and build/config files ---
 [[annotations]]
 path = [
-    "source/**/CMakeLists.txt", 
+    "source/**/CMakeLists.txt",
     "source/**/*.def",
     "source/**/*.in",
     "source/**/*.py",
@@ -50,4 +51,3 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "GPL-3.0-or-later"
-
