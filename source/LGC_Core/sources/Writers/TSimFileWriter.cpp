@@ -111,7 +111,6 @@ void TSimFileWriter::writeHeader()
 		}
 	}
 
-
 	if (data->getConfig().covar.isActive())
 		(*stream) << "*COVAR " << endl;
 
@@ -513,10 +512,10 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 		if (!frameIt->get()->measurements.radiActive)
 			(*stream) << DEACTIVATION_CHAR;
 
-		//RADI has not a structure of a round of measurement 
-		//initialization with the precision of the first value by default
+		// RADI has not a structure of a round of measurement
+		// initialization with the precision of the first value by default
 		auto romSig = frameIt->get()->measurements.fRADI.begin()->getObservedStDev().getMMetresValue();
-		(*stream) << "*RADI" << sep << romSig << sep  << "\n";
+		(*stream) << "*RADI" << sep << romSig << sep << "\n";
 		for (auto &meas : frameIt->get()->measurements.fRADI)
 			writeRADIMeas(&meas);
 	}
@@ -599,6 +598,9 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 			if (uvd.target.sigmaDist != romDefTarget.sigmaDist)
 				(*stream) << "DSE" << sep << uvd.target.sigmaDist.getMMetresValue() << sep;
 
+			if (!uvd.obsID.empty())
+				(*stream) << "ID" << sep << uvd.obsID << sep;
+
 			(*stream) << endl;
 		}
 	}
@@ -631,6 +633,9 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 			if (uvec.target.sigmaY != romDefTarget.sigmaY)
 				(*stream) << "YSE" << sep << uvec.target.sigmaY * M2MM << sep;
 
+			if (!uvec.obsID.empty())
+				(*stream) << "ID" << sep << uvec.obsID << sep;
+
 			(*stream) << endl;
 		}
 	}
@@ -650,6 +655,9 @@ void TSimFileWriter::writeDVERMeas(TDVER *meas)
 
 	if (meas->getDistanceCorrection().getMetresValue() != 0)
 		(*stream) << "DCOR" << sep << meas->getDistanceCorrection().getMetresValue() << sep;
+
+	if (!meas->obsID.empty())
+		(*stream) << "ID" << sep << meas->obsID << sep;
 
 	(*stream) << endl;
 }
@@ -685,6 +693,9 @@ void TSimFileWriter::writeECHOMeas(TECHOROM *meas)
 
 		if (itECHO.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 			(*stream) << "ICSE" << sep << itECHO.target.sigmaInstrCentering.getMMetresValue() << sep;
+
+		if (!itECHO.obsID.empty())
+			(*stream) << "ID" << sep << itECHO.obsID << sep;
 
 		(*stream) << endl;
 	}
@@ -729,6 +740,9 @@ void TSimFileWriter::writeECVEMeas(TECVEROM *meas)
 		if (itECVE.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 			(*stream) << "ISCE" << sep << itECVE.target.sigmaInstrCentering.getMMetresValue() << sep;
 
+		if (!itECVE.obsID.empty())
+			(*stream) << "ID" << sep << itECVE.obsID << sep;
+
 		(*stream) << endl;
 	}
 }
@@ -764,6 +778,9 @@ void TSimFileWriter::writeECSPMeas(TECSPROM *meas)
 
 		if (ecsp.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 			(*stream) << "ICSE" << sep << ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
+
+		if (!ecsp.obsID.empty())
+			(*stream) << "ID" << sep << ecsp.obsID << sep;
 
 		(*stream) << endl;
 	}
@@ -821,6 +838,9 @@ void TSimFileWriter::writeEDMMeas(TEDM *meas)
 
 		if (itDspt.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 			(*stream) << "TCSE" << sep << itDspt.target.sigmaTargetCentering.getMMetresValue() << sep;
+
+		if (!itDspt.obsID.empty())
+			(*stream) << "ID" << sep << itDspt.obsID << sep;
 
 		(*stream) << endl;
 	}
@@ -897,6 +917,9 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL *meas)
 				(*stream) << "DHDCOR" << sep << itDLEV.dhor->target.dhorCorrectionValue.getMetresValue() << sep;
 		}
 
+		if (!itDLEV.obsID.empty())
+			(*stream) << "ID" << sep << itDLEV.obsID << sep;
+
 		(*stream) << "\n";
 	}
 }
@@ -942,6 +965,9 @@ void TSimFileWriter::writeORIEMeas(TORIEROM *meas)
 		if (itORIE.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 			(*stream) << "TCSE" << sep << itORIE.target.sigmaTargetCentering.getMMetresValue() << sep;
 
+		if (!itORIE.obsID.empty())
+			(*stream) << "ID" << sep << itORIE.obsID << sep;
+
 		(*stream) << endl;
 	}
 }
@@ -957,6 +983,8 @@ void TSimFileWriter::writeRADIMeas(TRADI *meas)
 	(*stream) << meas->station->getName() << sep << meas->getAngleCnstr().getGonsValue();
 	(*stream) << sep << "OBSE" << sep << meas->getObservedStDev().getMMetresValue();
 	(*stream) << sep << "ACST" << sep << meas->getConstAngle().getGonsValue();
+	if (!meas->obsID.empty())
+		(*stream) << sep << "ID" << sep << meas->obsID;
 	(*stream) << "\n";
 }
 
@@ -969,7 +997,10 @@ void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ *meas)
 		(*stream) << DEACTIVATION_CHAR;
 
 	(*stream) << meas->station->getName() << sep << meas->obsValue.getX() << sep << meas->obsValue.getY() << sep << meas->obsValue.getZ() << sep
-			  << meas->getXObservedStDev().getMMetresValue() << sep << meas->getYObservedStDev().getMMetresValue() << sep << meas->getZObservedStDev().getMMetresValue() << endl;
+			  << meas->getXObservedStDev().getMMetresValue() << sep << meas->getYObservedStDev().getMMetresValue() << sep << meas->getZObservedStDev().getMMetresValue() << sep;
+	if (!meas->obsID.empty())
+		(*stream) << "ID" << sep << meas->obsID << sep;
+	(*stream) << endl;
 }
 
 void TSimFileWriter::writeECWSMeas(TECWSROM *meas)
@@ -1007,6 +1038,9 @@ void TSimFileWriter::writeECWSMeas(TECWSROM *meas)
 
 		if (itECWS.target.sigmaWS != meas->sigmaWS)
 			(*stream) << "WSSE" << sep << itECWS.target.sigmaWS.getMMetresValue() << sep;
+
+		if (!itECWS.obsID.empty())
+			(*stream) << "ID" << sep << itECWS.obsID << sep;
 
 		(*stream) << endl;
 	}
@@ -1058,6 +1092,9 @@ void TSimFileWriter::writeECWIMeas(TECWIROM *meas)
 
 		if (itECWI.target.sigmaInstrCenteringZ != wpsrDefInst.sigmaInstrCenteringZ)
 			(*stream) << "ZICSE" << sep << itECWI.target.sigmaInstrCenteringZ.getMMetresValue() << sep;
+
+		if (!itECWI.obsID.empty())
+			(*stream) << "ID" << sep << itECWI.obsID << sep;
 
 		(*stream) << endl;
 	}
@@ -1139,6 +1176,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (angl.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << angl.target.sigmaTargetCentering.getMMetresValue() << sep;
 
+				if (!angl.obsID.empty())
+					(*stream) << "ID" << sep << angl.obsID << sep;
+
 				(*stream) << endl;
 			}
 		}
@@ -1173,6 +1213,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 
 				if (zend.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << zend.target.sigmaTargetCentering.getMMetresValue() << sep;
+
+				if (!zend.obsID.empty())
+					(*stream) << "ID" << sep << zend.obsID << sep;
 
 				(*stream) << endl;
 			}
@@ -1213,6 +1256,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (dist.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << dist.target.sigmaTargetCentering.getMMetresValue() << sep;
 
+				if (!dist.obsID.empty())
+					(*stream) << "ID" << sep << dist.obsID << sep;
+
 				(*stream) << endl;
 			}
 		}
@@ -1244,6 +1290,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 
 				if (dhor.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << dhor.target.sigmaTargetCentering.getMMetresValue() << sep;
+
+				if (!dhor.obsID.empty())
+					(*stream) << "ID" << sep << dhor.obsID << sep;
 
 				(*stream) << endl;
 			}
@@ -1291,6 +1340,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (plr.target.ppmDist != romDefTarget.ppmDist)
 					(*stream) << "PPM" << sep << plr.target.ppmDist.getMMetresValue() << sep;
 
+				if (!plr.obsID.empty())
+					(*stream) << "ID" << sep << plr.obsID << sep;
+
 				(*stream) << endl;
 			}
 		}
@@ -1328,6 +1380,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					if (ecth.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecth.target.sigmaInstrCentering.getMMetresValue() << sep;
 
+					if (!ecth.obsID.empty())
+						(*stream) << "ID" << sep << ecth.obsID << sep;
+
 					(*stream) << endl;
 				}
 				else
@@ -1355,6 +1410,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 
 					if (ecth.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecth.target.sigmaInstrCentering.getMMetresValue() << sep;
+
+					if (!ecth.obsID.empty())
+						(*stream) << "ID" << sep << ecth.obsID << sep;
 
 					(*stream) << endl;
 				}
@@ -1395,6 +1453,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					if (ecdir.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecdir.target.sigmaInstrCentering.getMMetresValue() << sep;
 
+					if (!ecdir.obsID.empty())
+						(*stream) << "ID" << sep << ecdir.obsID << sep;
+
 					(*stream) << endl;
 				}
 				else
@@ -1423,6 +1484,9 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					if (ecdir.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecdir.target.sigmaInstrCentering.getMMetresValue() << sep;
 
+					if (!ecdir.obsID.empty())
+						(*stream) << "ID" << sep << ecdir.obsID << sep;
+
 					(*stream) << endl;
 				}
 			}
@@ -1442,22 +1506,22 @@ void TSimFileWriter::writeROLLYMeas(TROLLYROM *meas)
 
 /*
  * Common INCL Measurement Simulation Helper
- * 
+ *
  * Unified template function that handles both INCLY and ROLLY measurement simulation output.
  * Eliminates code duplication by accepting the measurement list, ROM, and header keyword.
- * 
+ *
  * Generates simulation input files in standard LGC format with:
  * - Header line with measurement type keyword and default instrument ID
  * - Individual measurement lines with target points and observed angles
  * - Optional parameters only when they differ from default instrument values
  * - Proper deactivation character handling for inactive measurements
- * 
+ *
  * @param measurements: List of measurements (INCLY or ROLLY) to write
  * @param rom: Round of measurements object containing measurement data and state
  * @param keyword: Header keyword string ("*INCLY" or "*ROLLY") for measurement type identification
  */
 template<typename MeasurementList, typename ROMType>
-void TSimFileWriter::writeINCLMeasHelper(const MeasurementList& measurements, const ROMType* rom, const std::string& keyword)
+void TSimFileWriter::writeINCLMeasHelper(const MeasurementList &measurements, const ROMType *rom, const std::string &keyword)
 {
 	// Get output stream and configure separator for consistent formatting
 	TAStreamFormatter *stream = getStream();
@@ -1523,6 +1587,11 @@ void TSimFileWriter::writeINCLMeasHelper(const MeasurementList& measurements, co
 		// Convert to centesimal seconds (cc) for uncertainty representation
 		if (measurement.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
 			(*stream) << "RFSE" << sep << measurement.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
+
+		// Write the observation ID (ID) only if present so downstream .sim files
+		// can preserve the identifier for later round-tripping/analysis.
+		if (!measurement.obsID.empty())
+			(*stream) << "ID" << sep << measurement.obsID << sep;
 
 		// End the measurement line
 		(*stream) << "\n";
