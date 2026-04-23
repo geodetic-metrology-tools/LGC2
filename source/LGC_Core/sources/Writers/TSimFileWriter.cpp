@@ -1588,8 +1588,6 @@ void TSimFileWriter::writeINCLMeasHelper(const MeasurementList &measurements, co
 		if (measurement.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
 			(*stream) << "RFSE" << sep << measurement.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
 
-		// Write the observation ID (ID) only if present so downstream .sim files
-		// can preserve the identifier for later round-tripping/analysis.
 		if (!measurement.obsID.empty())
 			(*stream) << "ID" << sep << measurement.obsID << sep;
 
