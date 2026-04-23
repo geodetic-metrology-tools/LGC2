@@ -980,12 +980,14 @@ void TSimFileWriter::writeRADIMeas(TRADI *meas)
 	if (!meas->isActive())
 		(*stream) << DEACTIVATION_CHAR;
 
-	(*stream) << meas->station->getName() << sep << meas->getAngleCnstr().getGonsValue();
-	(*stream) << sep << "OBSE" << sep << meas->getObservedStDev().getMMetresValue();
-	(*stream) << sep << "ACST" << sep << meas->getConstAngle().getGonsValue();
+	(*stream) << meas->station->getName() << sep << meas->getAngleCnstr().getGonsValue() << sep;
+	(*stream) << "OBSE" << sep << meas->getObservedStDev().getMMetresValue() << sep;
+	(*stream) << "ACST" << sep << meas->getConstAngle().getGonsValue() << sep;
+
 	if (!meas->obsID.empty())
-		(*stream) << sep << "ID" << sep << meas->obsID;
-	(*stream) << "\n";
+		(*stream) << "ID" << sep << meas->obsID << sep;
+
+	(*stream) << endl;
 }
 
 void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ *meas)
