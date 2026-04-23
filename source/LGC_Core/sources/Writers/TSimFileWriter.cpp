@@ -545,6 +545,16 @@ void TSimFileWriter::writeMeasurement(TDataTreeIterator frameIt)
 	}
 }
 
+void TSimFileWriter::writeObsID(const std::string &obsID)
+{
+	if (obsID.empty())
+		return;
+
+	TAStreamFormatter *stream = getStream();
+	const std::string sep = stream->getSeparator();
+	(*stream) << "ID" << sep << obsID << sep;
+}
+
 void TSimFileWriter::writeCAMMeas(TCAM *meas)
 {
 	TAStreamFormatter *stream = getStream();
@@ -598,8 +608,7 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 			if (uvd.target.sigmaDist != romDefTarget.sigmaDist)
 				(*stream) << "DSE" << sep << uvd.target.sigmaDist.getMMetresValue() << sep;
 
-			if (!uvd.obsID.empty())
-				(*stream) << "ID" << sep << uvd.obsID << sep;
+			writeObsID(uvd.obsID);
 
 			(*stream) << endl;
 		}
@@ -633,8 +642,7 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 			if (uvec.target.sigmaY != romDefTarget.sigmaY)
 				(*stream) << "YSE" << sep << uvec.target.sigmaY * M2MM << sep;
 
-			if (!uvec.obsID.empty())
-				(*stream) << "ID" << sep << uvec.obsID << sep;
+			writeObsID(uvec.obsID);
 
 			(*stream) << endl;
 		}
@@ -656,8 +664,7 @@ void TSimFileWriter::writeDVERMeas(TDVER *meas)
 	if (meas->getDistanceCorrection().getMetresValue() != 0)
 		(*stream) << "DCOR" << sep << meas->getDistanceCorrection().getMetresValue() << sep;
 
-	if (!meas->obsID.empty())
-		(*stream) << "ID" << sep << meas->obsID << sep;
+	writeObsID(meas->obsID);
 
 	(*stream) << endl;
 }
@@ -694,8 +701,7 @@ void TSimFileWriter::writeECHOMeas(TECHOROM *meas)
 		if (itECHO.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 			(*stream) << "ICSE" << sep << itECHO.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-		if (!itECHO.obsID.empty())
-			(*stream) << "ID" << sep << itECHO.obsID << sep;
+		writeObsID(itECHO.obsID);
 
 		(*stream) << endl;
 	}
@@ -740,8 +746,7 @@ void TSimFileWriter::writeECVEMeas(TECVEROM *meas)
 		if (itECVE.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 			(*stream) << "ISCE" << sep << itECVE.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-		if (!itECVE.obsID.empty())
-			(*stream) << "ID" << sep << itECVE.obsID << sep;
+		writeObsID(itECVE.obsID);
 
 		(*stream) << endl;
 	}
@@ -779,8 +784,7 @@ void TSimFileWriter::writeECSPMeas(TECSPROM *meas)
 		if (ecsp.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 			(*stream) << "ICSE" << sep << ecsp.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-		if (!ecsp.obsID.empty())
-			(*stream) << "ID" << sep << ecsp.obsID << sep;
+		writeObsID(ecsp.obsID);
 
 		(*stream) << endl;
 	}
@@ -839,8 +843,7 @@ void TSimFileWriter::writeEDMMeas(TEDM *meas)
 		if (itDspt.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 			(*stream) << "TCSE" << sep << itDspt.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-		if (!itDspt.obsID.empty())
-			(*stream) << "ID" << sep << itDspt.obsID << sep;
+		writeObsID(itDspt.obsID);
 
 		(*stream) << endl;
 	}
@@ -917,8 +920,7 @@ void TSimFileWriter::writeLEVELMeas(TLEVEL *meas)
 				(*stream) << "DHDCOR" << sep << itDLEV.dhor->target.dhorCorrectionValue.getMetresValue() << sep;
 		}
 
-		if (!itDLEV.obsID.empty())
-			(*stream) << "ID" << sep << itDLEV.obsID << sep;
+		writeObsID(itDLEV.obsID);
 
 		(*stream) << "\n";
 	}
@@ -965,8 +967,7 @@ void TSimFileWriter::writeORIEMeas(TORIEROM *meas)
 		if (itORIE.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 			(*stream) << "TCSE" << sep << itORIE.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-		if (!itORIE.obsID.empty())
-			(*stream) << "ID" << sep << itORIE.obsID << sep;
+		writeObsID(itORIE.obsID);
 
 		(*stream) << endl;
 	}
@@ -984,8 +985,7 @@ void TSimFileWriter::writeRADIMeas(TRADI *meas)
 	(*stream) << "OBSE" << sep << meas->getObservedStDev().getMMetresValue() << sep;
 	(*stream) << "ACST" << sep << meas->getConstAngle().getGonsValue() << sep;
 
-	if (!meas->obsID.empty())
-		(*stream) << "ID" << sep << meas->obsID << sep;
+	writeObsID(meas->obsID);
 
 	(*stream) << endl;
 }
@@ -1000,8 +1000,7 @@ void TSimFileWriter::writeOBSXYZMeas(TOBSXYZ *meas)
 
 	(*stream) << meas->station->getName() << sep << meas->obsValue.getX() << sep << meas->obsValue.getY() << sep << meas->obsValue.getZ() << sep
 			  << meas->getXObservedStDev().getMMetresValue() << sep << meas->getYObservedStDev().getMMetresValue() << sep << meas->getZObservedStDev().getMMetresValue() << sep;
-	if (!meas->obsID.empty())
-		(*stream) << "ID" << sep << meas->obsID << sep;
+	writeObsID(meas->obsID);
 	(*stream) << endl;
 }
 
@@ -1041,8 +1040,7 @@ void TSimFileWriter::writeECWSMeas(TECWSROM *meas)
 		if (itECWS.target.sigmaWS != meas->sigmaWS)
 			(*stream) << "WSSE" << sep << itECWS.target.sigmaWS.getMMetresValue() << sep;
 
-		if (!itECWS.obsID.empty())
-			(*stream) << "ID" << sep << itECWS.obsID << sep;
+		writeObsID(itECWS.obsID);
 
 		(*stream) << endl;
 	}
@@ -1095,8 +1093,7 @@ void TSimFileWriter::writeECWIMeas(TECWIROM *meas)
 		if (itECWI.target.sigmaInstrCenteringZ != wpsrDefInst.sigmaInstrCenteringZ)
 			(*stream) << "ZICSE" << sep << itECWI.target.sigmaInstrCenteringZ.getMMetresValue() << sep;
 
-		if (!itECWI.obsID.empty())
-			(*stream) << "ID" << sep << itECWI.obsID << sep;
+		writeObsID(itECWI.obsID);
 
 		(*stream) << endl;
 	}
@@ -1178,8 +1175,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (angl.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << angl.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-				if (!angl.obsID.empty())
-					(*stream) << "ID" << sep << angl.obsID << sep;
+				writeObsID(angl.obsID);
 
 				(*stream) << endl;
 			}
@@ -1216,8 +1212,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (zend.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << zend.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-				if (!zend.obsID.empty())
-					(*stream) << "ID" << sep << zend.obsID << sep;
+				writeObsID(zend.obsID);
 
 				(*stream) << endl;
 			}
@@ -1258,8 +1253,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (dist.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << dist.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-				if (!dist.obsID.empty())
-					(*stream) << "ID" << sep << dist.obsID << sep;
+				writeObsID(dist.obsID);
 
 				(*stream) << endl;
 			}
@@ -1293,8 +1287,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (dhor.target.sigmaTargetCentering != romDefTarget.sigmaTargetCentering)
 					(*stream) << "TCSE" << sep << dhor.target.sigmaTargetCentering.getMMetresValue() << sep;
 
-				if (!dhor.obsID.empty())
-					(*stream) << "ID" << sep << dhor.obsID << sep;
+				writeObsID(dhor.obsID);
 
 				(*stream) << endl;
 			}
@@ -1342,8 +1335,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 				if (plr.target.ppmDist != romDefTarget.ppmDist)
 					(*stream) << "PPM" << sep << plr.target.ppmDist.getMMetresValue() << sep;
 
-				if (!plr.obsID.empty())
-					(*stream) << "ID" << sep << plr.obsID << sep;
+				writeObsID(plr.obsID);
 
 				(*stream) << endl;
 			}
@@ -1382,8 +1374,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					if (ecth.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecth.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-					if (!ecth.obsID.empty())
-						(*stream) << "ID" << sep << ecth.obsID << sep;
+					writeObsID(ecth.obsID);
 
 					(*stream) << endl;
 				}
@@ -1413,8 +1404,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					if (ecth.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecth.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-					if (!ecth.obsID.empty())
-						(*stream) << "ID" << sep << ecth.obsID << sep;
+					writeObsID(ecth.obsID);
 
 					(*stream) << endl;
 				}
@@ -1455,8 +1445,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					if (ecdir.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecdir.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-					if (!ecdir.obsID.empty())
-						(*stream) << "ID" << sep << ecdir.obsID << sep;
+					writeObsID(ecdir.obsID);
 
 					(*stream) << endl;
 				}
@@ -1486,8 +1475,7 @@ void TSimFileWriter::writeTSTNMeas(std::shared_ptr<TTSTN> meas)
 					if (ecdir.target.sigmaInstrCentering != scaleDefInst.sigmaInstrCentering)
 						(*stream) << "ICSE" << sep << ecdir.target.sigmaInstrCentering.getMMetresValue() << sep;
 
-					if (!ecdir.obsID.empty())
-						(*stream) << "ID" << sep << ecdir.obsID << sep;
+					writeObsID(ecdir.obsID);
 
 					(*stream) << endl;
 				}
@@ -1590,8 +1578,7 @@ void TSimFileWriter::writeINCLMeasHelper(const MeasurementList &measurements, co
 		if (measurement.target.refSigmaCorrectionValue != inclDefInst.refSigmaCorrectionValue)
 			(*stream) << "RFSE" << sep << measurement.target.refSigmaCorrectionValue.getSignedCCValue() << sep;
 
-		if (!measurement.obsID.empty())
-			(*stream) << "ID" << sep << measurement.obsID << sep;
+		writeObsID(measurement.obsID);
 
 		// End the measurement line
 		(*stream) << "\n";
