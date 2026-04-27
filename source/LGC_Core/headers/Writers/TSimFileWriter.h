@@ -77,11 +77,12 @@ protected:
 	void writeROLLYMeas(TROLLYROM *meas);
 	void writeECWSMeas(TECWSROM *meas);
 	void writeECWIMeas(TECWIROM *meas);
+	void writeObsID(const std::string &obsID);
 
 private:
 	/// Common template helper for both INCLY and ROLLY measurement simulation output
 	template<typename MeasurementList, typename ROMType>
-	void writeINCLMeasHelper(const MeasurementList& measurements, const ROMType* rom, const std::string& keyword);
+	void writeINCLMeasHelper(const MeasurementList &measurements, const ROMType *rom, const std::string &keyword);
 
 public:
 	/// Project data
