@@ -1,9 +1,12 @@
 [![pipeline status](https://gitlab.cern.ch/apc/susofts/processing/LGC2/badges/master/pipeline.svg)](https://gitlab.cern.ch/apc/susofts/processing/LGC2/commits/master)
 
-# LGC2
+# LGC2 — CERN LGC Survey and Alignment Software
+
+> **LGC2** | **LGC** | **CERN** | **GitHub** | **GitLab** | Survey and alignment | Geodetic metrology | Least-squares adjustment
 
 **LGC2** is a command-line software originally developed at **CERN** for precise survey and alignment computations.
 It applies the **least-squares adjustment method** to determine the spatial positions of measured points and associated statistics from geodetic or metrological observations.
+**Official repositories:** [GitHub](https://github.com/geodetic-metrology-tools/LGC2) | [CERN GitLab](https://gitlab.cern.ch/apc/susofts/processing/LGC2) | **Documentation:** [lgc2.docs.cern.ch](https://lgc2.docs.cern.ch/)
 
 [[_TOC_]]
 
@@ -91,6 +94,16 @@ Additional materials can be found in the [`doc/`](./doc) directory.
 
 > The mathematical model documentation (PDF format, last updated in 2020) is no longer actively maintained.
 > It remains largely accurate but is scheduled for integration into the new public user guide.
+
+### References and Publications
+
+The following LGC/LGC2-related publications are available on the CERN Document Server (CDS):
+
+| Publication | Description |
+|-------------|-------------|
+| [LGC open-source: A strategy to share adjustment software and algorithmic development](https://cds.cern.ch/record/2938907) | CERN paper (2024) on LGC's transition to open-source and the rationale for sharing adjustment software with the community. |
+| [LGC: Analysis and practical example of direct levelling observations referenced on the CERN local Geoid model](https://cds.cern.ch/record/2849058) | Technical analysis of direct levelling with LGC, including DLEV observation models and CERN Geoid integration. |
+| [II.11 - Survey and alignment of accelerators](https://cds.cern.ch/record/2929434) | Overview of survey and alignment methods at CERN, including LGC applications for accelerator alignment. |
 
 ---
 
