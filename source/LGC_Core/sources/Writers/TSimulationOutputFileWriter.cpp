@@ -41,6 +41,9 @@ void TSimulationOutputFileWriter::writeFileBegin()
 	// Limited just number of points and unknowns for points for now
 	this->initObsListNumber();
 
+	// Snapshot elapsed time so writeTitle() shows the computation time for the first iteration
+	TLGCApp::updateProcessingElapsedSeconds();
+
 	// write the header title of the results file
 	this->writeTitle();
 
@@ -114,10 +117,10 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &pr
 	// simulation summary
 	(*stream) << "RESUME APRES : " << i << " SIMULATIONS" << endl;
 
-	// write date and time
-	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl
-			  << endl
-			  << endl;
+	TLGCApp::updateProcessingElapsedSeconds();
+	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS ";
+	(*stream).writeDouble(0, 7, TLGCApp::getProcessingElapsedSeconds());
+	(*stream) << "\n" << "\n" << "\n";
 	// write title
 	(*stream) << projTitle << endl;
 	(*stream) << "*********************************************************************************************************************************** " << endl;

@@ -4,6 +4,11 @@
 
 #include "TLSSimulation.h"
 
+#include <iomanip>
+#include <sstream>
+
+#include <Logger.hpp>
+#include "TLGCApp.h"
 #include "TLGCData.h"
 #include "TLSInputMatrices.h"
 #include "TLSInputMatricesFiller.h"
@@ -40,11 +45,28 @@ Behavior TLSSimulation::run(TLGCData &data, int maxIterations)
 
 	int numOfSimMade = 0;
 	int totalNumOfSimul = fData.getConfig().sim.numSims;
+	double elapsedTimeBeforeIteration = 0.0;
+
+	auto startIterationTimer = [&elapsedTimeBeforeIteration]() {
+		TLGCApp::updateProcessingElapsedSeconds();
+		elapsedTimeBeforeIteration = TLGCApp::getProcessingElapsedSeconds();
+	};
+
+	auto logIterationTime = [&numOfSimMade, &elapsedTimeBeforeIteration]() {
+		TLGCApp::updateProcessingElapsedSeconds();
+		const double elapsed = TLGCApp::getProcessingElapsedSeconds();
+		std::ostringstream msg;
+		msg << "Processing time for SIMU " << numOfSimMade << ": "
+		    << std::fixed << std::setprecision(7) << (elapsed - elapsedTimeBeforeIteration)
+		    << " s (elapsed since start: " << elapsed << " s)";
+		logInfo() << msg.str();
+	};
 
 	// Run through the first simulation
 
 	try
 	{
+		startIterationTimer();
 		simulateValues();
 		calcOK = lsCalc.run(data, maxIterations);
 
@@ -52,6 +74,8 @@ Behavior TLSSimulation::run(TLGCData &data, int maxIterations)
 		{
 			updateResValues();
 			numOfSimMade++;
+
+			logIterationTime();
 
 			// Iteration through the points
 			for (auto it(fData.getPoints().begin()); it != fData.getPoints().end(); ++it)
@@ -86,12 +110,16 @@ Behavior TLSSimulation::run(TLGCData &data, int maxIterations)
 			// reinitialize to project to the original form, points, frames, etc.
 			fData.reInitForSIMU();
 
+			startIterationTimer();
+
 			// compute the ls results for the current simulation
 			simulateValues();
 			calcOK = lsCalc.run(data, maxIterations);
 
 			// Updates the values for the 2 final tables (Points and Frames summaries)
 			updateResValues();
+
+			logIterationTime();
 
 			// Iteration through the points
 			for (auto it(fData.getPoints().begin()); it != fData.getPoints().end(); ++it)

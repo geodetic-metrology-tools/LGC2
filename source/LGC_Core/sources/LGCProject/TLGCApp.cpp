@@ -32,9 +32,16 @@
 const std::string TLGCApp::copyright = "CERN";
 const std::string TLGCApp::license= "GPL-3.0-or-later";
 
+std::chrono::steady_clock::time_point TLGCApp::startProcessingTime;
 std::string TLGCApp::startProcessingTimestampISO = "";
 std::string TLGCApp::startProcessingTimestampOUT = "";
 double TLGCApp::processingElapsedSeconds = 0;
+
+void TLGCApp::updateProcessingElapsedSeconds()
+{
+	std::chrono::duration<double> elapsed = std::chrono::steady_clock::now() - startProcessingTime;
+	processingElapsedSeconds = elapsed.count();
+}
 
 TLGCApp::TLGCApp(const std::string &infileLocation, const std::string &outfileLocation, const int maxIterations) :
 	fInputFileLoc(infileLocation), fOutputFileLoc(outfileLocation), fStream(nullptr), fMaxIterations(maxIterations)
@@ -73,9 +80,11 @@ Behavior TLGCApp::exec()
 	// Initialise Behavior with an error during the read
 	Behavior result(Behavior::BehaviorCode::ERR_readingContent, L"Errors found in the input file, check the log file for more details.");
 
-	startProcessingTime = std::chrono::system_clock::now();
-	startProcessingTimestampISO = convertTimestampToString(startProcessingTime, "%FT%T%z");
-	startProcessingTimestampOUT = convertTimestampToString(startProcessingTime, "%F %T (UTC %z)");
+	// system_clock gives a calendar-linked timestamp for display; steady_clock is monotonic and used for elapsed-time measurement.
+	auto calendarStart = std::chrono::system_clock::now();
+	startProcessingTime = std::chrono::steady_clock::now();
+	startProcessingTimestampISO = convertTimestampToString(calendarStart, "%FT%T%z");
+	startProcessingTimestampOUT = convertTimestampToString(calendarStart, "%F %T (UTC %z)");
 
 	// Read the input file. If error occured during the reading proces output them into an LOG file and throw an exception.
 	TReader r(projectData);
@@ -109,8 +118,7 @@ Behavior TLGCApp::exec()
 	result = lgcCalculation.computeResults(fileWriter);
 	logInfo() << "Calculation process ended.";
 
-	endProcessingTime = std::chrono::system_clock::now();
-	processingElapsedSeconds = computeProcessingElapsedSeconds(startProcessingTime, endProcessingTime);
+	updateProcessingElapsedSeconds();
 
 	// Save the final results (SIMU output is written during the calculation after each iteration)
 	if (result)
