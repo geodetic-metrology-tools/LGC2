@@ -18,7 +18,7 @@ class TLSConsCheck
 public:
 	// constructor
 	TLSConsCheck(TLGCData &data, const TLSInputMatrices &inputMtr);
-	bool getResultStatus();
+	bool getResultStatus() const { return resultStatus; }
 	// write the error message with the logger methods
 	void generateErrorMessage();
 	// get the connected nullspace groups
@@ -52,46 +52,32 @@ private:
 	// maps column index (unknown index) to object id
 	std::vector<int> colToObject;
 
-	// convert set of object-indices to variable indices
-	std::vector<int> indicesFromSet(const std::set<int> &objectSet);
-	// get set of object indices from variable indices
-	std::set<int> objectsFromIndices(const std::vector<int> &x);
+	// objects that contribute to row of firstDgnMatrix
+	std::set<int> objectsOnRow(int row) const;
 	void initialize();
 	void addObject(TVAdjustableObject &object, const std::string &objectType);
 	// get  points in group
 	std::set<int> getPoints(const std::set<int> &group);
 	// compute full Nullspace representation
 	TDenseMatrix computeNullspace();
-	// compute Nullspace representation with only certain objects contributing
-	std::vector<TDenseMatrix> computeKernelWrtObjectSet(const std::set<int> &allowedObjects);
-	// get set of objects that contribute to matrix
-	std::set<int> contributingObjects(const TDenseMatrix &M);
+	// compute Nullspace representation with only certain objects contributing (each column is a basis vector)
+	TDenseMatrix computeKernelWrtObjectSet(const std::set<int> &allowedObjects);
 	// compute all connected object groups that contribute to the Nullspace
 	std::set<std::set<int>> identifyConnectedNullspaceGroups();
 	// get set of object indices from the complement of a group that are connected to this group
 	std::pair<std::set<int>, int> externalConnections(const std::set<int> &group);
 	// write a warning message
-	void generateGroupWarning(const std::set<int> &component, const std::vector<TDenseMatrix> &kernGroupBaseVectors, const int groupNumber);
+	void generateGroupWarning(const std::set<int> &component, const TDenseMatrix &kernel, const int groupNumber);
 	// computing the jacobian of the virtual master helmert trafo acting on the point in root coordinates, will be a 3x7 matrix
 	TDenseMatrix getMasterDirections(const std::string &pointName);
 	// given a point and certain columns of the Nullspace, compute the resulting movement in Root considering all the contributions from the point in subframe and the helmert parameters from the chain to root
 	TDenseMatrix getAmbiguousDirectionsInRoot(const std::string &pointName, const TDenseMatrix &nullspaceBlock);
-	// return column indices from sparsity pattern of a row of a sparse  matrix
-	std::vector<int> getIndicesOfRow(const Eigen::SparseMatrix<double, Eigen::RowMajor> &M, int rowNumber);
-	std::vector<std::string> involvedHelmertComponents(TVector linComb);
-	// for a group check for each direction if it can be interpreted as movements from a helmert transformation in ROOT
-	std::vector<std::vector<std::string>> interpreteGroupDirectionsAsHelmertMovements(const std::set<int> &pointsInGroup, const std::vector<TDenseMatrix> &kernGroupBaseVectors);
-	//  return a set of points whose root coordinates are affected by the nullspaceDirection + the exact direction in which they move in root + their position in root.
-	std::tuple<std::set<std::string>, Eigen::VectorXd, Eigen::VectorXd> getAffectedPointsAndRootMovements(const std::set<int> &group, const Eigen::VectorXd &nullspaceVector);
-	void plotTransformationMessage(std::vector<std::vector<std::string>>);
-	// having n 3d points with a vector of their concatenated positions and a vector of concatenated directions (or matrix if there are several directions)
-	//  try to find a point such that the directions can be interpreted as rotation around that point
-	//  returns true if a rotation axis/center was found otherwise false
-	bool findRotationAxis(const Eigen::VectorXd &pos, const Eigen::MatrixXd &directions);
-	// method for interpreting nullspace directions of a group as translations/rotations
-	// the method first tries to isolate pure translations and then tries to interprete the remaining orthogonasl complement of the nullspace as rotations.
-	// it will also try to find the corresponding rotation axis
-	bool findDirectionsToBlock(std::array<bool, 7> &chosenConstraints, const Eigen::MatrixXd &helmertMovements, const Eigen::VectorXd &pointPositions, const Eigen::MatrixXd &nullspaceDirections);
+	// for each ambiguous direction of the group, classify it as stationary / a Helmert combination / not interpretable, and emit one warning row
+	void reportGroupHelmertInterpretation(const std::set<int> &pointsInGroup, const TDenseMatrix &kernel);
+	// return the set of points whose root coordinates are affected by nullspaceVector + their concatenated root-direction vector
+	std::pair<std::set<std::string>, Eigen::VectorXd> getAffectedPointsAndRootMovements(const std::set<int> &group, const Eigen::VectorXd &nullspaceVector);
+	// decompose nullspace directions into pure translations + pure rotations/scale and pick blocking constraints
+	bool findDirectionsToBlock(std::array<bool, 7> &chosenConstraints, const Eigen::MatrixXd &helmertMovements, const Eigen::MatrixXd &nullspaceDirections);
 	// input: matrix with columns representing ambiguous directions in terms of helmert directions. output: constraint signature blocking all of these directions
 	std::array<bool, 7> whatToBlock(const Eigen::MatrixXd &mat);
 };
