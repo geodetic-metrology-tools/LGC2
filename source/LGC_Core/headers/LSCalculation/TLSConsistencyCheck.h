@@ -41,8 +41,6 @@ private:
 	std::vector<std::string> objectTypes;
 	// vector of vector of associated variable indices
 	std::vector<std::vector<int>> objectIndices;
-	// vector of sets of object neighbors (connected via measurement or constraint)
-	std::vector<std::set<int>> neighbors;
 	// vector of sets of neighbors restricted to objects that contribute to Nullspace of first design matrix
 	std::vector<std::set<int>> nullspaceNeighbors;
 	// the different connected problematic groups
@@ -70,8 +68,6 @@ private:
 	std::set<int> contributingObjects(const TDenseMatrix &M);
 	// compute all connected object groups that contribute to the Nullspace
 	std::set<std::set<int>> identifyConnectedNullspaceGroups();
-	// find neighbors of objects in the nullspace
-	std::set<int> getNullspaceNeighbors(int object);
 	// get set of object indices from the complement of a group that are connected to this group
 	std::pair<std::set<int>, int> externalConnections(const std::set<int> &group);
 	// write a warning message
@@ -98,7 +94,6 @@ private:
 	bool findDirectionsToBlock(std::array<bool, 7> &chosenConstraints, const Eigen::MatrixXd &helmertMovements, const Eigen::VectorXd &pointPositions, const Eigen::MatrixXd &nullspaceDirections);
 	// input: matrix with columns representing ambiguous directions in terms of helmert directions. output: constraint signature blocking all of these directions
 	std::array<bool, 7> whatToBlock(const Eigen::MatrixXd &mat);
-	static Eigen::MatrixXd removeNearZeroNormColumns(const Eigen::MatrixXd &matrix, double threshold);
 };
 
 #endif

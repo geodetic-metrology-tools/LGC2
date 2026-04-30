@@ -599,11 +599,6 @@ bool TLSConsCheck::getResultStatus()
 	return resultStatus;
 }
 
-std::set<int> TLSConsCheck::getNullspaceNeighbors(int object)
-{
-	return nullspaceNeighbors.at(object);
-}
-
 std::set<std::set<int>> TLSConsCheck::identifyConnectedNullspaceGroups()
 {
 	std::unordered_map<int, int> parent;
@@ -735,7 +730,8 @@ std::array<bool, 7> TLSConsCheck::whatToBlock(const Eigen::MatrixXd &mat)
 		{
 			aux = aux * nullCoeffs;
 		}
-		// make sure already selected indices remain strictly zero
+		// the kernel basis is not orthonormal, so multiplying it back can leak tiny nonzeros
+		// into already-selected rows; force them to stay strictly zero
 		for (int k = 0; k < 7; k++)
 		{
 			if (result[k])
@@ -783,14 +779,9 @@ void TLSConsCheck::initialize()
 		for (int col : objectIndices[obj])
 			colToObject[col] = obj;
 
-	// compute neighbors
-	// initialize neighbors
-	for (auto object : objectNames)
-	{
-		std::set<int> empty;
-		neighbors.push_back(empty);
-		nullspaceNeighbors.push_back(empty);
-	}
+	// compute neighbor sets per object (connected via shared measurement/constraint rows)
+	std::vector<std::set<int>> neighbors(objectNames.size());
+	nullspaceNeighbors.assign(objectNames.size(), {});
 	for (int i = 0; i < firstDgnMatrix.rows(); i++)
 	{
 		std::vector<int> colIndices = getIndicesOfRow(firstDgnMatrix, i);
@@ -805,12 +796,10 @@ void TLSConsCheck::initialize()
 	}
 	nullspace = computeNullspace();
 
-	// compute nullspaceNeighbors (only allow connections to objects contributing
-	// to kernel)
+	// keep only neighbors that themselves contribute to the kernel
 	nullspaceObjects = contributingObjects(nullspace);
 	for (int i = 0; i < objectNames.size(); i++)
 	{
-		// nullspaceNeighbors are neighbors and contribute to kernel
 		for (auto object : neighbors[i])
 		{
 			if (nullspaceObjects.count(object) > 0)
@@ -951,24 +940,18 @@ std::vector<TDenseMatrix> TLSConsCheck::computeKernelWrtObjectSet(const std::set
 	// If the set of allowed objects corresponds to a connected nullspace group, there is at least one vector in the nullspace that has nonzero entries only at indices
 	// corresponding to objects in this group so in this case this method will return at least one nullspace vector
 	std::vector<int> allowedIndices = indicesFromSet(allowedObjects);
-	TDenseMatrix projection(allowedIndices.size(), nullspace.cols());
-	projection = nullspace(allowedIndices, Eigen::indexing::all);
-	// get a base of the projection
-	Eigen::FullPivLU<Eigen::MatrixXd> lu(projection);
-	int dimOfProjection = lu.rank();
-	TDenseMatrix projectionBase(allowedIndices.size(), dimOfProjection);
-	TDenseMatrix test = lu.image(projection);
-	projectionBase = test.leftCols(dimOfProjection);
-	// embed projected image in original space (putting zeros at all other indices)
-	TDenseMatrix result(nullspace.rows(), dimOfProjection);
-	result.setZero();
-	result(allowedIndices, Eigen::indexing::all) = test;
+	TDenseMatrix projection = nullspace(allowedIndices, Eigen::indexing::all);
+	// basis of the projected subspace
+	TDenseMatrix projectedBasis = Eigen::FullPivLU<Eigen::MatrixXd>(projection).image(projection);
+	// embed back into original space (zeros at all other indices)
+	TDenseMatrix result = TDenseMatrix::Zero(nullspace.rows(), projectedBasis.cols());
+	result(allowedIndices, Eigen::indexing::all) = projectedBasis;
+
 	std::vector<TDenseMatrix> kernGroupBaseVectors;
 	for (int j = 0; j < result.cols(); j++)
 	{
 		kernGroupBaseVectors.push_back(result.col(j));
 	}
-
 	return kernGroupBaseVectors;
 }
 std::vector<int> TLSConsCheck::indicesFromSet(const std::set<int> &objectSet)
@@ -1041,23 +1024,3 @@ std::pair<std::set<int>, int> TLSConsCheck::externalConnections(const std::set<i
 	return {externalConnectedObjects, nConnections};
 }
 
-Eigen::MatrixXd TLSConsCheck::removeNearZeroNormColumns(const Eigen::MatrixXd &matrix, double threshold)
-{
-	std::vector<int> colsToKeep;
-
-	for (int i = 0; i < matrix.cols(); ++i)
-	{
-		if (matrix.col(i).norm() > threshold)
-		{
-			colsToKeep.push_back(i);
-		}
-	}
-
-	Eigen::MatrixXd result(matrix.rows(), colsToKeep.size());
-	for (size_t i = 0; i < colsToKeep.size(); ++i)
-	{
-		result.col(i) = matrix.col(colsToKeep[i]);
-	}
-
-	return result;
-}
