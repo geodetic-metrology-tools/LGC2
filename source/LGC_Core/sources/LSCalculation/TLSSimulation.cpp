@@ -323,17 +323,10 @@ void TLSSimulation::updateDLEVSimValues(const TLEVEL &levelST, std::list<TDLEV> 
 {
 	for (auto &itDLEV : dlev)
 	{
+		const auto contribs = fCGenerator.getDLEVContribCombined(levelST, itDLEV);
+		itDLEV.setDistance(TLength(getSimulatedValue(contribs.fDLEV.fCalcMeas, sqrt(contribs.fDLEV.fObsVariance))));
 		if (itDLEV.dhor)
-		{
-			const auto contribs = fCGenerator.getDLEVContribCombined(levelST, itDLEV);
-			itDLEV.setDistance(TLength(getSimulatedValue(contribs.first.fCalcMeas, sqrt(contribs.first.fObsVariance))));
-			itDLEV.dhor->setDistance(TLength(getSimulatedValue(contribs.second.fCalcMeas, sqrt(contribs.second.fObsVariance))));
-		}
-		else
-		{
-			const auto contrib = fCGenerator.getDLEVContrib(levelST, itDLEV);
-			itDLEV.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
-		}
+			itDLEV.dhor->setDistance(TLength(getSimulatedValue(contribs.fDHOR.fCalcMeas, sqrt(contribs.fDHOR.fObsVariance))));
 	}
 }
 

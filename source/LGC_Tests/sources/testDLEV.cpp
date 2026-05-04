@@ -746,4 +746,26 @@ void object::test<25>()
 	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 	ensure_equals("S0 is not 0", projTest->getS0APosteriori(), 0, 1e-7);
 }
+
+template<>
+template<>
+void object::test<26>()
+{
+	set_test_name("DLEV+DHOR combined, IH adjustable, verifies getDLEVContribCombined DHOR path");
+	readTest(TestDLEV::DLEV_DHOR_TH_1, "DLEV_DHOR_TH_1");
+	ensure_equals("Reading Successfull ", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	TDataTree tree = projTest->getTree();
+	TDataTreeIterator frameIt = tree.begin();
+	auto romIt = frameIt.node->data->measurements.fLEVEL.begin();
+	auto measIt = romIt->measDLEV.begin();
+	ensure_equals("DLEV residual should be 0", measIt->getDistanceResidual().getMetresValue(), 0, 1e-7);
+	ensure_equals("DHOR residual should be 0", measIt->dhor->getDistanceResidual().getMetresValue(), 0, 1e-7);
+	ensure_equals("IH should converge to 1m", romIt->fMeasuredPlane->getRefPtDistEstimatedValue().getMetresValue(), 1.0, 1e-5);
+}
 } // namespace tut

@@ -449,7 +449,7 @@ Testing the staff verticality
 *PREC 7 
 *INSTR
 *LEVEL default Staff 0 0 0 0
-Staff 0.1 0 0 0 0 0
+Staff 0.1 0 0 0 0 0 0 0 0
 *CALA
 ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
 PT1 6000 6000 0          %a point far far away
@@ -470,7 +470,7 @@ see INSTR section
 *PREC 7 
 *INSTR
 *LEVEL default Staff 0 0 0 0
-Staff 0.1 0 250 0 250 0
+Staff 0.1 0 250 0 250 0 0 0 0
 *CALA
 ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
 PT1 6000 6000 0          %a point far far away
@@ -491,7 +491,7 @@ see INSTR section
 *PREC 7 
 *INSTR
 *LEVEL default Staff 0 0 0 0
-Staff 0.1 0 250 0 250 0
+Staff 0.1 0 250 0 250 0 0 0 0
 *CALA
 ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
 PT1 6000 6000 0          %a point far far away
@@ -507,7 +507,7 @@ Testing the staff verticality, LEP
 *PREC 7 
 *INSTR
 *LEVEL default Staff 0 0 0 0
-Staff 0.1 0 0 0 0 0
+Staff 0.1 0 0 0 0 0 0 0 0
 *CALA
 ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
 PT1 6000 6000 0          %a point far far away
@@ -526,7 +526,7 @@ Testing the staff verticality, SPHE
 *PREC 7 
 *INSTR
 *LEVEL default Staff 0 0 0 0
-Staff 0.1 0 0 0 0 0
+Staff 0.1 0 0 0 0 0 0 0 0
 *CALA
 ST1 2000 2097.79265 500  %CCS point where the Z is colinear to the local vertical
 PT1 6000 6000 0          %a point far far away
@@ -545,7 +545,7 @@ Testing the staff verticality, SPHE, with the station not at P0
 *PREC 7 
 *INSTR
 *LEVEL default Staff 0 0 0 0
-Staff 0.1 0 0 0 0 0
+Staff 0.1 0 0 0 0 0 0 0 0
 *CALA
 ST1 1000 1000 500  
 PT1 6000 6000 0          %a point far far away
@@ -565,12 +565,32 @@ see INSTR section
 *PREC 7 
 *INSTR
 *LEVEL default Staff 0 0 0 0
-Staff 0.1 0 250 0 250 0
+Staff 0.1 0 250 0 250 0 0 0 0
 *CALA
 ST1 1000 1000 500
 PT1 6000 6000 0          %a point far far away
 *DLEV default RefPt ST1 IH 1000
 PT1	3.92421241858614 %Computed using CSGEO
+*END
+)";
+
+// DLEV+DHOR combined, IH adjustable, OLOC.
+// ST1=(0,0,0), PT1=(5,0,-1), IH converges to 1m:
+//   DLEV = (0+1-(-1))/1 - 0 = 2.0
+//   DHOR = dist((0,0),(5,0)) = 5.0
+// sigmaDHor=0.1mm (token[7]) ensures nonzero DHOR variance.
+char const *const DLEV_DHOR_TH_1 = R"(*TITR
+DLEV+DHOR combined, IH adjustable, exercises getDLEVContribCombined with DHOR
+*OLOC
+*PREC 7
+*INSTR
+*LEVEL default Staff 0 0 0 0
+Staff 0.1 0 0 0 0 0 0.1 0 0
+*CALA
+ST1 0 0 0
+PT1 5 0 -1
+*DLEV default RefPt ST1 IH 0
+PT1 2.0 DHOR 5.0
 *END
 )";
 

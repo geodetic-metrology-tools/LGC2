@@ -60,8 +60,8 @@ public:
 	/// Transform a vector into an MLA system, where the first point is the origin of the system.
 	void transformVectorToMLASystem(const std::string &originName, const TPositionVector &originOfMLAPos, TFreeVector &freeVector);
 
-	/// Transform a vector definedinto an MLA system to the CSS.
-	void transformVectorFromMLAToCCS(const std::string &originName, const TPositionVector &originOfMLAPos, TFreeVector &freeVector);
+	/// Returns the local vertical (0,0,1) expressed in CCS at the given position. Returns (0,0,1) unchanged in OLOC.
+	TFreeVector getLocalVerticalInCCS(const std::string &originName, const TPositionVector &pos);
 
 	/// Sets new origin of the transformation to MLA system
 	void set2MLATransformation(TPositionVector originInCCS);
