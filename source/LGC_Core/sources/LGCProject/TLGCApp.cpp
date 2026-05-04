@@ -32,9 +32,15 @@
 const std::string TLGCApp::copyright = "CERN";
 const std::string TLGCApp::license= "GPL-3.0-or-later";
 
+std::chrono::system_clock::time_point TLGCApp::startProcessingTime;
 std::string TLGCApp::startProcessingTimestampISO = "";
 std::string TLGCApp::startProcessingTimestampOUT = "";
 double TLGCApp::processingElapsedSeconds = 0;
+
+void TLGCApp::updateProcessingElapsedSeconds()
+{
+	processingElapsedSeconds = computeProcessingElapsedSeconds(startProcessingTime, std::chrono::system_clock::now());
+}
 
 TLGCApp::TLGCApp(const std::string &infileLocation, const std::string &outfileLocation, const int maxIterations) :
 	fInputFileLoc(infileLocation), fOutputFileLoc(outfileLocation), fStream(nullptr), fMaxIterations(maxIterations)
@@ -109,8 +115,7 @@ Behavior TLGCApp::exec()
 	result = lgcCalculation.computeResults(fileWriter);
 	logInfo() << "Calculation process ended.";
 
-	endProcessingTime = std::chrono::system_clock::now();
-	processingElapsedSeconds = computeProcessingElapsedSeconds(startProcessingTime, endProcessingTime);
+	processingElapsedSeconds = computeProcessingElapsedSeconds(startProcessingTime, std::chrono::system_clock::now());
 
 	// Save the final results (SIMU output is written during the calculation after each iteration)
 	if (result)
