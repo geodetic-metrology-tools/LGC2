@@ -1782,14 +1782,13 @@ UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TU
 		targetTransfContributions.push_back({pair.first, trafoContrib});
 	}
 
-	// Stochastic model: full 2x2 a-priori covariance
-	// C = C_noise + C_center, where C_noise = diag(s_ux^2, s_uy^2), C_center = s_c^2 * J * J^T
+	// Stochastic model: independent 3D isotropic centering errors, scaled by 1/d^2
+	// sigma_TC and sigma_IC are mm-level position errors; effect on unit-vector component roughly sigma/d
 	TReal sigmaC2 = pow2q(uvec.target.sigmaTargetCentering) + pow2q(camera.instrument.sigmaInstrCentering);
-	Eigen::Matrix2d Cobs = sigmaC2 * (J * J.transpose());
-	Cobs(0, 0) += pow2q(uvec.target.sigmaX);
-	Cobs(1, 1) += pow2q(uvec.target.sigmaY);
+	TReal var1 = pow2q(uvec.target.sigmaX) + sigmaC2 * pow2q(invD);
+	TReal var2 = pow2q(uvec.target.sigmaY) + sigmaC2 * pow2q(invD);
 
-	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, tgFirstEqContrib, tgSecondEqContrib, targetTransfContributions, {sign * rhat(0), sign * rhat(1)}, {Cobs(0, 0), Cobs(1, 1)}};
+	UVECContrib contrib = {stFirstEqContrib, stSecondEqContrib, tgFirstEqContrib, tgSecondEqContrib, targetTransfContributions, {sign * rhat(0), sign * rhat(1)}, {var1, var2}};
 	return contrib;
 }
 UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD &uvd)
@@ -1814,21 +1813,21 @@ UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> targetTransfContributions;
 	addTransformationsContributions3D(*tg2stTrafo, uvd.targetPos->getEstimatedValue(), TFreeVector(J.row(0)), TFreeVector(J.row(1)), TFreeVector(J.row(2)), targetTransfContributions);
 
-	// Stochastic model: full 3x3 a-priori covariance (see camObservations.tex)
-	// C = C_noise + C_center, where C_noise = diag(s_ux^2, s_uy^2, s_dist^2),
-	// C_center = s_c^2 * J * J^T (block-diagonal: direction 2x2 decoupled from distance)
+	// Stochastic model: independent 3D isotropic centering errors
+	// Direction eqs: centering effect roughly sigma/d  :  sigmaC2/d^2
+	// Distance eq:   centering projects onto radial direction, |rhat|^2=1  :  sigmaC2
 	TReal sigmaC2 = pow2q(uvd.target.sigmaTargetCentering) + pow2q(camera.instrument.sigmaInstrCentering);
-	Eigen::Matrix3d Cobs = sigmaC2 * (J * J.transpose());
-	Cobs(0, 0) += pow2q(uvd.target.sigmaX);
-	Cobs(1, 1) += pow2q(uvd.target.sigmaY);
-	Cobs(2, 2) += pow2q(uvd.target.sigmaDist);
+	Eigen::Vector3d obsVariance(
+		pow2q(uvd.target.sigmaX)    + sigmaC2 * pow2q(invD),
+		pow2q(uvd.target.sigmaY)    + sigmaC2 * pow2q(invD),
+		pow2q(uvd.target.sigmaDist) + sigmaC2);
 
 	UVDContrib contrib;
 	contrib.fStCoordContrib = coordContribStation;
 	contrib.fTgCoordContrib = coordContribTarget;
 	contrib.fTgTransformContrib = targetTransfContributions;
 	contrib.fCalcMeas = Eigen::Vector3d(sign * rhat(0), sign * rhat(1), sign * d);
-	contrib.fObsVariance = Cobs.diagonal();
+	contrib.fObsVariance = obsVariance;
 
 	return contrib;
 }
