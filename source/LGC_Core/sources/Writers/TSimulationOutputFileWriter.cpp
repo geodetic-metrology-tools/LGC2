@@ -120,7 +120,9 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &pr
 	TLGCApp::updateProcessingElapsedSeconds();
 	(*stream) << "#CALCUL DU " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS ";
 	(*stream).writeDouble(0, 7, TLGCApp::getProcessingElapsedSeconds());
-	(*stream) << "\n" << "\n" << "\n";
+	(*stream) << "\n"
+			  << "\n"
+			  << "\n";
 	// write title
 	(*stream) << projTitle << endl;
 	(*stream) << "*********************************************************************************************************************************** " << endl;

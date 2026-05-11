@@ -8,6 +8,7 @@
 #include <sstream>
 
 #include <Logger.hpp>
+
 #include "TLGCApp.h"
 #include "TLGCData.h"
 #include "TLSInputMatrices.h"
@@ -56,9 +57,8 @@ Behavior TLSSimulation::run(TLGCData &data, int maxIterations)
 		TLGCApp::updateProcessingElapsedSeconds();
 		const double elapsed = TLGCApp::getProcessingElapsedSeconds();
 		std::ostringstream msg;
-		msg << "Processing time for SIMU " << numOfSimMade << ": "
-		    << std::fixed << std::setprecision(7) << (elapsed - elapsedTimeBeforeIteration)
-		    << " s (elapsed since start: " << elapsed << " s)";
+		msg << "Processing time for SIMU " << numOfSimMade << ": " << std::fixed << std::setprecision(7) << (elapsed - elapsedTimeBeforeIteration)
+			<< " s (elapsed since start: " << elapsed << " s)";
 		logInfo() << msg.str();
 	};
 
