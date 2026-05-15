@@ -1789,7 +1789,7 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	std::string title = "";
 	if (status == TSpatialStatus::kCala)
 	{
-		title = "CONTROL POINTS";
+		title = "FIXED POINTS";
 	}
 	if (status == TSpatialStatus::kVz)
 	{

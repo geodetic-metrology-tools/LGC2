@@ -138,22 +138,22 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
 	(*stream) << " | ";
 
-	(*stream).writeString(obsWidth, "OBSANGL"); // mesured ANGL
-	(*stream).writeString(obsResWidth, "SANGL"); // sigma ANGL
-	(*stream).writeString(obsWidth, "CALCANGL"); // estimated ANGL
-	(*stream).writeString(obsResWidth, "RESANGL"); // residual
+	(*stream).writeString(obsWidth, "OBS_ANGL"); // mesured ANGL
+	(*stream).writeString(obsResWidth, "S_ANGL"); // sigma ANGL
+	(*stream).writeString(obsWidth, "CALC_ANGL"); // estimated ANGL
+	(*stream).writeString(obsResWidth, "R_ANGL"); // residual
 	(*stream) << " | ";
 
-	(*stream).writeString(obsWidth, "OBSZEND"); // mesured ZEND
-	(*stream).writeString(obsResWidth, "SZEND"); // sigma ZEND
-	(*stream).writeString(obsWidth, "CALCZEND"); // estimated ZEND
-	(*stream).writeString(obsResWidth, "RESZEND"); // residual ZZEND
+	(*stream).writeString(obsWidth, "OBS_ZEND"); // mesured ZEND
+	(*stream).writeString(obsResWidth, "S_ZEND"); // sigma ZEND
+	(*stream).writeString(obsWidth, "CALC_ZEND"); // estimated ZEND
+	(*stream).writeString(obsResWidth, "R_ZEND"); // residual ZEND
 	(*stream) << " | ";
 
-	(*stream).writeString(obsWidth, "OBSDIST"); // mesured DIST
-	(*stream).writeString(obsResWidth, "SDIST"); // sigma DIST
-	(*stream).writeString(obsWidth, "CALCDIST"); // estimated DIST
-	(*stream).writeString(obsResWidth, "RESDIST"); // residual
+	(*stream).writeString(obsWidth, "OBS_DIST"); // mesured DIST
+	(*stream).writeString(obsResWidth, "S_DIST"); // sigma DIST
+	(*stream).writeString(obsWidth, "CALC_DIST"); // estimated DIST
+	(*stream).writeString(obsResWidth, "R_DIST"); // residual
 	(*stream) << " | ";
 
 	if (isAllfixed)

@@ -340,8 +340,8 @@ void TSimulationOutputFileWriter::writeRelErrorHeader()
 
 	// write header
 	(*stream) << endl << endl << endl;
-	(*stream) << "ERREURS RELATIVES " << endl;
-	(*stream) << "*******************" << endl << endl;
+	(*stream) << "RELATIVE ERRORS " << endl;
+	(*stream) << "****************" << endl << endl;
 
 	//////////////////////////////////////////////////////////////
 	// line1

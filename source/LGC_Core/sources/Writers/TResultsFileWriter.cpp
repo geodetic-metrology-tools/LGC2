@@ -194,7 +194,7 @@ void TResultsFileWriter::writeDataSummary()
 		writeAdjustableObjGeneralInfo("LINES", (int)fProjectData->getLines().numObjects(), (int)fProjectData->getLines().numUnknowns());
 
 	if (fProjectData->getPlanes().numObjects() > 0)
-		writeAdjustableObjGeneralInfo("PLANS", (int)fProjectData->getPlanes().numObjects(), (int)fProjectData->getPlanes().numUnknowns());
+		writeAdjustableObjGeneralInfo("PLANES", (int)fProjectData->getPlanes().numObjects(), (int)fProjectData->getPlanes().numUnknowns());
 
 	if (fProjectData->getAngles().numObjects() > 0)
 		writeAdjustableObjGeneralInfo("ANGLES", (int)fProjectData->getAngles().numObjects(), (int)fProjectData->getAngles().numUnknowns());
@@ -218,27 +218,27 @@ void TResultsFileWriter::writeDataSummary()
 	
 	// Reading *CALA
 	if (fNumFixedPoint != 0)
-		writePointDataSummary("CONTROL (CALA)", fNumFixedPoint);
+		writePointDataSummary("FIXED POINTS (CALA)", fNumFixedPoint);
 
 	// Reading *VXYZ
 	if (fNumVxyzPoint != 0)
 	{
-		writePointDataSummary("VARIABLES IN XYZ", fNumVxyzPoint);
+		writePointDataSummary("VARIABLE POINTS IN XYZ (POIN)", fNumVxyzPoint);
 		TAStreamFormatter &stream = getStreamRef();
-		stream << "	INCLUDED WITH SIGMA : " << nPointsWithSigma << "\n";
+		stream << "\t WITH A-PRIORI SIGMA : " << nPointsWithSigma << "\n";
 	}
 
 	// Reading *VYZ
 	if (fNumVyzPoint != 0)
-		writePointDataSummary("INVARIABLE IN X (VYZ)", fNumVyzPoint);
+		writePointDataSummary("POINTS FIXED IN X (VYZ)", fNumVyzPoint);
 
 	// Reading *VXZ
 	if (fNumVxzPoint != 0)
-		writePointDataSummary("INVARIABLE IN Y (VXZ)", fNumVxzPoint);
+		writePointDataSummary("POINTS FIXED IN Y (VXZ)", fNumVxzPoint);
 
 	// Reading *VXY
 	if (fNumVxyPoint != 0)
-		writePointDataSummary("INVARIABLE IN Z (VXY)", fNumVxyPoint);
+		writePointDataSummary("POINTS FIXED IN Z (VXY)", fNumVxyPoint);
 
 	// Reading *VX
 	if (fNumVxPoint != 0)
@@ -365,7 +365,7 @@ void TResultsFileWriter::writePointDataSummary(const std::string description, co
 {
 	TAStreamFormatter &stream = getStreamRef();
 
-	stream << "	READING POINTS " << description << " : " << numPts << endl;
+	stream << "	NUMBER OF " << description << " : " << numPts << endl;
 	return;
 }
 
@@ -556,8 +556,7 @@ void TResultsFileWriter::writeMeasDataSummary(const std::string description, con
 {
 	TAStreamFormatter &stream = getStreamRef();
 
-	// insure impose de mettre les endl en en retour de ligne...
-	stream << "	READING OF " << description << " : " << numObs << endl;
+	stream << "	NUMBER OF " << description << " : " << numObs << endl;
 
 	return;
 }
