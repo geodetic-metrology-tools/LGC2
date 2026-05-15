@@ -125,7 +125,7 @@ void	TFautFileWriter::writeDataSummary()
 	stream->width(5);
 	stream->precision(1);
 	(*stream) << right << fAlpha * 100 << " %" << separator;
-	(*stream) << "OR EXPRESSED AS CONFIDENCE LEVEL, (1-ALPHA) = ";
+	(*stream) << " OR EXPRESSED AS CONFIDENCE LEVEL, (1-ALPHA) = ";
 	stream->width(5);
 	stream->precision(1);
 	(*stream) << right << (100 - (fAlpha * 100)) << " %";
