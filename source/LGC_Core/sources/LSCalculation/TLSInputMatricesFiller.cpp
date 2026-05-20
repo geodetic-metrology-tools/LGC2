@@ -697,7 +697,8 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 		MatrixIndex eqIdx = itDLEV->getFirstEquationIndex();
 		MatrixIndex obsIdx = itDLEV->getFirstObservationIndex();
 
-		contributions = fCGenerator.getDLEVContrib(levelSt, *itDLEV); // Get the observation contribution
+		auto contribPair = fCGenerator.getDLEVContribCombined(levelSt, *itDLEV); // Get the observation contribution
+		contributions = contribPair.fDLEV;
 
 		// Update the sigma
 		itDLEV->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
@@ -746,10 +747,9 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 		// In a case that optional DHOR measurement is done
 		if (itDLEV->dhor)
 		{ // i.e. !=nullptr
+			contributionsDHOR = contribPair.fDHOR;
 			MatrixIndex eqIdxHd = itDLEV->dhor->getFirstEquationIndex();
 			MatrixIndex obsIdxHd = itDLEV->dhor->getFirstObservationIndex();
-
-			contributionsDHOR = fCGenerator.getHorDistContrib(levelSt.fMeasuredPlane->getReferencePoint(), *itDLEV->dhor); // Get the observation contribution
 
 			// Update the sigma
 			itDLEV->dhor->target.sigmaCombinedDHor = TLength(sqrt(contributionsDHOR.fObsVariance));
@@ -761,6 +761,14 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 			// Add reference point's contributions
 			if (!levelSt.fMeasuredPlane->getReferencePoint()->isFixed())
 				isProcessOK = isProcessOK && addPointContribution(*levelSt.fMeasuredPlane->getReferencePoint(), contributionsDHOR.fRefPtContrib, eqIdxHd, matrices);
+
+			// Adding contribution to a reference point distance
+			if (!levelSt.ihfix)
+				isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdxHd, levelSt.fMeasuredPlane->getRefPtDistUnknIndex(), contributionsDHOR.fRefPtDistContrib);
+
+			// Adding collimation angle contribution (nonzero only in non-OLOC)
+			if (!levelSt.instrument.collAngleAdjustable->isFixed())
+				isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdxHd, levelSt.instrument.collAngleAdjustable->getFirstUidx(), contributionsDHOR.fCollAngleContrib);
 
 			// Adding contributions of STATION transformation's parameters
 			for (auto itStaffTransform(contributionsDHOR.fStaffTransformContrib.begin()); itStaffTransform != contributionsDHOR.fStaffTransformContrib.end(); ++itStaffTransform)
@@ -1300,11 +1308,11 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
 
 /*
  * Common INCL Contributions Helper
- * 
+ *
  * Unified template function that handles both INCLY and ROLLY contributions to the
  * least squares input matrices. Eliminates code duplication by accepting the ROM
  * object, measurement list, and contribution getter function as template parameters.
- * 
+ *
  * @param rom: Round of Measurements object (TINCLYROM or TROLLYROM)
  * @param measurements: List of measurements (measINCLY or measROLLY)
  * @param getContrib: Function to get contributions (getINCLYContrib or getROLLYContrib)
@@ -1312,12 +1320,7 @@ void TLSInputMatricesFiller::addOBSXYZContributions(const std::list<TOBSXYZ> &ob
  * @param measurementType: String identifier for error messages ("Incly" or "Rolly")
  */
 template<typename TROM, typename TMeasList, typename TGetContrib>
-void TLSInputMatricesFiller::addINCLContributionsHelper(
-	TROM &rom,
-	TMeasList &measurements,
-	TGetContrib getContrib,
-	TLSInputMatrices *matrices,
-	const std::string &measurementType)
+void TLSInputMatricesFiller::addINCLContributionsHelper(TROM &rom, TMeasList &measurements, TGetContrib getContrib, TLSInputMatrices *matrices, const std::string &measurementType)
 {
 	bool isProcessOK = true;
 	MatrixIndex eqIdx = -1;
@@ -1365,12 +1368,12 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
 
 /*
  * ROLLY Contributions Matrix Filler
- * 
+ *
  * Integrates ROLLY inclinometer measurements into the least squares adjustment
  * system by populating the input design matrices with measurement contributions,
  * transformation parameters, and weight information. This function is a critical
  * component of the least squares calculation engine that processes ROLLY data.
- * 
+ *
  * The function performs the following operations for each ROLLY measurement:
  * - Retrieves observation contributions and transformation parameters
  * - Updates combined uncertainty (sigma) based on observation variance
@@ -1378,15 +1381,15 @@ void TLSInputMatricesFiller::addINCLYContributions(TINCLYROM &inclyROM, TLSInput
  * - Sets misclosure vector elements for residual calculations
  * - Populates weight matrix and its inverse for statistical weighting
  * - Validates matrix operations and error conditions
- * 
+ *
  * @param rollyROM: ROLLY Round of Measurements object containing all ROLLY
  *                   measurements, their parameters, and frame information
  * @param matrices: Pointer to the least squares input matrices that will be
  *                  populated with ROLLY measurement contributions
- * 
+ *
  * @throws std::runtime_error: When variance is zero/too small for weight matrix
  *                             or when matrix operations fail during processing
- * 
+ *
  * @note ROLLY measurements use the same contribution structure (INCLContrib) as
  *       INCLY measurements for consistency in the least squares system. The function
  *       processes each measurement individually, ensuring proper matrix indexing

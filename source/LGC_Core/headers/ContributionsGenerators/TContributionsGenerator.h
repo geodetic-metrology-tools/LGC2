@@ -99,8 +99,8 @@ public:
 	///  Returns the contribution for a TDVER measurement
 	DVERContrib getDVERContrib(const TDVER &dver);
 
-	///  Returns the contribution for a levelling measurement (TDLEV) measurement
-	DLEVContrib getDLEVContrib(const TLEVEL &levelST, const TDLEV &dlev);
+	///  Returns the DLEV and (optionally) DHOR contributions for a levelling measurement
+	DLEVCombinedContrib getDLEVContribCombined(const TLEVEL &levelST, const TDLEV &dlev);
 
 	///  Returns the contribution for offset to a vertical plane (TECHO)
 	ECHOContrib getECHOContrib(const TECHOROM &echoROM, const TECHO &echo);
@@ -113,9 +113,6 @@ public:
 
 	///  Returns the contribution for a free spatial distance measurement (TDSPT) made by EDM instrument
 	DistMeasContrib getDSPTContrib(const TEDM &edmST, const TDSPT &dspt);
-
-	///  Returns the horizontal distance measurement contribution (RDHOR), made as a part of DLEV measurement
-	HorDistContribLEVEL getHorDistContrib(const LGCAdjustablePoint *referencePoint, const TDLEV::TDHOR &dhor);
 
 	/// Returns contribution for the Gyro-Theodolithe measurement (TORIE)
 	AnglMeasContrib getOrieContrib(const TORIEROM &orieROM, const TORIE &orie);

@@ -268,14 +268,6 @@ void TLSSimulation::simulateValues()
 		for (auto itLEVEL(itTree.node->data->measurements.fLEVEL.begin()); itLEVEL != itTree.node->data->measurements.fLEVEL.end(); ++itLEVEL)
 		{
 			updateDLEVSimValues(*itLEVEL, itLEVEL->measDLEV);
-			if (itLEVEL->hasDHOR)
-			{
-				for (auto &itDHOR : itLEVEL->measDLEV)
-				{
-					if (itDHOR.dhor)
-						updateHorDistSimValues(itLEVEL->fMeasuredPlane->getReferencePoint(), *itDHOR.dhor.get());
-				}
-			}
 		}
 
 		// In every node iterate through the ECHO's measurements
@@ -331,16 +323,11 @@ void TLSSimulation::updateDLEVSimValues(const TLEVEL &levelST, std::list<TDLEV> 
 {
 	for (auto &itDLEV : dlev)
 	{
-		const auto contrib = fCGenerator.getDLEVContrib(levelST, itDLEV);
-		itDLEV.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
+		const auto contribs = fCGenerator.getDLEVContribCombined(levelST, itDLEV);
+		itDLEV.setDistance(TLength(getSimulatedValue(contribs.fDLEV.fCalcMeas, sqrt(contribs.fDLEV.fObsVariance))));
+		if (itDLEV.dhor)
+			itDLEV.dhor->setDistance(TLength(getSimulatedValue(contribs.fDHOR.fCalcMeas, sqrt(contribs.fDHOR.fObsVariance))));
 	}
-}
-
-/*DHOR made in DLEV measurement, different from the DHOR obs.*/
-void TLSSimulation::updateHorDistSimValues(const LGCAdjustablePoint *referencePoint, TDLEV::TDHOR &dhorlevel)
-{
-	const auto contrib = fCGenerator.getHorDistContrib(referencePoint, dhorlevel);
-	dhorlevel.setDistance(TLength(getSimulatedValue(contrib.fCalcMeas, sqrt(contrib.fObsVariance))));
 }
 
 void TLSSimulation::updateDSPTSimValues(const TEDM &edmST, std::list<TDSPT> &dspt)
