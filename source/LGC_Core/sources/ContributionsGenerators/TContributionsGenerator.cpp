@@ -908,8 +908,8 @@ DLEVCombinedContrib TContributionsGenerator::getDLEVContribCombined(const TLEVEL
 
 	if (std::abs(vz) < nullLimit)
 	{
-		generateContributionError(
-			"TContributionGenerator::getDLEVContribCombined: No intersection found between the horizontal plane and the vertical vector at the level of the target. Points: "
+		generateContributionError("TContributionGenerator::getDLEVContribCombined: No intersection found between the horizontal plane and the vertical vector at the "
+								  "level of the target. Points: "
 			+ getNameAndLine(*levelInstr.fMeasuredPlane->getReferencePoint()) + " and " + getNameAndLine(*dlev.targetPos));
 	}
 
@@ -1011,9 +1011,9 @@ DLEVCombinedContrib TContributionsGenerator::getDLEVContribCombined(const TLEVEL
 		TReal varIHDhor = 0.0;
 		if (levelInstr.ihfix)
 			varIHDhor = pow2q(cDhor * levelInstr.instrument.sigmaInstrHeight.getMetresValue());
-		TReal varianceDhor = pow2q(dlev.dhor->target.sigmaDHor.getMetresValue() + calcMeasDhor / 1000 * dlev.dhor->target.ppmDHor)
-		    + varIHDhor;
-		dhorContrib = {calcMeasDhor, staffContribDhor, referencePTContribDhor, staffTransfContributionsDhor, referencePTTransfContributionsDhor, fRefPtDistContDhor, dhorCollAngleContrib, varianceDhor};
+		TReal varianceDhor = pow2q(dlev.dhor->target.sigmaDHor.getMetresValue() + calcMeasDhor / 1000 * dlev.dhor->target.ppmDHor) + varIHDhor;
+		dhorContrib = {calcMeasDhor, staffContribDhor, referencePTContribDhor, staffTransfContributionsDhor, referencePTTransfContributionsDhor, fRefPtDistContDhor,
+			dhorCollAngleContrib, varianceDhor};
 	}
 	return {dlevContrib, dhorContrib};
 }
