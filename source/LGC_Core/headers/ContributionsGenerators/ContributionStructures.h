@@ -161,6 +161,8 @@ struct HorDistContribLEVEL
 	/// Vector of contributions in pairs with transformations, which are used to transform Reference Point into the node, where the DHOR measurement is calculated.
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
 
+	TReal fRefPtDistContrib; //!< Contribution to the reference point distance from the plane
+	TReal fCollAngleContrib; //!< d(DHOR)/d(collAngl); nonzero only in non-OLOC when intersection follows collimation plane
 	TReal fObsVariance;
 };
 
@@ -183,6 +185,17 @@ struct DLEVContrib
 	TReal fCollAngleContrib; //!< Contribution of the collimination angle
 
 	TReal fObsVariance;
+};
+
+/*!
+	\ingroup ContributionsGenerators
+
+	\brief Combined DLEV and optional DHOR contributions returned by getDLEVContribCombined.
+*/
+struct DLEVCombinedContrib
+{
+	DLEVContrib fDLEV;
+	HorDistContribLEVEL fDHOR;
 };
 
 /*!

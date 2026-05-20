@@ -40,7 +40,11 @@ void TPointTransformer::updateTransformations()
 	fMLAused = false;
 }
 
-void TPointTransformer::transformPointsToMLASystem(std::string originName, TPositionVector &originOfMLAPos, TPositionVector &additPointPos)
+////////////////////////////////////////
+// Transformations related functions
+////////////////////////////////////////
+
+void TPointTransformer::transformPointsToMLASystem(const std::string &originName, TPositionVector &originOfMLAPos, TPositionVector &additPointPos)
 {
 	if (!(fLastStationPtName == originName) || !fMLAused)
 	{
@@ -53,9 +57,32 @@ void TPointTransformer::transformPointsToMLASystem(std::string originName, TPosi
 	originOfMLAPos.setZ(TLength(0.0));
 }
 
-////////////////////////////////////////
-// Transformations related functions
-////////////////////////////////////////
+void TPointTransformer::transformVectorToMLASystem(const std::string &originName, const TPositionVector &originOfMLAPos, TFreeVector &freeVector)
+{
+	if (!(fLastStationPtName == originName) || !fMLAused)
+	{
+		set2MLATransformation(originOfMLAPos);
+		fLastStationPtName = originName;
+	}
+	transform2MLA(freeVector);
+}
+
+TFreeVector TPointTransformer::getLocalVerticalInCCS(const std::string &originName, const TPositionVector &pos)
+{
+	TFreeVector v(0, 0, 1, TCoordSysFactory::k3DCartesian);
+	if (fRefFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+	{
+		if (!(fLastStationPtName == originName) || !fMLAused)
+		{
+			set2MLATransformation(pos);
+			fLastStationPtName = originName;
+		}
+		transformMLA2CGRF(v);
+		transformCGRF2CCS(v);
+	}
+	return v;
+}
+
 void TPointTransformer::transform2MLA(TPositionVector &pv)
 {
 	fccs2cgrf.transform(pv);

@@ -697,7 +697,8 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 		MatrixIndex eqIdx = itDLEV->getFirstEquationIndex();
 		MatrixIndex obsIdx = itDLEV->getFirstObservationIndex();
 
-		contributions = fCGenerator.getDLEVContrib(levelSt, *itDLEV); // Get the observation contribution
+		auto contribPair = fCGenerator.getDLEVContribCombined(levelSt, *itDLEV); // Get the observation contribution
+		contributions = contribPair.fDLEV;
 
 		// Update the sigma
 		itDLEV->target.sigmaCombinedDist = TLength(sqrt(contributions.fObsVariance));
@@ -746,10 +747,9 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 		// In a case that optional DHOR measurement is done
 		if (itDLEV->dhor)
 		{ // i.e. !=nullptr
+			contributionsDHOR = contribPair.fDHOR;
 			MatrixIndex eqIdxHd = itDLEV->dhor->getFirstEquationIndex();
 			MatrixIndex obsIdxHd = itDLEV->dhor->getFirstObservationIndex();
-
-			contributionsDHOR = fCGenerator.getHorDistContrib(levelSt.fMeasuredPlane->getReferencePoint(), *itDLEV->dhor); // Get the observation contribution
 
 			// Update the sigma
 			itDLEV->dhor->target.sigmaCombinedDHor = TLength(sqrt(contributionsDHOR.fObsVariance));
@@ -761,6 +761,14 @@ void TLSInputMatricesFiller::addLevelStContributions(TLEVEL &levelSt, TLSInputMa
 			// Add reference point's contributions
 			if (!levelSt.fMeasuredPlane->getReferencePoint()->isFixed())
 				isProcessOK = isProcessOK && addPointContribution(*levelSt.fMeasuredPlane->getReferencePoint(), contributionsDHOR.fRefPtContrib, eqIdxHd, matrices);
+			
+			// Adding contribution to a reference point distance
+			if (!levelSt.ihfix)
+				isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdxHd, levelSt.fMeasuredPlane->getRefPtDistUnknIndex(), contributionsDHOR.fRefPtDistContrib);
+
+			// Adding collimation angle contribution (nonzero only in non-OLOC)
+			if (!levelSt.instrument.collAngleAdjustable->isFixed())
+				isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(eqIdxHd, levelSt.instrument.collAngleAdjustable->getFirstUidx(), contributionsDHOR.fCollAngleContrib);
 
 			// Adding contributions of STATION transformation's parameters
 			for (auto itStaffTransform(contributionsDHOR.fStaffTransformContrib.begin()); itStaffTransform != contributionsDHOR.fStaffTransformContrib.end(); ++itStaffTransform)

@@ -94,9 +94,6 @@ private:
 	void updateECVESimValues(const TECVEROM &ecveROM, std::list<TECVE> &ecve);
 	void updateECSPSimValues(const TECSPROM &ecspROM, std::list<TECSP> &ecsp);
 	void updateORIESimValues(const TORIEROM &orieROM, std::list<TORIE> &orie);
-	/*DHOR made in DLEV measurement, different from the DHOR obs.*/
-	void updateHorDistSimValues(const LGCAdjustablePoint *referencePoint, TDLEV::TDHOR &dhorlevel);
-
 	void updateUVDSimValues(TCAM &camera);
 	void updateUVECSimValues(TCAM &camera);
 
