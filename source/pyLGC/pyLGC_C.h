@@ -20,8 +20,7 @@ extern "C" {
 #endif
 
 typedef void* LGCEvaluator;
-typedef void* LGCPoint;
-typedef void* LGCFrame;
+typedef void* LGCAdjObj;
 
 /* Error handling — returns message from last failed call (thread-local). */
 PYLGC_API const char* lgcGetLastError(void);
@@ -63,20 +62,15 @@ PYLGC_API int lgcEvaluatorTrySolve(LGCEvaluator ev, int* outOk, double** outSolu
 /* Obs-index-to-line-number mapping (parallel key/value arrays) */
 PYLGC_API int lgcEvaluatorGetObsIndexToLineNumber(LGCEvaluator ev, int** outKeys, int** outValues, int* outLen);
 
-/* Point access — returns NULL on error (check lgcGetLastError).
-   Returned handle is borrowed (valid as long as the evaluator lives). */
-PYLGC_API LGCPoint  lgcEvaluatorGetPoint(LGCEvaluator ev, const char* name);
-PYLGC_API const char* lgcPointGetName(LGCPoint pt);
-PYLGC_API int         lgcPointGetFirstUidx(LGCPoint pt);
-PYLGC_API int         lgcPointGetRelativeUnknIndices(LGCPoint pt, int** outData, int* outLen);
-PYLGC_API int         lgcPointGetEstVector(LGCPoint pt, double** outData, int* outLen);
-
-/* Frame access — same lifetime semantics as points. */
-PYLGC_API LGCFrame  lgcEvaluatorGetFrame(LGCEvaluator ev, const char* name);
-PYLGC_API const char* lgcFrameGetName(LGCFrame fr);
-PYLGC_API int         lgcFrameGetFirstUidx(LGCFrame fr);
-PYLGC_API int         lgcFrameGetRelativeUnknIndices(LGCFrame fr, int** outData, int* outLen);
-PYLGC_API int         lgcFrameGetEstVector(LGCFrame fr, double** outData, int* outLen);
+/* Adjustable-object access (points & frames) — returns NULL on error
+   (check lgcGetLastError). Returned handle is borrowed (valid as long as the
+   evaluator lives). */
+PYLGC_API LGCAdjObj    lgcEvaluatorGetPoint(LGCEvaluator ev, const char* name);
+PYLGC_API LGCAdjObj    lgcEvaluatorGetFrame(LGCEvaluator ev, const char* name);
+PYLGC_API const char*  lgcAdjObjGetName(LGCAdjObj obj);
+PYLGC_API int          lgcAdjObjGetFirstUidx(LGCAdjObj obj);
+PYLGC_API int          lgcAdjObjGetRelativeUnknIndices(LGCAdjObj obj, int** outData, int* outLen);
+PYLGC_API int          lgcAdjObjGetEstVector(LGCAdjObj obj, double** outData, int* outLen);
 
 #ifdef __cplusplus
 }

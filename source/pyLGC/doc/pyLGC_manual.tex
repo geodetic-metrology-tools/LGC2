@@ -235,8 +235,9 @@ $v = f(x^*) - L = W^*$.
 
     \item \textbf{\code{pyLGC.py}} --- A pure-Python module that loads
         the shared library via \code{ctypes} and exposes the
-        \code{Evaluator}, \code{AdjustablePoint}, and
-        \code{AdjustableFrame} classes. Arrays are returned as
+        \code{Evaluator} and \code{AdjustableObject} classes
+        (\code{AdjustablePoint} and \code{AdjustableFrame} are retained
+        as aliases for \code{AdjustableObject}). Arrays are returned as
         \code{numpy} arrays for efficient data transfer.
         Requires \code{numpy}; \code{scipy} is optional (for sparse
         matrix construction).
@@ -392,63 +393,57 @@ All require a preceding \code{evaluate()}.
 \subsubsection*{Point and Frame Access}
 
 \begin{description}[style=nextline, leftmargin=1.5em]
-\item[\code{getPoint(name: str) -> AdjustablePoint}]
+\item[\code{getPoint(name: str) -> AdjustableObject}]
     Look up an adjustable point by name. Raises \code{RuntimeError} if
     not found.
 
-\item[\code{getFrame(name: str) -> AdjustableFrame}]
+\item[\code{getFrame(name: str) -> AdjustableObject}]
     Look up an adjustable reference frame by name. Raises
     \code{RuntimeError} if not found.
 \end{description}
 
+The two methods perform distinct lookups in the underlying engine
+(against \code{LGCAdjustablePoint} and
+\code{TAdjustableHelmertTransformation} respectively), but both return
+the same Python wrapper class (see Section~\ref{sec:adjobj}).
+
 %--------------------------------------------------------------------------
-\subsection{Class \code{AdjustablePoint}}
+\subsection{Class \code{AdjustableObject}}
+\label{sec:adjobj}
 %--------------------------------------------------------------------------
 
-Represents an adjustable point in the network. Instances are obtained
-via \code{Evaluator.getPoint()} and are valid as long as the parent
+Represents an adjustable object in the network --- either a point or a
+reference frame. Instances are obtained via \code{Evaluator.getPoint()}
+or \code{Evaluator.getFrame()} and are valid as long as the parent
 \code{Evaluator} exists.
 
+\code{AdjustablePoint} and \code{AdjustableFrame} are retained as
+aliases for \code{AdjustableObject}, so existing code that references
+those names continues to work.
+
 \begin{description}[style=nextline, leftmargin=1.5em]
 \item[\code{getName() -> str}]
-    Return the point name.
+    Return the object's name.
 
 \item[\code{getFirstUidx() -> int}]
-    Return the index of this point's first unknown in the global
+    Return the index of this object's first unknown in the global
     parameter vector. Together with \code{getRelativeUnknIndices()},
-    this identifies which elements of $x$ belong to this point.
+    this identifies which elements of $x$ belong to this object.
 
-\item[\code{getRelativeUnknIndices() -> list[int]}]
-    Return the list of relative unknown indices (offsets from
-    \code{getFirstUidx()}). For a fully free 3D point this is
-    \code{[0, 1, 2]}; for a partially fixed point some components are
-    absent; for a fully fixed point this is an empty list.
+\item[\code{getRelativeUnknIndices() -> numpy.ndarray}]
+    Return the relative unknown indices (offsets from
+    \code{getFirstUidx()}) as a 1-D integer array.
+    For a fully free 3D point this is \code{[0, 1, 2]}; for a partially
+    fixed point some components are absent; for a fully fixed object
+    the array is empty.
+    For an adjustable Helmert frame the indices select among up to
+    seven parameters (3 translations, 3 rotations, 1 scale).
 
-\item[\code{getEstVector() -> list[float]}]
-    Return the current estimated coordinate vector (always 3 elements
-    for a 3D point, regardless of which components are fixed).
-\end{description}
-
-%--------------------------------------------------------------------------
-\subsection{Class \code{AdjustableFrame}}
-%--------------------------------------------------------------------------
-
-Represents an adjustable Helmert transformation frame. The interface is
-identical to \code{AdjustablePoint}:
-
-\begin{description}[style=nextline, leftmargin=1.5em]
-\item[\code{getName() -> str}]
-    Frame name.
-
-\item[\code{getFirstUidx() -> int}]
-    First unknown index in the global parameter vector.
-
-\item[\code{getRelativeUnknIndices() -> list[int]}]
-    Relative unknown indices. Up to 7 parameters (3 translations,
-    3 rotations, 1 scale); fixed components are absent.
-
-\item[\code{getEstVector() -> list[float]}]
-    Current estimated transformation parameter vector.
+\item[\code{getEstVector() -> numpy.ndarray}]
+    Return the current estimated parameter vector as a 1-D float array.
+    For a 3D point this is always 3 elements regardless of which
+    components are fixed; for a Helmert frame this is the current
+    transformation parameter vector.
 \end{description}
 
 %--------------------------------------------------------------------------

@@ -1,5 +1,7 @@
 add_library(pyLGC_C SHARED pyLGC_C.cpp pyLGC_C.h)
 
+target_compile_definitions(pyLGC_C PRIVATE PYLGC_C_EXPORTS)
+
 target_link_libraries(pyLGC_C PRIVATE
     LGC_Core
     LSAlgorithms
