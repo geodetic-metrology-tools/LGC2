@@ -139,4 +139,34 @@ void object::test<7>()
 
 	ensure_equals("Calculation should be rejected with ERR_inputData", successCalc.code(), Behavior::BehaviorCode::ERR_inputData);
 }
+
+template<>
+template<>
+void object::test<8>()
+{
+	set_test_name("ACST sign: PLR3D and ANGL/ZEND/DIST stations yield identical V0 (instrument ACST = 10 gon)");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/POLAR_ACST.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestPOLAR::POLAR_ACST_CONSISTENCY);
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// Estimated V0 of the two stations: SP (observed via PLR3D) and SA (via ANGL/ZEND/DIST).
+	// ACST is applied with the same sign in both contribution models, so the two must match.
+	TDataTree tree = projTest->getTree();
+	auto stnIt = tree.begin().node->data->measurements.fTSTN.begin();
+	TReal v0PLR3D = stnIt->get()->roms.begin()->get()->v0->getEstimatedValue().getRadiansValue();
+	++stnIt;
+	TReal v0Angl = stnIt->get()->roms.begin()->get()->v0->getEstimatedValue().getRadiansValue();
+
+	ensure_equals("V0 identical across observation types", v0PLR3D, v0Angl, 1e-9);
+	// Data is consistent up to the 6-decimal rounding of the observations.
+	ensure_equals("Sigma0 a posteriori small (consistent data)", projTest->getS0APosteriori(), 0.0, 5e-2);
+}
 } // namespace tut

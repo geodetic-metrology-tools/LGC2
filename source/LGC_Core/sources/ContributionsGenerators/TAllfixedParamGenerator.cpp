@@ -179,9 +179,9 @@ TAngle* TAllfixedParamGenerator::getV0AllfixedPLR(const TTSTN& station, const TT
 
 	initSolution();
 	solveTrigoEquation(A, B, C);
-	// On a les solutions v0 -acst
-	fSolutionTrigo[0] += rom.acst;
-	fSolutionTrigo[1] += rom.acst;
+	// On a les solutions v0 + acst
+	fSolutionTrigo[0] -= rom.acst;
+	fSolutionTrigo[1] -= rom.acst;
 
 	return fSolutionTrigo;
 }
@@ -404,8 +404,8 @@ TLength TAllfixedParamGenerator::getHiAllfixedPLR(const TTSTN& station, const TT
 		Ry = station.rotY->getProvisionalValue().getRadiansValue();
 	}
 	
-	TReal sinV0 = (rom.v0->getProvisionalValue() - rom.acst).sine();
-	TReal cosV0 = (rom.v0->getProvisionalValue() - rom.acst).cosine();
+	TReal sinV0 = (rom.v0->getProvisionalValue() + rom.acst).sine();
+	TReal cosV0 = (rom.v0->getProvisionalValue() + rom.acst).cosine();
 	
 	TReal sinRx = sinq(Rx);
 	TReal cosRx = cosq(Rx);
@@ -575,8 +575,8 @@ TLength TAllfixedParamGenerator::getCsAllfixedPLR(const TTSTN& station, const TT
 		Ry = station.rotY->getProvisionalValue().getRadiansValue();
 	}
 
-	TReal sinV0 = (rom.v0->getProvisionalValue() - rom.acst).sine();
-	TReal cosV0 = (rom.v0->getProvisionalValue() - rom.acst).cosine();
+	TReal sinV0 = (rom.v0->getProvisionalValue() + rom.acst).sine();
+	TReal cosV0 = (rom.v0->getProvisionalValue() + rom.acst).cosine();
 
 	TReal sinRx = sinq(Rx);
 	TReal cosRx = cosq(Rx);

@@ -467,7 +467,7 @@ PLR3DContrib TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 		Rx = station->rotX->getEstimatedValue().getRadiansValue();
 		Ry = station->rotY->getEstimatedValue().getRadiansValue();
 	}
-	TReal V0((rom->v0->getEstimatedValue() - rom->acst));
+	TReal V0((rom->v0->getEstimatedValue() + rom->acst));
 
 	TInverseTransformation ARotationMat;
 	//  This represents the "A" matrix in https://edms.cern.ch/document/1465539/3

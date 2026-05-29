@@ -284,5 +284,40 @@ T4    10.016985575    TH 0.000000
 *END
 )";
 
+//------------------------------------ ACST ------------------------------------//
+// Two congruent stations (SP via PLR3D, SA via ANGL+ZEND+DIST) must estimate the
+// same V0: ANGL and PLR3D apply the instrument ACST (10 gon) with the same sign.
+char const *const POLAR_ACST_CONSISTENCY = R"(*TITR
+ACST sign consistency: PLR3D vs ANGL/ZEND/DIST, instrument ACST = 10 gon
+*OLOC
+*INSTR
+*POLAR TS TGT 0 0 0 10
+TGT 1.0 1.0 0.005 0.5 0 0 0 0 0 0
+*CALA
+SP     0.000000       0.000000       0.000000
+TP0    0.000000       1.000000       0.000000
+TP1    1.000000       1.000000       1.000000
+SA   100.000000       0.000000       0.000000
+TA0  100.000000       1.000000       0.000000
+TA1  101.000000       1.000000       1.000000
+*TSTN SP TS IHFIX IH 0.000000
+*V0
+*PLR3D
+TP0  0.000000     100.000000   1.000000      TH 0.000000
+TP1 50.000000      60.817345   1.732051      TH 0.000000
+*TSTN SA TS IHFIX IH 0.000000
+*V0
+*ANGL
+TA0  0.000000
+TA1 50.000000
+*ZEND
+TA0 100.000000    TH 0.000000
+TA1  60.817345    TH 0.000000
+*DIST
+TA0  1.000000     TH 0.000000
+TA1  1.732051     TH 0.000000
+*END
+)";
+
 } // namespace TestPOLAR
 #endif //_LGC_TESTS_POLAR_H

@@ -1481,7 +1481,7 @@ static void seedRot3DOrientation(const std::shared_ptr<TTSTN> &tstn, const std::
 	if (ok)
 	{
 		Angles ang = rot.getAngles(TRotationMatrix::kRzyx);
-		rom->v0->setValue(rom->v0->getFirstUidx(), ang.kappa.getRadiansValue() + acstR);
+		rom->v0->setValue(rom->v0->getFirstUidx(), ang.kappa.getRadiansValue() - acstR);
 		if (tstn->rotX == nullptr || tstn->rotY == nullptr)
 			throw std::runtime_error("ROT3D station " + tstn->instrumentPos->getName() + ": rotX/rotY null during pre-init.");
 		tstn->rotX->setValue(tstn->rotX->getFirstUidx(), ang.omega.getRadiansValue());
@@ -1492,7 +1492,7 @@ static void seedRot3DOrientation(const std::shared_ptr<TTSTN> &tstn, const std::
 		// Underdetermined geometry: fall back to a single-bearing V0 seed.
 		TReal bearing = atan2q(dRoot.at(0)(0), dRoot.at(0)(1));
 		TReal hz = atan2q(dInst.at(0)(0), dInst.at(0)(1));
-		rom->v0->setValue(rom->v0->getFirstUidx(), bearing + acstR - hz);
+		rom->v0->setValue(rom->v0->getFirstUidx(), bearing - acstR - hz);
 	}
 }
 
