@@ -76,6 +76,12 @@ void TTSTN::TROM::initialiseObsSummaries() {
     }
 }
 
+bool TTSTN::TROM::hasNonPLR3DMeasurements() const
+{
+	return !measANGL.empty() || !measZEND.empty() || !measDIST.empty()
+		|| !measDHOR.empty() || !measECTH.empty() || !measECDIR.empty();
+}
+
 const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary() const { return anglSummary_; }
 
 const TLGCObsSummary& TTSTN::TROM::getANGLObsSummary(std::string text) noexcept {

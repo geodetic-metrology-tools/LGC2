@@ -226,5 +226,63 @@ SR.A-GOF1D.C24-G4-EI  262.82424
 
 )";
 
+//------------------------------------ ROT3D ------------------------------------//
+// ROT3D testcase: the convergence of this file requires a well initialized station orientation.
+char const *const POLAR_ROT3D_NEAR_GIMBAL_LOCK = R"(*TITR
+ROT3D testcase
+*OLOC
+*INSTR
+*POLAR TS TGT 0 0 0 0
+TGT 1.0 1.0 0.005 0.5 0 0 0 0 0 0
+*CALA
+S    0.000000       0.000000       0.000000
+T1   10.000000       0.000000       0.100000
+T2   10.000000       0.500000       0.200000
+T3    9.000000       0.400000       1.000000
+T4   10.000000      -0.300000       0.500000
+*TSTN S TS ROT3D
+*V0
+*PLR3D
+T1 345.345535252    199.863114288    10.000499988     TH 0.000000
+T2 264.135532899    196.719989338    10.014489503     TH 0.000000
+T3 323.059468589    192.876271535     9.064215355     TH 0.000000
+T4 388.258354193    196.715279923    10.016985575     TH 0.000000
+*END
+)";
+
+// Same geometry as above but with the PLR3D rom split into ANGL+ZEND+DIST.
+// ANGL/ZEND/DIST contributions ignore rotX/rotY, so this must be rejected.
+char const *const POLAR_ROT3D_NON_PLR3D = R"(*TITR
+ROT3D + non-PLR3D rejection test
+*OLOC
+*INSTR
+*POLAR TS TGT 0 0 0 0
+TGT 1.0 1.0 0.005 0.5 0 0 0 0 0 0
+*CALA
+S    0.000000       0.000000       0.000000
+T1   10.000000       0.000000       0.100000
+T2   10.000000       0.500000       0.200000
+T3    9.000000       0.400000       1.000000
+T4   10.000000      -0.300000       0.500000
+*TSTN S TS ROT3D
+*V0
+*ANGL
+T1 345.345535252
+T2 264.135532899
+T3 323.059468589
+T4 388.258354193
+*ZEND
+T1 199.863114288    TH 0.000000
+T2 196.719989338    TH 0.000000
+T3 192.876271535    TH 0.000000
+T4 196.715279923    TH 0.000000
+*DIST
+T1    10.000499988    TH 0.000000
+T2    10.014489503    TH 0.000000
+T3     9.064215355    TH 0.000000
+T4    10.016985575    TH 0.000000
+*END
+)";
+
 } // namespace TestPOLAR
 #endif //_LGC_TESTS_POLAR_H

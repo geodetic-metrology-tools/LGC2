@@ -55,6 +55,12 @@ struct TTSTN : public TStatusObject {
 			/// All Ecarte-Theodolite line measurements in this ROM
 			std::list<TECDIR>  measECDIR;
 
+			/*!
+				\returns TRUE if this ROM holds any measurement other than PLR3D
+				(ANGL, ZEND, DIST, DHOR, ECTH or ECDIR), FALSE otherwise.
+			*/
+			bool hasNonPLR3DMeasurements() const;
+
             bool plrActive{ true }; ///< activation status of the PLR3D rom
             bool anglActive{ true }; ///< activation status of the ANGL rom
             bool zendActive{ true }; ///< activation status of the ZEND rom
@@ -157,9 +163,9 @@ struct TTSTN : public TStatusObject {
         bool ihfix{ false };
 
 		///The optional rotation angle about the X axis.
-		const TAdjustableAngle* rotX;
+		TAdjustableAngle* rotX;
 		///The optional rotation angle about the Y axis.
-		const TAdjustableAngle* rotY;
+		TAdjustableAngle* rotY;
 
 		/// Line of the station definition
 		int  line;

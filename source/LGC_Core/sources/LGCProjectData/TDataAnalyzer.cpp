@@ -6,12 +6,16 @@
 
 #include <bitset>
 
+#include <Eigen/Dense>
+
 #include <Logger.hpp>
 #include <TLGCData.h>
 #include <TPointTransformer.h>
+#include <TRotation.h>
+#include <TRotationMatrix.h>
 
+#include "BestFitRotationFns.h"
 #include "TAllfixedParamGenerator.h"
-#include "TDist.h"
 #include "TLOR2LOR.h"
 #include "TLSConsistencyCheck.h"
 #include "TLSInputMatrices.h"
@@ -413,18 +417,24 @@ bool TDataAnalyzer::checkParameters()
 			lastUidx = frame.getLastUidx() + 1;
 		}
 
-		// only ANGL, ZEND and DIST are allowed in a subframe for a total station
-		if (!it.node->data.get()->isROOTNode())
+		// Restrictions on the allowed measurement types:
+		//   - in a subframe, a TSTN may only carry ANGL, ZEND and DIST;
+		//   - a ROT3D station may only carry PLR3D, since rotX/rotY do not enter the
+		//     ANGL/ZEND/DIST/DHOR/ECTH/ECDIR contributions
+		const bool isSubframe = !it.node->data.get()->isROOTNode();
+		for (auto &tstn : it.node->data.get()->measurements.fTSTN)
 		{
-			for (auto &tstn : it.node->data.get()->measurements.fTSTN)
+			for (auto &rom : tstn->roms)
 			{
-				for (auto &rom : tstn->roms)
+				if (isSubframe && (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty()))
 				{
-					if (!rom->measDHOR.empty() || !rom->measPLR3D.empty() || !rom->measECTH.empty() || !rom->measECDIR.empty())
-					{
-						outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST are allowed in a subframe.";
-						return false;
-					}
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << "Only ANGL, ZEND and DIST are allowed in a subframe.";
+					return false;
+				}
+				if (tstn->rot3D && rom->hasNonPLR3DMeasurements())
+				{
+					outputMessages << TFileLogger::e_logType::LOG_ERROR << "ROT3D station " + tstn->instrumentPos->getName() + " supports only PLR3D measurements.";
+					return false;
 				}
 			}
 		}
@@ -1433,72 +1443,112 @@ void TDataAnalyzer::checkPDOR(TFileLogger &fileLog, bool dataConsistent)
 	}
 }
 
-void TDataAnalyzer::predetermineV0()
+// Seed a ROT3D station's full orientation (V0 about Z, plus rotX/rotY) from the PLR3D
+// direction pairs via a best-fit (Kabsch) rotation. ROT3D + non-PLR3D is rejected
+// upstream, so only PLR3D contributes here.
+static void seedRot3DOrientation(const std::shared_ptr<TTSTN> &tstn, const std::shared_ptr<TTSTN::TROM> &rom, const TLOR2LOR &stLor2RootTrafo, TPointTransformer &pointTransfo)
 {
-	// Define a lambda function to compute the bearing from a Target to a Station
-	auto computeBearing = [&](TPositionVector target, TPositionVector station, const TLOR2LOR &tgLor2StTrafo, const TLOR2LOR &stLor2RootTrafo) -> TAngle {
-		// Transform the target position to the root frame
-		tgLor2StTrafo.transform(target);
+	TPositionVector stnPos = tstn->instrumentPos->getEstimatedValue();
+	stLor2RootTrafo.transform(stnPos);
+
+	std::vector<Eigen::Vector3d> dInst, dRoot;
+	dInst.reserve(rom->measPLR3D.size());
+	dRoot.reserve(rom->measPLR3D.size());
+
+	// Skip targets too close to the station to normalize the baseline direction safely.
+	constexpr TReal minBaselineMetres = 1e-9;
+
+	for (const TPLR3D &plr : rom->measPLR3D)
+	{
+		TPositionVector tgt = plr.targetPos->getEstimatedValue();
+		const TLOR2LOR &tgLor2RootTrafo = pointTransfo.getLORTransformation(plr.targetPos->getFrameTreePosition(), pointTransfo.getTree()->begin());
+		tgLor2RootTrafo.transform(tgt);
+		TFreeVector d = tgt - stnPos;
+		TReal n = d.length().getMetresValue();
+		if (n < minBaselineMetres)
+			continue;
+		dRoot.emplace_back(d.toRealVector() / n);
+		TReal Hz = plr.getAngle(EPLR3DAngles::kANGL).getRadiansValue();
+		TReal Vz = plr.getAngle(EPLR3DAngles::kZEND).getRadiansValue();
+		TReal sV = sinq(Vz), cV = cosq(Vz);
+		dInst.emplace_back(sV * sinq(Hz), sV * cosq(Hz), cV);
+	}
+
+	const TReal acstR = rom->acst.getRadiansValue();
+
+	bool ok = false;
+	TRotation rot = makeBestFitRotation(dRoot, dInst, ok);
+	if (ok)
+	{
+		Angles ang = rot.getAngles(TRotationMatrix::kRzyx);
+		rom->v0->setValue(rom->v0->getFirstUidx(), ang.kappa.getRadiansValue() + acstR);
+		if (tstn->rotX == nullptr || tstn->rotY == nullptr)
+			throw std::runtime_error("ROT3D station " + tstn->instrumentPos->getName() + ": rotX/rotY null during pre-init.");
+		tstn->rotX->setValue(tstn->rotX->getFirstUidx(), ang.omega.getRadiansValue());
+		tstn->rotY->setValue(tstn->rotY->getFirstUidx(), ang.phi.getRadiansValue());
+	}
+	else if (!dInst.empty())
+	{
+		// Underdetermined geometry: fall back to a single-bearing V0 seed.
+		TReal bearing = atan2q(dRoot.at(0)(0), dRoot.at(0)(1));
+		TReal hz = atan2q(dInst.at(0)(0), dInst.at(0)(1));
+		rom->v0->setValue(rom->v0->getFirstUidx(), bearing + acstR - hz);
+	}
+}
+
+// Seed a standard (non-ROT3D) station's V0 as the circular mean of the per-observation
+// bearings derived from its ANGL and PLR3D readings.
+static void seedV0FromBearings(const std::shared_ptr<TTSTN> &tstn, const std::shared_ptr<TTSTN::TROM> &rom, const TLOR2LOR &stLor2RootTrafo, TPointTransformer &pointTransfo)
+{
+	// bearing from a target to the station, both expressed in the root frame
+	auto computeBearing = [&](TPositionVector target, TPositionVector station, const TLOR2LOR &tgLor2RootTrafo) -> TAngle {
+		tgLor2RootTrafo.transform(target);
 		stLor2RootTrafo.transform(station);
-
-		TReal xSt = station.getX().getMetresValue();
-		TReal ySt = station.getY().getMetresValue();
-		TReal xTg = target.getX().getMetresValue();
-		TReal yTg = target.getY().getMetresValue();
-
-		// Compute and return Bearing
-		return TAngle::aTan2((xTg - xSt), (yTg - ySt));
+		TFreeVector d = target - station;
+		return TAngle::aTan2(d.getX().getMetresValue(), d.getY().getMetresValue());
 	};
 
-	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kANGL) == 0 && fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) == 0)
+	std::vector<TAngle> anglesVector;
+	anglesVector.reserve(rom->measANGL.size() + rom->measPLR3D.size());
+
+	for (const TANGL &itANGL : rom->measANGL)
 	{
-		return; // No measurements to process
+		const TLOR2LOR &tgLor2RootTrafo = pointTransfo.getLORTransformation(itANGL.targetPos->getFrameTreePosition(), pointTransfo.getTree()->begin());
+		anglesVector.emplace_back(computeBearing(itANGL.targetPos->getEstimatedValue(), tstn->instrumentPos->getEstimatedValue(), tgLor2RootTrafo) - rom->acst - itANGL.getAngle());
 	}
+
+	for (const TPLR3D &itPLR3D : rom->measPLR3D)
+	{
+		const TLOR2LOR &tgLor2RootTrafo = pointTransfo.getLORTransformation(itPLR3D.targetPos->getFrameTreePosition(), pointTransfo.getTree()->begin());
+		anglesVector.emplace_back(computeBearing(itPLR3D.targetPos->getEstimatedValue(), tstn->instrumentPos->getEstimatedValue(), tgLor2RootTrafo) - rom->acst
+			- itPLR3D.getAngle(EPLR3DAngles::kANGL));
+	}
+
+	rom->v0->setValue(rom->v0->getFirstUidx(), TAngle::average(anglesVector).getRadiansValue());
+}
+
+void TDataAnalyzer::predetermineV0()
+{
+	if (fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kANGL) == 0 && fData.getMeasurementDimension(TMeasurementsGlobal::EMeasurementType::kPLR3D) == 0)
+		return;
 
 	const TDataTree &fTree = fData.getTree();
 	TPointTransformer fPointTransfo(&fTree, fData.getConfig().referential);
 
-	// V0 can only a free parameter in the root frame
+	// V0 can only be a free parameter in the root frame
 	for (const auto &tstn : fTree.begin().node->data.get()->measurements.fTSTN)
 	{
-		const TLOR2LOR &stLor2RootTrafo = fPointTransfo.getLORTransformation(
-			tstn->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin()); // Get transformation from "Station lor" to "ROOT"
+		const TLOR2LOR &stLor2RootTrafo = fPointTransfo.getLORTransformation(tstn->instrumentPos->getFrameTreePosition(), fPointTransfo.getTree()->begin());
 
-		// Calculated V0 value per Rom: a TSTN can only have one rom
 		for (const auto &itrom : tstn->roms)
 		{
-			if (itrom->measANGL.size() + itrom->measPLR3D.size() != 0)
-			{
-				// Create a vector of TAngle to Average, must be the size of ANGL + PLR3D within this rom
-				std::vector<TAngle> anglesVector;
-				anglesVector.reserve(itrom->measANGL.size() + itrom->measPLR3D.size());
+			if (itrom->measANGL.empty() && itrom->measPLR3D.empty())
+				continue;
 
-				// For ANGL measurements
-				for (TANGL itANGL : itrom->measANGL)
-				{
-					const TLOR2LOR &tgLor2StTrafo = fPointTransfo.getLORTransformation(itANGL.targetPos->getFrameTreePosition(),
-						tstn->instrumentPos->getFrameTreePosition()); // Get transformation from "Target lor" to "ROOT"
-
-					TAngle obsV0 = computeBearing(itANGL.targetPos->getEstimatedValue(), tstn->instrumentPos->getEstimatedValue(), tgLor2StTrafo, stLor2RootTrafo)
-						- itrom->acst - itANGL.getAngle();
-					anglesVector.emplace_back(obsV0);
-				}
-
-				// For PLR3D measurement
-				for (TPLR3D itPLR3D : itrom->measPLR3D)
-				{
-					const TLOR2LOR &tgLor2StTrafo = fPointTransfo.getLORTransformation(itPLR3D.targetPos->getFrameTreePosition(),
-						tstn->instrumentPos->getFrameTreePosition()); // Get transformation from "Target lor" to "ROOT"
-
-					TAngle obsV0 = computeBearing(itPLR3D.targetPos->getEstimatedValue(), tstn->instrumentPos->getEstimatedValue(), tgLor2StTrafo, stLor2RootTrafo)
-						- itrom->acst - itPLR3D.getAngle(EPLR3DAngles::kANGL);
-					anglesVector.emplace_back(obsV0);
-				}
-
-				// Average and set the estimated V0 value
-				int indexV0 = itrom->v0->getFirstUidx();
-				itrom->v0->setCorrection(indexV0, TAngle::average(anglesVector).getRadiansValue());
-			}
+			if (tstn->rot3D)
+				seedRot3DOrientation(tstn, itrom, stLor2RootTrafo, fPointTransfo);
+			else
+				seedV0FromBearings(tstn, itrom, stLor2RootTrafo, fPointTransfo);
 		}
 	}
 }
