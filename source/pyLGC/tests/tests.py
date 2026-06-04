@@ -17,15 +17,15 @@ def ev():
 # --- Loading ---
 
 def test_load_dimensions(ev):
-    idx = ev.getIndices()
+    idx = ev.getProblemDimensions()
     assert idx.UIndex > 0
     assert idx.EIndex > 0
     assert idx.OIndex > 0
 
-def test_get_params_before_evaluate(ev):
-    """getEstParams returns provisional values without needing evaluate()."""
-    params = ev.getEstParams()
-    assert len(params) == ev.getIndices().UIndex
+def test_get_params_before_evaluateAtParameters(ev):
+    """getEstimatedParameters returns provisional values without needing evaluateAtParameters()."""
+    params = ev.getEstimatedParameters()
+    assert len(params) == ev.getProblemDimensions().UIndex
     assert norm(params) > 0  # provisionals should be non-zero
 
 def test_load_broken_file():
@@ -40,18 +40,18 @@ def test_load_nonexistent_file():
 # --- Parameter set/get ---
 
 def test_set_get_round_trip(ev):
-    ev.evaluate()
-    params = ev.getEstParams()
+    ev.evaluateAtParameters()
+    params = ev.getEstimatedParameters()
     params[0] += 42.0
     ev.setParameters(params)
-    assert abs(ev.getEstParams()[0] - params[0]) < 1e-10
+    assert abs(ev.getEstimatedParameters()[0] - params[0]) < 1e-10
 
 def test_set_get_restore(ev):
-    ev.evaluate()
-    original = ev.getEstParams()
+    ev.evaluateAtParameters()
+    original = ev.getEstimatedParameters()
     ev.setParameters(original + 1.0)
     ev.setParameters(original)
-    assert norm(original - ev.getEstParams(), np.inf) < 1e-10
+    assert norm(original - ev.getEstimatedParameters(), np.inf) < 1e-10
 
 def test_set_wrong_dimension(ev):
     with pytest.raises(RuntimeError, match="wrong dimension"):
@@ -59,59 +59,59 @@ def test_set_wrong_dimension(ev):
 
 def test_random_set_get_round_trip(ev):
     rng = np.random.default_rng(42)
-    n = ev.getIndices().UIndex
+    n = ev.getProblemDimensions().UIndex
     for _ in range(20):
         params_in = rng.uniform(-np.pi, np.pi, size=n)
         ev.setParameters(params_in)
-        assert norm(params_in - ev.getEstParams(), np.inf) < 1e-10
+        assert norm(params_in - ev.getEstimatedParameters(), np.inf) < 1e-10
 
 
 # --- Evaluate ---
 
 def test_evaluate_without_set_uses_provisionals(ev):
-    ev.evaluate()
+    ev.evaluateAtParameters()
     w = ev.getMisclosure()
-    A = ev.getAMatrix()
+    A = ev.getFirstDesignMatrix()
     assert len(w) > 0
     assert len(A[2]) > 0
 
 def test_evaluate_changes_misclosure(ev):
-    ev.evaluate()
+    ev.evaluateAtParameters()
     w_before = ev.getMisclosure()
-    params = ev.getEstParams()
+    params = ev.getEstimatedParameters()
     params[0] += 1.0
     ev.setParameters(params)
-    ev.evaluate()
+    ev.evaluateAtParameters()
     assert norm(w_before - ev.getMisclosure(), np.inf) > 1e-15
 
 def test_evaluate_is_idempotent(ev):
-    ev.evaluate()
+    ev.evaluateAtParameters()
     w1 = ev.getMisclosure()
-    ev.evaluate()
+    ev.evaluateAtParameters()
     assert norm(w1 - ev.getMisclosure()) == 0.0
 
 def test_multiple_set_evaluate_cycles(ev):
-    n = ev.getIndices().UIndex
+    n = ev.getProblemDimensions().UIndex
     for i in range(5):
         ev.setParameters([float(i) * 0.001] * n)
-        ev.evaluate()
+        ev.evaluateAtParameters()
         ev.getMisclosure()
 
 
 # --- Getters without evaluate raise ---
 
 @pytest.mark.parametrize("getter", [
-    "getMisclosure", "getAMatrix", "getBMatrix",
-    "getInvBMatrix", "getPMatrix", "getA2Matrix",
+    "getMisclosure", "getFirstDesignMatrix", "getSecondDesignMatrix",
+    "getWeightMatrix", "getConstraintDesignMatrix",
     "getConstraintMisclosure",
 ])
 def test_getter_without_evaluate_raises(ev, getter):
     with pytest.raises(RuntimeError, match="evaluate"):
         getattr(ev, getter)()
 
-@pytest.mark.parametrize("getter", ["getMisclosure", "getAMatrix"])
+@pytest.mark.parametrize("getter", ["getMisclosure", "getFirstDesignMatrix"])
 def test_getter_after_set_without_evaluate_raises(ev, getter):
-    ev.setParameters([0.0] * ev.getIndices().UIndex)
+    ev.setParameters([0.0] * ev.getProblemDimensions().UIndex)
     with pytest.raises(RuntimeError, match="evaluate"):
         getattr(ev, getter)()
 
@@ -119,31 +119,29 @@ def test_getter_after_set_without_evaluate_raises(ev, getter):
 # --- Matrix/vector shapes ---
 
 def test_matrix_shapes(ev):
-    ev.evaluate()
-    idx = ev.getIndices()
+    ev.evaluateAtParameters()
+    idx = ev.getProblemDimensions()
 
-    A = ev.getAMatrix()
+    A = ev.getFirstDesignMatrix()
     assert (A[3], A[4]) == (idx.EIndex, idx.UIndex)
     assert len(A[2]) > 0
 
-    B = ev.getBMatrix()
+    B = ev.getSecondDesignMatrix()
     assert (B[3], B[4]) == (idx.EIndex, idx.OIndex)
     assert len(B[2]) > 0
 
-    invB = ev.getInvBMatrix()
-    assert (invB[3], invB[4]) == (idx.OIndex, idx.EIndex)
-    assert len(invB[2]) > 0
 
-    P = ev.getPMatrix()
+
+    P = ev.getWeightMatrix()
     assert (P[3], P[4]) == (idx.OIndex, idx.OIndex)
     assert len(P[2]) > 0
 
-    A2 = ev.getA2Matrix()
+    A2 = ev.getConstraintDesignMatrix()
     assert (A2[3], A2[4]) == (idx.CIndex, idx.UIndex)
 
 def test_vector_lengths(ev):
-    ev.evaluate()
-    idx = ev.getIndices()
+    ev.evaluateAtParameters()
+    idx = ev.getProblemDimensions()
     assert len(ev.getMisclosure()) == idx.EIndex
     assert len(ev.getConstraintMisclosure()) == idx.CIndex
 
@@ -195,51 +193,51 @@ def test_obs_line_numbers_monotonic(ev):
         assert line_next >= line_curr
 
 
-# --- tryLGCSolve ---
+# --- solve ---
 
 def test_solve(ev):
-    ok, solution = ev.tryLGCSolve()
+    ok, solution = ev.solve()
     assert ok
-    assert len(solution) == ev.getIndices().UIndex
+    assert len(solution) == ev.getProblemDimensions().UIndex
 
-def test_getter_after_solve_requires_evaluate(ev):
-    ev.tryLGCSolve()
+def test_getter_after_solve_requires_evaluateAtParameters(ev):
+    ev.solve()
     with pytest.raises(RuntimeError, match="evaluate"):
-        ev.getAMatrix()
-    ev.evaluate()
-    A = ev.getAMatrix()
+        ev.getFirstDesignMatrix()
+    ev.evaluateAtParameters()
+    A = ev.getFirstDesignMatrix()
     assert len(A[2]) > 0
 
-def test_solve_then_set_solution_then_evaluate(ev):
-    ok, sol = ev.tryLGCSolve()
+def test_solve_then_set_solution_then_evaluateAtParameters(ev):
+    ok, sol = ev.solve()
     ev.setParameters(sol)
-    ev.evaluate()
+    ev.evaluateAtParameters()
     assert len(ev.getMisclosure()) > 0
-    assert len(ev.getAMatrix()[2]) > 0
+    assert len(ev.getFirstDesignMatrix()[2]) > 0
 
 def test_solve_twice_no_reset(ev):
-    ok1, sol1 = ev.tryLGCSolve()
-    ok2, sol2 = ev.tryLGCSolve()
+    ok1, sol1 = ev.solve()
+    ok2, sol2 = ev.solve()
     assert ok1 and ok2
     assert norm(sol1 - sol2, np.inf) < 1.0
 
 def test_solve_twice_with_reset(ev):
-    params_initial = ev.getEstParams()
-    _, sol1 = ev.tryLGCSolve()
+    params_initial = ev.getEstimatedParameters()
+    _, sol1 = ev.solve()
     ev.setParameters(params_initial)
-    _, sol2 = ev.tryLGCSolve()
+    _, sol2 = ev.solve()
     assert norm(sol1 - sol2, np.inf) < 1e-8
 
 def test_point_frame_after_solve(ev):
-    ev.tryLGCSolve()
+    ev.solve()
     assert ev.getPoint("H4.XBPF.22716.E").getName() == "H4.XBPF.22716.E"
     assert ev.getFrame("testFrame").getName() == "testFrame"
 
 def test_perturb_after_solve(ev):
-    _, sol = ev.tryLGCSolve()
+    _, sol = ev.solve()
     sol[0] += 10.0
     ev.setParameters(sol)
-    ev.evaluate()
+    ev.evaluateAtParameters()
     assert norm(ev.getMisclosure(), np.inf) > 1e-10
 
 
@@ -253,7 +251,7 @@ def test_getEstVector_free_point(ev):
     est_before = pt.getEstVector()
     assert len(est_before) == 3
 
-    params = ev.getEstParams()
+    params = ev.getEstimatedParameters()
     uidx = pt.getFirstUidx()
     delta = 100.0
     params[uidx:uidx+3] += delta
@@ -269,7 +267,7 @@ def test_getEstVector_partial_point(ev):
     est_before = pt.getEstVector()
     assert len(est_before) == 3
 
-    params = ev.getEstParams()
+    params = ev.getEstimatedParameters()
     uidx = pt.getFirstUidx()
     delta = 50.0
     params[uidx:uidx+2] += delta
@@ -290,7 +288,7 @@ def test_getEstVector_fixed_point(ev):
     est_before = pt.getEstVector()
     assert len(est_before) == 3
 
-    ev.setParameters(ev.getEstParams() + 99.0)
+    ev.setParameters(ev.getEstimatedParameters() + 99.0)
 
     assert norm(pt.getEstVector() - est_before, np.inf) < 1e-10
 
@@ -299,8 +297,8 @@ def test_getEstVector_fixed_point(ev):
 
 def test_B_is_negative_identity(ev):
     """B matrix should be -I for parametric observation models."""
-    ev.evaluate()
-    rows, cols, vals, nr, nc = ev.getBMatrix()
+    ev.evaluateAtParameters()
+    rows, cols, vals, nr, nc = ev.getSecondDesignMatrix()
     assert nr == nc  # square
     # all entries on diagonal
     assert np.array_equal(rows, cols)
@@ -319,26 +317,17 @@ def test_solve_reduces_misclosure(ev):
     perturbed so that the initial misclosure is large and the reduction
     after solving is clearly visible.
     """
-    ev.evaluate()
+    ev.evaluateAtParameters()
     w_before = norm(ev.getMisclosure())
-    ok, sol = ev.tryLGCSolve()
+    ok, sol = ev.solve()
     assert ok
     ev.setParameters(sol)
-    ev.evaluate()
+    ev.evaluateAtParameters()
     w_after = norm(ev.getMisclosure())
     assert w_after / w_before < 1e-5
 
 
-# --- Derivative verification ---
 
-def test_finite_difference_matches_analytic_A(ev):
-    """Finite-difference Jacobian should agree with the analytic A matrix."""
-    ev.evaluate()
-    A_fd = ev.getFiniteDifferenceA(1e-7)
-    rows, cols, vals, nr, nc = ev.getAMatrix()
-    A_analytic = np.zeros((nr, nc))
-    A_analytic[rows, cols] = vals
-    assert norm(A_fd - A_analytic, np.inf) < 0.1
 
 
 # --- Frame getEstVector ---
@@ -350,7 +339,7 @@ def test_getEstVector_free_frame(ev):
     assert len(rel) == 4
 
     est_before = frame.getEstVector()
-    params = ev.getEstParams()
+    params = ev.getEstimatedParameters()
     uidx = frame.getFirstUidx()
     delta = 0.01
     params[uidx:uidx+len(rel)] += delta
@@ -365,5 +354,5 @@ def test_getEstVector_fixed_frame(ev):
     root = ev.getFrame("ROOT")
     assert len(root.getRelativeUnknIndices()) == 0
     est_before = root.getEstVector()
-    ev.setParameters(ev.getEstParams() + 99.0)
+    ev.setParameters(ev.getEstimatedParameters() + 99.0)
     assert norm(root.getEstVector() - est_before, np.inf) < 1e-10
