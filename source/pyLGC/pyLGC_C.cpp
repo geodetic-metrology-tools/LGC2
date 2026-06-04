@@ -232,8 +232,6 @@ extern "C"
 		CATCH_ERR
 	}
 
-	// --- Dense matrix ----------------------------------------------------------
-
 	// --- Solve -----------------------------------------------------------------
 
 	int lgcEvaluatorSolve(LGCEvaluator ev, int *outOk, double **outSolution, int *outLen)
