@@ -126,7 +126,7 @@ extern "C"
 
 	// --- Evaluation & parameters -----------------------------------------------
 
-	int lgcEvaluatorEvaluate(LGCEvaluator ev)
+	int lgcEvaluatorEvaluateAtParameters(LGCEvaluator ev)
 	{
 		try
 		{
@@ -146,7 +146,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int lgcEvaluatorGetEstParams(LGCEvaluator ev, double **outData, int *outLen)
+	int lgcEvaluatorGetEstimatedParameters(LGCEvaluator ev, double **outData, int *outLen)
 	{
 		try
 		{
@@ -158,7 +158,7 @@ extern "C"
 
 	// --- Indices ---------------------------------------------------------------
 
-	int lgcEvaluatorGetIndices(LGCEvaluator ev, int *u, int *e, int *o, int *c)
+	int lgcEvaluatorGetProblemDimensions(LGCEvaluator ev, int *u, int *e, int *o, int *c)
 	{
 		try
 		{
@@ -196,74 +196,47 @@ extern "C"
 
 	// --- Sparse matrices -------------------------------------------------------
 
-	int lgcEvaluatorGetAMatrix(LGCEvaluator ev, int **r, int **c, double **v, int *nnz, int *nr, int *nc)
+	int lgcEvaluatorGetFirstDesignMatrix(LGCEvaluator ev, int **outRows, int **outCols, double **outVals, int *outNnz, int *outNrows, int *outNcols)
 	{
 		try
 		{
-			return extractSparse(EV(ev).getAMatrix(), r, c, v, nnz, nr, nc);
+			return extractSparse(EV(ev).getAMatrix(), outRows, outCols, outVals, outNnz, outNrows, outNcols);
 		}
 		CATCH_ERR
 	}
 
-	int lgcEvaluatorGetBMatrix(LGCEvaluator ev, int **r, int **c, double **v, int *nnz, int *nr, int *nc)
+	int lgcEvaluatorGetSecondDesignMatrix(LGCEvaluator ev, int **outRows, int **outCols, double **outVals, int *outNnz, int *outNrows, int *outNcols)
 	{
 		try
 		{
-			return extractSparse(EV(ev).getBMatrix(), r, c, v, nnz, nr, nc);
+			return extractSparse(EV(ev).getBMatrix(), outRows, outCols, outVals, outNnz, outNrows, outNcols);
 		}
 		CATCH_ERR
 	}
 
-	int lgcEvaluatorGetInvBMatrix(LGCEvaluator ev, int **r, int **c, double **v, int *nnz, int *nr, int *nc)
+	int lgcEvaluatorGetConstraintDesignMatrix(LGCEvaluator ev, int **outRows, int **outCols, double **outVals, int *outNnz, int *outNrows, int *outNcols)
 	{
 		try
 		{
-			return extractSparse(EV(ev).getInvBMatrix(), r, c, v, nnz, nr, nc);
+			return extractSparse(EV(ev).getA2Matrix(), outRows, outCols, outVals, outNnz, outNrows, outNcols);
 		}
 		CATCH_ERR
 	}
 
-	int lgcEvaluatorGetA2Matrix(LGCEvaluator ev, int **r, int **c, double **v, int *nnz, int *nr, int *nc)
+	int lgcEvaluatorGetWeightMatrix(LGCEvaluator ev, int **outRows, int **outCols, double **outVals, int *outNnz, int *outNrows, int *outNcols)
 	{
 		try
 		{
-			return extractSparse(EV(ev).getA2Matrix(), r, c, v, nnz, nr, nc);
-		}
-		CATCH_ERR
-	}
-
-	int lgcEvaluatorGetPMatrix(LGCEvaluator ev, int **r, int **c, double **v, int *nnz, int *nr, int *nc)
-	{
-		try
-		{
-			return extractSparse(EV(ev).getPMatrix(), r, c, v, nnz, nr, nc);
+			return extractSparse(EV(ev).getPMatrix(), outRows, outCols, outVals, outNnz, outNrows, outNcols);
 		}
 		CATCH_ERR
 	}
 
 	// --- Dense matrix ----------------------------------------------------------
 
-	int lgcEvaluatorGetFiniteDifferenceA(LGCEvaluator ev, double epsilon, double **outData, int *outNrows, int *outNcols)
-	{
-		try
-		{
-			Eigen::MatrixXd A = EV(ev).getFiniteDifferenceA(epsilon);
-			*outNrows = static_cast<int>(A.rows());
-			*outNcols = static_cast<int>(A.cols());
-			int n = (*outNrows) * (*outNcols);
-			*outData = new double[n];
-			// row-major for easy consumption from Python
-			for (int i = 0; i < *outNrows; ++i)
-				for (int j = 0; j < *outNcols; ++j)
-					(*outData)[i * (*outNcols) + j] = A(i, j);
-			return 0;
-		}
-		CATCH_ERR
-	}
-
 	// --- Solve -----------------------------------------------------------------
 
-	int lgcEvaluatorTrySolve(LGCEvaluator ev, int *outOk, double **outSolution, int *outLen)
+	int lgcEvaluatorSolve(LGCEvaluator ev, int *outOk, double **outSolution, int *outLen)
 	{
 		try
 		{

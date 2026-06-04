@@ -48,19 +48,17 @@ _free_int             = _sig("lgcFreeIntArray",        None, [_ip])
 
 _ev_create            = _sig("lgcEvaluatorCreate",      _vp,  [_cp])
 _ev_destroy           = _sig("lgcEvaluatorDestroy",     None, [_vp])
-_ev_evaluate          = _sig("lgcEvaluatorEvaluate",    _int, [_vp])
+_ev_evaluate          = _sig("lgcEvaluatorEvaluateAtParameters",    _int, [_vp])
 _ev_set_params        = _sig("lgcEvaluatorSetParameters", _int, [_vp, _dp, _int])
-_ev_get_params        = _sig("lgcEvaluatorGetEstParams", _int, [_vp, _dpp, _ip])
-_ev_get_indices       = _sig("lgcEvaluatorGetIndices", _int, [_vp, _ip, _ip, _ip, _ip])
+_ev_get_params        = _sig("lgcEvaluatorGetEstimatedParameters", _int, [_vp, _dpp, _ip])
+_ev_get_indices       = _sig("lgcEvaluatorGetProblemDimensions", _int, [_vp, _ip, _ip, _ip, _ip])
 _ev_get_misc          = _sig("lgcEvaluatorGetMisclosure", _int, [_vp, _dpp, _ip])
 _ev_get_cmisc         = _sig("lgcEvaluatorGetConstraintMisclosure", _int, [_vp, _dpp, _ip])
-_ev_get_A             = _sig("lgcEvaluatorGetAMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
-_ev_get_B             = _sig("lgcEvaluatorGetBMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
-_ev_get_invB          = _sig("lgcEvaluatorGetInvBMatrix", _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
-_ev_get_A2            = _sig("lgcEvaluatorGetA2Matrix",    _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
-_ev_get_P             = _sig("lgcEvaluatorGetPMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
-_ev_get_fd            = _sig("lgcEvaluatorGetFiniteDifferenceA", _int, [_vp, _dbl, _dpp, _ip, _ip])
-_ev_solve             = _sig("lgcEvaluatorTrySolve",   _int, [_vp, _ip, _dpp, _ip])
+_ev_get_A             = _sig("lgcEvaluatorGetFirstDesignMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_B             = _sig("lgcEvaluatorGetSecondDesignMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_A2            = _sig("lgcEvaluatorGetConstraintDesignMatrix",    _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_get_P             = _sig("lgcEvaluatorGetWeightMatrix",     _int, [_vp, _ipp, _ipp, _dpp, _ip, _ip, _ip])
+_ev_solve             = _sig("lgcEvaluatorSolve",   _int, [_vp, _ip, _dpp, _ip])
 _ev_obs_map           = _sig("lgcEvaluatorGetObsIndexToLineNumber", _int, [_vp, _ipp, _ipp, _ip])
 
 _ev_get_point         = _sig("lgcEvaluatorGetPoint",   _vp,  [_vp, _cp])
@@ -169,7 +167,7 @@ class Evaluator:
             _ev_destroy(self._h)
             self._h = None
 
-    def evaluate(self):
+    def evaluateAtParameters(self):
         r = _ev_evaluate(self._h)
         if r == -1:
             raise RuntimeError(_last_error())
@@ -179,10 +177,10 @@ class Evaluator:
         arr = (ctypes.c_double * len(para))(*para)
         _check(_ev_set_params(self._h, arr, len(para)))
 
-    def getEstParams(self):
+    def getEstimatedParameters(self):
         return _doubles(_ev_get_params, self._h)
 
-    def getIndices(self):
+    def getProblemDimensions(self):
         u, e, o, c = _int(), _int(), _int(), _int()
         _check(_ev_get_indices(self._h,
                                ctypes.byref(u), ctypes.byref(e),
@@ -195,33 +193,19 @@ class Evaluator:
     def getConstraintMisclosure(self):
         return _doubles(_ev_get_cmisc, self._h)
 
-    def getAMatrix(self):
+    def getFirstDesignMatrix(self):
         return _sparse(_ev_get_A, self._h)
 
-    def getBMatrix(self):
+    def getSecondDesignMatrix(self):
         return _sparse(_ev_get_B, self._h)
 
-    def getInvBMatrix(self):
-        return _sparse(_ev_get_invB, self._h)
-
-    def getA2Matrix(self):
+    def getConstraintDesignMatrix(self):
         return _sparse(_ev_get_A2, self._h)
 
-    def getPMatrix(self):
+    def getWeightMatrix(self):
         return _sparse(_ev_get_P, self._h)
 
-    def getFiniteDifferenceA(self, finiteDiffEpsilon=1e-6):
-        data  = _dp()
-        nrows = _int()
-        ncols = _int()
-        _check(_ev_get_fd(self._h, finiteDiffEpsilon,
-                          ctypes.byref(data), ctypes.byref(nrows), ctypes.byref(ncols)))
-        nr, nc = nrows.value, ncols.value
-        result = np.ctypeslib.as_array(data, shape=(nr * nc,)).copy().reshape(nr, nc)
-        _free_double(data)
-        return result
-
-    def tryLGCSolve(self):
+    def solve(self):
         ok  = _int()
         sol = _dp()
         n   = _int()

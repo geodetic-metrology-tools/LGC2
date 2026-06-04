@@ -5,15 +5,15 @@ from scipy.sparse.linalg import spsolve
 import pyLGC
 
 ev = pyLGC.Evaluator("Title-Example.lgc2")
-ev.evaluate()
+ev.evaluateAtParameters()
 
 # Build sparse matrices
 def to_csr(tup):
     rows, cols, vals, nr, nc = tup
     return coo_matrix((vals, (rows, cols)), shape=(nr, nc)).tocsr()
 
-A = to_csr(ev.getAMatrix())
-P = to_csr(ev.getPMatrix())
+A = to_csr(ev.getFirstDesignMatrix())
+P = to_csr(ev.getWeightMatrix())
 w = ev.getMisclosure()
 
 # Normal equations: (A^T P A) dx = -A^T P W

@@ -34,30 +34,26 @@ PYLGC_API LGCEvaluator lgcEvaluatorCreate(const char* filePath);
 PYLGC_API void           lgcEvaluatorDestroy(LGCEvaluator ev);
 
 /* Evaluation & parameters — return 0 on success, -1 on error.
-   lgcEvaluatorEvaluate returns 1=true, 0=false, -1=error. */
-PYLGC_API int lgcEvaluatorEvaluate(LGCEvaluator ev);
+   lgcEvaluatorEvaluateAtParameters returns 1=true, 0=false, -1=error. */
+PYLGC_API int lgcEvaluatorEvaluateAtParameters(LGCEvaluator ev);
 PYLGC_API int lgcEvaluatorSetParameters(LGCEvaluator ev, const double* data, int len);
-PYLGC_API int lgcEvaluatorGetEstParams(LGCEvaluator ev, double** outData, int* outLen);
+PYLGC_API int lgcEvaluatorGetEstimatedParameters(LGCEvaluator ev, double** outData, int* outLen);
 
 /* Indices (UEOIndices) */
-PYLGC_API int lgcEvaluatorGetIndices(LGCEvaluator ev, int* u, int* e, int* o, int* c);
+PYLGC_API int lgcEvaluatorGetProblemDimensions(LGCEvaluator ev, int* u, int* e, int* o, int* c);
 
 /* Vectors */
 PYLGC_API int lgcEvaluatorGetMisclosure(LGCEvaluator ev, double** outData, int* outLen);
 PYLGC_API int lgcEvaluatorGetConstraintMisclosure(LGCEvaluator ev, double** outData, int* outLen);
 
 /* Sparse matrices as COO triplets (rows, cols, vals arrays of length nnz) */
-PYLGC_API int lgcEvaluatorGetAMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
-PYLGC_API int lgcEvaluatorGetBMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
-PYLGC_API int lgcEvaluatorGetInvBMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
-PYLGC_API int lgcEvaluatorGetA2Matrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
-PYLGC_API int lgcEvaluatorGetPMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
-
-/* Dense matrix (row-major flat array, size = nrows * ncols) */
-PYLGC_API int lgcEvaluatorGetFiniteDifferenceA(LGCEvaluator ev, double epsilon, double** outData, int* outNrows, int* outNcols);
+PYLGC_API int lgcEvaluatorGetFirstDesignMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
+PYLGC_API int lgcEvaluatorGetSecondDesignMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
+PYLGC_API int lgcEvaluatorGetConstraintDesignMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
+PYLGC_API int lgcEvaluatorGetWeightMatrix(LGCEvaluator ev, int** outRows, int** outCols, double** outVals, int* outNnz, int* outNrows, int* outNcols);
 
 /* Solve — returns 0 on success (-1 on error); outOk is 1 if solve converged. */
-PYLGC_API int lgcEvaluatorTrySolve(LGCEvaluator ev, int* outOk, double** outSolution, int* outLen);
+PYLGC_API int lgcEvaluatorSolve(LGCEvaluator ev, int* outOk, double** outSolution, int* outLen);
 
 /* Obs-index-to-line-number mapping (parallel key/value arrays) */
 PYLGC_API int lgcEvaluatorGetObsIndexToLineNumber(LGCEvaluator ev, int** outKeys, int** outValues, int* outLen);

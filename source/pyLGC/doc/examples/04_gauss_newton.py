@@ -13,17 +13,17 @@ def to_csr(tup):
 ev = pyLGC.Evaluator("Title-Example.lgc2")
 
 # 1. Reference solution from the built-in solver
-x0 = ev.getEstParams().copy()
-ok, x_ref = ev.tryLGCSolve()
+x0 = ev.getEstimatedParameters().copy()
+ok, x_ref = ev.solve()
 
 # 2. Reset to provisional values and run own Gauss-Newton
 x = x0.copy()
 for k in range(50):
     ev.setParameters(x)
-    ev.evaluate()
+    ev.evaluateAtParameters()
 
-    A = to_csr(ev.getAMatrix())
-    P = to_csr(ev.getPMatrix())
+    A = to_csr(ev.getFirstDesignMatrix())
+    P = to_csr(ev.getWeightMatrix())
     w = ev.getMisclosure()
 
     # Solve normal equations: (A^T P A) dx = -A^T P w
