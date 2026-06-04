@@ -57,7 +57,3 @@ When CMake configures the project, it automatically copies the Python tests and 
    ```powershell
    uv run pytest tests.py
    ```
-3. Run the standalone toy example:
-   ```powershell
-   uv run python example.py
-   ```
