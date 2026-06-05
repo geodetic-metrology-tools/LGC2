@@ -19,6 +19,16 @@
 
 /*!
 	\ingroup InputFileReader
+	\brief Returns the given end-of-line comment with double-quote characters removed.
+*/
+inline std::string stripQuotesFromEOLComment(std::string comment)
+{
+	comment.erase(std::remove(comment.begin(), comment.end(), '\"'), comment.end());
+	return comment;
+}
+
+/*!
+	\ingroup InputFileReader
 	\brief Abstract class for all the keywords.
 */
 class TAKeyWord
