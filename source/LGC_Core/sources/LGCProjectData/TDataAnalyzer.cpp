@@ -43,6 +43,13 @@ void TDataAnalyzer::assignEqIndex(TMeas &meas)
 	fData.fUEOIndices.EIndex += meas.getEqDim();
 }
 
+template<typename TMeas>
+void TDataAnalyzer::assignEOIndex(TMeas &meas)
+{
+	assignEqIndex(meas);
+	assignObsIndex(meas);
+}
+
 bool TDataAnalyzer::dataConsistent()
 {
 	bool consistent = true;
@@ -1095,8 +1102,7 @@ void TDataAnalyzer::assignEOIndices()
 					if (!fData.isLGCv1())
 						plr.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, plr.target.ID);
 
-					assignEqIndex(plr);
-					assignObsIndex(plr);
+					assignEOIndex(plr);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kPLR3D);
 				}
 
@@ -1107,8 +1113,7 @@ void TDataAnalyzer::assignEOIndices()
 					if (!fData.isLGCv1())
 						angl.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, angl.target.ID);
 
-					assignEqIndex(angl);
-					assignObsIndex(angl);
+					assignEOIndex(angl);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kANGL);
 				}
 
@@ -1119,8 +1124,7 @@ void TDataAnalyzer::assignEOIndices()
 					if (!fData.isLGCv1())
 						zend.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, zend.target.ID);
 
-					assignEqIndex(zend);
-					assignObsIndex(zend);
+					assignEOIndex(zend);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kZEND);
 				}
 
@@ -1131,8 +1135,7 @@ void TDataAnalyzer::assignEOIndices()
 					if (!fData.isLGCv1())
 						dist.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, dist.target.ID);
 
-					assignEqIndex(dist);
-					assignObsIndex(dist);
+					assignEOIndex(dist);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kDIST);
 				}
 
@@ -1143,24 +1146,21 @@ void TDataAnalyzer::assignEOIndices()
 					if (!fData.isLGCv1())
 						dhor.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(tstn->instrument.ID, dhor.target.ID);
 
-					assignEqIndex(dhor);
-					assignObsIndex(dhor);
+					assignEOIndex(dhor);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kDHOR);
 				}
 
 				// ECTH
 				for (auto &ecth : rom->measECTH)
 				{
-					assignEqIndex(ecth);
-					assignObsIndex(ecth);
+					assignEOIndex(ecth);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kECTH);
 				}
 
 				// ECDIR
 				for (auto &ecdir : rom->measECDIR)
 				{
-					assignEqIndex(ecdir);
-					assignObsIndex(ecdir);
+					assignEOIndex(ecdir);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kECDIR);
 				}
 			}
@@ -1172,16 +1172,14 @@ void TDataAnalyzer::assignEOIndices()
 			// UVD
 			for (auto &uvd : cam.measUVD)
 			{
-				assignEqIndex(uvd);
-				assignObsIndex(uvd);
+				assignEOIndex(uvd);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kUVD);
 			}
 
 			// UVEC
 			for (auto &uvec : cam.measUVEC)
 			{
-				assignEqIndex(uvec);
-				assignObsIndex(uvec);
+				assignEOIndex(uvec);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kUVEC);
 			}
 		}
@@ -1194,8 +1192,7 @@ void TDataAnalyzer::assignEOIndices()
 				if (!fData.isLGCv1())
 					dspt.target.distCorrectionAdjustable = getEdmTgtDistCorrAdj(edm.instrument.ID, dspt.target.ID);
 
-				assignEqIndex(dspt);
-				assignObsIndex(dspt);
+				assignEOIndex(dspt);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kDSPT);
 			}
 
@@ -1211,15 +1208,13 @@ void TDataAnalyzer::assignEOIndices()
 
 			for (auto &dlev : level.measDLEV)
 			{
-				assignEqIndex(dlev);
-				assignObsIndex(dlev);
+				assignEOIndex(dlev);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kDLEV);
 
 				// DLEV::DHOR
 				if (dlev.dhor)
 				{
-					assignEqIndex(*dlev.dhor);
-					assignObsIndex(*dlev.dhor);
+					assignEOIndex(*dlev.dhor);
 					fData.addToMeasurementNum(TMeasurementsGlobal::kDLEVDHOR);
 					// If DHOR exists, tell the station and increment the number of DHOR
 					level.hasDHOR = true;
@@ -1231,8 +1226,7 @@ void TDataAnalyzer::assignEOIndices()
 		// DVER
 		for (auto &dver : measurements.fDVER)
 		{
-			assignEqIndex(dver);
-			assignObsIndex(dver);
+			assignEOIndex(dver);
 			fData.addToMeasurementNum(TMeasurementsGlobal::kDVER);
 		}
 
@@ -1244,8 +1238,7 @@ void TDataAnalyzer::assignEOIndices()
 				if (!fData.isLGCv1())
 					orie.target.distCorrectionAdjustable = getPolarTgtDistCorrAdj(orierom.instrument.ID, orie.target.ID);
 
-				assignEqIndex(orie);
-				assignObsIndex(orie);
+				assignEOIndex(orie);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kORIE);
 			}
 
@@ -1253,8 +1246,7 @@ void TDataAnalyzer::assignEOIndices()
 		for (auto &echorom : measurements.fECHO)
 			for (auto &echo : echorom.measECHO)
 			{
-				assignEqIndex(echo);
-				assignObsIndex(echo);
+				assignEOIndex(echo);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECHO);
 			}
 
@@ -1262,8 +1254,7 @@ void TDataAnalyzer::assignEOIndices()
 		for (auto &ecverom : measurements.fECVE)
 			for (auto &ecve : ecverom.measECVE)
 			{
-				assignEqIndex(ecve);
-				assignObsIndex(ecve);
+				assignEOIndex(ecve);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECVE);
 			}
 
@@ -1271,24 +1262,21 @@ void TDataAnalyzer::assignEOIndices()
 		for (auto &ecsprom : measurements.fECSP)
 			for (auto &ecsp : ecsprom.measECSP)
 			{
-				assignEqIndex(ecsp);
-				assignObsIndex(ecsp);
+				assignEOIndex(ecsp);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECSP);
 			}
 
 		// RADI
 		for (auto &radi : measurements.fRADI)
 		{
-			assignEqIndex(radi);
-			assignObsIndex(radi);
+			assignEOIndex(radi);
 			fData.addToMeasurementNum(TMeasurementsGlobal::kRADI);
 		}
 
 		// OBSXYZ
 		for (auto &obsxyz : measurements.fOBSXYZ)
 		{
-			assignEqIndex(obsxyz);
-			assignObsIndex(obsxyz);
+			assignEOIndex(obsxyz);
 			fData.addToMeasurementNum(TMeasurementsGlobal::kOBSXYZ);
 		}
 
@@ -1296,8 +1284,7 @@ void TDataAnalyzer::assignEOIndices()
 		for (auto &inclyrom : measurements.fINCLY)
 			for (auto &incly : inclyrom.measINCLY)
 			{
-				assignEqIndex(incly);
-				assignObsIndex(incly);
+				assignEOIndex(incly);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kINCLY);
 			}
 
@@ -1305,8 +1292,7 @@ void TDataAnalyzer::assignEOIndices()
 		for (auto &rollyrom : measurements.fROLLY)
 			for (auto &rolly : rollyrom.measROLLY)
 			{
-				assignEqIndex(rolly);
-				assignObsIndex(rolly);
+				assignEOIndex(rolly);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kROLLY);
 			}
 
@@ -1314,8 +1300,7 @@ void TDataAnalyzer::assignEOIndices()
 		for (auto &ecwsrom : measurements.fECWS)
 			for (auto &ecws : ecwsrom.measECWS)
 			{
-				assignEqIndex(ecws);
-				assignObsIndex(ecws);
+				assignEOIndex(ecws);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECWS);
 			}
 
@@ -1324,8 +1309,7 @@ void TDataAnalyzer::assignEOIndices()
 		{
 			for (auto &ecwi : ecwirom.measECWI)
 			{
-				assignEqIndex(ecwi);
-				assignObsIndex(ecwi);
+				assignEOIndex(ecwi);
 				fData.addToMeasurementNum(TMeasurementsGlobal::kECWI);
 			}
 		}
@@ -1414,8 +1398,7 @@ void TDataAnalyzer::checkPDOR(TFileLogger &fileLog, bool dataConsistent)
 		auto initialize = [&](TPdorObs &pdor_meas) {
 			pdor_meas.Initialise(*cala, oriPt, pdor.fgis, pdor.hasBearing);
 			pdor_meas.line = pdor.line;
-			assignEqIndex(pdor_meas);
-			assignObsIndex(pdor_meas);
+			assignEOIndex(pdor_meas);
 			fData.addToMeasurementNum(TMeasurementsGlobal::kPDOR);
 		};
 

@@ -56,9 +56,7 @@ private:
 	//! Assign observation and equation indices to measurements.
 	void assignEOIndices();
 
-	//! Sets the first observation index on a measurement, records the obs-to-line
-	//! mapping for every observation dimension, and advances the global OIndex
-	//! counter by \c meas.getObsDim().
+	//! Sets observation index on a measurement and records the obs-to-line mapping.
 	template<typename TMeas>
 	void assignObsIndex(TMeas &meas);
 
@@ -66,6 +64,11 @@ private:
 	//! EIndex counter by \c meas.getEqDim().
 	template<typename TMeas>
 	void assignEqIndex(TMeas &meas);
+
+	//! Assigns both the equation and the observation indices of a single measurement
+	//! (convenience composition of \ref assignEqIndex and \ref assignObsIndex).
+	template<typename TMeas>
+	void assignEOIndex(TMeas &meas);
 
 	void checkPDOR(TFileLogger &fileLog, bool dataConsistent);
 
