@@ -15,6 +15,7 @@
 #include <TLGCData.h>
 #include <TLSEvaluator.h>
 #include <TSparseMatrix.h>
+#include <TVAdjustableObject.h>
 #include <UEOIndices.h>
 
 static thread_local std::string lastError;
@@ -51,8 +52,6 @@ static int extractSparse(const TSparseMatrix &mat, int **outRows, int **outCols,
 		}
 	return 0;
 }
-
-#include <TVAdjustableObject.h>
 
 #define EV(handle) (*static_cast<TLSEvaluator *>(handle))
 #define ADJ(handle) (*static_cast<TVAdjustableObject *>(handle))
