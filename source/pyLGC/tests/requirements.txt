@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: CERN
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Python dependencies required to run the pyLGC test suite.
+# Consumed by source/pyLGC/CMakeLists.txt, which provisions an isolated
+# virtual environment at <build>/pyLGC/venv and installs from this file.
+
+numpy
+pytest

@@ -10,7 +10,7 @@ path = [
     ".gitignore",
     ".gitlab-ci.yml",
     ".gitmodules",
-    "*.md",
+    "**/*.md",
     "*.yaml",
 	"DCO.txt",
 	"LGC.ico",
