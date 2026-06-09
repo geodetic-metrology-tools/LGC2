@@ -1,3 +1,6 @@
+# Turn OFF if you don't want pytest to gate every build.
+option(PYLGC_RUN_TESTS_AFTER_BUILD "Run pyLGC pytest as a POST_BUILD step" ON)
+
 add_library(pyLGC_C SHARED pyLGC_C.cpp pyLGC_C.h)
 
 target_compile_definitions(pyLGC_C PRIVATE PYLGC_C_EXPORTS)
@@ -74,17 +77,15 @@ endif()
 # Register the test runner only if the venv was provisioned successfully.
 # Otherwise, skip silently.
 if(_pyLGC_testsReady)
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/tests/run_tests.py"
-        "import subprocess, sys\n"
-        "result = subprocess.run([sys.executable, '-m', 'pytest', 'tests.py', '-v'])\n"
-        "if result.returncode:\n"
-        "    print('\\nWARNING: ========== pyLGC Python tests FAILED ==========')\n"
-    )
-    add_custom_command(TARGET pyLGC_C POST_BUILD
-        COMMAND ${_pyLGC_venvPython} run_tests.py
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests"
-        COMMENT "Running pyLGC Python tests (using build venv)"
-    )
+
+    # POST_BUILD pytest run
+    if(PYLGC_RUN_TESTS_AFTER_BUILD)
+        add_custom_command(TARGET pyLGC_C POST_BUILD
+            COMMAND ${_pyLGC_venvPython} -m pytest tests.py -v
+            WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/tests"
+            COMMENT "Running pyLGC Python tests (using build venv)"
+        )
+    endif()
 
     add_test(
         NAME pyLGC_Tests

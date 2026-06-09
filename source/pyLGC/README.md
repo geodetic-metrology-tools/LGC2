@@ -59,7 +59,7 @@ cmake --build . --config Release --target pyLGC_C
 
 ## 3. Running the Tests
 
-When CMake configures the project, it automatically copies the Python tests and test data (`.lgc2` files) from `source\pyLGC\tests` over to the `build` folder so they sit right next to the freshly compiled DLL. The build's POST_BUILD step also runs the suite once against the build venv, and the test is registered with CTest as `pyLGC_Tests`.
+When CMake configures the project, it automatically copies the Python tests and test data (`.lgc2` files) from `source\pyLGC\tests` over to the `build` folder so they sit right next to the freshly compiled DLL. The build's POST_BUILD step also runs the suite once against the build venv, **and a pytest failure fails the build** — just like a compile error. The same suite is also registered with CTest as `pyLGC_Tests`.
 
 To run the suite manually after a build, the simplest path is CTest from the build directory:
 ```powershell
