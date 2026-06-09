@@ -15,6 +15,9 @@ import numpy as np
 # Load the shared library
 # ---------------------------------------------------------------------------
 
+# NOTE: only Windows and Linux are officially supported. macOS has never
+# been tested; if pyLGC_C is ever built on macOS (producing a .dylib), add
+# a fallback for that here.
 _dll_name = "pyLGC_C.dll" if sys.platform == "win32" else "libpyLGC_C.so"
 _dll_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), _dll_name)
 _lib = ctypes.CDLL(_dll_path)

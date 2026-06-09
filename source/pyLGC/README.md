@@ -2,6 +2,14 @@
 
 This guide documents the workflow for building the `pyLGC_C` bindings from source and running the Python test suite on Windows.
 
+## Platform support
+
+| Platform | Status |
+|---|---|
+| Windows (x64)   | Supported — used in CI and by maintainers day-to-day. |
+| Linux (x86_64)  | Supported — built and tested in CI. |
+| macOS           | Not officially supported and never tested. The CMake + C++ build is plausibly portable and the Python wrapper would only need a small change to load `libpyLGC_C.dylib` instead of `libpyLGC_C.so` (see the comment in [`pyLGC.py`](pyLGC.py) near the `_dll_name` line) |
+
 ## 1. Environment Setup
 
 **You do not need to install anything yourself to run the tests through CMake / CTest.** When CMake configures the project, it automatically provisions an isolated virtual environment at `<build>/pyLGC/venv` and installs the dependencies listed in [`tests/requirements.txt`](tests/requirements.txt). This is what CI runs, and it's what you get out of the box on a fresh machine.
