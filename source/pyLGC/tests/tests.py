@@ -22,8 +22,8 @@ def test_load_dimensions(ev):
     assert idx.EIndex > 0
     assert idx.OIndex > 0
 
-def test_get_params_before_evaluateAtParameters(ev):
-    """getEstimatedParameters returns provisional values without needing evaluateAtParameters()."""
+def test_get_params_before_evaluate(ev):
+    """getEstimatedParameters returns provisional values without needing evaluate()."""
     params = ev.getEstimatedParameters()
     assert len(params) == ev.getProblemDimensions().UIndex
     assert norm(params) > 0  # provisionals should be non-zero
@@ -40,14 +40,14 @@ def test_load_nonexistent_file():
 # --- Parameter set/get ---
 
 def test_set_get_round_trip(ev):
-    ev.evaluateAtParameters()
+    ev.evaluate()
     params = ev.getEstimatedParameters()
     params[0] += 42.0
     ev.setParameters(params)
     assert abs(ev.getEstimatedParameters()[0] - params[0]) < 1e-10
 
 def test_set_get_restore(ev):
-    ev.evaluateAtParameters()
+    ev.evaluate()
     original = ev.getEstimatedParameters()
     ev.setParameters(original + 1.0)
     ev.setParameters(original)
@@ -69,32 +69,32 @@ def test_random_set_get_round_trip(ev):
 # --- Evaluate ---
 
 def test_evaluate_without_set_uses_provisionals(ev):
-    ev.evaluateAtParameters()
+    ev.evaluate()
     w = ev.getMisclosure()
     A = ev.getFirstDesignMatrix()
     assert len(w) > 0
     assert len(A[2]) > 0
 
 def test_evaluate_changes_misclosure(ev):
-    ev.evaluateAtParameters()
+    ev.evaluate()
     w_before = ev.getMisclosure()
     params = ev.getEstimatedParameters()
     params[0] += 1.0
     ev.setParameters(params)
-    ev.evaluateAtParameters()
+    ev.evaluate()
     assert norm(w_before - ev.getMisclosure(), np.inf) > 1e-15
 
 def test_evaluate_is_idempotent(ev):
-    ev.evaluateAtParameters()
+    ev.evaluate()
     w1 = ev.getMisclosure()
-    ev.evaluateAtParameters()
+    ev.evaluate()
     assert norm(w1 - ev.getMisclosure()) == 0.0
 
 def test_multiple_set_evaluate_cycles(ev):
     n = ev.getProblemDimensions().UIndex
     for i in range(5):
         ev.setParameters([float(i) * 0.001] * n)
-        ev.evaluateAtParameters()
+        ev.evaluate()
         ev.getMisclosure()
 
 
@@ -119,7 +119,7 @@ def test_getter_after_set_without_evaluate_raises(ev, getter):
 # --- Matrix/vector shapes ---
 
 def test_matrix_shapes(ev):
-    ev.evaluateAtParameters()
+    ev.evaluate()
     idx = ev.getProblemDimensions()
 
     A = ev.getFirstDesignMatrix()
@@ -140,7 +140,7 @@ def test_matrix_shapes(ev):
     assert (A2[3], A2[4]) == (idx.CIndex, idx.UIndex)
 
 def test_vector_lengths(ev):
-    ev.evaluateAtParameters()
+    ev.evaluate()
     idx = ev.getProblemDimensions()
     assert len(ev.getMisclosure()) == idx.EIndex
     assert len(ev.getConstraintMisclosure()) == idx.CIndex
@@ -200,18 +200,18 @@ def test_solve(ev):
     assert ok
     assert len(solution) == ev.getProblemDimensions().UIndex
 
-def test_getter_after_solve_requires_evaluateAtParameters(ev):
+def test_getter_after_solve_requires_evaluate(ev):
     ev.solve()
     with pytest.raises(RuntimeError, match="evaluate"):
         ev.getFirstDesignMatrix()
-    ev.evaluateAtParameters()
+    ev.evaluate()
     A = ev.getFirstDesignMatrix()
     assert len(A[2]) > 0
 
-def test_solve_then_set_solution_then_evaluateAtParameters(ev):
+def test_solve_then_set_solution_then_evaluate(ev):
     ok, sol = ev.solve()
     ev.setParameters(sol)
-    ev.evaluateAtParameters()
+    ev.evaluate()
     assert len(ev.getMisclosure()) > 0
     assert len(ev.getFirstDesignMatrix()[2]) > 0
 
@@ -237,7 +237,7 @@ def test_perturb_after_solve(ev):
     _, sol = ev.solve()
     sol[0] += 10.0
     ev.setParameters(sol)
-    ev.evaluateAtParameters()
+    ev.evaluate()
     assert norm(ev.getMisclosure(), np.inf) > 1e-10
 
 
@@ -297,7 +297,7 @@ def test_getEstVector_fixed_point(ev):
 
 def test_B_is_negative_identity(ev):
     """B matrix should be -I for parametric observation models."""
-    ev.evaluateAtParameters()
+    ev.evaluate()
     rows, cols, vals, nr, nc = ev.getSecondDesignMatrix()
     assert nr == nc  # square
     # all entries on diagonal
@@ -317,12 +317,12 @@ def test_solve_reduces_misclosure(ev):
     perturbed so that the initial misclosure is large and the reduction
     after solving is clearly visible.
     """
-    ev.evaluateAtParameters()
+    ev.evaluate()
     w_before = norm(ev.getMisclosure())
     ok, sol = ev.solve()
     assert ok
     ev.setParameters(sol)
-    ev.evaluateAtParameters()
+    ev.evaluate()
     w_after = norm(ev.getMisclosure())
     assert w_after / w_before < 1e-5
 
