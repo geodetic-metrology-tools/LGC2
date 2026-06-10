@@ -51,7 +51,7 @@ _free_int             = _sig("lgcFreeIntArray",        None, [_ip])
 
 _ev_create            = _sig("lgcEvaluatorCreate",      _vp,  [_cp])
 _ev_destroy           = _sig("lgcEvaluatorDestroy",     None, [_vp])
-_ev_evaluate          = _sig("lgcEvaluatorEvaluateAtParameters",    _int, [_vp])
+_ev_evaluate          = _sig("lgcEvaluatorevaluate",    _int, [_vp])
 _ev_set_params        = _sig("lgcEvaluatorSetParameters", _int, [_vp, _dp, _int])
 _ev_get_params        = _sig("lgcEvaluatorGetEstimatedParameters", _int, [_vp, _dpp, _ip])
 _ev_get_indices       = _sig("lgcEvaluatorGetProblemDimensions", _int, [_vp, _ip, _ip, _ip, _ip])
@@ -170,7 +170,7 @@ class Evaluator:
             _ev_destroy(self._h)
             self._h = None
 
-    def evaluateAtParameters(self):
+    def evaluate(self):
         r = _ev_evaluate(self._h)
         if r == -1:
             raise RuntimeError(_last_error())

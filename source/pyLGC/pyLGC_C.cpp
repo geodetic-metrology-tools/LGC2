@@ -125,7 +125,7 @@ extern "C"
 
 	// --- Evaluation & parameters -----------------------------------------------
 
-	int lgcEvaluatorEvaluateAtParameters(LGCEvaluator ev)
+	int lgcEvaluatorEvaluate(LGCEvaluator ev)
 	{
 		try
 		{

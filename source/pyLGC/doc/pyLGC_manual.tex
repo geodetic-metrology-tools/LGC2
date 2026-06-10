@@ -301,14 +301,14 @@ loaded from an LGC input file.
     Set the parameter vector. Accepts any sequence of length~$n_x$.
     Raises \code{RuntimeError} if the dimension is wrong.
     \emph{Note:} after calling \code{setParameters}, a new
-    \code{evaluateAtParameters()} is required before the getters return valid
+    \code{evaluate()} is required before the getters return valid
     results.
 \end{description}
 
 \subsubsection*{Evaluation}
 
 \begin{description}[style=nextline, leftmargin=1.5em]
-\item[\code{evaluateAtParameters() -> bool}]
+\item[\code{evaluate() -> bool}]
     Linearise the functional model at the current parameter values.
     Computes all matrices and vectors. Returns \code{True} on success.
     Must be called before any matrix or vector getter.
@@ -319,11 +319,11 @@ loaded from an LGC input file.
 \begin{description}[style=nextline, leftmargin=1.5em]
 \item[\code{getMisclosure() -> numpy.ndarray}]
     Return the misclosure vector $W = f(x_k) - L \in \mathbb{R}^{n_L}$.
-    Requires a preceding \code{evaluateAtParameters()}.
+    Requires a preceding \code{evaluate()}.
 
 \item[\code{getConstraintMisclosure() -> numpy.ndarray}]
     Return the constraint misclosure $W_2 = C(x_k) \in \mathbb{R}^{n_C}$.
-    Requires a preceding \code{evaluateAtParameters()}.
+    Requires a preceding \code{evaluate()}.
 \end{description}
 
 \subsubsection*{Sparse Matrices}
@@ -353,7 +353,7 @@ dimensions. See Section~\ref{sec:sparse} for how to construct
     Weight matrix $P \in \mathbb{R}^{n_L \times n_L}$.
 \end{description}
 
-All require a preceding \code{evaluateAtParameters()}.
+All require a preceding \code{evaluate()}.
 
 \subsubsection*{Solving}
 
@@ -362,8 +362,8 @@ All require a preceding \code{evaluateAtParameters()}.
     Run the full iterative least-squares solution. Returns a tuple
     \code{(ok, solution)} where \code{ok} indicates convergence and
     \code{solution} $\in \mathbb{R}^{n_x}$ is the estimated parameter
-    vector. Can be called without a prior \code{evaluateAtParameters()}.
-    \emph{Note:} after solving, \code{evaluateAtParameters()} must be called again
+    vector. Can be called without a prior \code{evaluate()}.
+    \emph{Note:} after solving, \code{evaluate()} must be called again
     before the matrix/vector getters are valid.
 \end{description}
 
@@ -452,8 +452,8 @@ descriptive messages. Common error conditions:
         \code{Errors found in the input file.} \\
     Wrong parameter dimension &
         \code{variable has wrong dimension, expected: 13, actual: 3} \\
-    Getter before \code{evaluateAtParameters()} &
-        \code{Must call evaluateAtParameters() before using getters} \\
+    Getter before \code{evaluate()} &
+        \code{Must call evaluate() before using getters} \\
     Unknown point name &
         \code{Point NOPE not found} \\
     Unknown frame name &
@@ -480,7 +480,7 @@ cycle:
     \item \textbf{Set parameters} (optional). Replace the current
         parameter vector with custom values using
         \code{setParameters()}.
-    \item \textbf{Evaluate.} Call \code{evaluateAtParameters()} to linearise the
+    \item \textbf{Evaluate.} Call \code{evaluate()} to linearise the
         functional model at the current parameters. This computes the
         matrices $A$, $P$, $A_2$ and the
         misclosure vectors $W$, $W_2$.
