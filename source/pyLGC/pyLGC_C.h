@@ -34,8 +34,8 @@ PYLGC_API LGCEvaluator lgcEvaluatorCreate(const char* filePath);
 PYLGC_API void           lgcEvaluatorDestroy(LGCEvaluator ev);
 
 /* Evaluation & parameters — return 0 on success, -1 on error.
-   lgcEvaluatorevaluate returns 1=true, 0=false, -1=error. */
-PYLGC_API int lgcEvaluatorevaluate(LGCEvaluator ev);
+   lgcEvaluatorEvaluate returns 1=true, 0=false, -1=error. */
+PYLGC_API int lgcEvaluatorEvaluate(LGCEvaluator ev);
 PYLGC_API int lgcEvaluatorSetParameters(LGCEvaluator ev, const double* data, int len);
 PYLGC_API int lgcEvaluatorGetEstimatedParameters(LGCEvaluator ev, double** outData, int* outLen);
 
