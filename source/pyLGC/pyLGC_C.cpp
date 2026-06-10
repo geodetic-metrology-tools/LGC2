@@ -24,7 +24,6 @@ static thread_local std::string lastError;
 // Helpers
 // ---------------------------------------------------------------------------
 
-//test comment
 static void eigenVecToArray(const Eigen::VectorXd &vec, double **out, int *len)
 {
 	*len = static_cast<int>(vec.size());
