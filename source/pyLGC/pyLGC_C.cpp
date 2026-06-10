@@ -85,19 +85,10 @@ static int extractSparse(const TSparseMatrix &mat, int **outRows, int **outCols,
 
 extern "C"
 {
-	const char *lgcGetLastError(void)
-	{
-		return lastError.c_str();
-	}
+	const char *lgcGetLastError(void) { return lastError.c_str(); }
 
-	void lgcFreeDoubleArray(double *ptr)
-	{
-		delete[] ptr;
-	}
-	void lgcFreeIntArray(int *ptr)
-	{
-		delete[] ptr;
-	}
+	void lgcFreeDoubleArray(double *ptr) { delete[] ptr; }
+	void lgcFreeIntArray(int *ptr) { delete[] ptr; }
 
 	// --- Evaluator lifecycle ---------------------------------------------------
 
@@ -118,10 +109,7 @@ extern "C"
 		CATCH_NULL
 	}
 
-	void lgcEvaluatorDestroy(LGCEvaluator ev)
-	{
-		delete static_cast<TLSEvaluator *>(ev);
-	}
+	void lgcEvaluatorDestroy(LGCEvaluator ev) { delete static_cast<TLSEvaluator *>(ev); }
 
 	// --- Evaluation & parameters -----------------------------------------------
 
@@ -295,15 +283,9 @@ extern "C"
 		CATCH_NULL
 	}
 
-	const char *lgcAdjObjGetName(LGCAdjObj obj)
-	{
-		return ADJ(obj).getName().c_str();
-	}
+	const char *lgcAdjObjGetName(LGCAdjObj obj) { return ADJ(obj).getName().c_str(); }
 
-	int lgcAdjObjGetFirstUidx(LGCAdjObj obj)
-	{
-		return ADJ(obj).getFirstUidx();
-	}
+	int lgcAdjObjGetFirstUidx(LGCAdjObj obj) { return ADJ(obj).getFirstUidx(); }
 
 	int lgcAdjObjGetRelativeUnknIndices(LGCAdjObj obj, int **outData, int *outLen)
 	{
