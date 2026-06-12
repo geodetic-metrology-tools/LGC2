@@ -501,6 +501,9 @@ void object::test<6>()
 	ang.parse(tokenizefileString("P4 88"), true, -1);
 	ensure_equals("Default target in this ROM should not be affected", ts1->roms.back()->defaultTargetId, "PT9");
 	ensure_equals("ANGL target of this measurement should be the default one", ts1->roms.back()->measANGL.back().target.ID, "PT9");
+
+	ang.parse(tokenizefileString("P5 88 $1424171 - \"TSU: 'Good 2F'\""), true, -1);
+	ensure_equals("Double quotes stripped from measurement EOL comment", ts1->roms.back()->measANGL.back().eolcomment, "$1424171 - TSU: 'Good 2F'");
 	//
 	// ZEND
 	TKeyZEND zend(proj);
