@@ -1618,11 +1618,11 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 	TAStreamFormatter *stream = getStream();
 	TLEVELWriter levelWriter(*stream, fProjectData->getConfig().histo.isActive());
 
-	auto &tmeas = (*frameIt)->measurements;
+	auto const &tmeas = (*frameIt)->measurements;
 
 	// DLEV
 	bool isdlev = false;
-	for (auto &itLEV : tmeas.fLEVEL)
+	for (auto const &itLEV : tmeas.fLEVEL)
 	{
 		if (itLEV.measDLEV.size() > 0)
 		{
@@ -1640,13 +1640,13 @@ void TFRAMEWriter::writeLEVELReliability(TDataTreeIterator frameIt)
 
 	// DHOR
 	bool isdhor = false;
-	for (auto &itLEV : tmeas.fLEVEL)
+	for (auto const &itLEV : tmeas.fLEVEL)
 	{
 		if (itLEV.hasDHOR)
 		{
 			if (isdhor == false)
 			{
-				(*stream) << "\n" << "DHOR observations from a DLEV observations" << "\n";
+				(*stream) << "\n" << "DLEVDHOR observations" << "\n";
 				levelWriter.writeReliabilityHeader();
 				isdhor = true;
 			}
