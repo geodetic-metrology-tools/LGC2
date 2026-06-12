@@ -59,7 +59,7 @@ repos:
             # Check if reuse command is available, install if not
             if ! command -v reuse &> /dev/null; then
               echo "REUSE tool not found. Installing..."
-              pip install reuse
+              pip install "reuse[charset-normalizer]"
               if [ $? -ne 0 ]; then
                 echo "Error: Failed to install reuse tool"
                 exit 1
