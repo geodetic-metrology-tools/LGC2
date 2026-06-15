@@ -67,7 +67,7 @@ bool getBooleanValue(const std::vector<std::string> &tokens, int &pos, const std
 std::string getEOLComment(const std::vector<std::string> &tokens)
 {
 	// Check if the last is a comment
-	return (tokens.back().at(0) == '$' || tokens.back().at(0) == '%') ? tokens.back() : "";
+	return (tokens.back().at(0) == '$' || tokens.back().at(0) == '%') ? stripQuotesFromEOLComment(tokens.back()) : "";
 }
 } // namespace
 
@@ -209,7 +209,7 @@ void TKeyANGL_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			angl.eolcomment = tokens.back();
+			angl.eolcomment = stripQuotesFromEOLComment(tokens.back());
 
 		if (hasAllParams)
 			angl.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
@@ -333,7 +333,7 @@ void TKeyZENI_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			zend.eolcomment = tokens.back();
+			zend.eolcomment = stripQuotesFromEOLComment(tokens.back());
 
 		if (hasAllParams)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
@@ -559,7 +559,7 @@ void TKeyZENH_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			zend.eolcomment = tokens.back();
+			zend.eolcomment = stripQuotesFromEOLComment(tokens.back());
 
 		if (hasAllParams)
 			zend.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
@@ -871,7 +871,7 @@ void TKeyDTHE_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dthe.eolcomment = tokens.back();
+			dthe.eolcomment = stripQuotesFromEOLComment(tokens.back());
 
 		if (hasAllParams)
 			dthe.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
@@ -1031,7 +1031,7 @@ void TKeyECTH_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			ecth.eolcomment = tokens.back();
+			ecth.eolcomment = stripQuotesFromEOLComment(tokens.back());
 
 		if (hasAllParams)
 			ecth.setDistance(TLength(std::stor(tokens.at(3))));
@@ -1278,7 +1278,7 @@ void TKeyDHOR_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dhor.eolcomment = tokens.back();
+			dhor.eolcomment = stripQuotesFromEOLComment(tokens.back());
 
 		if (hasAllParams)
 			dhor.setDistance(TLength(std::stor(tokens.at(2)), TLength::kMetres));
@@ -1588,7 +1588,7 @@ void TKeyDVER_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dver.eolcomment = tokens.back();
+			dver.eolcomment = stripQuotesFromEOLComment(tokens.back());
 	}
 }
 
@@ -2189,7 +2189,7 @@ void TKeyORIE_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			orie.eolcomment = tokens.back();
+			orie.eolcomment = stripQuotesFromEOLComment(tokens.back());
 
 		if (hasAllParams)
 			orie.setAngle(TAngle(std::stor(tokens.at(2)), TAngle::kGons));
@@ -2231,7 +2231,7 @@ void TKeyRADI_lgc1::parse(const std::vector<std::string> &tokens, bool, int line
 		// If last token starts with a comment character, store it as a end of line comment
 		const char fOfLastToken = tokens.back().at(0);
 		if (fOfLastToken == '$' || fOfLastToken == '%')
-			radi.eolcomment = tokens.back();
+			radi.eolcomment = stripQuotesFromEOLComment(tokens.back());
 	}
 
 	// auto& debug = proj.getCurrentNode().measurements;
