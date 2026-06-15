@@ -240,6 +240,11 @@ void object::test<4>()
 	pryz.parse(tokenizefileString("P3 1 2 3"), true, -1);
 	prz.parse(tokenizefileString("P4 1 2 3"), true, -1);
 
+	// Point with a comment that contains double quotes: the quotes must be
+	// stripped to keep the JSON output valid and SurveyPad highlighting sane.
+	TKeyVXY prxyQ(proj);
+	prxyQ.parse(tokenizefileString("P5 1 2 3 $1424171 - \"TSU: 'Good 2F'\""), true, -1);
+
 	const LGCAdjustablePoint &pt1 = proj.getPoints().getObject("P1");
 
 	ensure_equals(pt1.eolcomment, "$This is a DB comment");
@@ -250,7 +255,11 @@ void object::test<4>()
 	// Fails, but the values seem correct anyway
 	// ensure_equals(pt2.hdrcomment, "%Pc1 1 2 3\n%Pc2 1 2 3");
 	ensure("Lock state must match", pt2.isCoordinateFixed(1));
-	ensure_equals(proj.getPoints().numObjects(), (size_t)5);
+
+	const LGCAdjustablePoint &pt5 = proj.getPoints().getObject("P5");
+	ensure_equals("Double quotes must be stripped from EOL comment", pt5.eolcomment, "$1424171 - TSU: 'Good 2F'");
+
+	ensure_equals(proj.getPoints().numObjects(), (size_t)6);
 }
 
 template<>
@@ -492,6 +501,9 @@ void object::test<6>()
 	ang.parse(tokenizefileString("P4 88"), true, -1);
 	ensure_equals("Default target in this ROM should not be affected", ts1->roms.back()->defaultTargetId, "PT9");
 	ensure_equals("ANGL target of this measurement should be the default one", ts1->roms.back()->measANGL.back().target.ID, "PT9");
+
+	ang.parse(tokenizefileString("P5 88 $1424171 - \"TSU: 'Good 2F'\""), true, -1);
+	ensure_equals("Double quotes stripped from measurement EOL comment", ts1->roms.back()->measANGL.back().eolcomment, "$1424171 - TSU: 'Good 2F'");
 	//
 	// ZEND
 	TKeyZEND zend(proj);
