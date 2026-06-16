@@ -5,6 +5,7 @@
 #include "pyLGC_C.h"
 
 #include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <sstream>
@@ -110,7 +111,7 @@ extern "C"
 	{
 		try
 		{
-			std::ifstream file(filePath);
+			std::ifstream file(std::filesystem::u8path(filePath));
 			if (!file.is_open())
 			{
 				lastError = std::string("Cannot open file: ") + filePath;
