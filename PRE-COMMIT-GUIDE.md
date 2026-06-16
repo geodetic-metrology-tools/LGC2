@@ -212,6 +212,9 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
 ### Code Formatting
 
 - **clang-format**: Automatically formats C++ code according to `.clang-format` configuration
+  - Version pinned to v22.1.5 via `pre-commit/mirrors-clang-format` — no separate install needed
+  - **The version matters**: same `.clang-format` config produces different output across versions; v22.1.5 is the project standard
+  - IDE formatters (e.g. Visual Studio "Format Document") must also use v22.1.5 to avoid spurious diffs — see troubleshooting below
   - Uses project-specific style (tabs, 170 char limit, etc.)
   - Modifies files in-place
 
@@ -239,7 +242,7 @@ Pre-commit hooks and commit verification are automatically run in the GitLab CI 
 ### Pre-commit Job
 - **Trigger**: On all merge requests and branch pushes (except `master` and `appwidevs`)
 - **Stage**: `.pre` (runs before build stages)
-- **Image**: `python:3.11-slim` with `clang-format` installed
+- **Image**: `python:3.11-slim` (clang-format v22.1.5 downloaded automatically by pre-commit)
 - **Scope**: Only checks files modified in the branch/MR (not entire codebase)
 - **Purpose**: Ensures new/modified code meets quality standards
 
@@ -314,18 +317,54 @@ git push --force-with-lease
 
 ### "clang-format: command not found"
 
-**Problem:** clang-format is not installed.
+clang-format is managed by pre-commit via `mirrors-clang-format` and does not need a separate system install. If you see this error, run `pre-commit install` to (re)initialize the environment — pre-commit will download the pinned binary automatically.
 
-**Solution:**
-- **Windows:** Install LLVM from [llvm.org](https://releases.llvm.org/)
-- **Linux:**
-  ```bash
-  # Ubuntu/Debian
-  sudo apt-get install clang-format
+### IDE formatter produces different output than pre-commit
 
-  # CentOS/RHEL
-  sudo yum install clang-tools-extra
-  ```
+**Problem:** Visual Studio (or another IDE) uses a different clang-format version than the pinned v22.1.5, causing spurious diffs.
+
+**Option A — pip install (stable path, recommended):**
+
+```
+pip install clang-format==22.1.5
+```
+
+The binary lands at:
+- **Windows:** `%USERPROFILE%\AppData\Local\Programs\Python\Python3xx\Scripts\clang-format.exe`
+- **Linux:** `~/.local/bin/clang-format`
+
+Find the exact path with:
+```powershell
+# Windows
+(Get-Command clang-format).Source
+```
+```bash
+# Linux
+which clang-format
+```
+
+When the pinned version in `.pre-commit-config.yaml` changes, run `pip install clang-format==<new_version>` to stay in sync.
+
+**Option B — pre-commit virtualenv (no extra install):**
+
+After running `pre-commit install`, find the v22.1.5 binary inside the pre-commit cache:
+```powershell
+# Windows
+Get-ChildItem -Recurse "$env:USERPROFILE\.cache\pre-commit" -Filter "clang-format.exe" |
+  Where-Object { & $_.FullName --version 2>&1 | Select-String "22\." } |
+  Select-Object FullName
+```
+```bash
+# Linux
+find ~/.cache/pre-commit -name "clang-format" -executable -type f |
+  while read f; do v=$("$f" --version 2>&1); echo "$v $f"; done | grep "^clang-format version 22"
+```
+
+Note: this path contains a hash that changes when pre-commit rebuilds its environment (e.g. after `pre-commit clean`). Re-run the command above and update VS if that happens.
+
+**Configure Visual Studio** (both options): **Tools → Options → Text Editor → C/C++ → Formatting → General → "Use custom clang-format.exe file"** → select the binary path.
+
+The binary reads `.clang-format` from the project root via the normal directory walk — no extra configuration needed.
 
 ### Hooks are Modifying My Files
 

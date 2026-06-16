@@ -44,6 +44,14 @@ repos:
   #     - id: cmake-lint
   #       additional_dependencies: [pyyaml]
 
+  # clang-format: pinned version ensures all machines and CI use the same formatter
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v22.1.5
+    hooks:
+      - id: clang-format
+        types_or: [c++, c]
+        args: ["-style=file"]
+
   # Check for common C++ issues and project requirements
   - repo: local
     hooks:
@@ -83,14 +91,6 @@ repos:
               exit 1
             fi
           - --
-
-      # Format C++ code with clang-format using local .clang-format configuration
-      - id: clang-format
-        name: clang-format
-        entry: clang-format
-        language: system
-        types_or: [c++, c]
-        args: ['-i', '--style=file']  # Edit in-place, use .clang-format file
 
       # Check that text files are UTF-8 encoded
       - id: check-utf8-encoding
