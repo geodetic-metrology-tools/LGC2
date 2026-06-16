@@ -259,15 +259,17 @@ extern "C"
 		{
 			const auto &mapping = EV(ev).getObsIndexToLineNumber();
 			*outLen = static_cast<int>(mapping.size());
-			*outKeys = new int[*outLen];
-			*outValues = new int[*outLen];
+			std::unique_ptr<int[]> keys(new int[*outLen]);
+			std::unique_ptr<int[]> values(new int[*outLen]);
 			int i = 0;
 			for (const auto &kv : mapping)
 			{
-				(*outKeys)[i] = kv.first;
-				(*outValues)[i] = kv.second;
+				keys[i] = kv.first;
+				values[i] = kv.second;
 				++i;
 			}
+			*outKeys = keys.release();
+			*outValues = values.release();
 			return 0;
 		}
 		CATCH_ERR
