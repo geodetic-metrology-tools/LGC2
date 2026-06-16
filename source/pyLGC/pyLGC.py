@@ -165,9 +165,9 @@ class Evaluator:
     def __init__(self, filePath):
         self._h = _check_ptr(_ev_create(filePath.encode("utf-8")))
 
-    def __del__(self):
+    def __del__(self, _destroy=_ev_destroy):
         if getattr(self, "_h", None):
-            _ev_destroy(self._h)
+            _destroy(self._h)
             self._h = None
 
     def evaluate(self):
