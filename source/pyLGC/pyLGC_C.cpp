@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -37,19 +38,23 @@ static int extractSparse(const TSparseMatrix &mat, int **outRows, int **outCols,
 	*outNnz = nnz;
 	*outNrows = static_cast<int>(mat.rows());
 	*outNcols = static_cast<int>(mat.cols());
-	*outRows = new int[nnz];
-	*outCols = new int[nnz];
-	*outVals = new double[nnz];
+
+	std::unique_ptr<int[]> rows(new int[nnz]);
+	std::unique_ptr<int[]> cols(new int[nnz]);
+	std::unique_ptr<double[]> vals(new double[nnz]);
 
 	int idx = 0;
 	for (int k = 0; k < mat.outerSize(); ++k)
 		for (TSparseMatrix::InnerIterator it(mat, k); it; ++it)
 		{
-			(*outRows)[idx] = static_cast<int>(it.row());
-			(*outCols)[idx] = static_cast<int>(it.col());
-			(*outVals)[idx] = it.value();
+			rows[idx] = static_cast<int>(it.row());
+			cols[idx] = static_cast<int>(it.col());
+			vals[idx] = it.value();
 			++idx;
 		}
+	*outRows = rows.release();
+	*outCols = cols.release();
+	*outVals = vals.release();
 	return 0;
 }
 
