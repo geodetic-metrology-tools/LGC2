@@ -97,16 +97,20 @@ def _doubles(func, *args):
     data = _dp()
     n    = _int()
     _check(func(*args, ctypes.byref(data), ctypes.byref(n)))
-    out = np.ctypeslib.as_array(data, shape=(n.value,)).copy()
-    _free_double(data)
+    try:
+        out = np.ctypeslib.as_array(data, shape=(n.value,)).copy()
+    finally:
+        _free_double(data)
     return out
 
 def _ints(func, *args):
     data = _ip()
     n    = _int()
     _check(func(*args, ctypes.byref(data), ctypes.byref(n)))
-    out = np.ctypeslib.as_array(data, shape=(n.value,)).copy()
-    _free_int(data)
+    try:
+        out = np.ctypeslib.as_array(data, shape=(n.value,)).copy()
+    finally:
+        _free_int(data)
     return out
 
 def _sparse(func, *args):
@@ -119,13 +123,15 @@ def _sparse(func, *args):
     _check(func(*args,
                 ctypes.byref(rows), ctypes.byref(cols), ctypes.byref(vals),
                 ctypes.byref(nnz), ctypes.byref(nrows), ctypes.byref(ncols)))
-    k = nnz.value
-    r = np.ctypeslib.as_array(rows, shape=(k,)).copy()
-    c = np.ctypeslib.as_array(cols, shape=(k,)).copy()
-    v = np.ctypeslib.as_array(vals, shape=(k,)).copy()
-    _free_int(rows)
-    _free_int(cols)
-    _free_double(vals)
+    try:
+        k = nnz.value
+        r = np.ctypeslib.as_array(rows, shape=(k,)).copy()
+        c = np.ctypeslib.as_array(cols, shape=(k,)).copy()
+        v = np.ctypeslib.as_array(vals, shape=(k,)).copy()
+    finally:
+        _free_int(rows)
+        _free_int(cols)
+        _free_double(vals)
     return (r, c, v, nrows.value, ncols.value)
 
 # ---------------------------------------------------------------------------
@@ -213,8 +219,10 @@ class Evaluator:
         sol = _dp()
         n   = _int()
         _check(_ev_solve(self._h, ctypes.byref(ok), ctypes.byref(sol), ctypes.byref(n)))
-        solution = np.ctypeslib.as_array(sol, shape=(n.value,)).copy()
-        _free_double(sol)
+        try:
+            solution = np.ctypeslib.as_array(sol, shape=(n.value,)).copy()
+        finally:
+            _free_double(sol)
         return (bool(ok.value), solution)
 
     def getObsIndexToLineNumber(self):
