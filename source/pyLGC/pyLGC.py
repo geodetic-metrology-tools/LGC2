@@ -230,9 +230,11 @@ class Evaluator:
         vals = _ip()
         n    = _int()
         _check(_ev_obs_map(self._h, ctypes.byref(keys), ctypes.byref(vals), ctypes.byref(n)))
-        result = {keys[i]: vals[i] for i in range(n.value)}
-        _free_int(keys)
-        _free_int(vals)
+        try:
+            result = {keys[i]: vals[i] for i in range(n.value)}
+        finally:
+            _free_int(keys)
+            _free_int(vals)
         return result
 
     def getPoint(self, name):
