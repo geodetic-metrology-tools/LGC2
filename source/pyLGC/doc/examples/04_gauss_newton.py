@@ -20,7 +20,7 @@ ok, x_ref = ev.solve()
 x = x0.copy()
 for k in range(50):
     ev.setParameters(x)
-    ev.evaluateAtParameters()
+    ev.evaluate()
 
     A = to_csr(ev.getFirstDesignMatrix())
     P = to_csr(ev.getWeightMatrix())

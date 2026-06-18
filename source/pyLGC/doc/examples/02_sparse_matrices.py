@@ -4,7 +4,7 @@ from scipy.sparse import coo_matrix
 import pyLGC
 
 ev = pyLGC.Evaluator("Title-Example.lgc2")
-ev.evaluateAtParameters()
+ev.evaluate()
 
 # Convert COO tuple to scipy sparse matrix
 rows, cols, vals, nr, nc = ev.getFirstDesignMatrix()

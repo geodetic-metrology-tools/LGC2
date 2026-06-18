@@ -11,6 +11,7 @@ path = [
     ".gitlab-ci.yml",
     ".gitmodules",
     "**/*.md",
+    "**/*.pdf",
     "*.yaml",
 	"DCO.txt",
 	"LGC.ico",

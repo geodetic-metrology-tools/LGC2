@@ -5,7 +5,7 @@ from scipy.sparse.linalg import spsolve
 import pyLGC
 
 ev = pyLGC.Evaluator("Title-Example.lgc2")
-ev.evaluateAtParameters()
+ev.evaluate()
 
 # Build sparse matrices
 def to_csr(tup):
