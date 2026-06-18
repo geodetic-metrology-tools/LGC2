@@ -9,10 +9,10 @@
 
 // LGC
 #include <ContributionStructures.h>
+#include <LGCAdjustableSag.h>
 #include <TInverseTransformation.h>
 #include <TLGCPointConstraintGroup.h>
 #include <TLGCSagConstraintPair.h>
-#include <LGCAdjustableSag.h>
 #include <TPointTransformer.h>
 #include <TTSTN.h>
 

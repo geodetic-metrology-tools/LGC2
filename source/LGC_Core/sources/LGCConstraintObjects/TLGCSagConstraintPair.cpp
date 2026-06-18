@@ -13,11 +13,8 @@ SagPairBaseFrame TLGCSagConstraintPair::transformToBaseFrame(const TLGCData &dat
 	const LGCAdjustablePoint &assocPt = data.getPoints().getObject(assocPoint);
 	TDataTreeIterator sagFramePos = data.locateNode(fSag.getBaseFrame());
 
-	return SagPairBaseFrame{
-		TLOR2LOR(refPt.getFrameTreePosition(), sagFramePos, "ref2Sag"),
-		TLOR2LOR(assocPt.getFrameTreePosition(), sagFramePos, "assoc2Sag"),
-		refPt.getEstimatedValue(),
-		assocPt.getEstimatedValue()};
+	return SagPairBaseFrame{TLOR2LOR(refPt.getFrameTreePosition(), sagFramePos, "ref2Sag"), TLOR2LOR(assocPt.getFrameTreePosition(), sagFramePos, "assoc2Sag"),
+		refPt.getEstimatedValue(), assocPt.getEstimatedValue()};
 }
 
 #if USE_SERIALIZER

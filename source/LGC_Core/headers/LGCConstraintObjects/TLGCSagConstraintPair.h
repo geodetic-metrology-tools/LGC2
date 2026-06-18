@@ -5,7 +5,7 @@
  */
 
 #ifndef _TLGC_SAGCONSTRAINTPAIR_H
-#	define _TLGC_SAGCONSTRAINTPAIR_H
+#define _TLGC_SAGCONSTRAINTPAIR_H
 
 #include <LGCAdjustableSag.h>
 #include <TLOR2LOR.h>
@@ -26,11 +26,8 @@ class TLGCData;
 */
 struct SagPairBaseFrame
 {
-	SagPairBaseFrame(TLOR2LOR r2s, TLOR2LOR a2s,
-		TPositionVector refPos, TPositionVector assocPos) :
-		ref2Sag(std::move(r2s)), assoc2Sag(std::move(a2s)),
-		refSub(refPos), assocSub(assocPos),
-		refSag(refPos), assocSag(assocPos)
+	SagPairBaseFrame(TLOR2LOR r2s, TLOR2LOR a2s, TPositionVector refPos, TPositionVector assocPos) :
+		ref2Sag(std::move(r2s)), assoc2Sag(std::move(a2s)), refSub(refPos), assocSub(assocPos), refSag(refPos), assocSag(assocPos)
 	{
 		ref2Sag.transform(refSag);
 		assoc2Sag.transform(assocSag);
@@ -44,16 +41,15 @@ struct SagPairBaseFrame
 	TPositionVector assocSag;
 };
 
-#	if USE_SERIALIZER
+#if USE_SERIALIZER
 class TLGCSagConstraintPair : public Serializable
-#	else
+#else
 class TLGCSagConstraintPair
-#	endif // USE_SERIALIZER
+#endif // USE_SERIALIZER
 {
 public:
 	// constructor taking two point names: reference and associated (sagged) point
-	TLGCSagConstraintPair(std::string ref, std::string assoc, const LGCAdjustableSag &sag) :
-		refPoint(std::move(ref)), assocPoint(std::move(assoc)), fSag(sag){};
+	TLGCSagConstraintPair(std::string ref, std::string assoc, const LGCAdjustableSag &sag) : refPoint(std::move(ref)), assocPoint(std::move(assoc)), fSag(sag) {};
 
 	/*!
 		\brief Look up the two points and apply the ref->sag and assoc->sag
@@ -79,10 +75,10 @@ public:
 	void setXOffset(const TLength &xOffset) { fXOffset = xOffset; }
 	void setZOffset(const TLength &zOffset) { fZOffset = zOffset; }
 
-#	if USE_SERIALIZER
+#if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override;
-#	endif
+#endif
 
 private:
 	std::string refPoint;

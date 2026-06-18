@@ -56,7 +56,7 @@ struct pointSigmaData
 		firstCIdx(-1),
 		fRotRes(Eigen::Vector3d::Constant(NAN)),
 		fRotResNormalized(Eigen::Vector3d::Constant(NAN)),
-		fRotCovar(Eigen::Matrix3d::Constant(NAN)){};
+		fRotCovar(Eigen::Matrix3d::Constant(NAN)) {};
 	// xyz rotation order
 	// for the meaning of the angles, see https://edms.cern.ch/document/1476360/2
 	// see also LGC user guide

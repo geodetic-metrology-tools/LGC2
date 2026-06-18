@@ -7,11 +7,11 @@
 #ifndef _LGC_TESTS_SAG_H
 #define _LGC_TESTS_SAG_H
 
-
 /*Sag adjustable element tests*/
-namespace Sag{
+namespace Sag
+{
 
-    char const *const SAG_test_mixed_pairs_and_DEFORM = R"(*TITR
+char const *const SAG_test_mixed_pairs_and_DEFORM = R"(*TITR
 mixed *SAGELEMENT pair continuation block with a DEFORM-tagged CALA point
 *OLOC
 *APRI
@@ -147,7 +147,6 @@ P5_sag 4.5 2 4.5 1 1 1
 *ENDFRAME
 *END)";
 
-
 char const *const SAG_test_DEFORM_syntax = R"(*TITR
 Deformation Illustration - 5 points with z sag and curvature
 *OLOC
@@ -256,7 +255,5 @@ P_Middle 0 0 0.5   0.01 0.01 0.01
 P_Right 0 1 1   0.01 0.01 0.01
 *END)";
 
-
-
-}
+} // namespace Sag
 #endif

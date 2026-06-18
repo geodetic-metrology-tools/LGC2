@@ -157,7 +157,8 @@ void TKeySAGELEMENT::parse(const std::vector<std::string> &tokens, bool /*active
 	// Full definition: * SAGELEMENT name frame zS zC xS xC [ZS][ZC][XS][XC]
 	// The asterisk and the keyword itself are already two tokens
 	if (numTokens <= 7)
-		throw std::runtime_error("Key *SAGELEMENT takes at least 6 arguments: Name, Name of associated Frame, z and x sag and curvature plus optionally the tags for free transformation parameters, ZS, ZC, XS, XC");
+		throw std::runtime_error("Key *SAGELEMENT takes at least 6 arguments: Name, Name of associated Frame, z and x sag and curvature plus optionally the tags for "
+								 "free transformation parameters, ZS, ZC, XS, XC");
 
 	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
 

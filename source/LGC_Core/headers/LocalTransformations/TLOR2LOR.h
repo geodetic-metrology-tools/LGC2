@@ -57,7 +57,7 @@ public:
 	TLOR2LOR(TDataTreeIterator from, TDataTreeIterator to, const std::string &name);
 
 	/// Destructor
-	~TLOR2LOR(){};
+	~TLOR2LOR() {};
 	//@}
 
 	/// Transforms the point by this transformation

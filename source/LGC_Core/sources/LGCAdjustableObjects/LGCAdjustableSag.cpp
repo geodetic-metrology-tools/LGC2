@@ -5,8 +5,8 @@
 #include <stdexcept>
 
 #include <LGCAdjustableSag.h>
-#include <TAdjustablePoint.h>
 #include <TAdjustableLength.h>
+#include <TAdjustablePoint.h>
 
 #include "LGCAdjustablePoint.h"
 
@@ -85,8 +85,8 @@ void LGCAdjustableSag::setFirstUidx(int idx)
 Eigen::VectorXd LGCAdjustableSag::getEstVector() const
 {
 	Eigen::VectorXd estVect(kNumSagParams);
-	estVect << fZSag.getEstimatedValue().getMetresValue(), fZCurv.getEstimatedValue().getMetresValue(),
-		fXSag.getEstimatedValue().getMetresValue(), fXCurv.getEstimatedValue().getMetresValue();
+	estVect << fZSag.getEstimatedValue().getMetresValue(), fZCurv.getEstimatedValue().getMetresValue(), fXSag.getEstimatedValue().getMetresValue(),
+		fXCurv.getEstimatedValue().getMetresValue();
 	return estVect;
 }
 

@@ -274,10 +274,8 @@ void TSimFileWriter::writeSagElements()
 
 	for (auto &sagElement : data->getSags())
 	{
-		(*stream) << "*SAGELEMENT " << sagElement.getName() << sep << sagElement.getBaseFrame() << sep
-				  << sagElement.getZSag().getProvisionalValue().getMetresValue() << sep
-				  << sagElement.getZCurv().getProvisionalValue().getMetresValue() << sep
-				  << sagElement.getXSag().getProvisionalValue().getMetresValue() << sep
+		(*stream) << "*SAGELEMENT " << sagElement.getName() << sep << sagElement.getBaseFrame() << sep << sagElement.getZSag().getProvisionalValue().getMetresValue()
+				  << sep << sagElement.getZCurv().getProvisionalValue().getMetresValue() << sep << sagElement.getXSag().getProvisionalValue().getMetresValue() << sep
 				  << sagElement.getXCurv().getProvisionalValue().getMetresValue();
 		for (int j = 0; j < sagElement.kNumSagParams; ++j)
 		{

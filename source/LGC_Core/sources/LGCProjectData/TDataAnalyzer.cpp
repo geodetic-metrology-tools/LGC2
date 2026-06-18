@@ -779,8 +779,7 @@ bool TDataAnalyzer::checkParameters()
 
 		if (!fData.doesFrameExist(sagElement.getBaseFrame()))
 		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR
-				<< "Sag element " + sagElement.getName() + " refers to undefined base frame " + sagElement.getBaseFrame() + ".";
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag element " + sagElement.getName() + " refers to undefined base frame " + sagElement.getBaseFrame() + ".";
 			return false;
 		}
 		if (!sagElement.isFixed())

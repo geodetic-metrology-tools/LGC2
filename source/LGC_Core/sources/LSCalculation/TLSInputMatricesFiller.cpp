@@ -2102,9 +2102,11 @@ bool TLSInputMatricesFiller::fillSagConstraints(TLGCData *projData, TLSInputMatr
 				for (int colIdx = 0; colIdx < 3; colIdx++)
 				{
 					if (!refPt.isCoordinateFixed(colIdx))
-						fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, refPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdRefSub.contrib(rowIdx, colIdx));
+						fillOK = fillOK
+							&& matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, refPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdRefSub.contrib(rowIdx, colIdx));
 					if (!assocPt.isCoordinateFixed(colIdx))
-						fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, assocPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdAssocSub.contrib(rowIdx, colIdx));
+						fillOK = fillOK
+							&& matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, assocPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdAssocSub.contrib(rowIdx, colIdx));
 				}
 				// wrt sag parameters (ZS, ZC, XS, XC)
 				if (!sagAdjustable.getZSag().isFixed())

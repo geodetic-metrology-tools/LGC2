@@ -5,6 +5,7 @@
 #include "TReader.h"
 
 #include <unordered_map>
+
 #include <StringManager.h>
 
 #include "AdjObjectsReader.h"
@@ -444,7 +445,7 @@ bool TReader::read(std::istream &lgcStream)
 	}
 
 	// Calculate obsIDwidth from all registered observation IDs
-	for (const auto& obsIdPair : globalObsIdMap)
+	for (const auto &obsIdPair : globalObsIdMap)
 	{
 		if (obsIdPair.first.size() > project.getConfig().obsIDwidth)
 			project.getConfig().obsIDwidth = obsIdPair.first.size();
@@ -672,8 +673,7 @@ bool TReader::expandDeformDirectives()
 
 	// Helper: check if 'node' is in the subtree rooted at 'root' (inclusive of root itself)
 	// by walking up the parent chain from node
-	auto isInSubtreeOf = [&](const TDataTreeIterator &node, const TDataTreeIterator &root) -> bool
-	{
+	auto isInSubtreeOf = [&](const TDataTreeIterator &node, const TDataTreeIterator &root) -> bool {
 		if (node == root)
 			return true;
 		auto current = node;
@@ -697,13 +697,13 @@ bool TReader::expandDeformDirectives()
 	{
 		for (size_t j = i + 1; j < frameDeforms.size(); ++j)
 		{
-			if (isInSubtreeOf(frameDeforms[i].position, frameDeforms[j].position) ||
-				isInSubtreeOf(frameDeforms[j].position, frameDeforms[i].position))
+			if (isInSubtreeOf(frameDeforms[i].position, frameDeforms[j].position) || isInSubtreeOf(frameDeforms[j].position, frameDeforms[i].position))
 			{
 				std::string nameI = frameDeforms[i].position.node->data.get()->frame.getName();
 				std::string nameJ = frameDeforms[j].position.node->data.get()->frame.getName();
 				outputMessages << TFileLogger::e_logType::LOG_ERROR
-							   << "Line " + std::to_string(frameDeforms[j].line) + ": DEFORM in frame '" + nameJ + "' overlaps with DEFORM in frame '" + nameI + "' (nested deforms are not allowed).";
+							   << "Line " + std::to_string(frameDeforms[j].line) + ": DEFORM in frame '" + nameJ + "' overlaps with DEFORM in frame '" + nameI
+						+ "' (nested deforms are not allowed).";
 				return false;
 			}
 		}
@@ -719,7 +719,8 @@ bool TReader::expandDeformDirectives()
 			if (isInSubtreeOf(point.getFrameTreePosition(), fd.position))
 			{
 				outputMessages << TFileLogger::e_logType::LOG_ERROR
-							   << "Point '" + point.getName() + "' has a DEFORM tag but is also inside frame-level DEFORM in frame '" + fd.position.node->data.get()->frame.getName() + "' (line " + std::to_string(fd.line) + "). Use one or the other, not both.";
+							   << "Point '" + point.getName() + "' has a DEFORM tag but is also inside frame-level DEFORM in frame '"
+						+ fd.position.node->data.get()->frame.getName() + "' (line " + std::to_string(fd.line) + "). Use one or the other, not both.";
 				return false;
 			}
 		}
@@ -742,8 +743,7 @@ bool TReader::expandDeformDirectives()
 
 		if (!project.getSags().doesObjectExist(sagElementName))
 		{
-			outputMessages << TFileLogger::e_logType::LOG_ERROR
-						   << "Line " + std::to_string(lineNum) + ": DEFORM references undefined sag element '" + sagElementName + "'.";
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Line " + std::to_string(lineNum) + ": DEFORM references undefined sag element '" + sagElementName + "'.";
 			return false;
 		}
 
@@ -799,8 +799,7 @@ bool TReader::expandDeformDirectives()
 
 		if (pointNames.empty())
 		{
-			outputMessages << TFileLogger::e_logType::LOG_WARNING
-						   << "Line " + std::to_string(fd.line) + ": DEFORM in frame '" + frameName + "' found no points in subtree.";
+			outputMessages << TFileLogger::e_logType::LOG_WARNING << "Line " + std::to_string(fd.line) + ": DEFORM in frame '" + frameName + "' found no points in subtree.";
 			continue;
 		}
 
@@ -832,8 +831,7 @@ bool TReader::expandDeformDirectives()
 	// Phase E: Validate unique sag pair membership (across DEFORM-generated and SAGELEMENT continuation pairs).
 	// Each point may appear at most once per role (reference / associated).
 	{
-		auto checkUniqueMembership = [&](const std::string &role, auto getField) -> bool
-		{
+		auto checkUniqueMembership = [&](const std::string &role, auto getField) -> bool {
 			std::unordered_map<std::string, int> counts;
 			for (const auto &pair : project.getSagPointPairs())
 				counts[getField(pair)]++;
@@ -842,7 +840,8 @@ bool TReader::expandDeformDirectives()
 				if (count > 1)
 				{
 					outputMessages << TFileLogger::e_logType::LOG_ERROR
-								   << "Point '" + name + "' appears as " + role + " point in " + std::to_string(count) + " sag constraint pairs. A point may only appear in one sag constraint pair.";
+								   << "Point '" + name + "' appears as " + role + " point in " + std::to_string(count)
+							+ " sag constraint pairs. A point may only appear in one sag constraint pair.";
 					return false;
 				}
 			}
@@ -917,24 +916,27 @@ bool TReader::checkAndRegisterObsId(TDataTreeIterator itTree, std::unordered_map
 	std::string duplicateId;
 	int duplicateLine = -1;
 	int firstOccurrenceLine = -1;
-	
+
 	// Use the shared iteration helper to check for duplicates across all frames
 	iterateAllMeasurements(itTree, [&globalObsIdMap, &duplicateId, &duplicateLine, &firstOccurrenceLine](auto const &meas) {
-		if (!meas.obsID.empty() && duplicateId.empty()) {  // Only record first duplicate
+		if (!meas.obsID.empty() && duplicateId.empty())
+		{ // Only record first duplicate
 			auto result = globalObsIdMap.insert({meas.obsID, meas.line});
-			if (!result.second) {  // Insertion failed - duplicate found across frames!
+			if (!result.second)
+			{ // Insertion failed - duplicate found across frames!
 				duplicateId = meas.obsID;
 				duplicateLine = meas.line;
 				firstOccurrenceLine = result.first->second;
 			}
 		}
 	});
-	
+
 	// If duplicate was found, report it with both line numbers
 	if (!duplicateId.empty())
 	{
 		const std::string lineStr = "Line " + std::to_string(duplicateLine) + ": ";
-		outputMessages << TFileLogger::e_logType::LOG_ERROR << lineStr + "Observation ID \"" + duplicateId + "\" is duplicated (first occurrence at line " + std::to_string(firstOccurrenceLine) + ").";
+		outputMessages << TFileLogger::e_logType::LOG_ERROR
+					   << lineStr + "Observation ID \"" + duplicateId + "\" is duplicated (first occurrence at line " + std::to_string(firstOccurrenceLine) + ").";
 		return true;
 	}
 

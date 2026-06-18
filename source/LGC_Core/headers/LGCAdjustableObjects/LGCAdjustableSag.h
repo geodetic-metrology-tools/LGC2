@@ -10,13 +10,13 @@
 // STL
 #include <bitset>
 // SURVEYLIB
+#include <TAdjustableHelmertTransformation.h>
+#include <TAdjustableLength.h>
+#include <TAdjustablePoint.h>
 #include <TAngle.h>
 #include <TLength.h>
-#include <TAdjustablePoint.h>
-#include <TAdjustableLength.h>
-#include <TVAdjustableObject.h>
 #include <TRefSystemFactory.h>
-#include <TAdjustableHelmertTransformation.h>
+#include <TVAdjustableObject.h>
 
 #if USE_SERIALIZER
 #	include <Serializer.hpp>
@@ -57,14 +57,7 @@ private:
 public:
 	/*!@name Constructors/Initialization */
 	//@{
-	LGCAdjustableSag(
-		const std::string &name,
-		const std::string &baseFrame,
-		const TLength &zSag,
-		const TLength &zCurv,
-		const TLength &xSag,
-		const TLength &xCurv,
-		const std::bitset<kNumSagParams> &isFixed) :
+	LGCAdjustableSag(const std::string &name, const std::string &baseFrame, const TLength &zSag, const TLength &zCurv, const TLength &xSag, const TLength &xCurv, const std::bitset<kNumSagParams> &isFixed) :
 		fName(name),
 		fBaseFrame(baseFrame),
 		fZSag(TAdjustableLength(zSag, isFixed[0], name + "_ZS")),
@@ -105,20 +98,14 @@ public:
 	/*!
 		\brief Returns the number of unknowns for this sag element.
 	*/
-	virtual int getNumUnkn() const
-	{
-		return fIsFixed.size() - fIsFixed.count();
-	}
+	virtual int getNumUnkn() const { return fIsFixed.size() - fIsFixed.count(); }
 
 	///	See \ref TVAdjustableObject::getFirstUidx
 	virtual int getFirstUidx() const;
 	///	See \ref TVAdjustableObject::getLastUidx
 	virtual int getLastUidx() const;
 	const std::vector<int> getRelativeUnknIndices() const override;
-	bool isParameterFixed(int d) const
-	{
-		return (fIsFixed[d]);
-	}
+	bool isParameterFixed(int d) const { return (fIsFixed[d]); }
 	// zs,zc,xs,xc=0,1,2,3
 	// get the unknown index, returns -1 if variable is fixed
 	int getUnknIndex(int d) const;
@@ -140,7 +127,6 @@ public:
 	///	See \ref TVAdjustableObject::isFixed
 	virtual bool isFixed() const { return fIsFixed.all(); }
 
-
 	/*!@name Setting.*/
 	//@{
 
@@ -152,7 +138,7 @@ public:
 	virtual void setFirstUidx(int idx);
 
 	///	See \ref TVAdjustableObject::setCorrection
-	//virtual void setCorrection(int idx, TReal value);
+	// virtual void setCorrection(int idx, TReal value);
 	void setCovar(Eigen::Matrix<double, kNumSagParams, kNumSagParams> covarMat) { fCovar = covarMat; }
 	const Eigen::Matrix<double, kNumSagParams, kNumSagParams> &getCovar() const { return fCovar; }
 
@@ -164,6 +150,5 @@ public:
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
-
 };
 #endif // LGCADJUSTABLE_SAG
