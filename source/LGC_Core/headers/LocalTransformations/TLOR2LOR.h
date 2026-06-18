@@ -12,10 +12,10 @@
 #include <TTransformation.h>
 
 #include "LGCAdjustablePoint.h"
-#include "TLGCData.h"
 #include "TSparseMatrix.h"
 
 class TAdjustableHelmertTransformation;
+class TLGCData;
 
 /*!
 	\ingroup LocalTransformations

@@ -49,9 +49,13 @@ struct TTreeEntry
 	TAdjustableHelmertTransformation frame; 
 
 	/// Whole collection of measurements per node.
-	TMeasurements    measurements; 
+	TMeasurements    measurements;
 
-	explicit TTreeEntry() : 
+	/// If non-empty, this frame has a DEFORM tag with the given sag element name.
+	std::string deformSagElementName;
+	int deformLine = -1; ///< Input file line of the DEFORM tag (-1 = none)
+
+	explicit TTreeEntry() :
  			measurements(TMeasurements()), 
 			frame(std::bitset<3>(std::string("111")), std::bitset<3>(std::string("111")),std::bitset<1>(1),"ROOT") /*ROOT node*/
 			{} 

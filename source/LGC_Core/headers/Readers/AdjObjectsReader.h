@@ -49,6 +49,28 @@ class TKeyENDFRAME : public TAKeyWord {
 		virtual void parse(const std::vector<std::string>& tokens, bool, int);
 };
 
+class TKeySAGELEMENT : public TAKeyWord {
+	public:
+		/*!
+		 * SAGELEMENT parser. Two forms:
+		 *   * SAGELEMENT name frame zS zC xS xC [ZS][ZC][XS][XC]   (full definition; mandatory)
+		 *   refPoint  assocPoint                                    (optional continuation lines below the
+		 *                                                            definition: reference + associated point
+		 *                                                            pair attached to the just-defined element)
+		 */
+		TKeySAGELEMENT(TLGCData &project, int nb_allowed_keywords = nb_allowed_sagelement, const char **keywords = allowed_SAGELEMENT);
+
+		/// Parse line with the sag element definition or a continuation pair.
+		virtual void parse(const std::vector<std::string>& tokens, bool activeLine, int line);
+
+	private:
+		TKeySAGELEMENT &operator=(const TKeySAGELEMENT &);
+		// access to sag element storage
+		LGCAdjustableSagCollection &fSagAccess;
+		// name of the most recently defined sag element; used to attach continuation pairs
+		std::string fSagElementName;
+};
+
 
 class TAPointKey : public TAKeyWord {
 	public:

@@ -37,8 +37,9 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices &rm, T
 		bool len = extractLengthParams(rm, convCrit);
 		bool trf = extractTransformationParams(rm, convCrit);
 		bool ln = extractLineParams(rm, convCrit);
+		bool sag = extractSagParams(rm, convCrit);
 
-		if ((pt && angl && pln && trf && len && ln) || fDataSet->getConfig().allfixed.isActive())
+		if ((pt && angl && pln && trf && len && ln && sag) || fDataSet->getConfig().allfixed.isActive())
 			fLastIteration = true;
 	}
 	catch (std::exception const &excp)
@@ -184,6 +185,8 @@ bool TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices
 		extractLengthVar(rm);
 		extractPlaneVarCovar(rm);
 		extractTransformationVarCovar(rm);
+		extractSagVarCovar(rm);
+		extractSagPairOffsets();
 	}
 	catch (std::exception const &excp)
 	{
@@ -743,6 +746,30 @@ bool TLSResultsMatricesExtractor::extractLineParams(const TLSResultsMatrices &rm
 	return critNotExceeded;
 }
 
+bool TLSResultsMatricesExtractor::extractSagParams(const TLSResultsMatrices &rm, const TReal convCrit)
+{
+	logDebug() << "Extract parameters of the adjustable sag elements from the calculated matrices";
+
+	bool critNotExceeded = true;
+
+	for (auto &sagElement : fDataSet->getSags())
+	{
+		if (sagElement.isFixed())
+			continue;
+		for (int unknIdx = sagElement.getFirstUidx(); unknIdx <= sagElement.getLastUidx(); unknIdx++)
+		{
+			if (unknIdx >= rm.getSolutionVectByConst()->size())
+				throw std::runtime_error("Unknown index of a sag adjustable element: " + sagElement.getName() + " exceeds matrix dimensions!");
+
+			TReal correction = rm.getSolutionVctrElmt(unknIdx);
+			sagElement.setCorrection(unknIdx, correction);
+			if (fabsq(correction) > convCrit)
+				critNotExceeded = false;
+		}
+	}
+	return critNotExceeded;
+}
+
 bool TLSResultsMatricesExtractor::extractLengthParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable lengths from the calculated matrices";
@@ -929,6 +956,47 @@ void TLSResultsMatricesExtractor::extractLineVarCovar(const TLSResultsMatrices &
 
 			/* Eventually store covariance between angles if needed in the future.*/
 		}
+	}
+}
+
+void TLSResultsMatricesExtractor::extractSagVarCovar(const TLSResultsMatrices &rm)
+{
+	for (auto &sagObj : fDataSet->getSags())
+	{
+		std::vector<int> relUnkIdx = sagObj.getRelativeUnknIndices();
+		const TSparseMatrix *covMat = rm.getUnkCovarMtrxByConst();
+		int dimSag = sagObj.getNumUnkn();
+		TDenseMatrix fullCovar(sagObj.kNumSagParams, sagObj.kNumSagParams);
+		fullCovar.setZero();
+		if (dimSag > 0)
+		{
+			int firstIdx = sagObj.getFirstUidx();
+			fullCovar(relUnkIdx, relUnkIdx) = (covMat->block(firstIdx, firstIdx, dimSag, dimSag)).toDense();
+		}
+		sagObj.setCovar(fullCovar);
+
+		auto updateParamPrecision = [&](TAdjustableLength &param)
+		{
+			if (param.isFixed())
+				return;
+			int unknIdx = param.getFirstUidx();
+			param.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx)));
+		};
+		updateParamPrecision(sagObj.getZCurv());
+		updateParamPrecision(sagObj.getZSag());
+		updateParamPrecision(sagObj.getXCurv());
+		updateParamPrecision(sagObj.getXSag());
+	}
+}
+
+void TLSResultsMatricesExtractor::extractSagPairOffsets()
+{
+	for (auto &sagPair : fDataSet->getSagPointPairs())
+	{
+		SagPairBaseFrame bf = sagPair.transformToBaseFrame(*fDataSet);
+		sagPair.setDy(bf.refSag.getY());
+		sagPair.setXOffset(bf.assocSag.getX() - bf.refSag.getX());
+		sagPair.setZOffset(bf.assocSag.getZ() - bf.refSag.getZ());
 	}
 }
 

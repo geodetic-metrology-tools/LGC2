@@ -212,8 +212,13 @@ void LGCAdjustablePoint::setFirstUidx(int idx)
 	else if (allfixedParam)
 		throw std::logic_error("Trying to assign unknown index to a fixed point.(ALLFIXED is used)");
 	for (int i = 0; i < 3; i++)
+	{
 		if (!(fixedState[i] | allfixedParam))
 			uidx[i] = idx++;
+		else
+			// fixed coordinate has no unknown index; clear any stale value
+			uidx[i] = -1;
+	}
 }
 
 /// Update the adjustment information of an uninitialized point
@@ -301,6 +306,7 @@ void LGCAdjustablePoint::serialize(ObjectSerializer &obj) const
 	obj.addProperty("fCovarianceMatrixInRoot", fCovarianceMatrixInRoot);
 	obj.addProperty("fHasPointSigma", fHasPointSigma);
 	obj.addProperty("fPointSigma", fPointSigma);
+	obj.addProperty("fDeformSagElement", fDeformSagElement);
 }
 #endif
 
@@ -341,7 +347,7 @@ Eigen::Matrix3d LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv,
 	else
 	{
 		// get the global covariance matrix
-		TSparseMatrix covar = *fData->getCovMatByConst();
+		const TSparseMatrix &covar = *fData->getCovMatByConst();
 
 		int nPar = fData->fUEOIndices.UIndex;
 		if ((covar.cols() != nPar) || (covar.rows() != nPar))
@@ -352,7 +358,7 @@ Eigen::Matrix3d LGCAdjustablePoint::transformCovar(const LGCAdjustablePoint &pv,
 		// get the global derivative of the transformed point
 		TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
 		TLOR2LOR completeTrafo = fPointTransfo.getLORTransformation(pv.getFrameTreePosition(), toFrame);
-		TSparseMatrix jac = completeTrafo.getPointDerivative(fData, pv);
+		const TSparseMatrix &jac = completeTrafo.getPointDerivative(fData, pv);
 
 		// compute the covariance matrix in the destination Frame
 		return (jac * covar) * jac.transpose();

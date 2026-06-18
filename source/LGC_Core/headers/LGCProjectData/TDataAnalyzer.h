@@ -50,6 +50,7 @@ private:
 	bool cleanDeactivated();
 
 	bool checkParameters();
+	bool checkSagConnections();
 	bool checkConfigOptions();
 
 	//! Assign observation and equation indices to measurements.

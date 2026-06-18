@@ -2223,6 +2223,61 @@ pointSigmaContrib TContributionsGenerator::getPointSigmaContrib(LGCAdjustablePoi
 	return pointSigmaContrib({rotOffset});
 }
 
+SagPairContrib TContributionsGenerator::getSagPairContrib(const TLGCSagConstraintPair &sagPair, const TLGCData &data)
+{
+	SagPairContrib contrib;
+	const LGCAdjustableSag &sagObject = sagPair.getSag();
+
+	SagPairBaseFrame bf = sagPair.transformToBaseFrame(data);
+
+	double zSag = sagObject.getZSag().getEstimatedValue().getMetresValue();
+	double zCurv = sagObject.getZCurv().getEstimatedValue().getMetresValue();
+	double xSag = sagObject.getXSag().getEstimatedValue().getMetresValue();
+	double xCurv = sagObject.getXCurv().getEstimatedValue().getMetresValue();
+
+	// dy = y coordinate of reference point in sag frame (longitudinal distance)
+	double dy = bf.refSag.getY().getMetresValue();
+	double dy2 = pow2q(dy);
+
+	// offset components in sag frame: x and z
+	Eigen::Vector3d ex(1, 0, 0);
+	Eigen::Vector3d ez(0, 0, 1);
+	double relZOffset = zSag + zCurv * dy2;
+	double relXOffset = xSag + xCurv * dy2;
+	Eigen::Vector3d offset = relXOffset * ex + relZOffset * ez;
+
+	// constraint: refSag + offset - assocSag = 0
+	contrib.constraintMisclosure = bf.refSag.toRealVector() + offset - bf.assocSag.toRealVector();
+
+	// derivatives wrt sag parameters
+	contrib.dOffsetdZSag = ez;
+	contrib.dOffsetdZCurv = dy2 * ez;
+	contrib.dOffsetdXSag = ex;
+	contrib.dOffsetdXCurv = dy2 * ex;
+
+	// derivatives wrt point coordinates
+	// d(offset)/d(refSag) is a rank-1 3x3 matrix: d(offset)/d(dy) * ey^T
+	// d(offset)/d(dy) = 2*dy * (xCurv * ex + zCurv * ez)
+	Eigen::Vector3d dOffsetdDy = 2 * dy * (xCurv * ex + zCurv * ez);
+	Eigen::Vector3d ey(0, 1, 0);
+	Eigen::Matrix3d AOffset = dOffsetdDy * ey.transpose(); // rank-1 matrix
+
+	Eigen::Matrix3d id3 = Eigen::Matrix3d::Identity();
+	Eigen::Matrix3d R_ref2sag = bf.ref2Sag.getPartialDerivativeWrtPosition();
+	Eigen::Matrix3d R_assoc2sag = bf.assoc2Sag.getPartialDerivativeWrtPosition();
+
+	// d(constraint)/d(refSub) = (I + AOffset) * R_ref2sag
+	contrib.dConstraintdRefSub = {(id3 + AOffset) * R_ref2sag};
+	// d(constraint)/d(assocSub) = -R_assoc2sag
+	contrib.dConstraintdAssocSub = {-R_assoc2sag};
+
+	// Frame transformation derivatives
+	addTransformationsContributions3D(bf.ref2Sag, bf.refSub, id3 + AOffset, contrib.dConstraintdRefHelmert);
+	addTransformationsContributions3D(bf.assoc2Sag, bf.assocSub, -id3, contrib.dConstraintdAssocHelmert);
+
+	return contrib;
+}
+
 /*
  * INCL Helper Functions
  *

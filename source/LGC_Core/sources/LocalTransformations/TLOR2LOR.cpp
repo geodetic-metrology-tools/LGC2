@@ -7,6 +7,7 @@
 #include "TAdjustableHelmertTransformation.h"
 #include "TDirectTransformation.h"
 #include "TInverseTransformation.h"
+#include "TLGCData.h"
 #include "TTreeEntry.h"
 
 //////////////////////////////////////////////////////////////////////

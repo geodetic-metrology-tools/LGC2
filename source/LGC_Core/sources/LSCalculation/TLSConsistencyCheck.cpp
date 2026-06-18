@@ -754,6 +754,10 @@ void TLSConsCheck::initialize()
 	{
 		addObject(object, "Length");
 	}
+	for (auto &object : projData.getSags())
+	{
+		addObject(object, "Sag");
+	}
 	for (auto it(projData.getTree().begin()); it != projData.getTree().end(); ++it)
 	{
 		TAdjustableHelmertTransformation trafo(it.node->data.get()->frame);

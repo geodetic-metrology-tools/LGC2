@@ -48,6 +48,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 		fillOK &= fillParameterWeights(projData, matrices);
 		fillOK &= fillSlaveConstraints(projData, matrices);
 		fillOK &= fillPointGroupConstraints(projData, matrices);
+		fillOK &= fillSagConstraints(projData, matrices);
 
 		// Itteration through the nodes of the tree
 		for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++)
@@ -2065,6 +2066,67 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 			if (matrices->hasDegenerateConstraints())
 			{
 				throw std::runtime_error("A constraint that does not depend on any variable was added.");
+			}
+		}
+	}
+	catch (std::exception const &excp)
+	{
+		outputMessages << TFileLogger::e_logType::LOG_ERROR << excp.what();
+		fillOK = false;
+	}
+
+	return fillOK;
+}
+
+bool TLSInputMatricesFiller::fillSagConstraints(TLGCData *projData, TLSInputMatrices *matrices)
+{
+	bool fillOK = true;
+	auto &outputMessages(projData->getFileLogger());
+	try
+	{
+		// iterate over all sag pairs
+		for (const auto &sagPair : projData->getSagPointPairs())
+		{
+			int cIdx = sagPair.getFirstCIndex();
+			SagPairContrib contrib = fCGenerator.getSagPairContrib(sagPair, *projData);
+			for (int j = 0; j < sagPair.getConstraintDimension(); j++)
+				fillOK = fillOK && matrices->setCnstrMisclosureVectorElement(cIdx + j, contrib.constraintMisclosure(j));
+
+			const LGCAdjustablePoint &assocPt = projData->getPoints().getObject(sagPair.getAssocPoint());
+			const LGCAdjustablePoint &refPt = projData->getPoints().getObject(sagPair.getRefPoint());
+			const LGCAdjustableSag &sagAdjustable = sagPair.getSag();
+
+			for (int rowIdx = 0; rowIdx < sagPair.getConstraintDimension(); rowIdx++)
+			{
+				// wrt reference and associated point subframe coordinates
+				for (int colIdx = 0; colIdx < 3; colIdx++)
+				{
+					if (!refPt.isCoordinateFixed(colIdx))
+						fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, refPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdRefSub.contrib(rowIdx, colIdx));
+					if (!assocPt.isCoordinateFixed(colIdx))
+						fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, assocPt.getCoordinateUnknIndex(colIdx), contrib.dConstraintdAssocSub.contrib(rowIdx, colIdx));
+				}
+				// wrt sag parameters (ZS, ZC, XS, XC)
+				if (!sagAdjustable.getZSag().isFixed())
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getZSag().getFirstUidx(), contrib.dOffsetdZSag(rowIdx));
+				if (!sagAdjustable.getZCurv().isFixed())
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getZCurv().getFirstUidx(), contrib.dOffsetdZCurv(rowIdx));
+				if (!sagAdjustable.getXSag().isFixed())
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getXSag().getFirstUidx(), contrib.dOffsetdXSag(rowIdx));
+				if (!sagAdjustable.getXCurv().isFixed())
+					fillOK = fillOK && matrices->addCnstrFirstDgnMtrxElement(cIdx + rowIdx, sagAdjustable.getXCurv().getFirstUidx(), contrib.dOffsetdXCurv(rowIdx));
+			}
+			// frame transformation contributions
+			for (int rowIdx = 0; rowIdx < sagPair.getConstraintDimension(); rowIdx++)
+			{
+				auto addTransformationContributionVector = [&](auto &contributions) {
+					for (auto &frameContribPair : contributions)
+					{
+						fillOK = fillOK && addConstraintTransformationContribution(frameContribPair.first, frameContribPair.second.getContrib(rowIdx), cIdx + rowIdx, matrices);
+					}
+				};
+				addTransformationContributionVector(contrib.dConstraintdRefHelmert);
+				addTransformationContributionVector(contrib.dConstraintdAssocHelmert);
 			}
 		}
 	}

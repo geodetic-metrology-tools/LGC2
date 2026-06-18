@@ -261,6 +261,38 @@ void TSimFileWriter::writeInstrument()
 		(*stream) << "*WPSR " << itWPSR.second->ID << sep << itWPSR.second->sigmaX.getMMetresValue() << sep << itWPSR.second->sigmaZ.getMMetresValue() << sep
 				  << itWPSR.second->sigmaCombinedX.getMMetresValue() << sep << itWPSR.second->sigmaCombinedZ.getMMetresValue() << sep << endl;
 	}
+
+	writeSagElements();
+}
+
+void TSimFileWriter::writeSagElements()
+{
+	TAStreamFormatter *stream = getStream();
+	std::string sep = stream->getSeparator();
+
+	static const char *paramTag[4] = {"ZS", "ZC", "XS", "XC"};
+
+	for (auto &sagElement : data->getSags())
+	{
+		(*stream) << "*SAGELEMENT " << sagElement.getName() << sep << sagElement.getBaseFrame() << sep
+				  << sagElement.getZSag().getProvisionalValue().getMetresValue() << sep
+				  << sagElement.getZCurv().getProvisionalValue().getMetresValue() << sep
+				  << sagElement.getXSag().getProvisionalValue().getMetresValue() << sep
+				  << sagElement.getXCurv().getProvisionalValue().getMetresValue();
+		for (int j = 0; j < sagElement.kNumSagParams; ++j)
+		{
+			if (!sagElement.isParameterFixed(j))
+				(*stream) << sep << paramTag[j];
+		}
+		(*stream) << '\n';
+
+		// Emit constraint pairs as continuation lines directly under the *SAGELEMENT definition
+		for (auto &pair : data->getSagPointPairs())
+		{
+			if (pair.getSag().getName() == sagElement.getName())
+				(*stream) << pair.getRefPoint() << sep << pair.getAssocPoint() << '\n';
+		}
+	}
 }
 
 void TSimFileWriter::writeData(TDataTreeIterator itTree)

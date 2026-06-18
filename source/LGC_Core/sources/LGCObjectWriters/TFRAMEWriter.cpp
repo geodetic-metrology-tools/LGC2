@@ -368,6 +368,74 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 	}
 }
 
+void TFRAMEWriter::writeSagAdjustable()
+{
+	TAStreamFormatter *stream = getStream();
+	int coordWidth = getObsWidth();
+	const std::string refPointHeader = "Reference Point";
+	const std::string assocPointHeader = "Associated Point";
+	// getNameWidth() already covers the ref/assoc point names; widen only so the
+	// "Associated Point" column header still fits when names are short
+	int nameWidth = std::max(getNameWidth(), (int)assocPointHeader.length() + 1);
+	int coordPrecision = this->getCoordPrecision();
+
+	(*stream) << '\n';
+	(*stream) << "Sag adjustable elements and connected pairs:" << '\n';
+	(*stream) << "Pair offsets expressed in the sag element's base frame:" << '\n';
+	(*stream) << '\n';
+
+	for (auto &sagElement : fProjectData->getSags())
+	{
+		(*stream) << "Sag element:      " << sagElement.getName() << '\n';
+		(*stream) << "Associated frame: " << sagElement.getBaseFrame() << '\n';
+		(*stream).writeString(coordWidth, "");
+		(*stream).writeString(coordWidth, "ZS [mm]");
+		(*stream).writeString(coordWidth, "ZC [1/m]");
+		(*stream).writeString(coordWidth, "XS [mm]");
+		(*stream).writeString(coordWidth, "XC [1/m]");
+		(*stream) << '\n';
+		(*stream).writeString(coordWidth, "Status");
+		for (int j = 0; j < sagElement.kNumSagParams; j++)
+			(*stream).writeString(coordWidth, (sagElement.isParameterFixed(j)) ? "fixed" : "free");
+		(*stream) << '\n';
+		(*stream).writeString(coordWidth, "Estimate");
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getZSag().getEstimatedValue().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getZCurv().getEstimatedValue().getMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getXSag().getEstimatedValue().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getXCurv().getEstimatedValue().getMetresValue());
+		(*stream) << '\n';
+		(*stream).writeString(coordWidth, "Precision");
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getZSag().getEstimatedPrecision().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision + 3, sagElement.getZCurv().getEstimatedPrecision().getMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision, sagElement.getXSag().getEstimatedPrecision().getMMetresValue());
+		(*stream).writeDouble(coordWidth, coordPrecision + 3, sagElement.getXCurv().getEstimatedPrecision().getMetresValue());
+		(*stream) << '\n';
+		(*stream) << '\n';
+
+		int offsetPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+		int offsetWidth = 22; // wide enough to fit "z offset [mm]" header
+
+		(*stream).writeStringLeft(nameWidth, refPointHeader);
+		(*stream).writeStringLeft(nameWidth, assocPointHeader);
+		(*stream).writeString(coordWidth, "dy [m]");
+		(*stream).writeString(offsetWidth, "x offset [mm]");
+		(*stream).writeString(offsetWidth, "z offset [mm]");
+		(*stream) << '\n';
+		for (auto &sagPair : fProjectData->getSagPointPairs())
+		{
+			if (sagPair.getSag().getName() != sagElement.getName())
+				continue;
+			(*stream).writeStringLeft(nameWidth, sagPair.getRefPoint());
+			(*stream).writeStringLeft(nameWidth, sagPair.getAssocPoint());
+			(*stream).writeDouble(coordWidth, coordPrecision, sagPair.getDy().getMetresValue());
+			(*stream).writeDouble(offsetWidth, offsetPrecision, sagPair.getXOffset().getMMetresValue());
+			(*stream).writeDouble(offsetWidth, offsetPrecision, sagPair.getZOffset().getMMetresValue());
+			(*stream) << '\n';
+		}
+		(*stream) << '\n';
+	}
+}
+
 void TFRAMEWriter::initialiseAllObsSummaries()
 {
 	allRADISummaries_.clear();

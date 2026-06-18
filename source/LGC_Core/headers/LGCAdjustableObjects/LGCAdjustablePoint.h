@@ -263,6 +263,13 @@ public:
 	inline const pointSigmaData &getPointSigmaData() const { return fPointSigma; }
 	inline bool hasPointSigma() const { return fHasPointSigma; }
 	inline void activatePointSigma() { fHasPointSigma = true; }
+	inline void deactivatePointSigma() { fHasPointSigma = false; }
+	inline void resetPointSigma() { fPointSigma = pointSigmaData(); }
+
+	/// Returns the sag element name from a DEFORM tag on this point's definition (empty = none)
+	inline const std::string &getDeformSagElement() const { return fDeformSagElement; }
+	/// Set the sag element name for point-level DEFORM
+	inline void setDeformSagElement(const std::string &name) { fDeformSagElement = name; }
 
 private:
 	TDataTreeIterator fFramePosition; /*!< Iterator on the position in the tree. */
@@ -279,6 +286,8 @@ private:
 	// indicating whether the point has associated weights
 	bool fHasPointSigma{false};
 	pointSigmaData fPointSigma;
+	// sag element name from DEFORM tag on point definition line (empty = none)
+	std::string fDeformSagElement;
 	/*!Private constructor for creating uninitialized object	*/
 	LGCAdjustablePoint(const std::string &name);
 };

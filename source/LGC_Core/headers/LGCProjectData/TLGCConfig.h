@@ -285,6 +285,13 @@ struct TLGCConfig
 	/// width of observation's ID
 	int obsIDwidth = 0;
 
+	/// Widen pointNameWidth so it can fit the given point name.
+	void updatePointNameWidth(const std::string &name)
+	{
+		if ((int)name.size() > pointNameWidth)
+			pointNameWidth = (int)name.size();
+	}
+
 	/*
 	Checklist:
 		Referentiel defined?

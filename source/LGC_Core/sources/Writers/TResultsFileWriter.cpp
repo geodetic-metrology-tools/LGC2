@@ -539,6 +539,11 @@ void TResultsFileWriter::writeFramesResults()
 	{
 		frameWriter.writeFRAMEAll(itTree); // Writes
 	}
+
+	// write the adjustable sag elements after all frames/stations: the sag block can be
+	// large and is consulted less often than the observation residuals above
+	if (fProjectData->getSags().numObjects() > 0)
+		frameWriter.writeSagAdjustable();
 }
 
 void TResultsFileWriter::transfUsingGeoid(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf)
