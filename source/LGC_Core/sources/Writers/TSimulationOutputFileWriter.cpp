@@ -80,6 +80,10 @@ void TSimulationOutputFileWriter::writeLastSimResult(TLGCData &project, int numb
 	{
 		frameWriter.writeFRAMEAll(itTree); // Write all the information (also the simulated observed values) for the last iteration
 	}
+
+	// write the adjustable sag elements at the end, consistent with the results file
+	if (fProjectData->getSags().numObjects() > 0)
+		frameWriter.writeSagAdjustable();
 }
 
 // Write the header for a given simulation

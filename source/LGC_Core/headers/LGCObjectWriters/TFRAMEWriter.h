@@ -99,6 +99,9 @@ public:
 	/// write Histogramme summary in the rootOnly
 	void writeHistogrammeRootOnly();
 
+	/// Write sag adjustable element parameters and their connected pair tables.
+	void writeSagAdjustable();
+
 	/// WriteEllipsHeader
 	void writeEllipsHeader();
 	/// WriteEllipsoidHeader

@@ -36,20 +36,25 @@ TLGCData::~TLGCData()
 	fCovMat = nullptr;
 }
 
+TDataTreeIterator TLGCData::findNode(const std::string &frameName) const
+{
+	for (auto it(getTree().begin()); it != getTree().end(); ++it)
+	{
+		if (it.node->data.get()->frame.getName() == frameName)
+			return it;
+	}
+	return getTree().end();
+}
+
+bool TLGCData::doesFrameExist(const std::string &frameName) const
+{
+	return findNode(frameName) != getTree().end();
+}
+
 TDataTreeIterator TLGCData::locateNode(std::string frameName) const
 {
-	// Find the frame iterator with the corresponding frame name
-	TDataTreeIterator lastNodeIter = getTree().end();
-	TDataTreeIterator currentNodeIter = getTree().begin();
-	while (currentNodeIter != lastNodeIter)
-	{
-		if (currentNodeIter.node->data.get()->frame.getName() == frameName)
-		{
-			break;
-		}
-		currentNodeIter++;
-	}
-	if (currentNodeIter == lastNodeIter)
+	auto currentNodeIter = findNode(frameName);
+	if (currentNodeIter == getTree().end())
 		throw std::runtime_error("Frame " + frameName + " not found");
 
 	return currentNodeIter;
@@ -341,6 +346,9 @@ void TLGCData::reInitForSIMU()
 	for (auto &line : lines)
 		line.reInitialise();
 
+	for (auto &sag : sags)
+		sag.reInitialise();
+
 	for (auto nodeIt(tree.begin()); nodeIt != tree.end(); ++nodeIt)
 		nodeIt->get()->frame.reInitialise();
 
@@ -356,6 +364,7 @@ std::shared_ptr<TLGCData> TLGCData::clone() const
 	// Copy adjustable objects collections:
 	d->points = points;
 	d->lines = lines;
+	d->sags = sags;
 	d->planes = planes;
 	d->angles = angles;
 	d->lengths = lengths;
@@ -861,10 +870,12 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("lines", lines);
 	obj.addProperty("planes", planes);
 	obj.addProperty("points", points);
+	obj.addProperty("sags", sags);
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("slaveGroups", slaveGroups);
 	obj.addProperty("pointConstraintGroups", pointGroups);
+	obj.addProperty("sagPointPairs", sagPointPairs);
 }
 
 void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const

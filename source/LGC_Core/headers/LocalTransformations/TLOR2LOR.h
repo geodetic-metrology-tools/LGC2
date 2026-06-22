@@ -12,10 +12,10 @@
 #include <TTransformation.h>
 
 #include "LGCAdjustablePoint.h"
-#include "TLGCData.h"
 #include "TSparseMatrix.h"
 
 class TAdjustableHelmertTransformation;
+class TLGCData;
 
 /*!
 	\ingroup LocalTransformations
@@ -57,7 +57,7 @@ public:
 	TLOR2LOR(TDataTreeIterator from, TDataTreeIterator to, const std::string &name);
 
 	/// Destructor
-	~TLOR2LOR(){};
+	~TLOR2LOR() {};
 	//@}
 
 	/// Transforms the point by this transformation

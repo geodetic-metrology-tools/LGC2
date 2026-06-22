@@ -72,6 +72,9 @@ bool TDataAnalyzer::dataConsistent()
 	// checking parameter related data, assigning parameter indices
 	consistent = consistent && checkParameters();
 
+	// checking adjustable sag constraints (assigns constraint indices to sag point pairs)
+	consistent = consistent && checkSagConnections();
+
 	// checking different config options
 	consistent = consistent && checkConfigOptions();
 
@@ -765,10 +768,55 @@ bool TDataAnalyzer::checkParameters()
 		}
 	}
 
+	// Run through list of adjustable sag elements
+	for (auto &sagElement : fData.getSags())
+	{
+		if (!sagElement.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag element: " + sagElement.getName() + " is not initialized!";
+			return false;
+		}
+
+		if (!fData.doesFrameExist(sagElement.getBaseFrame()))
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag element " + sagElement.getName() + " refers to undefined base frame " + sagElement.getBaseFrame() + ".";
+			return false;
+		}
+		if (!sagElement.isFixed())
+		{
+			sagElement.setFirstUidx(lastUidx);
+			lastUidx += sagElement.getNumUnkn();
+		}
+	}
+
 	// Save total number of unknowns
 	fData.fUEOIndices.UIndex = lastUidx;
 
 	return true;
+}
+
+bool TDataAnalyzer::checkSagConnections()
+{
+	auto &outputMessages(fData.getFileLogger());
+	int lastCidx = fData.fUEOIndices.CIndex;
+	bool result = true;
+	for (auto &sagConnection : fData.getSagPointPairs())
+	{
+		if (!fData.getPoints().doesObjectExist(sagConnection.getRefPoint()))
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection reference point " + sagConnection.getRefPoint() + " is not defined.";
+			result = false;
+		}
+		if (!fData.getPoints().doesObjectExist(sagConnection.getAssocPoint()))
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Sag Connection associated point " + sagConnection.getAssocPoint() + " is not defined.";
+			result = false;
+		}
+		sagConnection.setFirstCIndex(lastCidx);
+		lastCidx += sagConnection.getConstraintDimension();
+	}
+	fData.fUEOIndices.CIndex = lastCidx;
+	return result;
 }
 
 bool TDataAnalyzer::checkConfigOptions()

@@ -74,6 +74,14 @@ void TKeyFRAME::parse(const std::vector<std::string> &tokens, bool /*activeLine*
 	// Create a new level in the tree using the current transformation definition.
 	proj.addChild(&adjTrafo);
 
+	// check for DEFORM tag on the frame line
+	if (opts.has("DEFORM"))
+	{
+		auto &node = proj.getCurrentNode();
+		node.deformSagElementName = opts.getParam("DEFORM");
+		node.deformLine = line;
+	}
+
 	// check for "Slave" frames
 	if (opts.has("SLAVE"))
 	{
@@ -119,6 +127,65 @@ void TKeyENDFRAME::parse(const std::vector<std::string> &tokens, bool, int)
 	}
 
 	proj.moveUp();
+}
+
+///////////////////////////////////////////////////////
+// TKeySAGELEMENT
+///////////////////////////////////////////////////////
+TKeySAGELEMENT::TKeySAGELEMENT(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAKeyWord(SAGELEMENT, project), fSagAccess(proj.getSags())
+{
+	for (int i(0); i < nb_allowed_keywords; i++)
+		allowed_keywords.emplace_back(keywords[i]);
+}
+
+void TKeySAGELEMENT::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
+{
+	auto numTokens = tokens.size();
+
+	// Continuation line: refPoint  assocPoint  (attaches a pair to the most recently defined sag element)
+	if (numTokens == 2 && tokens[0] != "*")
+	{
+		if (fSagElementName.empty())
+			throw std::runtime_error("Sag constraint pair given before any *SAGELEMENT was defined.");
+		if (!proj.getSags().doesObjectExist(fSagElementName))
+			throw std::runtime_error("Sag adjustable element " + fSagElementName + " needs to be defined before pairs can be attached.");
+		LGCAdjustableSag &sagObject = proj.getSags().getObject(fSagElementName);
+		proj.getSagPointPairs().push_back(TLGCSagConstraintPair(tokens[0], tokens[1], sagObject));
+		return;
+	}
+
+	// Full definition: * SAGELEMENT name frame zS zC xS xC [ZS][ZC][XS][XC]
+	// The asterisk and the keyword itself are already two tokens
+	if (numTokens <= 7)
+		throw std::runtime_error("Key *SAGELEMENT takes at least 6 arguments: Name, Name of associated Frame, z and x sag and curvature plus optionally the tags for "
+								 "free transformation parameters, ZS, ZC, XS, XC");
+
+	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
+
+	std::string sagName = tokens[2];
+	if (fSagAccess.doesObjectExist(sagName))
+		throw std::runtime_error("Sag adjustable element " + sagName + " is already defined.");
+	std::string frameName = tokens[3];
+	TLength zSag(std::stor(tokens[4]));
+	TLength zCurv(std::stor(tokens[5]));
+	TLength xSag(std::stor(tokens[6]));
+	TLength xCurv(std::stor(tokens[7]));
+	std::bitset<4> fixedStates("1111");
+	if (opts.has("ZS"))
+		fixedStates[0] = 0;
+	if (opts.has("ZC"))
+		fixedStates[1] = 0;
+	if (opts.has("XS"))
+		fixedStates[2] = 0;
+	if (opts.has("XC"))
+		fixedStates[3] = 0;
+	LGCAdjustableSag sagObject(sagName, frameName, zSag, zCurv, xSag, xCurv, fixedStates);
+
+	sagObject.setLine(line);
+	fSagAccess.addObject(sagObject);
+
+	// remember the active element so following continuation pair lines attach to it
+	fSagElementName = sagName;
 }
 
 ///////////////////////////////////////////////////////
@@ -170,8 +237,7 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 	pt.line = line;
 	pt.setActive(activeLine);
 
-	if (tokens.at(0).size() > proj.getConfig().pointNameWidth)
-		proj.getConfig().pointNameWidth = (int)tokens.at(0).size();
+	proj.getConfig().updatePointNameWidth(tokens.at(0));
 
 	TOptionHelper opts(tokens.cbegin(), tokens.cend());
 
@@ -251,6 +317,10 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		}
 		pt.activatePointSigma();
 	}
+
+	// check if DEFORM tag is present
+	if (opts.has("DEFORM"))
+		pt.setDeformSagElement(opts.getParam("DEFORM"));
 
 	// check if one of the weights was set to zero
 	// if no angle was used we block the corresponding freedoms

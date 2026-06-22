@@ -45,6 +45,7 @@ set(tests_SOURCES
 	sources/testPointWithSigma.cpp
 	sources/testEREL.cpp
 	sources/testDLEV.cpp
+	sources/testSAG.cpp
 )
 
 set(tests_INPUT
@@ -72,6 +73,7 @@ set(tests_INPUT
 	headers/testEREL.h
 	headers/testDLEV.h
 	headers/testPOLAR.h
+	headers/testSAG.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})

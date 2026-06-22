@@ -17,6 +17,7 @@
 #include <TLGCConfig.h>
 #include <TLGCFrameConstraintGroup.h>
 #include <TLGCPointConstraintGroup.h>
+#include <TLGCSagConstraintPair.h>
 #include <TLGCStatistic.h>
 #include <TMeasurements.h>
 #include <TTreeEntry.h>
@@ -154,8 +155,11 @@ public:
 	/// Returns current iterator position in the tree.
 	inline TDataTreeIterator getCurrentPosition() { return pos; }
 
-	/// Returns the iterator of a frame via its name
+	/// Returns the iterator of a frame via its name. Throws if not found.
 	TDataTreeIterator locateNode(std::string frameName) const;
+
+	/// Returns true if a frame with the given name exists in the tree.
+	bool doesFrameExist(const std::string &frameName) const;
 
 	/// Adds a new level to the tree passing the local transformation that led to this level.
 	TTreeEntry &addChild(TAdjustableHelmertTransformation *trafo);
@@ -177,6 +181,10 @@ public:
 	LGCAdjustablePointCollection &getPoints() { return points; }
 	/// Returns a constant reference of the vector/ collection of all the adjustable points
 	LGCAdjustablePointCollection const &getPoints() const { return points; }
+	/// Returns the vector/ collection of all the adjustable sags
+	LGCAdjustableSagCollection &getSags() { return sags; }
+	/// Returns a constant reference of the vector/ collection of all the adjustable sags
+	LGCAdjustableSagCollection const &getSags() const { return sags; }
 	/// Returns the vector/ collection of all the adjustable lines
 	LGCAdjustableLineCollection &getLines() { return lines; }
 	/// Returns a constant reference of the vector/ collection of all the adjustable lines
@@ -202,6 +210,10 @@ public:
 	std::list<TLGCPointConstraintGroup> &getPointGroups() { return pointGroups; }
 	/// Returns a constant reference of the Constraint groups
 	std::list<TLGCPointConstraintGroup> const &getPointGroups() const { return pointGroups; }
+	// Returns vector of the sag point pairs
+	std::vector<TLGCSagConstraintPair> &getSagPointPairs() { return sagPointPairs; }
+	/// Returns a constant reference of the sag point pairs
+	std::vector<TLGCSagConstraintPair> const &getSagPointPairs() const { return sagPointPairs; }
 
 	/// Returns the instruments defined
 	TInstrumentData &getInstruments() { return instruments; }
@@ -296,6 +308,9 @@ public:
 #endif // USE_SERIALIZER
 
 private:
+	/// Returns iterator of a frame by name, or getTree().end() if not found.
+	TDataTreeIterator findNode(const std::string &frameName) const;
+
 	/// Copy the frametree structure from *src* to *tgt*
 	static void copyTree(TLGCData const *const src, TLGCData *tgt);
 
@@ -311,6 +326,8 @@ private:
 	LGCAdjustablePointCollection points;
 	/// Adjustable lines are collected globally
 	LGCAdjustableLineCollection lines;
+	/// Adjustable sag objects are collected globally
+	LGCAdjustableSagCollection sags;
 	/// Adjustable planes are collected globally
 	LGCAdjustablePlaneCollection planes;
 	/// Adjustable angles are collected globally
@@ -322,6 +339,8 @@ private:
 	std::list<TLGCFrameConstraintGroup> slaveGroups;
 	// vector containing data associated to point constraint groups
 	std::list<TLGCPointConstraintGroup> pointGroups;
+	// vector containing the sag point pairs
+	std::vector<TLGCSagConstraintPair> sagPointPairs;
 
 	bool islgc1{false};
 

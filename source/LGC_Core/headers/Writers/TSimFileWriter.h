@@ -52,6 +52,8 @@ protected:
 	virtual void writeHeader();
 	/// write the instruments
 	void writeInstrument();
+	/// write the adjustable sag elements with their constraint pairs as continuation lines
+	void writeSagElements();
 	/// write the data for a node. Recursive function
 	void writeData(TDataTreeIterator frameIt);
 

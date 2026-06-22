@@ -81,6 +81,10 @@ struct TransformationContrib2D
 	TransformationContrib secondEquationTransContrib;
 };
 
+// often used to store sensitivities with respect to all transformations along a transformation chain
+typedef std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransformationContribVector;
+typedef std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> TransformationContrib3DVector;
+
 /*!
 	\ingroup ContributionsGenerators
 
@@ -93,9 +97,9 @@ struct DistMeasContrib
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the DIST measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+	TransformationContribVector fTgTransformContrib;
 
 	TReal fHIContrib; //!< Instrument (station) height contribution
 	TReal fDistCorrection; //!< Distance correction
@@ -115,9 +119,9 @@ struct AnglMeasContrib
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the angle measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the angle measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+	TransformationContribVector fTgTransformContrib;
 
 	TReal fHIContrib; //!< Instrument (station) height contribution
 	TReal fV0Contrib; //!< V0 contribution - orientation angle of the station (around the Z axis)
@@ -137,9 +141,9 @@ struct HorDistContrib
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+	TransformationContribVector fTgTransformContrib;
 
 	TReal fDistCorrection; //!< Distance correction
 	TReal fObsVariance;
@@ -157,9 +161,9 @@ struct HorDistContribLEVEL
 	TFreeVector fRefPtContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STAFF into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStaffTransformContrib;
+	TransformationContribVector fStaffTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform Reference Point into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
+	TransformationContribVector fRefPtTransformContrib;
 
 	TReal fRefPtDistContrib; //!< Contribution to the reference point distance from the plane
 	TReal fCollAngleContrib; //!< d(DHOR)/d(collAngl); nonzero only in non-OLOC when intersection follows collimation plane
@@ -177,9 +181,9 @@ struct DLEVContrib
 	TFreeVector fStaffContrib;
 	TFreeVector fRefPtContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform STAFF into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStaffTransformContrib;
+	TransformationContribVector fStaffTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform Reference Point into the node, where the DHOR measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
+	TransformationContribVector fRefPtTransformContrib;
 
 	TReal fRefPtDistContrib;
 	TReal fCollAngleContrib; //!< Contribution of the collimination angle
@@ -210,9 +214,9 @@ struct DVERContrib
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the DVER measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DVER measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+	TransformationContribVector fTgTransformContrib;
 
 	TReal fObsVariance;
 };
@@ -230,7 +234,7 @@ struct ECHOContrib
 	TReal fRefPtDistContrib; //!< Contribution to a distance of a referenece point from the plane
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECHO measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 
 	TReal fObsVariance;
 };
@@ -247,9 +251,9 @@ struct ScaleMeasContrib
 	TFreeVector fPointLineContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECHO measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECHO measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fPtLineTransformContrib;
+	TransformationContribVector fPtLineTransformContrib;
 
 	TReal fObsVariance;
 };
@@ -267,11 +271,11 @@ struct ECSPContrib
 	// TFreeVector	fLineVecContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECSP measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECSP measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fPtLineTransformContrib1;
+	TransformationContribVector fPtLineTransformContrib1;
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECSP measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fPtLineTransformContrib2;
+	TransformationContribVector fPtLineTransformContrib2;
 
 	TReal fObsVariance;
 };
@@ -291,9 +295,9 @@ struct ECTHContrib
 
 	TReal fDistanceCorrectionContrib;
 
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTSTNPtTransformContrib;
+	TransformationContribVector fTSTNPtTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the ECTH measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 
 	TReal fObsVariance;
 };
@@ -310,9 +314,9 @@ struct PLR3DContrib
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the PLR3D measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fStTransformContrib;
+	TransformationContrib3DVector fStTransformContrib;
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the PLR3D measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
+	TransformationContrib3DVector fTgTransformContrib;
 
 	Eigen::Vector3d fInstrHeightContrib; //!< Instrument (station) height contribution for the First, Second and Third equation respectively.
 	Eigen::Vector3d fTargetHeightContrib; //!< Target height contribution for the First, Second and Third equation respectively.
@@ -339,7 +343,7 @@ struct UVDContrib
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the UVD measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
+	TransformationContrib3DVector fTgTransformContrib;
 
 	Eigen::Vector3d fObsVariance; //!< Variances of the First, Second and Third equation respectively.
 };
@@ -391,7 +395,7 @@ struct PtOrientationContrib
 	TFreeVector oriPointContrib; // contribution for the oritented point
 
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the root.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fRefPtTransformContrib;
+	TransformationContribVector fRefPtTransformContrib;
 
 	TReal calcmeas; // calculated measurement
 };
@@ -408,7 +412,7 @@ struct OBSXYZContrib
 	Point3DContrib fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform the observed point into the observation frame.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>> fTgTransformContrib;
+	TransformationContrib3DVector fTgTransformContrib;
 
 	TFreeVector fMisclosureVector; //!< Misclosure vector of the First, Second and Third equation respectively.
 };
@@ -420,7 +424,7 @@ struct DistMeasContribFrame
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+	TransformationContribVector fTgTransformContrib;
 
 	TReal fHIContrib; //!< Instrument (station) height contribution
 	TReal fDistCorrection; //!< Distance correction
@@ -434,7 +438,7 @@ struct AnglMeasContribFrame
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform TARGET into the node, where the DIST measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fTgTransformContrib;
+	TransformationContribVector fTgTransformContrib;
 
 	TReal fHIContrib; //!< Instrument (station) height contribution
 	TReal fV0Contrib; //!< V0 contribution - orientation angle of the station (around the Z axis)
@@ -447,7 +451,7 @@ struct INCLContrib
 	TAngle fCalcMeas;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the angle measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fStTransformContrib;
+	TransformationContribVector fStTransformContrib;
 
 	TReal fObsVariance; //!< Variance of the observation
 };
@@ -458,7 +462,7 @@ struct ECWSContrib
 	TFreeVector fTgCoordContrib;
 
 	/// Vector of contributions in pairs with transformations, which are used to transform STATION into the node, where the distance measurement is calculated.
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fWSTransformContrib;
+	TransformationContribVector fWSTransformContrib;
 
 	TReal fWSContrib;
 	TReal fObsVariance;
@@ -477,8 +481,8 @@ struct ECWIContrib
 	TReal fSagContrib[2]; //!< Contribution to the sag of the wire
 
 	/// Vector of contributions in pairs with transformations, which are used to transform the wire in the Station Frame
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fWireFirstEqTransformContrib;
-	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> fWireSecondEqTransformContrib;
+	TransformationContribVector fWireFirstEqTransformContrib;
+	TransformationContribVector fWireSecondEqTransformContrib;
 
 	TReal fObsVariance[2];
 };
@@ -496,9 +500,23 @@ struct PointGroupConstraintContrib
 	TReal constraintMisclosure;
 	// derivatives
 	// with respect to frame trafos (for each affected point)
-	std::map<std::string, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>>> TransformContrib;
+	std::map<std::string, TransformationContribVector> TransformContrib;
 	// with respect to involved points
 	std::map<std::string, Eigen::Vector3d> PointContrib;
+};
+
+struct SagPairContrib
+{
+	// 3D constraint evaluated in the sag element's base frame:
+	// refSag + offset - assocSag = 0
+	Eigen::Vector3d constraintMisclosure;
+	// derivatives wrt point subframe coordinates (transformed to sag frame)
+	Point3DContrib dConstraintdAssocSub, dConstraintdRefSub;
+	// derivatives wrt frame transformations (point frames -> sag frame)
+	TransformationContrib3DVector dConstraintdAssocHelmert, dConstraintdRefHelmert;
+	// derivatives wrt sag parameters (ZS, ZC, XS, XC)
+	Eigen::Vector3d dOffsetdZSag, dOffsetdZCurv;
+	Eigen::Vector3d dOffsetdXSag, dOffsetdXCurv;
 };
 
 struct PointGroupConstraintContrib3D
@@ -508,7 +526,7 @@ struct PointGroupConstraintContrib3D
 	Eigen::Vector3d constraintMisclosure;
 	// derivatives
 	// with respect to frame trafos (for each affected point)
-	std::map<std::string, std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib3D>>> TransformContrib;
+	std::map<std::string, TransformationContrib3DVector> TransformContrib;
 	// with respect to involved points
 	std::map<std::string, Eigen::Matrix3d> PointContrib;
 };

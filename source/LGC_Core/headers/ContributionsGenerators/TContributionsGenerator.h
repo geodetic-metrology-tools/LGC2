@@ -9,8 +9,10 @@
 
 // LGC
 #include <ContributionStructures.h>
+#include <LGCAdjustableSag.h>
 #include <TInverseTransformation.h>
 #include <TLGCPointConstraintGroup.h>
+#include <TLGCSagConstraintPair.h>
 #include <TPointTransformer.h>
 #include <TTSTN.h>
 
@@ -141,6 +143,8 @@ public:
 	//@}
 	LIBRPointGroupContrib getPointGroupConstraintContrib(const TLGCPointConstraintGroup pointConstraintGroup, const TLGCData &data);
 	pointSigmaContrib getPointSigmaContrib(LGCAdjustablePoint &, const TLGCData *);
+
+	SagPairContrib getSagPairContrib(const TLGCSagConstraintPair &sagPair, const TLGCData &data);
 
 private:
 	// Contains references: not assignable
