@@ -75,6 +75,7 @@ include_directories (
 	${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/Logs
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
+	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcAlternatives
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcElements
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/CalcParams
 	${SURVEYLIB_ROOT}/source/ProjectFramework/headers/Converters

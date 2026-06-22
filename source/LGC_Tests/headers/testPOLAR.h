@@ -31,7 +31,7 @@ TZ.A-RPT.C09-1	423.854072	418.446173	207.320160
 TZ.A-RPT.C09-2	424.055427	418.510778	207.316600
 STAT2_SR.A-MWB.ISR09	426.576294	409.447027	207.134000
 *TSTN  STAT2_SR.A-MWB.ISR09  ST  IHFIX  IH  0.000000
-*V0 
+*V0
 *ANGL
 SR.A-GQF1A.C09-G1-EI  287.11671
 SR.A-GOF1B.C09-G1-SI  294.08257
@@ -76,7 +76,7 @@ TZ.A-RPT.C09-1	423.854072	418.446173	207.320160
 TZ.A-RPT.C09-2	424.055427	418.510778	207.316600
 STAT2_SR.A-MWB.ISR09	426.576294	409.447027	207.134000
 *TSTN  STAT2_SR.A-MWB.ISR09  ST  IHFIX  IH  0.000000
-*V0 
+*V0
 *ANGL
 SR.A-GQF1A.C09-G1-EI  287.11671
 SR.A-GOF1B.C09-G1-SI  294.08257
@@ -112,18 +112,18 @@ TZ.A-RPT.C09-1	423.854072	418.446173	207.320160
 TZ.A-RPT.C09-2	424.055427	418.510778	207.316600
 STAT2_SR.A-MWB.ISR09	426.576294	409.447027	207.134000
 *TSTN  STAT2_SR.A-MWB.ISR09  ST  IHFIX  IH  0.000000
-*V0 
+*V0
 *PLR3D
-SR.A-GSD1D.C09-G3-SI                        67.483710       100.35853       5.397219         TH -0.000002 
-SR.A-GOF1D.C09-G4-EI                        70.042040       100.33510       5.825704         TH -0.000003 
-SR.A-GQF1E.C09-G4-SI                        76.981530       100.18486       10.472558        TH -0.000009 
+SR.A-GSD1D.C09-G3-SI                        67.483710       100.35853       5.397219         TH -0.000002
+SR.A-GOF1D.C09-G4-EI                        70.042040       100.33510       5.825704         TH -0.000003
+SR.A-GQF1E.C09-G4-SI                        76.981530       100.18486       10.472558        TH -0.000009
 SR.A-GQF1A.C09-G1-EI                        287.11671       100.18380       10.458502        TH -0.000008
 SR.A-GOF1B.C09-G1-SI                        294.08257       100.33312       5.810617         TH -0.000003
 SR.A-GSD1B.C09-G2-EI                        296.64848       100.35828       5.382529         TH -0.000002
-SR.A-GQF8B.C09-G2-SI                        344.97913       101.14603       1.681018         TH -0.000000 
-SR.A-GQF8D.C09-G3-EI                        19.59313        101.13884       1.689250         TH -0.000000 
-TZ.A-RPT.C09-1                              181.25595       98.79458        9.009795         TH -0.000006 
-TZ.A-RPT.C09-2                              182.74806       98.82008        9.012360         TH -0.000006 
+SR.A-GQF8B.C09-G2-SI                        344.97913       101.14603       1.681018         TH -0.000000
+SR.A-GQF8D.C09-G3-EI                        19.59313        101.13884       1.689250         TH -0.000000
+TZ.A-RPT.C09-1                              181.25595       98.79458        9.009795         TH -0.000006
+TZ.A-RPT.C09-2                              182.74806       98.82008        9.012360         TH -0.000006
 )";
 
 char const *const POLAR_V0_INIT_3 = R"(*TITR
@@ -147,7 +147,7 @@ TZ.A-RPT.C09-1	423.854072	418.446173	207.320160
 TZ.A-RPT.C09-2	424.055427	418.510778	207.316600
 STAT2_SR.A-MWB.ISR09	426.576294	409.447027	207.134000
 *TSTN  STAT2_SR.A-MWB.ISR09  ST  IHFIX  IH  0.000000
-*V0 
+*V0
 *ANGL
 SR.A-GQF1A.C09-G1-EI  287.11671
 SR.A-GOF1B.C09-G1-SI  294.08257
@@ -164,12 +164,12 @@ SR.A-GOF1B.C09-G1-SI  5.810617
 SR.A-GSD1B.C09-G2-EI  5.382529
 SR.A-GQF8B.C09-G2-SI  1.681018
 *PLR3D
-SR.A-GSD1D.C09-G3-SI                        67.483710       100.35853       5.397219         TH -0.000002 
-SR.A-GOF1D.C09-G4-EI                        70.042040       100.33510       5.825704         TH -0.000003 
-SR.A-GQF1E.C09-G4-SI                        76.981530       100.18486       10.472558        TH -0.000009 
-SR.A-GQF8D.C09-G3-EI                        19.59313        101.13884       1.689250         TH -0.000000 
-TZ.A-RPT.C09-1                              181.25595       98.79458        9.009795         TH -0.000006 
-TZ.A-RPT.C09-2                              182.74806       98.82008        9.012360         TH -0.000006 
+SR.A-GSD1D.C09-G3-SI                        67.483710       100.35853       5.397219         TH -0.000002
+SR.A-GOF1D.C09-G4-EI                        70.042040       100.33510       5.825704         TH -0.000003
+SR.A-GQF1E.C09-G4-SI                        76.981530       100.18486       10.472558        TH -0.000009
+SR.A-GQF8D.C09-G3-EI                        19.59313        101.13884       1.689250         TH -0.000000
+TZ.A-RPT.C09-1                              181.25595       98.79458        9.009795         TH -0.000006
+TZ.A-RPT.C09-2                              182.74806       98.82008        9.012360         TH -0.000006
 )";
 
 char const *const POLAR_V0_INIT_4 = R"(*TITR
@@ -202,7 +202,7 @@ SR.A-GQF8B.C22-G2-SI	283.618121	621.458223	0
 SR.A-GOF1B.C22-G1-SI	280.823448	617.564286	0
 SR.A-GSD1B.C22-G2-EI	281.018485	618.007412	0
 *TSTN  STAT1_SR.A-GN.C23-1  ST  IHFIX  IH  0.000000
-*V0 
+*V0
 *ANGL
 SR.A-GQF1A.C22-G1-EI  50.18918
 SR.A-GOF1B.C22-G1-SI  51.55486
@@ -224,6 +224,99 @@ SR.A-GSD1D.C24-G3-SI  262.47497
 SR.A-GOF1D.C24-G4-EI  262.82424
 *END
 
+)";
+
+//------------------------------------ ROT3D ------------------------------------//
+// ROT3D testcase: the convergence of this file requires a well initialized station orientation.
+char const *const POLAR_ROT3D_NEAR_GIMBAL_LOCK = R"(*TITR
+ROT3D testcase
+*OLOC
+*INSTR
+*POLAR TS TGT 0 0 0 0
+TGT 1.0 1.0 0.005 0.5 0 0 0 0 0 0
+*CALA
+S    0.000000       0.000000       0.000000
+T1   10.000000       0.000000       0.100000
+T2   10.000000       0.500000       0.200000
+T3    9.000000       0.400000       1.000000
+T4   10.000000      -0.300000       0.500000
+*TSTN S TS ROT3D
+*V0
+*PLR3D
+T1 345.345535252    199.863114288    10.000499988     TH 0.000000
+T2 264.135532899    196.719989338    10.014489503     TH 0.000000
+T3 323.059468589    192.876271535     9.064215355     TH 0.000000
+T4 388.258354193    196.715279923    10.016985575     TH 0.000000
+*END
+)";
+
+// Same geometry as above but with the PLR3D rom split into ANGL+ZEND+DIST.
+// ANGL/ZEND/DIST contributions ignore rotX/rotY, so this must be rejected.
+char const *const POLAR_ROT3D_NON_PLR3D = R"(*TITR
+ROT3D + non-PLR3D rejection test
+*OLOC
+*INSTR
+*POLAR TS TGT 0 0 0 0
+TGT 1.0 1.0 0.005 0.5 0 0 0 0 0 0
+*CALA
+S    0.000000       0.000000       0.000000
+T1   10.000000       0.000000       0.100000
+T2   10.000000       0.500000       0.200000
+T3    9.000000       0.400000       1.000000
+T4   10.000000      -0.300000       0.500000
+*TSTN S TS ROT3D
+*V0
+*ANGL
+T1 345.345535252
+T2 264.135532899
+T3 323.059468589
+T4 388.258354193
+*ZEND
+T1 199.863114288    TH 0.000000
+T2 196.719989338    TH 0.000000
+T3 192.876271535    TH 0.000000
+T4 196.715279923    TH 0.000000
+*DIST
+T1    10.000499988    TH 0.000000
+T2    10.014489503    TH 0.000000
+T3     9.064215355    TH 0.000000
+T4    10.016985575    TH 0.000000
+*END
+)";
+
+//------------------------------------ ACST ------------------------------------//
+// Two congruent stations (SP via PLR3D, SA via ANGL+ZEND+DIST) must estimate the
+// same V0: ANGL and PLR3D apply the instrument ACST (10 gon) with the same sign.
+char const *const POLAR_ACST_CONSISTENCY = R"(*TITR
+ACST sign consistency: PLR3D vs ANGL/ZEND/DIST, instrument ACST = 10 gon
+*OLOC
+*INSTR
+*POLAR TS TGT 0 0 0 10
+TGT 1.0 1.0 0.005 0.5 0 0 0 0 0 0
+*CALA
+SP     0.000000       0.000000       0.000000
+TP0    0.000000       1.000000       0.000000
+TP1    1.000000       1.000000       1.000000
+SA   100.000000       0.000000       0.000000
+TA0  100.000000       1.000000       0.000000
+TA1  101.000000       1.000000       1.000000
+*TSTN SP TS IHFIX IH 0.000000
+*V0
+*PLR3D
+TP0  0.000000     100.000000   1.000000      TH 0.000000
+TP1 50.000000      60.817345   1.732051      TH 0.000000
+*TSTN SA TS IHFIX IH 0.000000
+*V0
+*ANGL
+TA0  0.000000
+TA1 50.000000
+*ZEND
+TA0 100.000000    TH 0.000000
+TA1  60.817345    TH 0.000000
+*DIST
+TA0  1.000000     TH 0.000000
+TA1  1.732051     TH 0.000000
+*END
 )";
 
 } // namespace TestPOLAR
