@@ -1,7 +1,7 @@
 # Configure version when called from UI
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR "2")
-set (LGC_VERSION_MINOR "10")
+set (LGC_VERSION_MINOR "11")
 set (LGC_VERSION_PATCH "0")
 
 # Versions files
@@ -63,10 +63,10 @@ INCLUDE(${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake)
 
 set(CORE_INCLUDE_PATH 	${LGCCore_INCLUDE_PATH})
 set(CORE_SOURCES_PATH 	${LGCCore_MODULE_PATH}/sources)
-					
-					
+
+
 # Create a variable containing all .h files:
-set(Core_HEADERS 	
+set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TContributionsGenerator.h
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/ContributionStructures.h
 	${CORE_INCLUDE_PATH}/ContributionsGenerators/TPointTransformer.h
@@ -166,7 +166,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TTSTNWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TCAMWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TLEVELWriter.cpp
-	${CORE_SOURCES_PATH}/LGCObjectWriters/TEDMWriter.cpp	
+	${CORE_SOURCES_PATH}/LGCObjectWriters/TEDMWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TFRAMEWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TSCALEWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TOtherMeasurementsWriter.cpp
@@ -269,15 +269,14 @@ source_group("Writers\\Sources" FILES ${WRITERS_CPP})
 
 
 # Create a static library from sources:
-add_library(LGCCore STATIC 
+add_library(LGCCore STATIC
     ${Core_HEADERS}
     ${Core_SOURCES}
 )
 
-target_link_libraries(LGCCore 
+target_link_libraries(LGCCore
     LSAlgorithms
     ProjectFramework
     SpatialObjects
     Tools
 )
-
