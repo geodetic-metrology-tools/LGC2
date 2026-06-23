@@ -595,11 +595,11 @@ void object::test<18>()
 	template<>
 	template<>
 	void object::test<19>()
-	{ 
+	{
 		set_test_name("Testing UVEC, 2 STATIONS in root, points in subf");
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STROOT_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
-		
+
 		std::stringstream infiler(TestCAM::UVEC_2STROOT_SUBF);
 
 		bool succesReading = r.read(infiler);
@@ -824,21 +824,16 @@ void object::test<24>()
 	// The signed distance must also produce zero residuals regardless of uz sign.
 	for (auto &uvd : camIt->measUVD)
 	{
-		ensure_equals("UVD x residual should be zero for " + uvd.targetPos->getName(),
-			uvd.getXCompVectorResidual(), 0.0, 1e-6);
-		ensure_equals("UVD y residual should be zero for " + uvd.targetPos->getName(),
-			uvd.getYCompVectorResidual(), 0.0, 1e-6);
-		ensure_equals("UVD distance residual should be zero for " + uvd.targetPos->getName(),
-			uvd.getDistanceResidual().getMetresValue(), 0.0, 1e-6);
+		ensure_equals("UVD x residual should be zero for " + uvd.targetPos->getName(), uvd.getXCompVectorResidual(), 0.0, 1e-6);
+		ensure_equals("UVD y residual should be zero for " + uvd.targetPos->getName(), uvd.getYCompVectorResidual(), 0.0, 1e-6);
+		ensure_equals("UVD distance residual should be zero for " + uvd.targetPos->getName(), uvd.getDistanceResidual().getMetresValue(), 0.0, 1e-6);
 	}
 
 	// UVEC residuals: 4 measurements (direction only, no distance)
 	for (auto &uvec : camIt->measUVEC)
 	{
-		ensure_equals("UVEC x residual should be zero for " + uvec.targetPos->getName(),
-			uvec.getXCompVectorResidual(), 0.0, 1e-6);
-		ensure_equals("UVEC y residual should be zero for " + uvec.targetPos->getName(),
-			uvec.getYCompVectorResidual(), 0.0, 1e-6);
+		ensure_equals("UVEC x residual should be zero for " + uvec.targetPos->getName(), uvec.getXCompVectorResidual(), 0.0, 1e-6);
+		ensure_equals("UVEC y residual should be zero for " + uvec.targetPos->getName(), uvec.getYCompVectorResidual(), 0.0, 1e-6);
 	}
 }
 
@@ -873,22 +868,18 @@ void object::test<25>()
 
 	// PBehind is at (-1,-1,-1) relative to station at origin: dz < 0, so simulated uz should be negative
 	auto uvecIt = camIt->measUVEC.begin();
-	ensure("PBehind UVEC: simulated uz should be negative",
-		uvecIt->getVectorValue().getZ().getMetresValue() < 0.0);
+	ensure("PBehind UVEC: simulated uz should be negative", uvecIt->getVectorValue().getZ().getMetresValue() < 0.0);
 
 	// PInFront is at (1,1,1) relative to station at origin: dz > 0, so simulated uz should be positive
 	uvecIt++;
-	ensure("PInFront UVEC: simulated uz should be positive",
-		uvecIt->getVectorValue().getZ().getMetresValue() > 0.0);
+	ensure("PInFront UVEC: simulated uz should be positive", uvecIt->getVectorValue().getZ().getMetresValue() > 0.0);
 
 	// Same checks for UVD
 	auto uvdIt = camIt->measUVD.begin();
-	ensure("PBehind UVD: simulated uz should be negative",
-		uvdIt->getVectorValue().getZ().getMetresValue() < 0.0);
+	ensure("PBehind UVD: simulated uz should be negative", uvdIt->getVectorValue().getZ().getMetresValue() < 0.0);
 
 	uvdIt++;
-	ensure("PInFront UVD: simulated uz should be positive",
-		uvdIt->getVectorValue().getZ().getMetresValue() > 0.0);
+	ensure("PInFront UVD: simulated uz should be positive", uvdIt->getVectorValue().getZ().getMetresValue() > 0.0);
 }
 
 } // namespace tut

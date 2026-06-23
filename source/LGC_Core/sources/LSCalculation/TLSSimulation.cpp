@@ -4,9 +4,10 @@
 
 #include "TLSSimulation.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
-#include <algorithm>
+
 #include <Logger.hpp>
 
 #include "TLGCApp.h"
@@ -381,8 +382,7 @@ void TLSSimulation::updateUVDSimValues(TCAM &camera)
 	{
 		// Compute sign of dz from approximate geometry so the model selects the correct hemisphere
 		fPointTransformer.setMLA(false);
-		const auto &lorTrafo = fPointTransformer.getLORTransformation(
-			itUVD->targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition());
+		const auto &lorTrafo = fPointTransformer.getLORTransformation(itUVD->targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition());
 		TPositionVector tgtPos = itUVD->targetPos->getEstimatedValue();
 		lorTrafo.transform(tgtPos);
 		TReal dz = (tgtPos - camera.instrumentPos->getEstimatedValue()).toRealVector()(2);
@@ -419,8 +419,7 @@ void TLSSimulation::updateUVECSimValues(TCAM &camera)
 	{
 		// Compute sign of dz from approximate geometry so the model selects the correct hemisphere
 		fPointTransformer.setMLA(false);
-		const auto &lorTrafo = fPointTransformer.getLORTransformation(
-			itUVEC->targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition());
+		const auto &lorTrafo = fPointTransformer.getLORTransformation(itUVEC->targetPos->getFrameTreePosition(), camera.instrumentPos->getFrameTreePosition());
 		TPositionVector tgtPos = itUVEC->targetPos->getEstimatedValue();
 		lorTrafo.transform(tgtPos);
 		TReal dz = (tgtPos - camera.instrumentPos->getEstimatedValue()).toRealVector()(2);
