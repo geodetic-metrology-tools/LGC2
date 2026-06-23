@@ -65,6 +65,12 @@ public:
 	const TSparseMatrix &getPMatrix() const;
 	const UEOIndices getIndices() const { return fData->fUEOIndices; };
 
+	// observation index to input file line number mapping
+	const std::map<int, int> &getObsIndexToLineNumber() const { return fData->fObsIndexToLineNumber; }
+
+	// access to project data (for Python bindings)
+	const TLGCData &getData() const { return *fData; }
+
 	// get the whole inputmatrices object
 	const TLSInputMatrices &getInputMatricesRef() const;
 	// get a copy
@@ -72,7 +78,7 @@ public:
 
 private:
 	// indicates that results are ready for access
-	bool isUptoDate;
+	bool isUptoDate{false};
 	// helper method
 	void checkIsUptoDate() const;
 	

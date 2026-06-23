@@ -1,0 +1,554 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\geometry{margin=2.5cm}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    urlcolor=blue!60!black,
+    citecolor=blue!60!black,
+}
+
+\lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    stringstyle=\color{red!60!black},
+    commentstyle=\color{green!50!black}\itshape,
+    backgroundcolor=\color{gray!8},
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{gray!40},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    xleftmargin=1.5em,
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4,
+    aboveskip=1em,
+    belowskip=1em,
+}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\title{\textbf{pyLGC} --- Python Interface for LGC2\\[0.5em]
+\large Least-Squares Geodetic Computation}
+\author{Jürgen Gutekunst, Marco Carotta}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+%==========================================================================
+\section{Introduction}
+%==========================================================================
+
+\code{pyLGC} is a Python module that provides access to the LGC2
+least-squares adjustment engine. It loads a native shared library
+(\code{pyLGC\_C.dll} on Windows, \code{libpyLGC\_C.so} on Linux) via
+\code{ctypes}.
+
+The module exposes the evaluator, which encapsulates the linearised
+least-squares problem built from an LGC input file, and allows the user
+to inspect, perturb, evaluate, and solve the underlying system.
+For a detailed description of the underlying concepts and methods,
+see~\cite{gutekunst_lgc2}.
+
+This document is structured as follows:
+Section~\ref{sec:ls} describes the underlying least-squares problem,
+Section~\ref{sec:api} documents the Python API, and
+Section~\ref{sec:workflow} provides examples of common workflows.
+
+%==========================================================================
+\section{The Least-Squares Problem}
+\label{sec:ls}
+%==========================================================================
+
+This section summarises the nonlinear estimation problem solved by LGC2.
+The formulation follows~\cite{barbier_ls}; see
+also~\cite{gutekunst_lgc2} for a broader overview
+and~\cite{wells_krakiwsky} for the general theory of least squares.
+
+In the general theory of geodetic adjustment, the observation model can
+take the implicit (combined) form $F(x, L+v) = 0$, where both
+parameters and observations appear inside $F$. In LGC2, however, all
+observation models are of \emph{parametric} form: $f(x) - (L+v) = 0$,
+i.e.\ the model predicts the observations as a function of the
+parameters alone. As a consequence, the matrix
+$B = \partial F / \partial L$ is always $-I$ (the negative identity),
+which simplifies the solution considerably.
+
+%--------------------------------------------------------------------------
+\subsection{The Nonlinear Estimation Problem}
+%--------------------------------------------------------------------------
+
+Given a parametric observation model $f\colon \mathbb{R}^{n_x} \to
+\mathbb{R}^{n_L}$ that predicts measurement values from unknown
+parameters, LGC2 solves the constrained nonlinear least-squares problem
+\begin{align}
+  \begin{split}
+    & \min \;\tfrac{1}{2}\, v^T P\, v \\
+    & \text{over } (x, v) \in \mathbb{R}^{n_x} \times \mathbb{R}^{n_L}, \\
+    & \text{subject to} \\
+    & \quad f(x) + B\,v - L = 0, \\
+    & \quad C(x) = 0,
+  \end{split}
+  \label{eq:pe_problem}
+\end{align}
+where $x \in \mathbb{R}^{n_x}$ is the parameter vector,
+$L \in \mathbb{R}^{n_L}$ the measurement vector,
+$v \in \mathbb{R}^{n_L}$ the residuals,
+$B \in \mathbb{R}^{n_L \times n_L}$ the observation coefficient matrix,
+$C\colon \mathbb{R}^{n_x} \to \mathbb{R}^{n_C}$ the constraint function,
+and $P \in \mathbb{R}^{n_L \times n_L}$ the weight matrix.
+Since all observation models in LGC2 are of parametric form
+$f(x) - (L + v) = 0$, the matrix $B$ is always $-I$ (negative identity).
+The API nevertheless exposes $B$ and $B^{-1}$ for completeness.
+
+%--------------------------------------------------------------------------
+\subsection{Gauss--Newton Linearisation}
+%--------------------------------------------------------------------------
+
+Problem~\eqref{eq:pe_problem} is solved by the Gauss--Newton algorithm.
+At iterate $x_k$, we define the misclosure vector as
+\begin{equation}
+    W_k = f(x_k) - L \in \mathbb{R}^{n_L},
+    \label{eq:misclosure}
+\end{equation}
+which measures how well the current parameters explain the measurements.
+Linearising $f$ around $x_k$ gives
+\begin{equation}
+    f(x_k + \Delta x) \approx f(x_k) + A_k\, \Delta x,
+    \qquad
+    A_k = \frac{\partial f}{\partial x}(x_k) \in \mathbb{R}^{n_L \times n_x}.
+    \label{eq:Adef}
+\end{equation}
+Similarly, the constraint is linearised as
+\begin{equation}
+    C(x_k + \Delta x) \approx C(x_k) + A_{2,k}\, \Delta x,
+    \qquad
+    A_{2,k} = \frac{\partial C}{\partial x}(x_k)
+        \in \mathbb{R}^{n_C \times n_x}.
+\end{equation}
+Substituting the linearised model into the observation equation
+$f(x) + B\,v - L = 0$ gives
+\begin{equation}
+    f(x_k) + A_k\,\Delta x + B\,v - L \;\approx\; 0
+    \qquad\Longrightarrow\qquad
+    v \;\approx\; -B^{-1}\bigl(f(x_k) - L + A_k\,\Delta x\bigr)
+      \;=\; -B^{-1}(W_k + A_k\,\Delta x).
+\end{equation}
+With $B = -I$ this simplifies to $v \approx W_k + A_k\,\Delta x$.
+Inserting into the objective
+$\min\,\tfrac{1}{2}\,v^T P\,v$ yields the linearised subproblem
+\begin{align}
+  \begin{split}
+    \min \;&\tfrac{1}{2}\, (W_k + A_k\,\Delta x)^T P\,
+        (W_k + A_k\,\Delta x)
+    \quad \text{over } \Delta x, \\
+    \text{s.t.}\quad
+    & A_{2,k}\,\Delta x + C(x_k) = 0.
+  \end{split}
+  \label{eq:GN_subproblem}
+\end{align}
+This defines the matrices and vectors accessible through the
+\code{pyLGC} API:
+\begin{align}
+    A &= \frac{\partial f}{\partial x}(x_k) \in \mathbb{R}^{n_L \times n_x},
+        &\text{(design / Jacobian matrix)} \\
+    B &= -I \in \mathbb{R}^{n_L \times n_L},
+        &\text{(observation coefficient matrix)} \\
+    W &= f(x_k) - L \in \mathbb{R}^{n_L},
+        &\text{(misclosure vector)} \\
+    A_2 &= \frac{\partial C}{\partial x}(x_k) \in \mathbb{R}^{n_C \times n_x},
+        &\text{(constraint Jacobian)} \\
+    W_2 &= C(x_k) \in \mathbb{R}^{n_C},
+        &\text{(constraint misclosure)} \\
+    P &\in \mathbb{R}^{n_L \times n_L}.
+        &\text{(weight matrix)}
+\end{align}
+
+%--------------------------------------------------------------------------
+\subsection{Solution of the Linearised Problem}
+%--------------------------------------------------------------------------
+
+Setting the gradient of the Lagrangian of~\eqref{eq:GN_subproblem} to
+zero yields the KKT system
+\begin{equation}
+  \begin{pmatrix}
+    A^T P\, A & A_2^T \\
+    A_2       & 0
+  \end{pmatrix}
+  \begin{pmatrix}
+    \Delta x \\ \lambda
+  \end{pmatrix}
+  = -
+  \begin{pmatrix}
+    A^T P\, W \\
+    W_2
+  \end{pmatrix},
+  \label{eq:kkt}
+\end{equation}
+where $\lambda$ is the vector of Lagrange multipliers for the
+constraints. In the unconstrained case ($n_C = 0$), this simplifies to
+the normal equations
+\begin{equation}
+    A^T P\, A\;\Delta x = -A^T P\, W.
+    \label{eq:normal}
+\end{equation}
+The parameters are then updated as $x_{k+1} = x_k + \Delta x$ and the
+process repeats until convergence. The residuals at convergence are
+$v = f(x^*) - L = W^*$.
+
+%==========================================================================
+\section{API Reference}
+\label{sec:api}
+%==========================================================================
+
+%--------------------------------------------------------------------------
+\subsection{Architecture}
+\label{sec:arch}
+%--------------------------------------------------------------------------
+
+\code{pyLGC} is structured in two layers:
+
+\begin{enumerate}
+    \item \textbf{\code{pyLGC\_C.dll / libpyLGC\_C.so}} --- A shared
+        library with a plain C~API (\code{extern "C"}) wrapping the C++
+        LGC2 engine. It has no dependency on Python and can be called
+        from any language with a C foreign-function interface.
+
+    \item \textbf{\code{pyLGC.py}} --- A pure-Python module that loads
+        the shared library via \code{ctypes} and exposes the
+        \code{Evaluator} and \code{AdjustableObject} classes
+        (\code{AdjustablePoint} and \code{AdjustableFrame} are retained
+        as aliases for \code{AdjustableObject}). Arrays are returned as
+        \code{numpy} arrays for efficient data transfer.
+        Requires \code{numpy}; \code{scipy} is optional (for sparse
+        matrix construction).
+\end{enumerate}
+
+Because the shared library has no compile-time dependency on Python
+headers, it can be used from any language with a C foreign-function
+interface.
+
+%--------------------------------------------------------------------------
+\subsection{Module-Level Types}
+%--------------------------------------------------------------------------
+
+\paragraph{\code{UEOIndices}} Named tuple holding the four key
+dimensions of the problem:
+
+\begin{center}
+\begin{tabular}{cll}
+    \toprule
+    Symbol & Field & Meaning \\
+    \midrule
+    $n_x$ & \code{UIndex} & Number of unknowns (parameters) \\
+    $n_L$ & \code{EIndex} & Number of equations (= number of observations) \\
+    $n_L$ & \code{OIndex} & Number of observations \\
+    $n_C$ & \code{CIndex} & Number of constraints \\
+    \bottomrule
+\end{tabular}
+\end{center}
+
+%--------------------------------------------------------------------------
+\subsection{Class \code{Evaluator}}
+%--------------------------------------------------------------------------
+
+The central class. Each instance encapsulates one least-squares problem
+loaded from an LGC input file.
+
+\subsubsection*{Constructor}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{Evaluator(filePath: str)}]
+    Load and parse the given LGC input file. Raises \code{RuntimeError}
+    if the file cannot be opened or contains errors.
+\end{description}
+
+\subsubsection*{Problem Dimensions}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getProblemDimensions() -> UEOIndices}]
+    Return the dimensions $(n_x, n_L, n_L, n_C)$ of the problem. Available
+    immediately after construction.
+\end{description}
+
+\subsubsection*{Parameter Management}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getEstimatedParameters() -> numpy.ndarray}]
+    Return the current parameter vector $x \in \mathbb{R}^{n_x}$ as a
+    one-dimensional numpy array.
+
+\item[\code{setParameters(para)}]
+    Set the parameter vector. Accepts any sequence of length~$n_x$.
+    Raises \code{RuntimeError} if the dimension is wrong.
+    \emph{Note:} after calling \code{setParameters}, a new
+    \code{evaluate()} is required before the getters return valid
+    results.
+\end{description}
+
+\subsubsection*{Evaluation}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{evaluate() -> bool}]
+    Linearise the functional model at the current parameter values.
+    Computes all matrices and vectors. Returns \code{True} on success.
+    Must be called before any matrix or vector getter.
+\end{description}
+
+\subsubsection*{Vectors}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getMisclosure() -> numpy.ndarray}]
+    Return the misclosure vector $W = f(x_k) - L \in \mathbb{R}^{n_L}$.
+    Requires a preceding \code{evaluate()}.
+
+\item[\code{getConstraintMisclosure() -> numpy.ndarray}]
+    Return the constraint misclosure $W_2 = C(x_k) \in \mathbb{R}^{n_C}$.
+    Requires a preceding \code{evaluate()}.
+\end{description}
+
+\subsubsection*{Sparse Matrices}
+
+All sparse matrix getters return a tuple of five elements:
+\begin{center}
+    \code{(rows, cols, vals, nrows, ncols)}
+\end{center}
+where \code{rows}, \code{cols} are integer arrays, \code{vals} is a
+float array (COO format), and \code{nrows}, \code{ncols} are the matrix
+dimensions. See Section~\ref{sec:sparse} for how to construct
+\code{scipy.sparse} matrices from these tuples.
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getFirstDesignMatrix()}]
+    Design matrix (Jacobian) $A = \partial f / \partial x \in \mathbb{R}^{n_L \times n_x}$.
+
+\item[\code{getSecondDesignMatrix()}]
+    Observation coefficient matrix $B \in \mathbb{R}^{n_L \times n_L}$.
+    Since LGC2 uses parametric models, $B = -I$ always (see
+    Section~\ref{sec:ls}).
+
+\item[\code{getConstraintDesignMatrix()}]
+    Constraint Jacobian $A_2 = \partial C / \partial x \in \mathbb{R}^{n_C \times n_x}$.
+
+\item[\code{getWeightMatrix()}]
+    Weight matrix $P \in \mathbb{R}^{n_L \times n_L}$.
+\end{description}
+
+All require a preceding \code{evaluate()}.
+
+\subsubsection*{Solving}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{solve() -> (bool, numpy.ndarray)}]
+    Run the full iterative least-squares solution. Returns a tuple
+    \code{(ok, solution)} where \code{ok} indicates convergence and
+    \code{solution} $\in \mathbb{R}^{n_x}$ is the estimated parameter
+    vector. Can be called without a prior \code{evaluate()}.
+    \emph{Note:} after solving, \code{evaluate()} must be called again
+    before the matrix/vector getters are valid.
+\end{description}
+
+\subsubsection*{Observation Mapping}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getObsIndexToLineNumber() -> dict}]
+    Return a dictionary mapping internal observation indices to line
+    numbers in the input file. Useful for tracing residuals back to
+    specific observations.
+\end{description}
+
+\subsubsection*{Point and Frame Access}
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getPoint(name: str) -> AdjustableObject}]
+    Look up an adjustable point by name. Raises \code{RuntimeError} if
+    not found.
+
+\item[\code{getFrame(name: str) -> AdjustableObject}]
+    Look up an adjustable reference frame by name. Raises
+    \code{RuntimeError} if not found.
+\end{description}
+
+The two methods perform distinct lookups in the underlying engine
+(against \code{LGCAdjustablePoint} and
+\code{TAdjustableHelmertTransformation} respectively), but both return
+the same Python wrapper class (see Section~\ref{sec:adjobj}).
+
+%--------------------------------------------------------------------------
+\subsection{Class \code{AdjustableObject}}
+\label{sec:adjobj}
+%--------------------------------------------------------------------------
+
+Represents an adjustable object in the network --- either a point or a
+reference frame. Instances are obtained via \code{Evaluator.getPoint()}
+or \code{Evaluator.getFrame()} and are valid as long as the parent
+\code{Evaluator} exists.
+
+\code{AdjustablePoint} and \code{AdjustableFrame} are retained as
+aliases for \code{AdjustableObject}, so existing code that references
+those names continues to work.
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getName() -> str}]
+    Return the object's name.
+
+\item[\code{getFirstUidx() -> int}]
+    Return the index of this object's first unknown in the global
+    parameter vector. Together with \code{getRelativeUnknIndices()},
+    this identifies which elements of $x$ belong to this object.
+
+\item[\code{getRelativeUnknIndices() -> numpy.ndarray}]
+    Return the relative unknown indices (offsets from
+    \code{getFirstUidx()}) as a 1-D integer array.
+    For a fully free 3D point this is \code{[0, 1, 2]}; for a partially
+    fixed point some components are absent; for a fully fixed object
+    the array is empty.
+    For an adjustable Helmert frame the indices select among up to
+    seven parameters (3 translations, 3 rotations, 1 scale).
+
+\item[\code{getEstVector() -> numpy.ndarray}]
+    Return the current estimated parameter vector as a 1-D float array.
+    For a 3D point this is always 3 elements regardless of which
+    components are fixed; for a Helmert frame this is the current
+    transformation parameter vector.
+\end{description}
+
+%--------------------------------------------------------------------------
+\subsection{Error Handling}
+\label{sec:errors}
+%--------------------------------------------------------------------------
+
+All errors are reported as Python \code{RuntimeError} exceptions with
+descriptive messages. Common error conditions:
+
+\begin{center}
+\small
+\begin{tabular}{ll}
+    \toprule
+    Situation & Example message \\
+    \midrule
+    File not found &
+        \code{Cannot open file: network.lgc2} \\
+    Malformed input file &
+        \code{Errors found in the input file.} \\
+    Wrong parameter dimension &
+        \code{variable has wrong dimension, expected: 13, actual: 3} \\
+    Getter before \code{evaluate()} &
+        \code{Must call evaluate() before using getters} \\
+    Unknown point name &
+        \code{Point NOPE not found} \\
+    Unknown frame name &
+        \code{Frame NOPE not found} \\
+    \bottomrule
+\end{tabular}
+\end{center}
+
+%==========================================================================
+\section{Typical Workflow and Examples}
+\label{sec:workflow}
+%==========================================================================
+
+All code listings in this section are available as standalone Python
+scripts in the \code{examples/} directory alongside this document.
+
+The standard usage pattern follows a \emph{load -- set -- evaluate -- get}
+cycle:
+
+\begin{enumerate}[leftmargin=2em]
+    \item \textbf{Load.} Create an \code{Evaluator} from an LGC input
+        file. This parses the file, builds the internal data structures,
+        and sets the provisional parameter values.
+    \item \textbf{Set parameters} (optional). Replace the current
+        parameter vector with custom values using
+        \code{setParameters()}.
+    \item \textbf{Evaluate.} Call \code{evaluate()} to linearise the
+        functional model at the current parameters. This computes the
+        matrices $A$, $P$, $A_2$ and the
+        misclosure vectors $W$, $W_2$.
+    \item \textbf{Get results.} Retrieve any combination of matrices
+        and vectors via the getter methods.
+    \item \textbf{Repeat} steps 2--4 as needed (e.g.\ for iterative
+        solving or sensitivity analysis).
+\end{enumerate}
+
+Alternatively, \code{solve()} performs the full iterative solution
+internally, returning the converged parameter vector directly.
+
+\lstinputlisting[style=python, caption={Basic workflow example (\code{examples/01\_basic\_workflow.py}).}]{examples/01_basic_workflow.py}
+
+%--------------------------------------------------------------------------
+\subsection{Sparse Matrix Usage with SciPy}
+\label{sec:sparse}
+%--------------------------------------------------------------------------
+
+All sparse matrices are returned in COO (coordinate) format as plain
+arrays, compatible with \code{scipy.sparse}:
+
+\lstinputlisting[style=python, caption={Converting COO tuples to SciPy sparse matrices (\code{examples/02\_sparse\_matrices.py}).}]{examples/02_sparse_matrices.py}
+
+%--------------------------------------------------------------------------
+\subsection{Building the Normal Equations in SciPy}
+\label{sec:normal}
+%--------------------------------------------------------------------------
+
+Given the matrices from the evaluator, the normal
+equation~\eqref{eq:normal} can be assembled and solved in Python:
+
+\lstinputlisting[style=python, caption={Forming and solving the normal equations (\code{examples/03\_normal\_equations.py}).}]{examples/03_normal_equations.py}
+
+%--------------------------------------------------------------------------
+\subsection{Gauss--Newton Iteration}
+\label{sec:gn}
+%--------------------------------------------------------------------------
+
+The following example implements a simple Gauss--Newton solver using
+the matrices provided by the evaluator. At each iteration the normal
+equations~\eqref{eq:normal} are formed and solved, and the parameter
+vector is updated until the step size falls below a tolerance.
+
+\lstinputlisting[style=python, caption={Simple Gauss--Newton solver, validated against the built-in solver (\code{examples/04\_gauss\_newton.py}).}]{examples/04_gauss_newton.py}
+
+%--------------------------------------------------------------------------
+%==========================================================================
+\begin{thebibliography}{9}
+
+\bibitem{gutekunst_lgc2}
+    J.~Gutekunst,
+    \emph{LGC -- Position Estimation Software: Principal Concepts and Methods},
+    CERN, 2024.
+    \url{https://edms.cern.ch/document/3067818/1}
+
+\bibitem{barbier_ls}
+    M.~Barbier,
+    \emph{Least Square Equations for LGC2},
+    CERN, 2015.
+    \url{https://edms.cern.ch/document/1475972/2}
+
+\bibitem{wells_krakiwsky}
+    D.~Wells and E.~Krakiwsky,
+    \emph{The Method of Least Squares},
+    University of New Brunswick, Department of Geodesy and Geomatics
+    Engineering, Lecture Notes No.~18, 1971.
+
+\end{thebibliography}
+
+\end{document}
