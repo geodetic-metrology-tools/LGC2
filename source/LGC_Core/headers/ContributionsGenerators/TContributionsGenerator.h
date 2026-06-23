@@ -52,6 +52,21 @@ public:
 			In all cases the STATION and TARGET points can be defined anywhere in the TREE of local frames.
 	*/
 	//@{
+	/*!
+		Contributions of a generic polar observation for a TSTN measuring inside the frame tree.
+		The observation is modelled as f(relPos), with
+			relPos = (target + targetCentering + targetVertical * targetHeight) - (station + stationCentering)
+		i.e. the model f (e.g. distance, horizontal angle) and its Jacobian df/d(relPos), supplied via
+		@p model, are applied to the relative position; the target height is added along the LOCAL VERTICAL at
+		the target.
+
+		station/target coordinates are free unknowns. targetCentering is a 2D offset in the local horizontal
+		plane orthogonal to the local vertical at the target; stationCentering is a 2D offset in the station
+		frame's horizontal (XY) plane. Both are fixed at 0 with an isotropic variance (sigmaTargetCentering /
+		sigmaInstrCentering, same sigma on both in-plane axes - no vertical component). The vertical offset is
+		the separate targetHeight: a fixed value with variance sigmaTargetHt, never a free unknown (unlike
+		instrument height / distance correction). These fixed-parameter variances are propagated by J*Sigma*J^T.
+	*/
 	template<typename TPolarMeas>
 	PolarContribInFrame getPolarContribInFrame(std::shared_ptr<TTSTN> station, const TPolarMeas &dist, const ModelAndJacobian &model);
 

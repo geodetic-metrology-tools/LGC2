@@ -28,6 +28,11 @@ TContributionsGenerator::TContributionsGenerator(TPointTransformer &fPointTransf
 	In all cases the STATION and TARGET points can be defined anywhere in the TREE of local frames.
 */
 
+// Generic polar contribution: f(relPos) with
+//   relPos = (target + targetCentering + targetVertical * targetHeight) - (station + stationCentering).
+// f and df/d(relPos) come from 'model'. targetCentering acts in the local horizontal plane orthogonal to the
+// local vertical at the target; stationCentering in the station-frame XY plane; the vertical offset is the
+// separate targetHeight. See the header for the parameter/stochastic model.
 template<typename TPolarMeas>
 PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_ptr<TTSTN> station, const TPolarMeas &polarMeas, const ModelAndJacobian &model)
 {
@@ -80,16 +85,20 @@ PolarContribInFrame TContributionsGenerator::getPolarContribInFrame(std::shared_
 	// variance computation (contributions from fixed parameters: target height, target/station centering)
 	Eigen::MatrixXd dRelPosdUncertainParameters(3, 5);
 
-	// Transform vectors to station coordinates
+	// local vertical at the target (in station coordinates) - the direction of the target height
 	TFreeVector targetVerticalInStationCoord = targetVertical;
 	root2stationTrafo.transform(targetVerticalInStationCoord);
-	TFreeVector targetX(1, 0, 0, TCoordSysFactory::k3DCartesian);
-	root2stationTrafo.transform(targetX);
-	TFreeVector targetY(0, 1, 0, TCoordSysFactory::k3DCartesian);
-	root2stationTrafo.transform(targetY);
 
-	// Set Jacobian columns (rel pos wrt [T_u x/y, T_H_u, S_u x/y])
-	dRelPosdUncertainParameters << targetX.toRealVector(), targetY.toRealVector(), targetVerticalInStationCoord.toRealVector(), -Eigen::Vector3d::UnitX(),
+	// Target centering acts in the LOCAL HORIZONTAL PLANE at the target, i.e. the plane orthogonal to the
+	// local vertical above (NOT the root/station XY plane). Centering is isotropic (same sigma on both
+	// in-plane axes), so any orthonormal basis of that plane gives the same variance; build one from the
+	// local vertical.
+	Eigen::Vector3d targetUp = targetVerticalInStationCoord.toRealVector().normalized();
+	Eigen::Vector3d targetCenteringE1 = targetUp.unitOrthogonal();
+	Eigen::Vector3d targetCenteringE2 = targetUp.cross(targetCenteringE1);
+
+	// Set Jacobian columns (rel pos wrt [T_u e1/e2, T_H_u, S_u x/y])
+	dRelPosdUncertainParameters << targetCenteringE1, targetCenteringE2, targetVerticalInStationCoord.toRealVector(), -Eigen::Vector3d::UnitX(),
 		-Eigen::Vector3d::UnitY();
 
 	// Chain rule for stochastic model Jacobian
