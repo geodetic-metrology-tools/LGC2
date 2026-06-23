@@ -10,7 +10,8 @@ path = [
     ".gitignore",
     ".gitlab-ci.yml",
     ".gitmodules",
-    "*.md",
+    "**/*.md",
+    "**/*.pdf",
     "*.yaml",
 	"DCO.txt",
 	"LGC.ico",
@@ -47,6 +48,7 @@ path = [
     "source/LGC_Tests/testFiles/**/*.res",
     "source/LGC_Tests/testFiles/**/*.out",
     "source/LGC_Tests/testFiles/**/*.m",
+    "source/pyLGC/**/*.lgc2",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "NONE"

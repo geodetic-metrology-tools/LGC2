@@ -4,3 +4,15 @@ source/Version.h
 
 # Pre-commit cache
 .pre-commit-cache/
+
+# IDE / Visual Studio
+.vs/
+.vscode/
+
+# Build artifacts
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/

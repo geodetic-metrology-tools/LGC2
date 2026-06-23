@@ -56,7 +56,11 @@ repos:
         args:
           - -c
           - |
-            # Check if reuse command is available, install if not
+            # Check if reuse command is available, install if not.
+            # The 'charset-normalizer' extra is required since reuse>=3 made
+            # encoding-detection backends optional; without it, `reuse lint-file`
+            # fails with NoEncodingModuleError when it has to sniff a file's
+            # encoding (e.g. .lgc2 inputs, generated test outputs).
             if ! command -v reuse &> /dev/null; then
               echo "REUSE tool not found. Installing..."
               pip install "reuse[charset-normalizer]"

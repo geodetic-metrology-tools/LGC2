@@ -37,6 +37,9 @@ add_compile_definitions(USE_SERIALIZER=${USE_SERIALIZER})
 set(LIBRARIES_PATH "${CMAKE_SOURCE_DIR}/../lib")
 include(${LIBRARIES_PATH}/SUSoftCMakeCommon/CMakeLists.txt)
 
+# Enable -fPIC for all targets so static libs can be linked into the pyLGC shared library
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Versions files
 configure_file (
   "${CMAKE_SOURCE_DIR}/LGCVersion.in"
@@ -99,6 +102,9 @@ INCLUDE("${SURVEYLIB_ROOT}/source/SourceSurveyLib.cmake")
 # add subdirectories
 ADD_SUBDIRECTORY(LGC_Core)
 ADD_SUBDIRECTORY(LGC_Tests)
+
+# Python C API bindings (plain shared library — no Python or pybind11 needed to build)
+ADD_SUBDIRECTORY(pyLGC)
 
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)
