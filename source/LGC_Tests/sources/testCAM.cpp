@@ -10,6 +10,7 @@
 #include <cmath>
 
 #include <Behavior.h>
+#include <TLGCApp.h>
 #include <TLGCData.h>
 #include <TReader.h>
 
@@ -594,11 +595,11 @@ void object::test<18>()
 	template<>
 	template<>
 	void object::test<19>()
-	{ 
+	{
 		set_test_name("Testing UVEC, 2 STATIONS in root, points in subf");
 		projTest->getFileLogger().setOutputfileLocation("C:/Temp/UVEC_2STROOT_SUBF.txt");
 		projTest->getFileLogger().writeReportHeader("LGC output file");
-		
+
 		std::stringstream infiler(TestCAM::UVEC_2STROOT_SUBF);
 
 		bool succesReading = r.read(infiler);
@@ -782,4 +783,103 @@ void object::test<23>()
 	obsUVECIt++;
 	ensure_equals("observation TRGT should be one defined on the *CAM line", obsUVECIt->target.ID, "T1");
 }
+
+//-------------------------------------- UVEC/UVD hemisphere tests ----------------------------------//
+
+template<>
+template<>
+void object::test<24>()
+{
+	// Hemisphere test: station STN at origin, PBehind at (-1,-1,-1), PInFront at (1,1,1).
+	//
+	// The UVEC/UVD model uses: f(p) = sgn(uz_obs/pz) * (px,py)/||p||
+	// This selects the unit-sphere intersection with the same z-sign as the observation.
+	//
+	// The UVD distance is signed according to the uz sign convention:
+	//   - target behind station (pz<0) + uz negative  -> distance is positive
+	//   - target behind station (pz<0) + uz positive   -> distance is negative
+	//   - target in front (pz>0)       + uz positive   -> distance is positive
+	//   - target in front (pz>0)       + uz negative   -> distance is negative
+	//
+	// The test data contains all 4 combinations (2 points x 2 hemisphere conventions)
+	// and verifies that all residuals are zero.
+
+	set_test_name("Testing UVEC/UVD hemisphere: zero residuals for both hemispheres");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/CAM_HEMISPHERE.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestCAM::UVEC_HEMISPHERE);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	auto camIt = projTest->getTree().begin().node->data->measurements.fCAM.begin();
+
+	// UVD residuals: 4 measurements (2 per point, each with both hemisphere conventions)
+	// The signed distance must also produce zero residuals regardless of uz sign.
+	for (auto &uvd : camIt->measUVD)
+	{
+		ensure_equals("UVD x residual should be zero for " + uvd.targetPos->getName(), uvd.getXCompVectorResidual(), 0.0, 1e-6);
+		ensure_equals("UVD y residual should be zero for " + uvd.targetPos->getName(), uvd.getYCompVectorResidual(), 0.0, 1e-6);
+		ensure_equals("UVD distance residual should be zero for " + uvd.targetPos->getName(), uvd.getDistanceResidual().getMetresValue(), 0.0, 1e-6);
+	}
+
+	// UVEC residuals: 4 measurements (direction only, no distance)
+	for (auto &uvec : camIt->measUVEC)
+	{
+		ensure_equals("UVEC x residual should be zero for " + uvec.targetPos->getName(), uvec.getXCompVectorResidual(), 0.0, 1e-6);
+		ensure_equals("UVEC y residual should be zero for " + uvec.targetPos->getName(), uvec.getYCompVectorResidual(), 0.0, 1e-6);
+	}
+}
+
+template<>
+template<>
+void object::test<25>()
+{
+	set_test_name("Testing UVEC/UVD hemisphere simulation: correct uz sign");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/CAM_HEMISPHERE_SIM.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestCAM::UVEC_HEMISPHERE_SIM);
+
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	std::string infileLocation = "dummy_string";
+	std::string outfileLocation = "C:/Temp/CAM_HEMISPHERE_SIM.txt";
+
+	TLGCApp testApp(infileLocation, outfileLocation, 80);
+
+	std::shared_ptr<TAStreamFormatter> streamFormatter;
+	testApp.initializeStream(projTest, outfileLocation, streamFormatter);
+
+	TSimulationOutputFileWriter fileWriter(streamFormatter.get(), projTest.get());
+	std::shared_ptr<TSimulationOutputFileWriter> writerPointer = std::make_shared<TSimulationOutputFileWriter>(fileWriter);
+	TLGCCalculation calcul(projTest);
+	Behavior success = calcul.computeResults(writerPointer);
+	ensure_equals("Simulation successful", success.code(), Behavior::BehaviorCode::ERR_noError);
+
+	auto camIt = projTest->getTree().begin().node->data->measurements.fCAM.begin();
+
+	// PBehind is at (-1,-1,-1) relative to station at origin: dz < 0, so simulated uz should be negative
+	auto uvecIt = camIt->measUVEC.begin();
+	ensure("PBehind UVEC: simulated uz should be negative", uvecIt->getVectorValue().getZ().getMetresValue() < 0.0);
+
+	// PInFront is at (1,1,1) relative to station at origin: dz > 0, so simulated uz should be positive
+	uvecIt++;
+	ensure("PInFront UVEC: simulated uz should be positive", uvecIt->getVectorValue().getZ().getMetresValue() > 0.0);
+
+	// Same checks for UVD
+	auto uvdIt = camIt->measUVD.begin();
+	ensure("PBehind UVD: simulated uz should be negative", uvdIt->getVectorValue().getZ().getMetresValue() < 0.0);
+
+	uvdIt++;
+	ensure("PInFront UVD: simulated uz should be positive", uvdIt->getVectorValue().getZ().getMetresValue() > 0.0);
+}
+
 } // namespace tut

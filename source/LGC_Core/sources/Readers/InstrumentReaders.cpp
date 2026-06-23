@@ -100,7 +100,7 @@ void TKeyCAMD::parse(const std::vector<std::string> &tokens, bool /*activeLine*/
 		auto &camInstruments(finstruments.fCAMD);
 		checkInstrument(5, camInstruments, tokens);
 
-		auto p = std::make_shared<TInstrumentData::TCAMD>(tokens.at(2), tokens.at(3), TLength(std::stor(tokens.at(4)), TLength::EUnits::kMetres), line);
+		auto p = std::make_shared<TInstrumentData::TCAMD>(tokens.at(2), tokens.at(3), TLength(std::stor(tokens.at(4)), TLength::EUnits::kMillimetres), line);
 
 		// store the new station
 		camInstruments.insert(std::make_pair(tokens.at(2), p));
