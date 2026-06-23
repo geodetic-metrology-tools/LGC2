@@ -46,6 +46,7 @@ void TSimFileWriter::writeFile()
 	// reformat the streamformatter
 	stream->setLengthUnits(TLength::EUnits::kMetres);
 	stream->setPrecisionFormat(fProjectData->getConfig().outPrecision.digits);
+	stream->precision(9); // 9 decimals to avoid scientific notation for sub-0.1 mm values.
 
 	writeHeader();
 	writeInstrument();
