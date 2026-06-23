@@ -16,10 +16,15 @@
 
 */
 
+// STL
+#include <algorithm>
+#include <cmath>
 // SURVEYLIB
 #include <TAdjustableHelmertTransformation.h>
 #include <TFreeVector.h>
 #include <TLGCPointConstraintGroup.h>
+// LGC
+#include <Global.h>
 
 /*!
 	\ingroup ContributionsGenerators
@@ -428,6 +433,64 @@ struct ModelAndJacobian
 	// the raw model function evaluated at the relative position. e.g. distance, horizontal angle
 	std::function<modelEval(const Eigen::Vector3d &)> func;
 };
+
+/*!
+	\ingroup ContributionsGenerators
+
+	\brief Raw polar observation models: the value f(relPos) and its Jacobian df/d(relPos), as a function of the
+	relative position relPos = (target - station) expressed in the station frame.
+
+	These are the single source of truth for the distance / angle conventions used by the "TSTN in frame"
+	contribution generators (getPolarContribInFrame), kept as pure, non-capturing functions so they can be
+	reused and unit-tested in isolation. Each returns a modelEval whose 'success' flag is false (with a
+	message) when the Jacobian is undefined for the given geometry.
+*/
+namespace PolarModels
+{
+//! Spatial distance: f = ||relPos||
+inline modelEval distance(const Eigen::Vector3d &relPos)
+{
+	const double r = relPos.norm();
+	if (isZero(r))
+		return {0.0, Eigen::RowVector3d::Zero(), false, "Relative position is zero, cannot evaluate Jacobian of distance function."};
+	return {r, relPos.transpose() / r, true, ""};
+}
+
+//! Horizontal (direction) angle, convention atan2(x, y)
+inline modelEval horizontalAngle(const Eigen::Vector3d &relPos)
+{
+	const double x = relPos(0);
+	const double y = relPos(1);
+	const double dist2 = x * x + y * y; // horizontal distance squared
+	const double angle = std::atan2(x, y);
+	if (isZero(dist2))
+		return {angle, Eigen::RowVector3d::Zero(), false, "Horizontal angle Jacobian undefined: (identical x/y coordinates)."};
+	Eigen::RowVector3d jac;
+	jac << y / dist2, -x / dist2, 0.0;
+	return {angle, jac, true, ""};
+}
+
+//! Zenith (vertical) angle measured from the local vertical: f = acos(z / ||relPos||)
+inline modelEval zenithAngle(const Eigen::Vector3d &relPos)
+{
+	const double r2 = relPos.squaredNorm();
+	if (isZero(r2))
+		return {0.0, Eigen::RowVector3d::Zero(), false, "Vertical angle undefined: relative position is zero."};
+	const double x = relPos(0);
+	const double y = relPos(1);
+	const double z = relPos(2);
+	const double r = std::sqrt(r2);
+	const double c = std::clamp(z / r, -1.0, 1.0); // clamp for numerical safety
+	const double angle = std::acos(c);
+	const double rho = std::sqrt(x * x + y * y);
+	if (isZero(rho))
+		return {angle, Eigen::RowVector3d::Zero(), false, "Vertical angle Jacobian undefined: horizontal projection is near zero."};
+	const double denom = rho * r2;
+	Eigen::RowVector3d jac;
+	jac << (x * z) / denom, (y * z) / denom, -rho / r2;
+	return {angle, jac, true, ""};
+}
+} // namespace PolarModels
 struct PolarContribInFrame
 {
 	TReal fModelPrediction; // evalualtion of the model function resulting from relatve position.

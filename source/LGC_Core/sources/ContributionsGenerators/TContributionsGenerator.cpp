@@ -206,15 +206,7 @@ DistMeasContrib TContributionsGenerator::getSpatialDistanceContrib(std::shared_p
 
 DistMeasContribFrame TContributionsGenerator::getSpatialDistanceContribInFrame(std::shared_ptr<TTSTN> station, const TLINE &dist)
 {
-	ModelAndJacobian distanceModel;
-	distanceModel.func = [](const Eigen::Vector3d &relPos) -> modelEval {
-		if (isZero(relPos.norm()))
-		{
-			return {0.0, Eigen::RowVector3d::Zero(), false, "Relative position is zero, cannot evaluate Jacobian of distance function."};
-		}
-		return {relPos.norm(), relPos.transpose() / relPos.norm(), true, ""};
-	};
-
+	ModelAndJacobian distanceModel{PolarModels::distance};
 	PolarContribInFrame spatialDistContribInFrame = getPolarContribInFrame(station, dist, distanceModel);
 
 	// distance correction
@@ -309,28 +301,7 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 
 AnglMeasContribFrame TContributionsGenerator::getHorAnglContribInFrame(std::shared_ptr<TTSTN> station, std::shared_ptr<TTSTN::TROM> rom, const TANGL &angl)
 {
-	ModelAndJacobian horAnglModel;
-	horAnglModel.func = [](const Eigen::Vector3d &relPos) -> modelEval {
-		const double x = relPos(0);
-		const double y = relPos(1);
-
-		// horizontal distance squared
-		const double dist2 = x * x + y * y;
-
-		// model value: note your convention is atan2(x, y)
-		const double angle = std::atan2(x, y);
-
-		if (isZero(dist2))
-		{
-			return {angle, Eigen::RowVector3d::Zero(), false, "Horizontal angle Jacobian undefined: (identical x/y coordinates)."};
-		}
-
-		Eigen::RowVector3d jac;
-		jac << y / dist2, -x / dist2, 0.0;
-
-		return {angle, jac, true, ""};
-	};
-
+	ModelAndJacobian horAnglModel{PolarModels::horizontalAngle};
 	PolarContribInFrame horAnglContribInFrame = getPolarContribInFrame(station, angl, horAnglModel);
 
 	// Calculated measurement value
@@ -428,39 +399,7 @@ AnglMeasContrib TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN
 
 AnglMeasContribFrame TContributionsGenerator::getZenDistContribInFrame(std::shared_ptr<TTSTN> station, const TZEND &zend)
 {
-	ModelAndJacobian vertAnglModel;
-	vertAnglModel.func = [](const Eigen::Vector3d &relPos) -> modelEval {
-		const double x = relPos(0);
-		const double y = relPos(1);
-		const double z = relPos(2);
-
-		const double r2 = relPos.squaredNorm();
-		if (isZero(r2))
-		{
-			return {0.0, Eigen::RowVector3d::Zero(), false, "Vertical angle undefined: relative position is zero."};
-		}
-
-		const double r = std::sqrt(r2);
-
-		// Clamp for numerical safety
-		double c = std::clamp(z / r, -1.0, 1.0);
-
-		const double angle = std::acos(c);
-
-		const double rho = std::sqrt(x * x + y * y);
-		if (isZero(rho))
-		{
-			return {angle, Eigen::RowVector3d::Zero(), false, "Vertical angle Jacobian undefined: horizontal projection is near zero."};
-		}
-
-		const double denom = rho * r2;
-
-		Eigen::RowVector3d jac;
-		jac << (x * z) / denom, (y * z) / denom, -rho / r2;
-
-		return {angle, jac, true, ""};
-	};
-
+	ModelAndJacobian vertAnglModel{PolarModels::zenithAngle};
 	PolarContribInFrame vertAnglContribInFrame = getPolarContribInFrame(station, zend, vertAnglModel);
 
 	TAngle calcMeas(vertAnglContribInFrame.fModelPrediction);
