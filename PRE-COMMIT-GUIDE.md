@@ -217,6 +217,9 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
   - IDE formatters (e.g. Visual Studio "Format Document") must also use v22.1.5 to avoid spurious diffs — see troubleshooting below
   - Uses project-specific style (tabs, 170 char limit, etc.)
   - Modifies files in-place
+- **autopep8**: Automatically formats Python code to conform to PEP 8
+  - Runs on committed `.py` files
+  - Modifies files in-place
 
 ### General Checks
 

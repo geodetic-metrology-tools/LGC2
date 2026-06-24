@@ -35,6 +35,12 @@ repos:
       - id: debug-statements
         exclude: '\.cpp$|\.h$'  # C++ files don't have Python debug statements
 
+  # Python formatting (PEP 8)
+  - repo: https://github.com/hhatto/autopep8
+    rev: v2.3.2
+    hooks:
+      - id: autopep8
+
   # CMake formatting (optional - uncomment if you want to enforce CMake formatting)
   # - repo: https://github.com/cheshirekow/cmake-format-precommit
   #   rev: v0.6.13
