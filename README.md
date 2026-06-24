@@ -40,6 +40,36 @@ Both **Windows** and **Linux** versions are provided at this link.
 
 ---
 
+## LGC2 as a Library — pyLGC
+
+LGC2 exposes its least-squares engine as a pre-built shared library for **Windows** and **Linux**, published on [CERN GitLab Releases](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/releases) alongside each release.
+
+### Python
+
+A `ctypes`-based Python wrapper (`pyLGC.py`) and its dependencies (`requirements.txt`) are included in the bundle:
+
+```python
+import pyLGC
+
+ev = pyLGC.Evaluator("myproject.lgc2")
+ev.evaluate()
+print(ev.getProblemDimensions())
+```
+
+### C / C++
+
+The bundle also ships `pyLGC_C.h` — a plain `extern "C"` header — for direct linking with no Python dependency.
+
+### MATLAB, Julia, R and other languages
+
+The native library can be loaded from any language with C FFI (MATLAB `loadlibrary`, Julia `ccall`, R `dyn.load`, etc.) using `pyLGC_C.h` as the interface definition.
+
+> Integration beyond Python has not been fully tested by the maintainers. If you use pyLGC from another language, feedback and contributions are welcome via [GitHub Issues](https://github.com/geodetic-metrology-tools/LGC2/issues).
+
+See [`source/pyLGC/README.md`](source/pyLGC/README.md) for full setup instructions, API reference, and examples.
+
+---
+
 ## GitHub vs GitLab Notice
 
 Historically, the **LGC2** project has been developed within **CERN’s GitLab environment** (`gitlab.cern.ch`).
