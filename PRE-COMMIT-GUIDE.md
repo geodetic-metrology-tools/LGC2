@@ -214,6 +214,9 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
 - **clang-format**: Automatically formats C++ code according to `.clang-format` configuration
   - Uses project-specific style (tabs, 170 char limit, etc.)
   - Modifies files in-place
+- **autopep8**: Automatically formats Python code to conform to PEP 8
+  - Runs on committed `.py` files
+  - Modifies files in-place
 
 ### General Checks
 
