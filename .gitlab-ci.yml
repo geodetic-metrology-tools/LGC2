@@ -106,6 +106,7 @@ linux_build_and_test:
         expire_in: 1 day
         paths:
             - build/pyLGC/libpyLGC_C.so
+            - source/pyLGC/tests/requirements.txt
 
 # Build and upload the LGC application
 linux_release:
@@ -131,10 +132,14 @@ linux_pyLGC_release:
     script:
         - cp build/pyLGC/libpyLGC_C.so libpyLGC_C.so
         - cp source/pyLGC/pyLGC.py pyLGC.py
+        - cp source/pyLGC/tests/requirements.txt requirements.txt
+        - cp source/pyLGC/pyLGC_C.h pyLGC_C.h
     artifacts:
         paths:
             - libpyLGC_C.so
             - pyLGC.py
+            - requirements.txt
+            - pyLGC_C.h
 
 ##################
 # WINDOWS BUILDS #
@@ -144,8 +149,10 @@ linux_pyLGC_release:
 windows64_build_and_test:
     extends: .windows64_build_and_test
     artifacts:
+        expire_in: 1 day
         paths:
             - build/pyLGC/Release/pyLGC_C.dll
+            - source/pyLGC/tests/requirements.txt
 
 # Build and upload the LGC application
 windows64_release:
@@ -168,13 +175,17 @@ windows64_pyLGC_release:
         - x64
         - c++
     rules:
-        - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[\w.+-]+$/
+        - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9a-zA-Z._+-]+$/'
     dependencies: ["windows64_build_and_test"]
     needs: ["windows64_build_and_test"]
     script:
         - cp build/pyLGC/Release/pyLGC_C.dll pyLGC_C.dll
         - cp source/pyLGC/pyLGC.py pyLGC.py
+        - cp source/pyLGC/tests/requirements.txt requirements.txt
+        - cp source/pyLGC/pyLGC_C.h pyLGC_C.h
     artifacts:
         paths:
             - pyLGC_C.dll
             - pyLGC.py
+            - requirements.txt
+            - pyLGC_C.h

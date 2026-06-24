@@ -1,6 +1,6 @@
 # pyLGC Development Guide
 
-This guide documents the workflow for building the `pyLGC_C` bindings from source and running the Python test suite on Windows.
+This guide documents the workflow for building the `pyLGC_C` bindings from source and running the Python test suite on Windows and Linux.
 
 ## Platform support
 
@@ -76,3 +76,93 @@ If you set up your own `uv` environment (see section 1), the alternative is:
 cd C:\susoft\LGC2\build\pyLGC\tests
 uv run pytest tests.py
 ```
+
+## 4. Using the pre-built release artifact
+
+If you do not want to build from source, pre-built artifacts are published on [CERN GitLab Releases](https://gitlab.cern.ch/apc/susofts/processing/LGC2/-/releases) by the CI pipeline for each release tag.
+
+Each release provides a flat bundle containing:
+
+| File | Windows | Linux |
+|------|---------|-------|
+| Native library | `pyLGC_C.dll` | `libpyLGC_C.so` |
+| Python wrapper | `pyLGC.py` | `pyLGC.py` |
+| Dependencies | `requirements.txt` | `requirements.txt` |
+
+### Setup
+
+1. Download and place all three files in the same directory.
+2. Install the Python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Make sure `pyLGC.py` and the native library are on your Python path (or in the working directory):
+   ```python
+   import sys
+   sys.path.insert(0, "/path/to/pyLGC/bundle")
+   import pyLGC
+   ```
+
+### Minimal usage example
+
+```python
+import pyLGC
+
+ev = pyLGC.Evaluator("myproject.lgc2")
+ev.evaluate()
+
+dims = ev.getProblemDimensions()
+print(f"Unknowns: {dims.UIndex}, Observations: {dims.OIndex}")
+
+params = ev.getEstimatedParameters()
+print("Estimated parameters:", params)
+
+# Access a named point or frame
+point = ev.getPoint("MY_POINT")
+print(point.getName(), point.getEstVector())
+```
+
+For full API documentation and extended examples, refer to the [pyLGC manual](doc/).
+
+## 5. Using from C/C++ (or other languages) _(untested)_
+
+The bundle also ships `pyLGC_C.h` — the plain C header. You can link against the DLL/SO directly from any language with C FFI, without Python.
+
+**Minimal C example:**
+```c
+#include "pyLGC_C.h"
+#include <stdio.h>
+
+int main(void) {
+    LGCEvaluator ev = lgcEvaluatorCreate("myproject.lgc2");
+    if (!ev) { fprintf(stderr, "%s\n", lgcGetLastError()); return 1; }
+
+    lgcEvaluatorEvaluate(ev);
+
+    int u, e, o, c;
+    lgcEvaluatorGetProblemDimensions(ev, &u, &e, &o, &c);
+    printf("Unknowns: %d, Observations: %d\n", u, o);
+
+    double *params = NULL; int n = 0;
+    lgcEvaluatorGetEstimatedParameters(ev, &params, &n);
+    lgcFreeDoubleArray(params);
+
+    lgcEvaluatorDestroy(ev);
+    return 0;
+}
+```
+
+**Memory management:** any `double**` or `int**` output parameter is heap-allocated by the library — free it with `lgcFreeDoubleArray` / `lgcFreeIntArray` after use.
+
+The same header works from MATLAB (`loadlibrary`), Julia (`ccall`), R, or any other runtime that can load a shared library.
+
+> Integration beyond Python has not been fully tested by the maintainers. If you use pyLGC from another language, feedback and contributions are welcome via [GitHub Issues](https://github.com/geodetic-metrology-tools/LGC2/issues).
+
+**R — loading the library (tested):**
+```r
+dyn.load("pyLGC_C.dll")  # or "libpyLGC_C.so" on Linux
+getNativeSymbolInfo("lgcEvaluatorCreate")  # symbol resolves correctly
+dyn.unload("pyLGC_C.dll")
+```
+
+> R's base FFI (`.C()`) cannot store or pass back opaque `void*` handles, which this API uses for `LGCEvaluator` and `LGCAdjObj`. Full integration requires `Rcpp` or a dedicated C wrapper.
