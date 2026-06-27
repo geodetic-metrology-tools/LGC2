@@ -825,8 +825,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId)
 	{
 		throw std::runtime_error("No point with Id " + pointId + " found");
 	}
-	TPositionVector result = paramRefs.POINTS.at(pointId).getEstimatedValue();
-	return toVectorXd(result);
+	return paramRefs.POINTS.at(pointId).getEstVector();
 }
 Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId, const std::string &destFrame)
 {
@@ -853,16 +852,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(const std::string &frameId)
 		throw std::runtime_error("No Frame with Id " + frameId + " found");
 	}
 
-	Eigen::VectorXd resultVector(7);
-	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tX;
-	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tY;
-	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstParam().tZ;
-	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstParam().omega;
-	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstParam().phi;
-	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstParam().kappa;
-	resultVector[6] = (double)paramRefs.FRAMES.at(frameId).getEstParam().scale;
-
-	return resultVector;
+	return paramRefs.FRAMES.at(frameId).getEstVector();
 }
 
 Eigen::VectorXd Moni::MoniImpl::getSagEstimate(const std::string &sagId)
@@ -882,16 +872,11 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(const std::string &frameId)
 		throw std::runtime_error("No Frame with Id " + frameId + " found");
 	}
 
+	const auto &f = paramRefs.FRAMES.at(frameId);
 	Eigen::VectorXd resultVector(7);
-	TAdjustableHelmertTransformation &aux = paramRefs.FRAMES.at(frameId);
-	resultVector[0] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(0);
-	resultVector[1] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(1);
-	resultVector[2] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionTransl(2);
-	resultVector[3] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(0);
-	resultVector[4] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(1);
-	resultVector[5] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionRot(2);
-	resultVector[6] = (double)paramRefs.FRAMES.at(frameId).getEstimatedPrecisionScale();
-
+	resultVector << f.getEstimatedPrecisionTransl(0), f.getEstimatedPrecisionTransl(1), f.getEstimatedPrecisionTransl(2),
+		f.getEstimatedPrecisionRot(0), f.getEstimatedPrecisionRot(1), f.getEstimatedPrecisionRot(2),
+		f.getEstimatedPrecisionScale();
 	return resultVector;
 }
 
