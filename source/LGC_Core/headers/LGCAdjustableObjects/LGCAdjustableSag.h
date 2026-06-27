@@ -95,6 +95,10 @@ public:
 	// set the value corresponding to an index
 	virtual void setValue(int idx, TReal value) override;
 
+	// set the estimated value of the sag parameter by parameter index (0,1,2,3 = ZSag, ZCurv, XSag, XCurv);
+	// works regardless of whether the parameter is fixed or free (sets fEstimatedValue directly)
+	void setEstValue(int idx, TReal value);
+
 	/*!
 		\brief Returns the number of unknowns for this sag element.
 	*/

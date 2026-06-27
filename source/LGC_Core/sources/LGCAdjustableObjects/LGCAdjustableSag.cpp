@@ -126,6 +126,26 @@ void LGCAdjustableSag::setValue(int idx, TReal value)
 		throw std::logic_error("Sag unknown index in range but not mapped to any parameter.");
 }
 
+void LGCAdjustableSag::setEstValue(int idx, TReal value)
+{
+	// 0,1,2,3 = ZSag, ZCurv, XSag, XCurv
+	switch (idx)
+	{
+	case 0:
+		fZSag.setEstValue(value);
+		break;
+	case 1:
+		fZCurv.setEstValue(value);
+		break;
+	case 2:
+		fXSag.setEstValue(value);
+		break;
+	case 3:
+		fXCurv.setEstValue(value);
+		break;
+	}
+}
+
 void LGCAdjustableSag::reInitialise()
 {
 	fZSag.reInitialise();

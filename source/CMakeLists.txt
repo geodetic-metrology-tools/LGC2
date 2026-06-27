@@ -75,6 +75,7 @@ include_directories (
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/Writers
 	${CMAKE_SOURCE_DIR}/LGC_Core/headers/LGCObjectWriters
 	${CMAKE_SOURCE_DIR}/LGC_Tests/headers
+	${CMAKE_SOURCE_DIR}/LGC_API/headers
 	${SURVEYLIB_ROOT}/source/Tools/headers
 	${SURVEYLIB_ROOT}/source/Logs
 	${SURVEYLIB_ROOT}/source/LSAlgorithms/headers/AdjustableObjects
@@ -105,6 +106,9 @@ ADD_SUBDIRECTORY(LGC_Tests)
 
 # Python C API bindings (plain shared library — no Python or pybind11 needed to build)
 ADD_SUBDIRECTORY(pyLGC)
+
+# Monitoring API (Moni) — shared library for real-time monitoring applications (FRAS)
+ADD_SUBDIRECTORY(LGC_API)
 
 # INSTALL for creation of the LGC2 installer
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/LGC_Core/sources/LGCProject/main.cpp)

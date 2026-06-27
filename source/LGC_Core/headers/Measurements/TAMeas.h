@@ -118,6 +118,9 @@ class TAMeas : public TStatusObject
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
 			MatrixIndex getLastEquationIndex() const { return fMeasIdx.fFirstEquationIndex + fMeasIdx.eqDim - 1; }
 
+			/// Returns LS-matrices observation index of the last observation of this measurement
+			MatrixIndex getLastObservationIndex() const { return fMeasIdx.fFirstObservationIndex + fMeasIdx.obsDim - 1; }
+
 			/// get observation vector
 			virtual Eigen::VectorXd getObsVector() const = 0;
 			virtual void setObsVector(const Eigen::VectorXd &) = 0;

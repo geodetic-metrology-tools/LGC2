@@ -12,6 +12,7 @@
 #include <UEOIndices.h>
 // LGC
 #include <map>
+#include <set>
 #include <Global.h>
 #include <LGCAdjustableObjectCollection.h>
 #include <TFileLogger.h>
@@ -252,6 +253,10 @@ public:
 
 	/// Number of unknowns, equations, observations and constraints.
 	UEOIndices fUEOIndices;
+
+	/// Masked parameter indices, managed globally (e.g. via the monitoring API). The corresponding
+	/// variables are held fixed (masked) during the least-squares adjustment.
+	std::set<int> fParameterMask;
 
 	/// Maps observation vector index to input file line number (built during index assignment)
 	std::map<int, int> fObsIndexToLineNumber;

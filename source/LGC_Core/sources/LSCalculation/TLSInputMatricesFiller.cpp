@@ -42,6 +42,9 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 		// Contribution generator transformations need to update the transformations it stores.
 		fPointTransformer.updateTransformations();
 
+		// communicate the masked parameters (frozen/fixed via the monitoring API) to the LS matrices
+		matrices->fMaskData.PIndices = projData->fParameterMask;
+
 		// LGC uses only parametric measurement models, so the B matrix is -Identity
 		fillOK &= matrices->setSecondDgnMtrxToMinusIdentity();
 
@@ -138,6 +141,9 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 			if (itTree.node->data->measurements.fPDOR.isInitialised())
 				addPDORContributions(itTree.node->data->measurements.fPDOR, matrices);
 		}
+
+		// Mask the rows of any deactivated observations (monitoring API) so they are excluded from the solve.
+		maskInactiveObservations(projData, matrices);
 	}
 	catch (std::exception const &excp)
 	{
@@ -167,6 +173,79 @@ void TLSInputMatricesFiller::initMatriceDimension(const TLGCData &projData, TLSI
 		throw std::runtime_error("Observation index in LS matrices is null.");
 
 	matrices->initMatrices(projData.fUEOIndices);
+}
+
+// Mask the equation/observation rows of a single measurement if it is inactive. The rows have already
+// been filled; masking excludes them from the solve while keeping the index numbering stable.
+template<typename Meas>
+inline void TLSInputMatricesFiller::updateMask(const Meas &meas, TLSInputMatrices *matrices)
+{
+	if (meas.isActive())
+		return;
+	for (int j = meas.getFirstEquationIndex(); j <= meas.getLastEquationIndex(); ++j)
+		matrices->fMaskData.EIndices.insert(j);
+	for (int j = meas.getFirstObservationIndex(); j <= meas.getLastObservationIndex(); ++j)
+		matrices->fMaskData.OIndices.insert(j);
+}
+
+// Walk every measurement in the project and mask the rows of any that are currently inactive
+// (e.g. deactivated through the monitoring API via setActivationStatus(id, false)).
+void TLSInputMatricesFiller::maskInactiveObservations(TLGCData *projData, TLSInputMatrices *matrices)
+{
+	for (TDataTreeIterator itTree = projData->getTree().begin(); itTree != projData->getTree().end(); itTree++)
+	{
+		auto &meas = itTree.node->data->measurements;
+		// Total station (TSTN) observations, grouped in ROMs
+		for (auto &itTSTN : meas.fTSTN)
+			for (auto &itROM : itTSTN->roms)
+			{
+				for (auto &m : itROM->measPLR3D) updateMask(m, matrices);
+				for (auto &m : itROM->measANGL) updateMask(m, matrices);
+				for (auto &m : itROM->measZEND) updateMask(m, matrices);
+				for (auto &m : itROM->measDIST) updateMask(m, matrices);
+				for (auto &m : itROM->measDHOR) updateMask(m, matrices);
+				for (auto &m : itROM->measECTH) updateMask(m, matrices);
+				for (auto &m : itROM->measECDIR) updateMask(m, matrices);
+			}
+		// Camera (CAM)
+		for (auto &itCAM : meas.fCAM)
+		{
+			for (auto &m : itCAM.measUVD) updateMask(m, matrices);
+			for (auto &m : itCAM.measUVEC) updateMask(m, matrices);
+		}
+		// EDM
+		for (auto &itEDM : meas.fEDM)
+			for (auto &m : itEDM.measDSPT) updateMask(m, matrices);
+		// Level
+		for (auto &itLEVEL : meas.fLEVEL)
+			for (auto &m : itLEVEL.measDLEV) updateMask(m, matrices);
+		// Scale (ECHO / ECVE / ECSP)
+		for (auto &itECHOrom : meas.fECHO)
+			for (auto &m : itECHOrom.measECHO) updateMask(m, matrices);
+		for (auto &itECVErom : meas.fECVE)
+			for (auto &m : itECVErom.measECVE) updateMask(m, matrices);
+		for (auto &itECSProm : meas.fECSP)
+			for (auto &m : itECSProm.measECSP) updateMask(m, matrices);
+		// Orientation (ORIE)
+		for (auto &itORIErom : meas.fORIE)
+			for (auto &m : itORIErom.measORIE) updateMask(m, matrices);
+		// Inclinometer (INCLY / ROLLY)
+		for (auto &itINCLYrom : meas.fINCLY)
+			for (auto &m : itINCLYrom.measINCLY) updateMask(m, matrices);
+		for (auto &itROLLYrom : meas.fROLLY)
+			for (auto &m : itROLLYrom.measROLLY) updateMask(m, matrices);
+		// Water / wire (ECWS / ECWI)
+		for (auto &itECWSrom : meas.fECWS)
+			for (auto &m : itECWSrom.measECWS) updateMask(m, matrices);
+		for (auto &itECWIrom : meas.fECWI)
+			for (auto &m : itECWIrom.measECWI) updateMask(m, matrices);
+		// Single-list measurements
+		for (auto &m : meas.fDVER) updateMask(m, matrices);
+		for (auto &m : meas.fRADI) updateMask(m, matrices);
+		for (auto &m : meas.fOBSXYZ) updateMask(m, matrices);
+		if (meas.fPDOR.isInitialised())
+			updateMask(meas.fPDOR, matrices);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

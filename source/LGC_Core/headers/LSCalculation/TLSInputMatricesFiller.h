@@ -77,6 +77,15 @@ private:
 	/// Initialise the dimensions of the input matrices from the project data.
 	void initMatriceDimension(const TLGCData &projData, TLSInputMatrices *matrices);
 
+	/// Mask the equation/observation rows of a single measurement if it is inactive (deactivated, e.g.
+	/// via the monitoring API). The rows are still filled; masking excludes them from the solve while
+	/// keeping the index numbering stable across adjustments.
+	template<typename Meas>
+	inline void updateMask(const Meas &meas, TLSInputMatrices *matrices);
+
+	/// Walk all measurements and mask the rows of any that are currently inactive.
+	void maskInactiveObservations(TLGCData *projData, TLSInputMatrices *matrices);
+
 	// fill in the parameter weight constraints
 	bool fillParameterWeights(TLGCData *projData, TLSInputMatrices *matrices);
 	// fill in the slave constraints
