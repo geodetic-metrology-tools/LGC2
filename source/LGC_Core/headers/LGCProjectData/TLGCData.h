@@ -12,6 +12,7 @@
 #include <UEOIndices.h>
 // LGC
 #include <map>
+#include <set>
 #include <Global.h>
 #include <LGCAdjustableObjectCollection.h>
 #include <TFileLogger.h>
@@ -253,8 +254,22 @@ public:
 	/// Number of unknowns, equations, observations and constraints.
 	UEOIndices fUEOIndices;
 
+	/// Masked parameter indices, managed globally (e.g. via the monitoring API). The corresponding
+	/// variables are held fixed (masked) during the least-squares adjustment.
+	std::set<int> fParameterMask;
+
 	/// Maps observation vector index to input file line number (built during index assignment)
 	std::map<int, int> fObsIndexToLineNumber;
+
+	/// When false, the observation (residual) covariance matrix Qvv and the reliability statistics
+	/// that depend on it are skipped during the adjustment. Callers that only need parameter
+	/// precisions (e.g. the monitoring API) can set this to false to save the bulk of the
+	/// variance-covariance cost. Defaults to true.
+	bool fComputeObsCovar = true;
+	/// Sets whether the observation (residual) covariance Qvv is computed during the adjustment.
+	void setComputeObsCovar(bool b) { fComputeObsCovar = b; }
+	/// Returns whether the observation (residual) covariance Qvv is computed during the adjustment.
+	bool getComputeObsCovar() const { return fComputeObsCovar; }
 
 
 	/// Sets the number of LS iterations.

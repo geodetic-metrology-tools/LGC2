@@ -46,6 +46,7 @@ set(tests_SOURCES
 	sources/testEREL.cpp
 	sources/testDLEV.cpp
 	sources/testSAG.cpp
+	sources/testAPI.cpp
 )
 
 set(tests_INPUT
@@ -74,11 +75,21 @@ set(tests_INPUT
 	headers/testDLEV.h
 	headers/testPOLAR.h
 	headers/testSAG.h
+	headers/testAPI.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
-target_link_libraries(LGC_Tests  LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
+# Ensure LGC_API (Monitoring) is built first, and copy its DLL next to the test executable
+add_dependencies(LGC_Tests LGC_API)
+
+add_custom_command(TARGET LGC_Tests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "$<TARGET_FILE:LGC_API>"
+    "$<TARGET_FILE_DIR:LGC_Tests>/$<TARGET_FILE_NAME:LGC_API>"
+)
+
+target_link_libraries(LGC_Tests  LGC_API LGC_Core LSAlgorithms ProjectFramework SpatialObjects Tools Plugins)
 
 add_test(
 	NAME LGC_Tests
@@ -90,7 +101,34 @@ add_test(
 set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFiles)
 file(GLOB COPY_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR}/*)
 
+# Also stage the Monitoring API test input files (testFilesAPI/) into test_files/
+set(TEST_FILE_DIR_API ${CMAKE_CURRENT_LIST_DIR}/testFilesAPI)
+file(GLOB ADDITIONAL_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR_API}/*)
+list(APPEND COPY_TESTFILES ${ADDITIONAL_TESTFILES})
+
+# NOTE: the file(COPY) below stages the test inputs at configure time into the
+# target's output dir (build/LGC_Tests/test_files). The previous
+# post_build_copy_dlls() call here produced a broken "cmake -E copy <dest>"
+# command under single-config generators with CMAKE_BUILD_TYPE=RelWithDebInfo
+# (its $<CONFIG:debug>/$<CONFIG:release> gen-expressions expand to nothing,
+# leaving no source argument), so it is intentionally dropped — file(COPY)
+# already places the files where the test executable expects them.
 foreach(test_file ${COPY_TESTFILES})
-	post_build_copy_dlls(LGC_Tests "${test_file}" "${test_file}" "test_files")
 	file(COPY "${test_file}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test_files")
 endforeach()
+
+# Multi-config generators (e.g. Visual Studio) run the test from a per-config
+# subdir: $<TARGET_FILE_DIR:LGC_Tests> == build/LGC_Tests/<CONFIG>, which is the
+# test's WORKING_DIRECTORY. The configure-time file(COPY) above lands in the
+# config-agnostic build/LGC_Tests/test_files, one level too high, so the inputs
+# are not found ("Cannot open file: test_files/..."). Mirror them next to the
+# executable at build time. CMAKE_CONFIGURATION_TYPES is empty for single-config
+# generators (Ninja/Makefiles), where the file(COPY) location is already correct.
+if(CMAKE_CONFIGURATION_TYPES)
+	add_custom_command(TARGET LGC_Tests POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		        "${CMAKE_CURRENT_BINARY_DIR}/test_files"
+		        "$<TARGET_FILE_DIR:LGC_Tests>/test_files"
+		COMMENT "Staging test_files next to LGC_Tests (multi-config generator)"
+	)
+endif()

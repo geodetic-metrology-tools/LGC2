@@ -25,6 +25,9 @@ public:
 	/// Sign of the observed uz component (+1 or -1), used to select the correct unit-sphere hemisphere
 	TReal signUz = 1.0;
 
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(2); s << this->target.sigmaX, this->target.sigmaY; return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaX = sigma(0); this->target.sigmaY = sigma(1); }
+
 	/// Constructor
 	TUVEC(const LGCAdjustablePoint &pos, TInstrumentData::TCAMD::TTarget tgt) : TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 	{

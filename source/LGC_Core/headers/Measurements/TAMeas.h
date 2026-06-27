@@ -15,6 +15,7 @@
 #include <UEOIndices.h>
 //LGC
 #include <TInstrumentData.h>
+#include <TVMeas.h>
 
 
 class LGCAdjustablePoint;
@@ -57,7 +58,7 @@ struct MeasIdx
 					of the observed target. May be set to int and supplied with 0 if no target is used.
 */
 template<typename TTarget>
-class TAMeas : public TStatusObject
+class TAMeas : public TVMeas
 {
     private:
         
@@ -118,9 +119,15 @@ class TAMeas : public TStatusObject
 			/// Get last equation index. This method must be implemented in  the derived classes, depending on the number of equations of the model.
 			MatrixIndex getLastEquationIndex() const { return fMeasIdx.fFirstEquationIndex + fMeasIdx.eqDim - 1; }
 
+			/// Returns LS-matrices observation index of the last observation of this measurement
+			MatrixIndex getLastObservationIndex() const { return fMeasIdx.fFirstObservationIndex + fMeasIdx.obsDim - 1; }
+
+			/// \see TVMeas::getObsId
+			const std::string &getObsId() const override { return obsID; }
+
 			/// get observation vector
-			virtual Eigen::VectorXd getObsVector() const = 0;
-			virtual void setObsVector(const Eigen::VectorXd &) = 0;
+			virtual Eigen::VectorXd getObsVector() const override = 0;
+			virtual void setObsVector(const Eigen::VectorXd &) override = 0;
 
 
 #if USE_SERIALIZER
@@ -228,6 +235,17 @@ class TAScalarMeas : public TAMeas<TTarget>
 			/// Returns residual of the observed angle
 			const TAngle& getAngleResidual(TEnumAngle id=kValue) const {
 				return anglesResiduals[id];
+			}
+
+			/// \see TVMeas::getResidualVector — angle residuals (radians) followed by distance residuals (metres).
+			Eigen::VectorXd getResidualVector() const override {
+				Eigen::VectorXd res(numAngles + numDistances);
+				int k = 0;
+				for (int i = 0; i < numAngles; ++i)
+					res(k++) = (double)anglesResiduals[i];
+				for (int i = 0; i < numDistances; ++i)
+					res(k++) = (double)distancesResiduals[i];
+				return res;
 			}
 		//@}
 
@@ -341,6 +359,13 @@ class TAVectorMeas : public TAMeas<TTarget>
 		/// Returns a residual of an Y component of observed vector
 		const TReal getYCompVectorResidual() const {
 			return YcompResidual;
+		}
+
+		/// \see TVMeas::getResidualVector — [x-component, y-component] residuals.
+		Eigen::VectorXd getResidualVector() const override {
+			Eigen::VectorXd res(2);
+			res << XcompResidual, YcompResidual;
+			return res;
 		}
 #if USE_SERIALIZER
 		virtual void serialize(ObjectSerializer &obj) const override;

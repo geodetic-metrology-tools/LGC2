@@ -107,6 +107,7 @@ linux_build_and_test:
         paths:
             - build/pyLGC/libpyLGC_C.so
             - source/pyLGC/tests/requirements.txt
+            - build/LGC_API/libLGC_API.so
 
 # Build and upload the LGC application
 linux_release:
@@ -153,6 +154,8 @@ windows64_build_and_test:
         paths:
             - build/pyLGC/Release/pyLGC_C.dll
             - source/pyLGC/tests/requirements.txt
+            - build/LGC_API/Release/LGC_API.dll
+            - build/LGC_API/Release/LGC_API.lib
 
 # Build and upload the LGC application
 windows64_release:
@@ -189,3 +192,60 @@ windows64_pyLGC_release:
             - pyLGC.py
             - requirements.txt
             - pyLGC_C.h
+
+##################
+# MONITORING BUNDLES (Python + C++) #
+##################
+# Self-contained "plug and play" bundles of the monitoring library, built on
+# every branch push. Download the latest build of a branch via the permanent
+# latest-artifacts permalink (no tag / release needed):
+#   <project>/-/jobs/artifacts/<branch>/download?job=linux_monitoring_library
+#   <project>/-/jobs/artifacts/<branch>/download?job=windows64_monitoring_library
+# Each bundle serves BOTH the Python ctypes wrapper and direct C/C++ linking
+# (one native library carries the C++ Monitor class and the moni* C ABI).
+
+linux_monitoring_library:
+    stage: release
+    image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
+    rules:
+        - if: '$CI_COMMIT_BRANCH'
+    dependencies: ["linux_build_and_test"]
+    needs: ["linux_build_and_test"]
+    script:
+        - mkdir -p monitoring_library
+        - cp build/LGC_API/libLGC_API.so            monitoring_library/
+        - cp source/LGC_API/python/pyMonitoring.py  monitoring_library/
+        - cp source/LGC_API/python/tests/requirements.txt monitoring_library/
+        - cp source/LGC_API/headers/Monitor.h    monitoring_library/
+        - cp source/LGC_API/headers/pyMonitoring_C.h monitoring_library/
+        - cp source/LGC_API/BUNDLE_README.md        monitoring_library/README.md
+    artifacts:
+        name: "monitoring_library-linux-x86_64"
+        expire_in: never
+        paths:
+            - monitoring_library/
+
+windows64_monitoring_library:
+    stage: release
+    tags:
+        - windows
+        - x64
+        - c++
+    rules:
+        - if: '$CI_COMMIT_BRANCH'
+    dependencies: ["windows64_build_and_test"]
+    needs: ["windows64_build_and_test"]
+    script:
+        - mkdir monitoring_library
+        - cp build/LGC_API/Release/LGC_API.dll       monitoring_library/
+        - cp build/LGC_API/Release/LGC_API.lib       monitoring_library/
+        - cp source/LGC_API/python/pyMonitoring.py   monitoring_library/
+        - cp source/LGC_API/python/tests/requirements.txt monitoring_library/
+        - cp source/LGC_API/headers/Monitor.h     monitoring_library/
+        - cp source/LGC_API/headers/pyMonitoring_C.h monitoring_library/
+        - cp source/LGC_API/BUNDLE_README.md         monitoring_library/README.md
+    artifacts:
+        name: "monitoring_library-windows-x64"
+        expire_in: never
+        paths:
+            - monitoring_library/
