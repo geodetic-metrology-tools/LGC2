@@ -40,6 +40,8 @@ enum EPLR3DAngles
 class TPLR3D : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ESingleValue, 1, EPLR3DAngles, 2>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(3); s << this->target.sigmaAngl.getRadiansValue(), this->target.sigmaZenD.getRadiansValue(), this->target.sigmaDist.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaAngl.setRadiansValue(sigma(0)); this->target.sigmaZenD.setRadiansValue(sigma(1)); this->target.sigmaDist.setMetresValue(sigma(2)); }
 	/// See TAScalarMeas
 	TPLR3D(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt);
 
@@ -82,6 +84,8 @@ public:
 class TANGL : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaAngl.getRadiansValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaAngl.setRadiansValue(sigma(0)); }
 	/// See TAScalarMeas
 	TANGL(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt) :
 		TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt), fAllFixedV0(TAngle(NO_VALf))
@@ -106,6 +110,8 @@ public:
 class TZEND : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaZenD.getRadiansValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaZenD.setRadiansValue(sigma(0)); }
 	/// See TAScalarMeas
 	TZEND(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt) :
 		TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>(pos, tgt), fAllFixedHi(NO_VALf)
@@ -130,6 +136,8 @@ public:
 class TLINE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaDist.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaDist.setMetresValue(sigma(0)); }
 	/// See TAScalarMeas
 	TLINE(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt);
 
@@ -158,6 +166,8 @@ public:
 class TECTH : public TAScalarMeas<TInstrumentData::TSCALE>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaD.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaD.setMetresValue(sigma(0)); }
 	/// Observed horizontal angle defining the reference plane
 	TAngle obsHorAngle;
 
@@ -187,6 +197,8 @@ public:
 class TECDIR : public TAScalarMeas<TInstrumentData::TSCALE>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaD.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaD.setMetresValue(sigma(0)); }
 	/// Observed horizontal angle defining the reference plane
 	TAngle obsHorAngle;
 	/// Observed vertical angle defining the reference plane
@@ -216,6 +228,8 @@ public:
 class TECSP : public TAScalarMeas<TInstrumentData::TSCALE>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaD.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaD.setMetresValue(sigma(0)); }
 	/*!@name Constructors */
 	//@{
 	TECSP(const LGCAdjustablePoint &stationedPoint, TInstrumentData::TSCALE scaleInstr);
@@ -238,6 +252,8 @@ public:
 class TDSPT : public TAScalarMeas<TInstrumentData::TEDM::TTarget>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaDSpt.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaDSpt.setMetresValue(sigma(0)); }
 	/*!@name Constructors */
 	//@{
 	TDSPT(const LGCAdjustablePoint &pos, TInstrumentData::TEDM::TTarget tgt) :
@@ -271,6 +287,8 @@ public:
 class TECHO : public TAScalarMeas<TInstrumentData::TSCALE>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaD.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaD.setMetresValue(sigma(0)); }
 	/*!@name Constructors */
 	//@{
 	TECHO(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
@@ -292,6 +310,8 @@ public:
 class TECVE : public TAScalarMeas<TInstrumentData::TSCALE>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaD.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaD.setMetresValue(sigma(0)); }
 	/*!@name Constructors */
 	//@{
 	TECVE(const LGCAdjustablePoint &pos, TInstrumentData::TSCALE instr) : TAScalarMeas<TInstrumentData::TSCALE>(pos, instr) {}
@@ -315,6 +335,8 @@ public:
 class TDVER : public TAScalarMeas<int>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->getObservedStDev().getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->setObservedStDev(TLength(sigma(0))); }
 	/// Pointer to the first point
 	const LGCAdjustablePoint *station;
 
@@ -363,6 +385,8 @@ private:
 class TDLEV : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaD.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaD.setMetresValue(sigma(0)); }
 	/// Nested class of TDLEV for an optional DHOR measurement
 	class TDHOR : public TAScalarMeas<TInstrumentData::TLEVEL::TTarget>
 	{
@@ -410,6 +434,8 @@ public:
 class TORIE : public TAScalarMeas<TInstrumentData::TPOLAR::TTarget, ENoValues, 0, ESingleValue, 1>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaAngl.getRadiansValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaAngl.setRadiansValue(sigma(0)); }
 	/*!@name Constructor*/
 	//@{
 	TORIE(const LGCAdjustablePoint &pos, TInstrumentData::TPOLAR::TTarget tgt) : TAScalarMeas(pos, tgt) {}
@@ -430,6 +456,8 @@ public:
 class TRADI : public TAMeas<int>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->getObservedStDev().getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->setObservedStDev(TLength(sigma(0))); }
 	/// Pointer to the first point
 	const LGCAdjustablePoint *station;
 
@@ -469,6 +497,8 @@ public:
 	// radi is seen as a "constraint"
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { setAngleCnstr(TAngle(obsVect(0))); }
 	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getAngleCnstr().getRadiansValue()); }
+	/// RADI is not a real observation; it has no residual vector.
+	virtual Eigen::VectorXd getResidualVector() const override { return Eigen::VectorXd(); }
 #if USE_SERIALIZER
 	// Inherited via Serializable
 	virtual void serialize(ObjectSerializer &obj) const;
@@ -533,6 +563,7 @@ public:
 	//@}
 	virtual void setObsVector(const Eigen::VectorXd &obsVect) override { fbearing = TAngle(obsVect(0)); }
 	virtual Eigen::VectorXd getObsVector() const override { return Eigen::VectorXd::Constant(1, getBearing().getRadiansValue()); }
+	virtual Eigen::VectorXd getResidualVector() const override { return Eigen::VectorXd(); }
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -555,6 +586,8 @@ private:
 class TOBSXYZ : public TAMeas<int>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(3); s << getXObservedStDev().getMetresValue(), getYObservedStDev().getMetresValue(), getZObservedStDev().getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { setXObservedStDev(TLength(sigma(0))); setYObservedStDev(TLength(sigma(1))); setZObservedStDev(TLength(sigma(2))); }
 	/// Pointer to the point
 	const LGCAdjustablePoint *station;
 	// Position of the point in the subframe (= observation)
@@ -598,6 +631,12 @@ public:
 		result << obsValue.getX().getMetresValue(), obsValue.getY().getMetresValue(), obsValue.getZ().getMetresValue();
 		return result;
 	}
+	virtual Eigen::VectorXd getResidualVector() const override
+	{
+		Eigen::VectorXd result(3);
+		result << getXResidual().getMetresValue(), getYResidual().getMetresValue(), getZResidual().getMetresValue();
+		return result;
+	}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -623,6 +662,8 @@ private:
 class TINCLY : public TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaAngl.getRadiansValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaAngl.setRadiansValue(sigma(0)); }
 	/*!@name Constructors */
 	//@{
 
@@ -648,6 +689,8 @@ public:
 class TROLLY : public TAScalarMeas<TInstrumentData::TINCL, ENoValues, 0, ESingleValue, 1>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaAngl.getRadiansValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaAngl.setRadiansValue(sigma(0)); }
 	/*!@name Constructors */
 	//@{
 
@@ -670,6 +713,8 @@ public:
 class TECWS : public TAScalarMeas<TInstrumentData::THLSR>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(1); s << this->target.sigmaDist.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaDist.setMetresValue(sigma(0)); }
 	/*!@name Constructors */
 	//@{
 	TECWS(const LGCAdjustablePoint &station, TInstrumentData::THLSR instr, TLength obsVal) : TAScalarMeas<TInstrumentData::THLSR>(station, instr, obsVal) {}
@@ -702,6 +747,8 @@ enum EECWIDistances
 class TECWI : public TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>
 {
 public:
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(2); s << this->target.sigmaX.getMetresValue(), this->target.sigmaZ.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaX.setMetresValue(sigma(0)); this->target.sigmaZ.setMetresValue(sigma(1)); }
 	/*!@name Constructors */
 	//@{
 	TECWI(const LGCAdjustablePoint &station, TInstrumentData::TWPSR instr) : TAScalarMeas<TInstrumentData::TWPSR, EECWIDistances, 2, ENoValues, 0>(station, instr)

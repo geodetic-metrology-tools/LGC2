@@ -25,6 +25,9 @@ public:
 	/// Sign of the observed uz component (+1 or -1), used to select the correct unit-sphere hemisphere
 	TReal signUz = 1.0;
 
+	virtual Eigen::VectorXd getObsSigmaVector() const override { Eigen::VectorXd s(3); s << this->target.sigmaX, this->target.sigmaY, this->target.sigmaDist.getMetresValue(); return s; }
+	virtual void setObsSigmaVector(const Eigen::VectorXd &sigma) override { this->target.sigmaX = sigma(0); this->target.sigmaY = sigma(1); this->target.sigmaDist.setMetresValue(sigma(2)); }
+
 	TUVD(const LGCAdjustablePoint &pos, TInstrumentData::TCAMD::TTarget tgt) : TAVectorMeas<TInstrumentData::TCAMD::TTarget>(pos, tgt)
 	{
 		fMeasIdx.eqDim = 3;
@@ -56,6 +59,12 @@ public:
 	{
 		Eigen::VectorXd result(3);
 		result << getVectorValue().getX().getMetresValue(), getVectorValue().getY().getMetresValue(), getDistance().getMetresValue();
+		return result;
+	}
+	virtual Eigen::VectorXd getResidualVector() const override
+	{
+		Eigen::VectorXd result(3);
+		result << getXCompVectorResidual(), getYCompVectorResidual(), getDistanceResidual().getMetresValue();
 		return result;
 	}
 

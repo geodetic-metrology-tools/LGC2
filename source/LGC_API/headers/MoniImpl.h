@@ -106,7 +106,7 @@ private:
 	void initialize();
 	void createParameterReferences();
 	void createMeasurementReferences();
-	TStatusObject &getStatusObject(const std::string &obsId);
+	TVMeas &getMeasurement(const std::string &id);
 
 	// containing measurement configuration, observations, estimates
 	std::shared_ptr<TLGCData> project;
@@ -120,40 +120,8 @@ private:
 
 	struct
 	{
-		// the measurement types
-		std::unordered_map<std::string, std::string> types;
-		// rather maps to one class higher (TScalar, TPosition??)
-		// Polar type
-		std::unordered_map<std::string, TANGL &> ANGL;
-		std::unordered_map<std::string, TZEND &> ZEND;
-		std::unordered_map<std::string, TLINE &> DIST;
-		std::unordered_map<std::string, TECTH &> ECTH;
-		std::unordered_map<std::string, TECDIR &> ECDIR;
-		std::unordered_map<std::string, TLINE &> DHOR;
-		std::unordered_map<std::string, TPLR3D &> PLR3D;
-		std::unordered_map<std::string, TORIE &> ORIE;
-		// CAMD type
-		std::unordered_map<std::string, TUVEC &> UVEC;
-		std::unordered_map<std::string, TUVD &> UVD;
-		// EDM type
-		std::unordered_map<std::string, TDSPT &> DSPT;
-		// LEVEL type, what about RefPt and RefPt+DHOR config?
-		std::unordered_map<std::string, TDLEV &> DLEV;
-		// SCALE Type
-		std::unordered_map<std::string, TECHO &> ECHO;
-		std::unordered_map<std::string, TECSP &> ECSP;
-		std::unordered_map<std::string, TECVE &> ECVE;
-		// INCL Type
-		std::unordered_map<std::string, TINCLY &> INCLY;
-		std::unordered_map<std::string, TROLLY &> ROLLY;
-		// HLSR Type
-		std::unordered_map<std::string, TECWS &> ECWS;
-		// WPSR Type
-		std::unordered_map<std::string, TECWI &> ECWI;
-		// "No" type
-		std::unordered_map<std::string, TDVER &> DVER;
-		std::unordered_map<std::string, TRADI &> RADI;
-		std::unordered_map<std::string, TOBSXYZ &> OBSXYZ;
+		// single polymorphic handle to every measurement, keyed by observation id
+		std::unordered_map<std::string, TVMeas &> meas;
 	} measRefs;
 
 	struct
