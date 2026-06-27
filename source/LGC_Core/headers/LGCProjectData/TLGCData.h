@@ -261,6 +261,16 @@ public:
 	/// Maps observation vector index to input file line number (built during index assignment)
 	std::map<int, int> fObsIndexToLineNumber;
 
+	/// When false, the observation (residual) covariance matrix Qvv and the reliability statistics
+	/// that depend on it are skipped during the adjustment. Callers that only need parameter
+	/// precisions (e.g. the monitoring API) can set this to false to save the bulk of the
+	/// variance-covariance cost. Defaults to true.
+	bool fComputeObsCovar = true;
+	/// Sets whether the observation (residual) covariance Qvv is computed during the adjustment.
+	void setComputeObsCovar(bool b) { fComputeObsCovar = b; }
+	/// Returns whether the observation (residual) covariance Qvv is computed during the adjustment.
+	bool getComputeObsCovar() const { return fComputeObsCovar; }
+
 
 	/// Sets the number of LS iterations.
 	void setNumberOfLSIterations(int noi) { fLSRelatedInfo.fNumberOfLSIterations = noi; }

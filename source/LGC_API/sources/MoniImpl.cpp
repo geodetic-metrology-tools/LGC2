@@ -721,6 +721,9 @@ Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(const std::string &id)
 bool Moni::MoniImpl::adjust()
 {
 	Behavior successCalculation;
+	// Monitoring only needs parameter precisions, not the observation covariance Qvv or the
+	// reliability statistics derived from it - skip them to save the bulk of the var-covar cost.
+	project->setComputeObsCovar(false);
 	successCalculation = algorithm->run(*project.get(), 80);
 	if (successCalculation)
 	{

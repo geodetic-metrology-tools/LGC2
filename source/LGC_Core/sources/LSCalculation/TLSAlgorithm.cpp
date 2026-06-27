@@ -178,7 +178,10 @@ Behavior TLSAlgorithm::computeStatisticsAtCurrentState(TLGCData *data, TLSInputM
 
 bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrices *inputMtr, TALSComputer *computer)
 {
-	if (!computer->calcResidusAndVarCovMatrix(inputMtr, resultMatrices.get()))
+	// Callers (e.g. the monitoring API) may opt out of the observation covariance Qvv and the
+	// reliability statistics that depend on it, which is the bulk of this routine's cost.
+	bool computeObsCovar = data->getComputeObsCovar();
+	if (!computer->calcResidusAndVarCovMatrix(inputMtr, resultMatrices.get(), computeObsCovar))
 	{
 		logWarning() << "Residual errors and their related variance-covariance matrix could not be estimated!";
 		return false;
@@ -207,7 +210,7 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 	data->setS0APosteriori(S0);
 	data->setChiS0Limits(resultMatrices->getSigmaZeroLowLimit(), resultMatrices->getSigmaZeroUpLimit());
 
-	if ((data->fUEOIndices.UIndex != 0) && data->getConfig().faut.isActive())
+	if (computeObsCovar && (data->fUEOIndices.UIndex != 0) && data->getConfig().faut.isActive())
 	{
 		logDebug() << "Computes statistics (Z, W, T, G, NABLA and DELTY)";
 
