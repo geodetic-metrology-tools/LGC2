@@ -99,9 +99,6 @@ public:
 	waterRom getECWSData(const std::string &ecwsRomName);
 	wireRom getECWIData(const std::string &ecwiRomName);
 
-	// get Meas IDs
-	std::vector<std::string> getECWSMeasIds();
-
 private:
 	void initialize();
 	void createParameterReferences();

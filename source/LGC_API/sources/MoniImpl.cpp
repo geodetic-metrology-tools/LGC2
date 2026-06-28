@@ -167,11 +167,6 @@ DECLSPEC Eigen::VectorXd Moni::getObsSigma(const std::string &obsId)
 	return pimpl_->getObsSigma(obsId);
 }
 
-// get Meas IDs
-std::vector<std::string> Moni::getECWSMeasIds()
-{
-	return pimpl_->getECWSMeasIds();
-}
 Eigen::VectorXd Moni::getMeas(const std::string &id)
 {
 	return pimpl_->getMeas(id);
@@ -736,14 +731,6 @@ bool Moni::MoniImpl::adjust()
 	return estimationStatus;
 }
 
-std::vector<std::string> Moni::MoniImpl::getECWSMeasIds()
-{
-	std::vector<std::string> theIds;
-	for (auto &romPair : romRefs.ecwsRoms)
-		for (auto &m : romPair.second.measECWS)
-			theIds.push_back(m.obsID);
-	return theIds;
-}
 Eigen::VectorXd Moni::MoniImpl::getObsSigma(const std::string &id)
 {
 	return getMeasurement(id).getObsSigmaVector();

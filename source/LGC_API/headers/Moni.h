@@ -87,8 +87,6 @@ public:
 	DECLSPEC Eigen::VectorXd getPointEstimatePrec(const std::string &pointName, const std::string &frameName);
 	DECLSPEC Eigen::VectorXd getFrameEstimatePrec(const std::string &);
 	DECLSPEC Eigen::VectorXd getSagEstimatePrec(const std::string &);
-	// get Meas IDs
-	DECLSPEC std::vector<std::string> getECWSMeasIds();
 	// get measurement
 	DECLSPEC Eigen::VectorXd getMeas(const std::string &id);
 	// get estimated residual
