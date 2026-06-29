@@ -80,7 +80,7 @@ set(tests_INPUT
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})
 
-# Ensure LGC_API (Moni) is built first, and copy its DLL next to the test executable
+# Ensure LGC_API (Monitoring) is built first, and copy its DLL next to the test executable
 add_dependencies(LGC_Tests LGC_API)
 
 add_custom_command(TARGET LGC_Tests POST_BUILD
@@ -101,7 +101,7 @@ add_test(
 set(TEST_FILE_DIR ${CMAKE_CURRENT_LIST_DIR}/testFiles)
 file(GLOB COPY_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR}/*)
 
-# Also stage the Moni API test input files (testFilesAPI/) into test_files/
+# Also stage the Monitoring API test input files (testFilesAPI/) into test_files/
 set(TEST_FILE_DIR_API ${CMAKE_CURRENT_LIST_DIR}/testFilesAPI)
 file(GLOB ADDITIONAL_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR_API}/*)
 list(APPEND COPY_TESTFILES ${ADDITIONAL_TESTFILES})

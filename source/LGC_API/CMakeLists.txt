@@ -9,14 +9,18 @@ SET(API_INCLUDE_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/headers/)
 SET(API_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources)
 					
 # Create a variable containing all .h files:
-set(API_HEADERS 	
-	${API_INCLUDE_PATH}/Moni.h
-	${API_INCLUDE_PATH}/MoniImpl.h
+set(API_HEADERS
+	${API_INCLUDE_PATH}/Monitoring.h
+	${API_INCLUDE_PATH}/MonitoringImpl.h
+	${API_INCLUDE_PATH}/pyMonitoring_C.h
 )
 
 # Create a variable containing all .cpp files:
 set(API_SOURCES
-	${API_SOURCES_PATH}/MoniImpl.cpp
+	${API_SOURCES_PATH}/MonitoringImpl.cpp
+	# Flat C ABI exported alongside the C++ Monitoring class, so a single
+	# LGC_API.dll serves both C++ consumers and the ctypes Python wrapper.
+	${API_SOURCES_PATH}/pyMonitoring_C.cpp
 )
 
 # Define VS folders:
@@ -28,6 +32,9 @@ source_group("\\Sources" FILES ${API_CPP})
 
 # Create a dynamic library from sources:
 add_library(${PROJECT_NAME} SHARED ${API_HEADERS} ${API_SOURCES})
+
+# Export the flat C ABI (moni* functions) from this DLL as well.
+target_compile_definitions(${PROJECT_NAME} PRIVATE PYMONITORING_C_EXPORTS)
 
 target_link_libraries(${PROJECT_NAME}
 	LGC_Core
@@ -52,5 +59,9 @@ endif()
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
 endif()
+
+# Python C-ABI bindings for the monitoring API (plain shared library — no
+# Python or pybind11 needed to build). Mirrors source/pyLGC.
+ADD_SUBDIRECTORY(python)
 
 

@@ -1,6 +1,6 @@
 
-#ifndef MONI
-#define MONI
+#ifndef MONITORING
+#define MONITORING
 
 #include <memory>
 #include <string>
@@ -37,15 +37,15 @@ struct wireRom
 	wireRom(const std::string &name, const Eigen::VectorXd &vals, const Eigen::VectorXd &sigmas) : romName(name), estimate(vals), prec(sigmas) {}
 };
 
-class Moni
+class Monitoring
 {
 public:
-	DECLSPEC Moni(const std::string &inputFilePath);
-	DECLSPEC ~Moni();
+	DECLSPEC Monitoring(const std::string &inputFilePath);
+	DECLSPEC ~Monitoring();
 	// reset the Monitoring object to a freshly constructed object
 	DECLSPEC void reset(); 
 
-	// DECLSPEC void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
+	// DECLSPEC void Monitoring::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
 	//  write the results from the current estimation in a json file with timestamp
 
 #if USE_SERIALIZER
@@ -104,9 +104,9 @@ public:
 	DECLSPEC wireRom getECWIData(const std::string &ecwiRomName);
 
 private:
-	class MoniImpl;
+	class MonitoringImpl;
 	std::string fFilePath; // needed for the reset method
-	std::unique_ptr<MoniImpl> pimpl_;
+	std::unique_ptr<MonitoringImpl> pimpl_;
 };
 
 #endif

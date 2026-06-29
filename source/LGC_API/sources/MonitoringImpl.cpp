@@ -1,8 +1,8 @@
-#include "MoniImpl.h"
+#include "MonitoringImpl.h"
 
 #include <iostream>
 
-#include "Moni.h"
+#include "Monitoring.h"
 #include "TAStreamFormatter.h"
 
 template<typename AdjustableObject>
@@ -14,189 +14,189 @@ bool isFreeVar(const AdjustableObject &adjObj, int idx)
 
 
 // constructor
-Moni::Moni(const std::string &inputFilePath) : pimpl_(std::make_unique<MoniImpl>(inputFilePath)), fFilePath(inputFilePath)
+Monitoring::Monitoring(const std::string &inputFilePath) : pimpl_(std::make_unique<MonitoringImpl>(inputFilePath)), fFilePath(inputFilePath)
 {
 }
-Moni::~Moni() = default;
+Monitoring::~Monitoring() = default;
 
-DECLSPEC void Moni::reset()
+DECLSPEC void Monitoring::reset()
 {
 	// full internal reset, calling implementation constructor, assuming initialization fiole still exists
-	pimpl_ = std::make_unique<MoniImpl>(fFilePath);
+	pimpl_ = std::make_unique<MonitoringImpl>(fFilePath);
 }
 
-// void Moni::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+// void Monitoring::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
 
 #if USE_SERIALIZER
-void Moni::writeResultFile()
+void Monitoring::writeResultFile()
 {
 	pimpl_->writeResultFile();
 }
 #endif
 
-void Moni::writeLGCInputFile()
+void Monitoring::writeLGCInputFile()
 {
 	pimpl_->writeLGCInputFile();
 }
 
-void Moni::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
+void Monitoring::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
 {
 	pimpl_->updateMeas(id, measurementVector);
 }
 
-void Moni::setActivationStatus(const std::string &id, bool status)
+void Monitoring::setActivationStatus(const std::string &id, bool status)
 {
 	pimpl_->setActivationStatus(id, status);
 }
 
-DECLSPEC bool Moni::getActivationStatus(const std::string &id)
+DECLSPEC bool Monitoring::getActivationStatus(const std::string &id)
 {
 	return pimpl_->getActivationStatus(id);
 }
 
-void Moni::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
+void Monitoring::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
 {
 	pimpl_->setObsSigma(id, sigma);
 }
 
-void Moni::setFixedFrameParameter(const std::string &frameName, int idx, double val)
+void Monitoring::setFixedFrameParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->setFixedFrameParameter(frameName, idx, val);
 }
-void Moni::setFixedPointParameter(const std::string &frameName, int idx, double val)
+void Monitoring::setFixedPointParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->setFixedPointParameter(frameName, idx, val);
 }
 
-void Moni::setFixedSagParameter(const std::string &sagName, int idx, double val)
+void Monitoring::setFixedSagParameter(const std::string &sagName, int idx, double val)
 {
 	pimpl_->setFixedSagParameter(sagName, idx, val);
 }
 
-void Moni::freezeFrameParameter(const std::string &frameName, int idx, double val)
+void Monitoring::freezeFrameParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->freezeFrameParameter(frameName, idx, val);
 }
 
-void Moni::unfreezeFrameParameter(const std::string &frameName, int idx)
+void Monitoring::unfreezeFrameParameter(const std::string &frameName, int idx)
 {
 	pimpl_->unfreezeFrameParameter(frameName, idx);
 }
-void Moni::freezePointParameter(const std::string &pointName, int idx, double val)
+void Monitoring::freezePointParameter(const std::string &pointName, int idx, double val)
 {
 	pimpl_->freezePointParameter(pointName, idx, val);
 }
 
-void Moni::freezeSagParameter(const std::string &sagName, int idx, double val)
+void Monitoring::freezeSagParameter(const std::string &sagName, int idx, double val)
 {
 	pimpl_->freezeSagParameter(sagName, idx, val);
 }
 
-void Moni::unfreezePointParameter(const std::string &pointName, int idx)
+void Monitoring::unfreezePointParameter(const std::string &pointName, int idx)
 {
 	pimpl_->unfreezePointParameter(pointName, idx);
 }
 
-void Moni::unfreezeSagParameter(const std::string &sagName, int idx)
+void Monitoring::unfreezeSagParameter(const std::string &sagName, int idx)
 {
 	pimpl_->unfreezeSagParameter(sagName, idx);
 }
 
 // triggering the adjustment calculation
-bool Moni::adjust()
+bool Monitoring::adjust()
 {
 	return pimpl_->adjust();
 }
-bool Moni::getStatus()
+bool Monitoring::getStatus()
 {
 	return pimpl_->getStatus();
 }
 // get estimate of point
-Eigen::VectorXd Moni::getPointEstimate(const std::string &pointId)
+Eigen::VectorXd Monitoring::getPointEstimate(const std::string &pointId)
 {
 	return pimpl_->getPointEstimate(pointId);
 }
 // get estimate of frame
-Eigen::VectorXd Moni::getFrameEstimate(const std::string &frameId)
+Eigen::VectorXd Monitoring::getFrameEstimate(const std::string &frameId)
 {
 	return pimpl_->getFrameEstimate(frameId);
 }
-Eigen::VectorXd Moni::getSagEstimate(const std::string &sagId)
+Eigen::VectorXd Monitoring::getSagEstimate(const std::string &sagId)
 {
 	return pimpl_->getSagEstimate(sagId);
 }
-Eigen::VectorXd Moni::getFrameEstimatePrec(const std::string &frameId)
+Eigen::VectorXd Monitoring::getFrameEstimatePrec(const std::string &frameId)
 {
 	return pimpl_->getFrameEstimatePrec(frameId);
 }
 
-Eigen::VectorXd Moni::getSagEstimatePrec(const std::string &sagId)
+Eigen::VectorXd Monitoring::getSagEstimatePrec(const std::string &sagId)
 {
 	return pimpl_->getSagEstimatePrec(sagId);
 }
 
 // get estimate of point in subframe
-Eigen::VectorXd Moni::getPointEstimate(const std::string &id, const std::string &frameName)
+Eigen::VectorXd Monitoring::getPointEstimate(const std::string &id, const std::string &frameName)
 {
 	return pimpl_->getPointEstimate(id, frameName);
 }
 // get diagonal elements of covariances of the estimated parameters
-Eigen::VectorXd Moni::getPointEstimatePrec(const std::string &id)
+Eigen::VectorXd Monitoring::getPointEstimatePrec(const std::string &id)
 {
 	return pimpl_->getPointEstimatePrec(id);
 }
 // get diagonal elements of covariances of the estimated parameters transformed to a subframe
-Eigen::VectorXd Moni::getPointEstimatePrec(const std::string &id, const std::string &frameName)
+Eigen::VectorXd Monitoring::getPointEstimatePrec(const std::string &id, const std::string &frameName)
 {
 	return pimpl_->getPointEstimatePrec(id, frameName);
 }
 // get estimated residual
-Eigen::VectorXd Moni::getEstimateResidual(const std::string &obsId)
+Eigen::VectorXd Monitoring::getEstimateResidual(const std::string &obsId)
 {
 	return pimpl_->getEstimateResidual(obsId);
 }
 
 // get calculated measurement
-Eigen::VectorXd Moni::getCalcMeas(const std::string &obsId)
+Eigen::VectorXd Monitoring::getCalcMeas(const std::string &obsId)
 {
 	return pimpl_->getCalcMeas(obsId);
 }
 
-DECLSPEC Eigen::VectorXd Moni::getObsSigma(const std::string &obsId)
+DECLSPEC Eigen::VectorXd Monitoring::getObsSigma(const std::string &obsId)
 {
 	return pimpl_->getObsSigma(obsId);
 }
 
-Eigen::VectorXd Moni::getMeas(const std::string &id)
+Eigen::VectorXd Monitoring::getMeas(const std::string &id)
 {
 	return pimpl_->getMeas(id);
 }
 // get the sigma0 after adjustment
-double Moni::getSigma0()
+double Monitoring::getSigma0()
 {
 	return pimpl_->getSigma0();
 }
 // transform coordinates/directions
-DECLSPEC Eigen::Vector3d Moni::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
+DECLSPEC Eigen::Vector3d Monitoring::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
 {
 	return pimpl_->transformCoordinates(coord, from, to);
 };
-DECLSPEC Eigen::Vector3d Moni::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
+DECLSPEC Eigen::Vector3d Monitoring::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
 {
 	return pimpl_->transformDirection(dir, from, to);
 };
-waterRom Moni::getECWSData(const std::string &ecwsRomName)
+waterRom Monitoring::getECWSData(const std::string &ecwsRomName)
 {
 	return pimpl_->getECWSData(ecwsRomName);
 }
 
-DECLSPEC wireRom Moni::getECWIData(const std::string &ecwiRomName)
+DECLSPEC wireRom Monitoring::getECWIData(const std::string &ecwiRomName)
 {
 	return pimpl_->getECWIData(ecwiRomName);
 }
 
 // actual Implementation
-void Moni::MoniImpl::initialize()
+void Monitoring::MonitoringImpl::initialize()
 {
 	estimationStatus = false;
 	Behavior successCalculation;
@@ -224,7 +224,7 @@ void Moni::MoniImpl::initialize()
 }
 
 #if USE_SERIALIZER
-void Moni::MoniImpl::writeResultFile()
+void Monitoring::MonitoringImpl::writeResultFile()
 {
 	JSONObjectSerializer obj;
 	//jsonSerializerObject ser;
@@ -239,7 +239,7 @@ void Moni::MoniImpl::writeResultFile()
 }
 #endif
 
-void Moni::MoniImpl::writeLGCInputFile()
+void Monitoring::MonitoringImpl::writeLGCInputFile()
 {
 	// Create and initialise stream:
 	std::shared_ptr<TAStreamFormatter> stream;
@@ -285,7 +285,7 @@ void Moni::MoniImpl::writeLGCInputFile()
 	TInputFileWriter infileWriter(stream.get(), project.get());
 	infileWriter.writeFile();
 }
-void Moni::MoniImpl::setFixedFrameParameter(const std::string &frameName, int idx, double val)
+void Monitoring::MonitoringImpl::setFixedFrameParameter(const std::string &frameName, int idx, double val)
 {
 	// set a fixed frame parameter (for example scale of Frame which is determined by temperature)
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -320,7 +320,7 @@ void Moni::MoniImpl::setFixedFrameParameter(const std::string &frameName, int id
 	}
 }
 
-void Moni::MoniImpl::setFixedPointParameter(const std::string &pointName, int idx, double val)
+void Monitoring::MonitoringImpl::setFixedPointParameter(const std::string &pointName, int idx, double val)
 {
 	// set a fixed point parameter
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -343,7 +343,7 @@ void Moni::MoniImpl::setFixedPointParameter(const std::string &pointName, int id
 	
 }
 
-void Moni::MoniImpl::setFixedSagParameter(const std::string &sagName, int idx, double val)
+void Monitoring::MonitoringImpl::setFixedSagParameter(const std::string &sagName, int idx, double val)
 {
 	if (idx<0 || idx>3)
 	{
@@ -370,7 +370,7 @@ void Moni::MoniImpl::setFixedSagParameter(const std::string &sagName, int idx, d
 
 }
 
-void Moni::MoniImpl::freezeFrameParameter(const std::string &frameName, int idx, double val)
+void Monitoring::MonitoringImpl::freezeFrameParameter(const std::string &frameName, int idx, double val)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -408,7 +408,7 @@ void Moni::MoniImpl::freezeFrameParameter(const std::string &frameName, int idx,
 	}
 }
 
-void Moni::MoniImpl::unfreezeFrameParameter(const std::string &frameName, int idx)
+void Monitoring::MonitoringImpl::unfreezeFrameParameter(const std::string &frameName, int idx)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -459,7 +459,7 @@ void Moni::MoniImpl::unfreezeFrameParameter(const std::string &frameName, int id
 	}
 }
 
-void Moni::MoniImpl::freezePointParameter(const std::string &pointName, int idx, double val)
+void Monitoring::MonitoringImpl::freezePointParameter(const std::string &pointName, int idx, double val)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -485,7 +485,7 @@ void Moni::MoniImpl::freezePointParameter(const std::string &pointName, int idx,
 	project->fParameterMask.insert(pointRef.getCoordinateUnknIndex(idx));
 }
 
-void Moni::MoniImpl::freezeSagParameter(const std::string &sagName, int idx, double val)
+void Monitoring::MonitoringImpl::freezeSagParameter(const std::string &sagName, int idx, double val)
 {
 	if (idx<0 || idx>3)
 	{
@@ -515,7 +515,7 @@ void Moni::MoniImpl::freezeSagParameter(const std::string &sagName, int idx, dou
 
 }
 
-void Moni::MoniImpl::unfreezePointParameter(const std::string &pointName, int idx)
+void Monitoring::MonitoringImpl::unfreezePointParameter(const std::string &pointName, int idx)
 {
 	// freeze a point parameter that is free in the original configuration
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -555,7 +555,7 @@ void Moni::MoniImpl::unfreezePointParameter(const std::string &pointName, int id
 	}
 }
 
-void Moni::MoniImpl::unfreezeSagParameter(const std::string &sagName, int idx)
+void Monitoring::MonitoringImpl::unfreezeSagParameter(const std::string &sagName, int idx)
 {	// unfreeze a sag parameter that is free in the original configuration
 	if (idx<0 || idx>3)
 	{
@@ -599,7 +599,7 @@ void Moni::MoniImpl::unfreezeSagParameter(const std::string &sagName, int idx)
 
 }
 
-void Moni::MoniImpl::createParameterReferences()
+void Monitoring::MonitoringImpl::createParameterReferences()
 {
 	for (auto &object : project.get()->getPoints())
 	{
@@ -634,7 +634,7 @@ void Moni::MoniImpl::createParameterReferences()
 		paramRefs.FRAMES.insert({object.getName(), object});
 	}
 }
-void Moni::MoniImpl::createMeasurementReferences()
+void Monitoring::MonitoringImpl::createMeasurementReferences()
 {
 	// Register every measurement under its observation id; also keep ECWS/ECWI round-of-measurement
 	// references for the water/wire network result accessors.
@@ -670,7 +670,7 @@ void Moni::MoniImpl::createMeasurementReferences()
 	}
 }
 
-TVMeas &Moni::MoniImpl::getMeasurement(const std::string &id)
+TVMeas &Monitoring::MonitoringImpl::getMeasurement(const std::string &id)
 {
 	auto it = measRefs.meas.find(id);
 	if (it == measRefs.meas.end())
@@ -678,42 +678,42 @@ TVMeas &Moni::MoniImpl::getMeasurement(const std::string &id)
 	return it->second;
 }
 
-Eigen::VectorXd Moni::MoniImpl::toVectorXd(TFreeVector freeVector)
+Eigen::VectorXd Monitoring::MonitoringImpl::toVectorXd(TFreeVector freeVector)
 {
 	Eigen::VectorXd vector(3);
 	vector << (double)freeVector.getX(), (double)freeVector.getY(), (double)freeVector.getZ();
 	return vector;
 }
 
-Eigen::VectorXd Moni::MoniImpl::toVectorXd(TPositionVector posVector)
+Eigen::VectorXd Monitoring::MonitoringImpl::toVectorXd(TPositionVector posVector)
 {
 	Eigen::VectorXd vector(3);
 	vector << (double)posVector.getX(), (double)posVector.getY(), (double)posVector.getZ();
 	return vector;
 }
 
-void Moni::MoniImpl::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
+void Monitoring::MonitoringImpl::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
 {
 	// any new observation data invalidates the current estimation
 	estimationStatus = false;
 	getMeasurement(id).setObsVector(measurementVector);
 }
-void Moni::MoniImpl::setActivationStatus(const std::string &id, bool status)
+void Monitoring::MonitoringImpl::setActivationStatus(const std::string &id, bool status)
 {
 	estimationStatus = false;
 	getMeasurement(id).setActive(status);
 }
-bool Moni::MoniImpl::getActivationStatus(const std::string &id)
+bool Monitoring::MonitoringImpl::getActivationStatus(const std::string &id)
 {
 	return getMeasurement(id).isActive();
 }
 
-Eigen::VectorXd Moni::MoniImpl::getEstimateResidual(const std::string &id)
+Eigen::VectorXd Monitoring::MonitoringImpl::getEstimateResidual(const std::string &id)
 {
 	return getMeasurement(id).getResidualVector();
 }
 
-bool Moni::MoniImpl::adjust()
+bool Monitoring::MonitoringImpl::adjust()
 {
 	Behavior successCalculation;
 	// Monitoring only needs parameter precisions, not the observation covariance Qvv or the
@@ -731,15 +731,15 @@ bool Moni::MoniImpl::adjust()
 	return estimationStatus;
 }
 
-Eigen::VectorXd Moni::MoniImpl::getObsSigma(const std::string &id)
+Eigen::VectorXd Monitoring::MonitoringImpl::getObsSigma(const std::string &id)
 {
 	return getMeasurement(id).getObsSigmaVector();
 }
-double Moni::MoniImpl::getSigma0()
+double Monitoring::MonitoringImpl::getSigma0()
 {
 	return project->getS0APosteriori();
 }
-Eigen::Vector3d Moni::MoniImpl::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
+Eigen::Vector3d Monitoring::MonitoringImpl::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
 {
 	if (paramRefs.FRAMES.count(from) == 0)
 	{
@@ -755,11 +755,11 @@ Eigen::Vector3d Moni::MoniImpl::transformCoordinates(const Eigen::Vector3d &coor
 	lorTrafo.transform(temp);
 	return temp.toRealVector();
 }
-Eigen::Vector3d Moni::MoniImpl::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
+Eigen::Vector3d Monitoring::MonitoringImpl::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
 {
-	return Moni::MoniImpl::transformCoordinates(dir, from, to) - Moni::MoniImpl::transformCoordinates(Eigen::Vector3d(0, 0, 0), from, to);
+	return Monitoring::MonitoringImpl::transformCoordinates(dir, from, to) - Monitoring::MonitoringImpl::transformCoordinates(Eigen::Vector3d(0, 0, 0), from, to);
 }
-waterRom Moni::MoniImpl::getECWSData(const std::string &ecwsRomName)
+waterRom Monitoring::MonitoringImpl::getECWSData(const std::string &ecwsRomName)
 {
 	// find the ecws rom reference
 	auto it = romRefs.ecwsRoms.find(ecwsRomName);
@@ -774,7 +774,7 @@ waterRom Moni::MoniImpl::getECWSData(const std::string &ecwsRomName)
 		throw std::runtime_error("No ECWS round of measurements named " + ecwsRomName + " found.");
 	}
 }
-wireRom Moni::MoniImpl::getECWIData(const std::string &ecwiRomName)
+wireRom Monitoring::MonitoringImpl::getECWIData(const std::string &ecwiRomName)
 {
 	// find the ecwi rom reference
 	auto it = romRefs.ecwiRoms.find(ecwiRomName);
@@ -796,12 +796,12 @@ wireRom Moni::MoniImpl::getECWIData(const std::string &ecwiRomName)
 	}
 }
 // get measurement
-Eigen::VectorXd Moni::MoniImpl::getMeas(const std::string &id)
+Eigen::VectorXd Monitoring::MonitoringImpl::getMeas(const std::string &id)
 {
 	return getMeasurement(id).getObsVector();
 }
 
-void Moni::MoniImpl::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
+void Monitoring::MonitoringImpl::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
 {
 	// new weights invalidate the current estimation
 	estimationStatus = false;
@@ -809,7 +809,7 @@ void Moni::MoniImpl::setObsSigma(const std::string &id, const Eigen::VectorXd &s
 }
 
 // get estimate
-Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId)
+Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimate(const std::string &pointId)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
@@ -817,7 +817,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId)
 	}
 	return paramRefs.POINTS.at(pointId).getEstVector();
 }
-Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId, const std::string &destFrame)
+Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimate(const std::string &pointId, const std::string &destFrame)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
@@ -835,7 +835,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimate(const std::string &pointId, con
 	return toVectorXd(point);
 }
 
-Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(const std::string &frameId)
+Eigen::VectorXd Monitoring::MonitoringImpl::getFrameEstimate(const std::string &frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
@@ -845,7 +845,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimate(const std::string &frameId)
 	return paramRefs.FRAMES.at(frameId).getEstVector();
 }
 
-Eigen::VectorXd Moni::MoniImpl::getSagEstimate(const std::string &sagId)
+Eigen::VectorXd Monitoring::MonitoringImpl::getSagEstimate(const std::string &sagId)
 {	
 	if (paramRefs.SAGS.count(sagId) == 0)
 	{
@@ -855,7 +855,7 @@ Eigen::VectorXd Moni::MoniImpl::getSagEstimate(const std::string &sagId)
 	return paramRefs.SAGS.at(sagId).getEstVector();
 }
 
-Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(const std::string &frameId)
+Eigen::VectorXd Monitoring::MonitoringImpl::getFrameEstimatePrec(const std::string &frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
@@ -870,7 +870,7 @@ Eigen::VectorXd Moni::MoniImpl::getFrameEstimatePrec(const std::string &frameId)
 	return resultVector;
 }
 
-Eigen::VectorXd Moni::MoniImpl::getSagEstimatePrec(const std::string &sagId)
+Eigen::VectorXd Monitoring::MonitoringImpl::getSagEstimatePrec(const std::string &sagId)
 {
 	if (paramRefs.SAGS.count(sagId) == 0)
 	{
@@ -882,7 +882,7 @@ Eigen::VectorXd Moni::MoniImpl::getSagEstimatePrec(const std::string &sagId)
 	return fullCovar.diagonal().array().sqrt();
 }
 
-Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(const std::string &pointId)
+Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimatePrec(const std::string &pointId)
 {
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
 	if (paramRefs.POINTS.count(pointId) == 0)
@@ -898,7 +898,7 @@ Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(const std::string &pointId)
 	return prec;
 }
 
-Eigen::VectorXd Moni::MoniImpl::getPointEstimatePrec(const std::string &pointId, const std::string &destFrame)
+Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimatePrec(const std::string &pointId, const std::string &destFrame)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{

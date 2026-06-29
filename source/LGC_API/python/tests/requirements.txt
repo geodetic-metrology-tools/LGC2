@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: CERN
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Python dependencies required to run the pyMonitoring test suite.
+# Consumed by source/LGC_API/python/CMakeLists.txt, which provisions an
+# isolated virtual environment at <build>/python/venv and installs from this file.
+
+numpy
+pytest

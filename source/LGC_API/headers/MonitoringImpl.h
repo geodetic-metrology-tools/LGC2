@@ -3,10 +3,10 @@
 Any permission to use it shall be granted in writing. Request shall be adressed to CERN through mail-KT@cern.ch
 */
 
-#ifndef TMONIIMPL
-#define TMONIIMPL
+#ifndef TMONITORINGIMPL
+#define TMONITORINGIMPL
 
-#include "Moni.h"
+#include "Monitoring.h"
 
 // STL
 #include <chrono>
@@ -33,12 +33,12 @@ Any permission to use it shall be granted in writing. Request shall be adressed 
 #	include <Serializer_json.hpp>
 #endif // USE_SERIALIZER
 
-class Moni::MoniImpl
+class Monitoring::MonitoringImpl
 {
 public:
 	// constructor
-	MoniImpl(const std::string &path) : inputFilePath(path) { MoniImpl::initialize(); }
-	~MoniImpl() = default;
+	MonitoringImpl(const std::string &path) : inputFilePath(path) { MonitoringImpl::initialize(); }
+	~MonitoringImpl() = default;
 	void updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector);
 	// set & get activationstatus
 	void setActivationStatus(const std::string &, bool);
