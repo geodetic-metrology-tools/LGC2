@@ -106,7 +106,13 @@ set(TEST_FILE_DIR_API ${CMAKE_CURRENT_LIST_DIR}/testFilesAPI)
 file(GLOB ADDITIONAL_TESTFILES LIST_DIRECTORIES false ${TEST_FILE_DIR_API}/*)
 list(APPEND COPY_TESTFILES ${ADDITIONAL_TESTFILES})
 
+# NOTE: the file(COPY) below stages the test inputs at configure time into the
+# target's output dir (build/LGC_Tests/test_files). The previous
+# post_build_copy_dlls() call here produced a broken "cmake -E copy <dest>"
+# command under single-config generators with CMAKE_BUILD_TYPE=RelWithDebInfo
+# (its $<CONFIG:debug>/$<CONFIG:release> gen-expressions expand to nothing,
+# leaving no source argument), so it is intentionally dropped — file(COPY)
+# already places the files where the test executable expects them.
 foreach(test_file ${COPY_TESTFILES})
-	post_build_copy_dlls(LGC_Tests "${test_file}" "${test_file}" "test_files")
 	file(COPY "${test_file}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test_files")
 endforeach()

@@ -1,6 +1,7 @@
 #include "MonitoringImpl.h"
 
 #include <iostream>
+#include <stdexcept>
 
 #include "Monitoring.h"
 #include "TAStreamFormatter.h"
@@ -211,10 +212,25 @@ void Monitoring::MonitoringImpl::initialize()
 	// Testfile is LB_calcul_3D_CCS_IP_8_HLS_4.lgc
 
 	std::ifstream inputFileStream(inputFilePath, std::ifstream::in);
+	// Fail fast on a missing/unreadable file. Without this, an unopened stream
+	// is fed to r.read(), the (false) result is ignored, and an empty project
+	// is handed to the analyzer/algorithm below, which spins for minutes before
+	// eventually throwing. Mirrors the is_open()/read checks in the pyLGC loader.
+	if (!inputFileStream.is_open())
+	{
+		throw std::runtime_error("Cannot open file: " + inputFilePath);
+	}
 	bool succesReading = r.read(inputFileStream);
+	if (!succesReading)
+	{
+		throw std::runtime_error("Errors found in the input file: " + inputFilePath);
+	}
 	/*Class for analyzing the data.*/
 	TDataAnalyzer analyzer(*project.get());
-	analyzer.dataConsistent();
+	if (!analyzer.dataConsistent())
+	{
+		throw std::runtime_error("Error during problem initialization: " + inputFilePath);
+	}
 
 	algorithm.reset(new TLSAlgorithm(*project.get()));
 	// make measurements & parameters accessible
