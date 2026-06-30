@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "MonitoringImpl.h"
+#include "MonitorImpl.h"
 
 #include <iostream>
 #include <stdexcept>
 
-#include "Monitoring.h"
+#include "Monitor.h"
 #include "TAStreamFormatter.h"
 
 template<typename AdjustableObject>
@@ -19,189 +19,189 @@ bool isFreeVar(const AdjustableObject &adjObj, int idx)
 
 
 // constructor
-Monitoring::Monitoring(const std::string &inputFilePath) : pimpl_(std::make_unique<MonitoringImpl>(inputFilePath)), fFilePath(inputFilePath)
+Monitor::Monitor(const std::string &inputFilePath) : pimpl_(std::make_unique<MonitorImpl>(inputFilePath)), fFilePath(inputFilePath)
 {
 }
-Monitoring::~Monitoring() = default;
+Monitor::~Monitor() = default;
 
-DECLSPEC void Monitoring::reset()
+DECLSPEC void Monitor::reset()
 {
 	// full internal reset, calling implementation constructor, assuming initialization fiole still exists
-	pimpl_ = std::make_unique<MonitoringImpl>(fFilePath);
+	pimpl_ = std::make_unique<MonitorImpl>(fFilePath);
 }
 
-// void Monitoring::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
+// void Monitor::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
 
 #if USE_SERIALIZER
-void Monitoring::writeResultFile()
+void Monitor::writeResultFile()
 {
 	pimpl_->writeResultFile();
 }
 #endif
 
-void Monitoring::writeLGCInputFile()
+void Monitor::writeLGCInputFile()
 {
 	pimpl_->writeLGCInputFile();
 }
 
-void Monitoring::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
+void Monitor::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
 {
 	pimpl_->updateMeas(id, measurementVector);
 }
 
-void Monitoring::setActivationStatus(const std::string &id, bool status)
+void Monitor::setActivationStatus(const std::string &id, bool status)
 {
 	pimpl_->setActivationStatus(id, status);
 }
 
-DECLSPEC bool Monitoring::getActivationStatus(const std::string &id)
+DECLSPEC bool Monitor::getActivationStatus(const std::string &id)
 {
 	return pimpl_->getActivationStatus(id);
 }
 
-void Monitoring::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
+void Monitor::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
 {
 	pimpl_->setObsSigma(id, sigma);
 }
 
-void Monitoring::setFixedFrameParameter(const std::string &frameName, int idx, double val)
+void Monitor::setFixedFrameParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->setFixedFrameParameter(frameName, idx, val);
 }
-void Monitoring::setFixedPointParameter(const std::string &frameName, int idx, double val)
+void Monitor::setFixedPointParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->setFixedPointParameter(frameName, idx, val);
 }
 
-void Monitoring::setFixedSagParameter(const std::string &sagName, int idx, double val)
+void Monitor::setFixedSagParameter(const std::string &sagName, int idx, double val)
 {
 	pimpl_->setFixedSagParameter(sagName, idx, val);
 }
 
-void Monitoring::freezeFrameParameter(const std::string &frameName, int idx, double val)
+void Monitor::freezeFrameParameter(const std::string &frameName, int idx, double val)
 {
 	pimpl_->freezeFrameParameter(frameName, idx, val);
 }
 
-void Monitoring::unfreezeFrameParameter(const std::string &frameName, int idx)
+void Monitor::unfreezeFrameParameter(const std::string &frameName, int idx)
 {
 	pimpl_->unfreezeFrameParameter(frameName, idx);
 }
-void Monitoring::freezePointParameter(const std::string &pointName, int idx, double val)
+void Monitor::freezePointParameter(const std::string &pointName, int idx, double val)
 {
 	pimpl_->freezePointParameter(pointName, idx, val);
 }
 
-void Monitoring::freezeSagParameter(const std::string &sagName, int idx, double val)
+void Monitor::freezeSagParameter(const std::string &sagName, int idx, double val)
 {
 	pimpl_->freezeSagParameter(sagName, idx, val);
 }
 
-void Monitoring::unfreezePointParameter(const std::string &pointName, int idx)
+void Monitor::unfreezePointParameter(const std::string &pointName, int idx)
 {
 	pimpl_->unfreezePointParameter(pointName, idx);
 }
 
-void Monitoring::unfreezeSagParameter(const std::string &sagName, int idx)
+void Monitor::unfreezeSagParameter(const std::string &sagName, int idx)
 {
 	pimpl_->unfreezeSagParameter(sagName, idx);
 }
 
 // triggering the adjustment calculation
-bool Monitoring::adjust()
+bool Monitor::adjust()
 {
 	return pimpl_->adjust();
 }
-bool Monitoring::getStatus()
+bool Monitor::getStatus()
 {
 	return pimpl_->getStatus();
 }
 // get estimate of point
-Eigen::VectorXd Monitoring::getPointEstimate(const std::string &pointId)
+Eigen::VectorXd Monitor::getPointEstimate(const std::string &pointId)
 {
 	return pimpl_->getPointEstimate(pointId);
 }
 // get estimate of frame
-Eigen::VectorXd Monitoring::getFrameEstimate(const std::string &frameId)
+Eigen::VectorXd Monitor::getFrameEstimate(const std::string &frameId)
 {
 	return pimpl_->getFrameEstimate(frameId);
 }
-Eigen::VectorXd Monitoring::getSagEstimate(const std::string &sagId)
+Eigen::VectorXd Monitor::getSagEstimate(const std::string &sagId)
 {
 	return pimpl_->getSagEstimate(sagId);
 }
-Eigen::VectorXd Monitoring::getFrameEstimatePrec(const std::string &frameId)
+Eigen::VectorXd Monitor::getFrameEstimatePrec(const std::string &frameId)
 {
 	return pimpl_->getFrameEstimatePrec(frameId);
 }
 
-Eigen::VectorXd Monitoring::getSagEstimatePrec(const std::string &sagId)
+Eigen::VectorXd Monitor::getSagEstimatePrec(const std::string &sagId)
 {
 	return pimpl_->getSagEstimatePrec(sagId);
 }
 
 // get estimate of point in subframe
-Eigen::VectorXd Monitoring::getPointEstimate(const std::string &id, const std::string &frameName)
+Eigen::VectorXd Monitor::getPointEstimate(const std::string &id, const std::string &frameName)
 {
 	return pimpl_->getPointEstimate(id, frameName);
 }
 // get diagonal elements of covariances of the estimated parameters
-Eigen::VectorXd Monitoring::getPointEstimatePrec(const std::string &id)
+Eigen::VectorXd Monitor::getPointEstimatePrec(const std::string &id)
 {
 	return pimpl_->getPointEstimatePrec(id);
 }
 // get diagonal elements of covariances of the estimated parameters transformed to a subframe
-Eigen::VectorXd Monitoring::getPointEstimatePrec(const std::string &id, const std::string &frameName)
+Eigen::VectorXd Monitor::getPointEstimatePrec(const std::string &id, const std::string &frameName)
 {
 	return pimpl_->getPointEstimatePrec(id, frameName);
 }
 // get estimated residual
-Eigen::VectorXd Monitoring::getEstimateResidual(const std::string &obsId)
+Eigen::VectorXd Monitor::getEstimateResidual(const std::string &obsId)
 {
 	return pimpl_->getEstimateResidual(obsId);
 }
 
 // get calculated measurement
-Eigen::VectorXd Monitoring::getCalcMeas(const std::string &obsId)
+Eigen::VectorXd Monitor::getCalcMeas(const std::string &obsId)
 {
 	return pimpl_->getCalcMeas(obsId);
 }
 
-DECLSPEC Eigen::VectorXd Monitoring::getObsSigma(const std::string &obsId)
+DECLSPEC Eigen::VectorXd Monitor::getObsSigma(const std::string &obsId)
 {
 	return pimpl_->getObsSigma(obsId);
 }
 
-Eigen::VectorXd Monitoring::getMeas(const std::string &id)
+Eigen::VectorXd Monitor::getMeas(const std::string &id)
 {
 	return pimpl_->getMeas(id);
 }
 // get the sigma0 after adjustment
-double Monitoring::getSigma0()
+double Monitor::getSigma0()
 {
 	return pimpl_->getSigma0();
 }
 // transform coordinates/directions
-DECLSPEC Eigen::Vector3d Monitoring::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
+DECLSPEC Eigen::Vector3d Monitor::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
 {
 	return pimpl_->transformCoordinates(coord, from, to);
 };
-DECLSPEC Eigen::Vector3d Monitoring::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
+DECLSPEC Eigen::Vector3d Monitor::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
 {
 	return pimpl_->transformDirection(dir, from, to);
 };
-waterRom Monitoring::getECWSData(const std::string &ecwsRomName)
+waterRom Monitor::getECWSData(const std::string &ecwsRomName)
 {
 	return pimpl_->getECWSData(ecwsRomName);
 }
 
-DECLSPEC wireRom Monitoring::getECWIData(const std::string &ecwiRomName)
+DECLSPEC wireRom Monitor::getECWIData(const std::string &ecwiRomName)
 {
 	return pimpl_->getECWIData(ecwiRomName);
 }
 
 // actual Implementation
-void Monitoring::MonitoringImpl::initialize()
+void Monitor::MonitorImpl::initialize()
 {
 	estimationStatus = false;
 	Behavior successCalculation;
@@ -244,7 +244,7 @@ void Monitoring::MonitoringImpl::initialize()
 }
 
 #if USE_SERIALIZER
-void Monitoring::MonitoringImpl::writeResultFile()
+void Monitor::MonitorImpl::writeResultFile()
 {
 	JSONObjectSerializer obj;
 	//jsonSerializerObject ser;
@@ -259,7 +259,7 @@ void Monitoring::MonitoringImpl::writeResultFile()
 }
 #endif
 
-void Monitoring::MonitoringImpl::writeLGCInputFile()
+void Monitor::MonitorImpl::writeLGCInputFile()
 {
 	// Create and initialise stream:
 	std::shared_ptr<TAStreamFormatter> stream;
@@ -305,7 +305,7 @@ void Monitoring::MonitoringImpl::writeLGCInputFile()
 	TInputFileWriter infileWriter(stream.get(), project.get());
 	infileWriter.writeFile();
 }
-void Monitoring::MonitoringImpl::setFixedFrameParameter(const std::string &frameName, int idx, double val)
+void Monitor::MonitorImpl::setFixedFrameParameter(const std::string &frameName, int idx, double val)
 {
 	// set a fixed frame parameter (for example scale of Frame which is determined by temperature)
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -340,7 +340,7 @@ void Monitoring::MonitoringImpl::setFixedFrameParameter(const std::string &frame
 	}
 }
 
-void Monitoring::MonitoringImpl::setFixedPointParameter(const std::string &pointName, int idx, double val)
+void Monitor::MonitorImpl::setFixedPointParameter(const std::string &pointName, int idx, double val)
 {
 	// set a fixed point parameter
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -363,7 +363,7 @@ void Monitoring::MonitoringImpl::setFixedPointParameter(const std::string &point
 	
 }
 
-void Monitoring::MonitoringImpl::setFixedSagParameter(const std::string &sagName, int idx, double val)
+void Monitor::MonitorImpl::setFixedSagParameter(const std::string &sagName, int idx, double val)
 {
 	if (idx<0 || idx>3)
 	{
@@ -390,7 +390,7 @@ void Monitoring::MonitoringImpl::setFixedSagParameter(const std::string &sagName
 
 }
 
-void Monitoring::MonitoringImpl::freezeFrameParameter(const std::string &frameName, int idx, double val)
+void Monitor::MonitorImpl::freezeFrameParameter(const std::string &frameName, int idx, double val)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -428,7 +428,7 @@ void Monitoring::MonitoringImpl::freezeFrameParameter(const std::string &frameNa
 	}
 }
 
-void Monitoring::MonitoringImpl::unfreezeFrameParameter(const std::string &frameName, int idx)
+void Monitor::MonitorImpl::unfreezeFrameParameter(const std::string &frameName, int idx)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.FRAMES.count(frameName) == 0)
@@ -479,7 +479,7 @@ void Monitoring::MonitoringImpl::unfreezeFrameParameter(const std::string &frame
 	}
 }
 
-void Monitoring::MonitoringImpl::freezePointParameter(const std::string &pointName, int idx, double val)
+void Monitor::MonitorImpl::freezePointParameter(const std::string &pointName, int idx, double val)
 {
 	// freeze a frame parameter that is free in the original configuration
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -505,7 +505,7 @@ void Monitoring::MonitoringImpl::freezePointParameter(const std::string &pointNa
 	project->fParameterMask.insert(pointRef.getCoordinateUnknIndex(idx));
 }
 
-void Monitoring::MonitoringImpl::freezeSagParameter(const std::string &sagName, int idx, double val)
+void Monitor::MonitorImpl::freezeSagParameter(const std::string &sagName, int idx, double val)
 {
 	if (idx<0 || idx>3)
 	{
@@ -535,7 +535,7 @@ void Monitoring::MonitoringImpl::freezeSagParameter(const std::string &sagName, 
 
 }
 
-void Monitoring::MonitoringImpl::unfreezePointParameter(const std::string &pointName, int idx)
+void Monitor::MonitorImpl::unfreezePointParameter(const std::string &pointName, int idx)
 {
 	// freeze a point parameter that is free in the original configuration
 	if (paramRefs.POINTS.count(pointName) == 0)
@@ -575,7 +575,7 @@ void Monitoring::MonitoringImpl::unfreezePointParameter(const std::string &point
 	}
 }
 
-void Monitoring::MonitoringImpl::unfreezeSagParameter(const std::string &sagName, int idx)
+void Monitor::MonitorImpl::unfreezeSagParameter(const std::string &sagName, int idx)
 {	// unfreeze a sag parameter that is free in the original configuration
 	if (idx<0 || idx>3)
 	{
@@ -619,7 +619,7 @@ void Monitoring::MonitoringImpl::unfreezeSagParameter(const std::string &sagName
 
 }
 
-void Monitoring::MonitoringImpl::createParameterReferences()
+void Monitor::MonitorImpl::createParameterReferences()
 {
 	for (auto &object : project.get()->getPoints())
 	{
@@ -654,7 +654,7 @@ void Monitoring::MonitoringImpl::createParameterReferences()
 		paramRefs.FRAMES.insert({object.getName(), object});
 	}
 }
-void Monitoring::MonitoringImpl::createMeasurementReferences()
+void Monitor::MonitorImpl::createMeasurementReferences()
 {
 	// Register every measurement under its observation id; also keep ECWS/ECWI round-of-measurement
 	// references for the water/wire network result accessors.
@@ -690,7 +690,7 @@ void Monitoring::MonitoringImpl::createMeasurementReferences()
 	}
 }
 
-TVMeas &Monitoring::MonitoringImpl::getMeasurement(const std::string &id)
+TVMeas &Monitor::MonitorImpl::getMeasurement(const std::string &id)
 {
 	auto it = measRefs.meas.find(id);
 	if (it == measRefs.meas.end())
@@ -698,45 +698,45 @@ TVMeas &Monitoring::MonitoringImpl::getMeasurement(const std::string &id)
 	return it->second;
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::toVectorXd(TFreeVector freeVector)
+Eigen::VectorXd Monitor::MonitorImpl::toVectorXd(TFreeVector freeVector)
 {
 	Eigen::VectorXd vector(3);
 	vector << (double)freeVector.getX(), (double)freeVector.getY(), (double)freeVector.getZ();
 	return vector;
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::toVectorXd(TPositionVector posVector)
+Eigen::VectorXd Monitor::MonitorImpl::toVectorXd(TPositionVector posVector)
 {
 	Eigen::VectorXd vector(3);
 	vector << (double)posVector.getX(), (double)posVector.getY(), (double)posVector.getZ();
 	return vector;
 }
 
-void Monitoring::MonitoringImpl::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
+void Monitor::MonitorImpl::updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector)
 {
 	// any new observation data invalidates the current estimation
 	estimationStatus = false;
 	getMeasurement(id).setObsVector(measurementVector);
 }
-void Monitoring::MonitoringImpl::setActivationStatus(const std::string &id, bool status)
+void Monitor::MonitorImpl::setActivationStatus(const std::string &id, bool status)
 {
 	estimationStatus = false;
 	getMeasurement(id).setActive(status);
 }
-bool Monitoring::MonitoringImpl::getActivationStatus(const std::string &id)
+bool Monitor::MonitorImpl::getActivationStatus(const std::string &id)
 {
 	return getMeasurement(id).isActive();
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getEstimateResidual(const std::string &id)
+Eigen::VectorXd Monitor::MonitorImpl::getEstimateResidual(const std::string &id)
 {
 	return getMeasurement(id).getResidualVector();
 }
 
-bool Monitoring::MonitoringImpl::adjust()
+bool Monitor::MonitorImpl::adjust()
 {
 	Behavior successCalculation;
-	// Monitoring only needs parameter precisions, not the observation covariance Qvv or the
+	// Monitor only needs parameter precisions, not the observation covariance Qvv or the
 	// reliability statistics derived from it - skip them to save the bulk of the var-covar cost.
 	project->setComputeObsCovar(false);
 	successCalculation = algorithm->run(*project.get(), 80);
@@ -751,15 +751,15 @@ bool Monitoring::MonitoringImpl::adjust()
 	return estimationStatus;
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getObsSigma(const std::string &id)
+Eigen::VectorXd Monitor::MonitorImpl::getObsSigma(const std::string &id)
 {
 	return getMeasurement(id).getObsSigmaVector();
 }
-double Monitoring::MonitoringImpl::getSigma0()
+double Monitor::MonitorImpl::getSigma0()
 {
 	return project->getS0APosteriori();
 }
-Eigen::Vector3d Monitoring::MonitoringImpl::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
+Eigen::Vector3d Monitor::MonitorImpl::transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
 {
 	if (paramRefs.FRAMES.count(from) == 0)
 	{
@@ -775,11 +775,11 @@ Eigen::Vector3d Monitoring::MonitoringImpl::transformCoordinates(const Eigen::Ve
 	lorTrafo.transform(temp);
 	return temp.toRealVector();
 }
-Eigen::Vector3d Monitoring::MonitoringImpl::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
+Eigen::Vector3d Monitor::MonitorImpl::transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to)
 {
-	return Monitoring::MonitoringImpl::transformCoordinates(dir, from, to) - Monitoring::MonitoringImpl::transformCoordinates(Eigen::Vector3d(0, 0, 0), from, to);
+	return Monitor::MonitorImpl::transformCoordinates(dir, from, to) - Monitor::MonitorImpl::transformCoordinates(Eigen::Vector3d(0, 0, 0), from, to);
 }
-waterRom Monitoring::MonitoringImpl::getECWSData(const std::string &ecwsRomName)
+waterRom Monitor::MonitorImpl::getECWSData(const std::string &ecwsRomName)
 {
 	// find the ecws rom reference
 	auto it = romRefs.ecwsRoms.find(ecwsRomName);
@@ -794,7 +794,7 @@ waterRom Monitoring::MonitoringImpl::getECWSData(const std::string &ecwsRomName)
 		throw std::runtime_error("No ECWS round of measurements named " + ecwsRomName + " found.");
 	}
 }
-wireRom Monitoring::MonitoringImpl::getECWIData(const std::string &ecwiRomName)
+wireRom Monitor::MonitorImpl::getECWIData(const std::string &ecwiRomName)
 {
 	// find the ecwi rom reference
 	auto it = romRefs.ecwiRoms.find(ecwiRomName);
@@ -816,12 +816,12 @@ wireRom Monitoring::MonitoringImpl::getECWIData(const std::string &ecwiRomName)
 	}
 }
 // get measurement
-Eigen::VectorXd Monitoring::MonitoringImpl::getMeas(const std::string &id)
+Eigen::VectorXd Monitor::MonitorImpl::getMeas(const std::string &id)
 {
 	return getMeasurement(id).getObsVector();
 }
 
-void Monitoring::MonitoringImpl::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
+void Monitor::MonitorImpl::setObsSigma(const std::string &id, const Eigen::VectorXd &sigma)
 {
 	// new weights invalidate the current estimation
 	estimationStatus = false;
@@ -829,7 +829,7 @@ void Monitoring::MonitoringImpl::setObsSigma(const std::string &id, const Eigen:
 }
 
 // get estimate
-Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimate(const std::string &pointId)
+Eigen::VectorXd Monitor::MonitorImpl::getPointEstimate(const std::string &pointId)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
@@ -837,7 +837,7 @@ Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimate(const std::string &
 	}
 	return paramRefs.POINTS.at(pointId).getEstVector();
 }
-Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimate(const std::string &pointId, const std::string &destFrame)
+Eigen::VectorXd Monitor::MonitorImpl::getPointEstimate(const std::string &pointId, const std::string &destFrame)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{
@@ -855,7 +855,7 @@ Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimate(const std::string &
 	return toVectorXd(point);
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getFrameEstimate(const std::string &frameId)
+Eigen::VectorXd Monitor::MonitorImpl::getFrameEstimate(const std::string &frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
@@ -865,7 +865,7 @@ Eigen::VectorXd Monitoring::MonitoringImpl::getFrameEstimate(const std::string &
 	return paramRefs.FRAMES.at(frameId).getEstVector();
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getSagEstimate(const std::string &sagId)
+Eigen::VectorXd Monitor::MonitorImpl::getSagEstimate(const std::string &sagId)
 {	
 	if (paramRefs.SAGS.count(sagId) == 0)
 	{
@@ -875,7 +875,7 @@ Eigen::VectorXd Monitoring::MonitoringImpl::getSagEstimate(const std::string &sa
 	return paramRefs.SAGS.at(sagId).getEstVector();
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getFrameEstimatePrec(const std::string &frameId)
+Eigen::VectorXd Monitor::MonitorImpl::getFrameEstimatePrec(const std::string &frameId)
 {
 	if (paramRefs.FRAMES.count(frameId) == 0)
 	{
@@ -890,7 +890,7 @@ Eigen::VectorXd Monitoring::MonitoringImpl::getFrameEstimatePrec(const std::stri
 	return resultVector;
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getSagEstimatePrec(const std::string &sagId)
+Eigen::VectorXd Monitor::MonitorImpl::getSagEstimatePrec(const std::string &sagId)
 {
 	if (paramRefs.SAGS.count(sagId) == 0)
 	{
@@ -902,7 +902,7 @@ Eigen::VectorXd Monitoring::MonitoringImpl::getSagEstimatePrec(const std::string
 	return fullCovar.diagonal().array().sqrt();
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimatePrec(const std::string &pointId)
+Eigen::VectorXd Monitor::MonitorImpl::getPointEstimatePrec(const std::string &pointId)
 {
 	// Only Points are implemented for now, will give the sigmas in the frame where the point is declared
 	if (paramRefs.POINTS.count(pointId) == 0)
@@ -918,7 +918,7 @@ Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimatePrec(const std::stri
 	return prec;
 }
 
-Eigen::VectorXd Monitoring::MonitoringImpl::getPointEstimatePrec(const std::string &pointId, const std::string &destFrame)
+Eigen::VectorXd Monitor::MonitorImpl::getPointEstimatePrec(const std::string &pointId, const std::string &destFrame)
 {
 	if (paramRefs.POINTS.count(pointId) == 0)
 	{

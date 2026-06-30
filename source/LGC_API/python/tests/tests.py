@@ -36,12 +36,12 @@ STRING = "vivienString.lgc"
 
 @pytest.fixture
 def moni():
-    return pyMonitoring.Monitoring(LGC_FRAS)
+    return pyMonitoring.Monitor(LGC_FRAS)
 
 
 def test_load_nonexistent_file():
     with pytest.raises(RuntimeError):
-        pyMonitoring.Monitoring("does_not_exist.lgc")
+        pyMonitoring.Monitor("does_not_exist.lgc")
 
 
 def test_adjust_succeeds(moni):
@@ -131,7 +131,7 @@ def test_reset_recovers_after_blunder(moni):
 def test_simple_api_use():
     """Mirror of testAPI test<1>: estimates, (de)activation, updateMeas,
     calcMeas, frame precisions and setObsSigma on minimalTest.lgc2."""
-    m = pyMonitoring.Monitoring(MINIMAL)
+    m = pyMonitoring.Monitor(MINIMAL)
     m.adjust()
 
     sigma_before = m.getSigma0()
@@ -177,7 +177,7 @@ def test_simple_api_use():
 
 def test_manipulate_fixed_parameters():
     """Mirror of testAPI test<2>: setFixedFrameParameter / setFixedPointParameter."""
-    m = pyMonitoring.Monitoring(FIXEDPARAMS)
+    m = pyMonitoring.Monitor(FIXEDPARAMS)
     m.adjust()
     assert np.allclose(m.getFrameEstimate("testFrame"), [0, 0, 0, 0, 0, 0, 1], atol=1e-12)
 
@@ -194,7 +194,7 @@ def test_manipulate_fixed_parameters():
 
 def test_freeze_frame_parameter():
     """Mirror of testAPI test<3>: freeze / unfreeze frame parameters + errors."""
-    m = pyMonitoring.Monitoring(MINIMAL)
+    m = pyMonitoring.Monitor(MINIMAL)
     m.adjust()
     assert np.allclose(m.getFrameEstimate("testFrame"), [1, 2, 3, 0, 0, 0, 1], atol=1e-12)
 
@@ -217,7 +217,7 @@ def test_freeze_frame_parameter():
 
 def test_freeze_point_parameter():
     """Mirror of testAPI test<4>: freeze / unfreeze point parameters + precision + errors."""
-    m = pyMonitoring.Monitoring(MINIMAL)
+    m = pyMonitoring.Monitor(MINIMAL)
     m.adjust()
     assert np.allclose(m.getPointEstimate("P2"), [0, 0, 0], atol=1e-12)
 
@@ -245,7 +245,7 @@ def test_freeze_point_parameter():
 
 def test_sag_parameters():
     """Mirror of testAPI test<8>: sag estimate/precision, freeze and setFixed."""
-    m = pyMonitoring.Monitoring(SAG)
+    m = pyMonitoring.Monitor(SAG)
     m.adjust()
     assert np.allclose(m.getPointEstimate("left"), [0.007, -1.0, 0.003], atol=1e-9)
     assert np.allclose(m.getPointEstimate("middle"), [0.003, 0.0, 0.001], atol=1e-9)
@@ -286,7 +286,7 @@ def test_sag_parameters():
 
 def test_transformations():
     """Mirror of testAPI test<10>: forward/backward transform invariance."""
-    m = pyMonitoring.Monitoring(STRING)
+    m = pyMonitoring.Monitor(STRING)
     frm = "RSTR_STRING.B1M.LQXFE.1SF"
     to = "RSTR_STRING.B1M.LQXFG.2SF"
 
@@ -303,7 +303,7 @@ def test_transformations():
 
 def test_reset_after_failure():
     """Mirror of testAPI test<11>: a blunder makes adjust() raise; reset() recovers."""
-    m = pyMonitoring.Monitoring(STRING)
+    m = pyMonitoring.Monitor(STRING)
     m.updateMeas("LQXFE.1SF.Q_WPS", np.array([10.0, 10.0]))
     with pytest.raises(RuntimeError):
         m.adjust()
@@ -315,7 +315,7 @@ def test_reset_after_failure():
 
 def test_disable_wire_sensor():
     """Mirror of testAPI test<12>: deactivating a wire sensor zeroes its residual."""
-    m = pyMonitoring.Monitoring(STRING)
+    m = pyMonitoring.Monitor(STRING)
     m.adjust()
     wire_id = "LQXFE.1SF.Q_WPS"
     assert np.linalg.norm(m.getEstimateResidual(wire_id)) > 1e-12

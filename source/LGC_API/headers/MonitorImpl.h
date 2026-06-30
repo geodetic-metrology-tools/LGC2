@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef TMONITORINGIMPL
-#define TMONITORINGIMPL
+#ifndef TMONITORIMPL
+#define TMONITORIMPL
 
-#include "Monitoring.h"
+#include "Monitor.h"
 
 // STL
 #include <chrono>
@@ -32,12 +32,12 @@
 #	include <Serializer_json.hpp>
 #endif // USE_SERIALIZER
 
-class Monitoring::MonitoringImpl
+class Monitor::MonitorImpl
 {
 public:
 	// constructor
-	MonitoringImpl(const std::string &path) : inputFilePath(path) { MonitoringImpl::initialize(); }
-	~MonitoringImpl() = default;
+	MonitorImpl(const std::string &path) : inputFilePath(path) { MonitorImpl::initialize(); }
+	~MonitorImpl() = default;
 	void updateMeas(const std::string &id, const Eigen::VectorXd &measurementVector);
 	// set & get activationstatus
 	void setActivationStatus(const std::string &, bool);

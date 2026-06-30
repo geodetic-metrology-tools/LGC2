@@ -1,8 +1,8 @@
-# LGC2 Monitoring library - bundle
+# LGC2 Monitor library - bundle
 
 Self-contained bundle for BOTH the Python monitoring API and direct C/C++ use of
 the monitoring library. A single native library serves all of them (it carries
-the C++ `Monitoring` class and the flat `moni*` C ABI):
+the C++ `Monitor` class and the flat `moni*` C ABI):
 
     Windows : LGC_API.dll   (+ LGC_API.lib for C++ linking)
     Linux   : libLGC_API.so
@@ -11,9 +11,9 @@ the C++ `Monitoring` class and the flat `moni*` C ABI):
 
     LGC_API.dll / libLGC_API.so   native monitoring library (also exports the C ABI)
     LGC_API.lib                   (Windows only) import library for C++ linking
-    pyMonitoring.py               Python ctypes wrapper (class Monitoring)
+    pyMonitoring.py               Python ctypes wrapper (class Monitor)
     requirements.txt              Python dependencies (numpy)
-    Monitoring.h                  C++ header (class Monitoring)
+    Monitor.h                  C++ header (class Monitor)
     pyMonitoring_C.h              flat C ABI header (moni* functions, for C / other FFI)
 
 ## Python (plug and play)
@@ -23,7 +23,7 @@ the C++ `Monitoring` class and the flat `moni*` C ABI):
     3. use it:
          import sys; sys.path.insert(0, r"<this folder>")
          import pyMonitoring
-         m = pyMonitoring.Monitoring("project.lgc")
+         m = pyMonitoring.Monitor("project.lgc")
          m.adjust()
          print(m.getSigma0())
 
@@ -32,7 +32,7 @@ directly via ctypes.
 
 ## C++ (link against the library)
 
-`Monitoring.h` includes <Eigen/Dense>, so Eigen (header-only) is required at
+`Monitor.h` includes <Eigen/Dense>, so Eigen (header-only) is required at
 compile time. Eigen is NOT shipped in this bundle - point the compiler at your
 own Eigen.
 
@@ -46,8 +46,8 @@ own Eigen.
       # keep libLGC_API.so next to your executable
 
     app.cpp:
-      #include "Monitoring.h"
-      int main() { Monitoring m("project.lgc"); m.adjust(); }
+      #include "Monitor.h"
+      int main() { Monitor m("project.lgc"); m.adjust(); }
 
 ## C / other languages (flat C ABI)
 

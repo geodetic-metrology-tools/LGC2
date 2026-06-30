@@ -10,15 +10,15 @@ SET(API_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources)
 					
 # Create a variable containing all .h files:
 set(API_HEADERS
-	${API_INCLUDE_PATH}/Monitoring.h
-	${API_INCLUDE_PATH}/MonitoringImpl.h
+	${API_INCLUDE_PATH}/Monitor.h
+	${API_INCLUDE_PATH}/MonitorImpl.h
 	${API_INCLUDE_PATH}/pyMonitoring_C.h
 )
 
 # Create a variable containing all .cpp files:
 set(API_SOURCES
-	${API_SOURCES_PATH}/MonitoringImpl.cpp
-	# Flat C ABI exported alongside the C++ Monitoring class, so a single
+	${API_SOURCES_PATH}/MonitorImpl.cpp
+	# Flat C ABI exported alongside the C++ Monitor class, so a single
 	# LGC_API.dll serves both C++ consumers and the ctypes Python wrapper.
 	${API_SOURCES_PATH}/pyMonitoring_C.cpp
 )

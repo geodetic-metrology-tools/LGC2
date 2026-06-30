@@ -147,8 +147,8 @@ WaterRom = namedtuple("WaterRom", ["romName", "estimate", "prec"])
 WireRom = namedtuple("WireRom", ["romName", "estimate", "prec"])
 
 
-class Monitoring:
-    """Real-time monitoring estimator (wraps the C++ Moni class)."""
+class Monitor:
+    """Real-time monitoring estimator (wraps the C++ Monitor class)."""
 
     def __init__(self, inputFilePath):
         self._h = _check_ptr(_create(inputFilePath.encode("utf-8")))

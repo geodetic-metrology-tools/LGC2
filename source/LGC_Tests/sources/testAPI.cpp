@@ -13,7 +13,7 @@
 #include <iostream>
 #include <random>
 
-#include "Monitoring.h"
+#include "Monitor.h"
 
 using namespace std::chrono;
 namespace tut
@@ -38,7 +38,7 @@ template<>
 void object::test<1>()
 {
 	set_test_name("Testing simple API use");
-	Monitoring apiObject("test_files/minimalTest.lgc2");
+	Monitor apiObject("test_files/minimalTest.lgc2");
 	apiObject.adjust();
 	double sigmaBeforeDeactivation = apiObject.getSigma0();
 	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
@@ -114,7 +114,7 @@ template<>
 void object::test<2>()
 {
 	set_test_name("Testing methods for manipulating fixed parameters");
-	Monitoring apiObject("test_files/manipulateFixedParameters.lgc2");
+	Monitor apiObject("test_files/manipulateFixedParameters.lgc2");
 	apiObject.adjust();
 	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
 	Eigen::VectorXd expectedRes(7);
@@ -149,7 +149,7 @@ template<>
 void object::test<3>()
 {
 	set_test_name("Testing methods for freezing frame parameters");
-	Monitoring apiObject("test_files/minimalTest.lgc2");
+	Monitor apiObject("test_files/minimalTest.lgc2");
 	apiObject.adjust();
 	Eigen::VectorXd estRes = apiObject.getFrameEstimate("testFrame");
 	Eigen::VectorXd expectedRes(7);
@@ -197,7 +197,7 @@ template<>
 void object::test<4>()
 {
 	set_test_name("Testing methods for freezing point parameters");
-	Monitoring apiObject("test_files/minimalTest.lgc2");
+	Monitor apiObject("test_files/minimalTest.lgc2");
 	apiObject.adjust();
 	Eigen::VectorXd estRes = apiObject.getPointEstimate("P2");
 	Eigen::VectorXd expectedRes(3);
@@ -257,7 +257,7 @@ void object::test<5>()
 	auto start = high_resolution_clock::now();
 	std::string inputFilePath = "test_files/SC.lgc2";
 
-	Monitoring mockup(inputFilePath);
+	Monitor mockup(inputFilePath);
 
 	// the IDs for the observations we want to manipulate during the monitoring
 	std::vector<std::string> ecwsIds = {"meas1", "meas2", "meas3", "meas4", "meas5", "meas6", "meas7", "meas8"};
@@ -344,7 +344,7 @@ void object::test<6>()
 	auto start = high_resolution_clock::now();
 	std::string inputFilePath = "test_files/LGC_SCT_WPS.lgc";
 
-	Monitoring mockup(inputFilePath);
+	Monitor mockup(inputFilePath);
 
 	// the IDs for the observations we want to manipulate during the monitoring
 	std::vector<std::string> wpsIds = {
@@ -432,7 +432,7 @@ void object::test<7>()
 	auto start = high_resolution_clock::now();
 	std::string inputFilePath = "test_files/LGC_SCT_WPS_withNominalPositions.lgc";
 
-	Monitoring mockup(inputFilePath);
+	Monitor mockup(inputFilePath);
 
 	// the IDs for the observations we want to manipulate during the monitoring
 	std::vector<std::string> wpsIds = {
@@ -508,7 +508,7 @@ template<>
 void object::test<8>()
 {
 	set_test_name("Testing simple sag example: freezing, setFixed, getEst, getEstPrec");
-	Monitoring apiObject("test_files/minimalSag.lgc");
+	Monitor apiObject("test_files/minimalSag.lgc");
 	apiObject.adjust();
 	Eigen::Vector3d leftEst = apiObject.getPointEstimate("left");
 	Eigen::Vector3d middleEst = apiObject.getPointEstimate("middle");
@@ -580,7 +580,7 @@ template<>
 void object::test<9>()
 {
 	set_test_name("Testing simple string example with sag");
-	Monitoring apiObject("test_files/vivienString.lgc");
+	Monitor apiObject("test_files/vivienString.lgc");
 
 	SimpleTimer compTimer;
 	compTimer.start();
@@ -598,7 +598,7 @@ template<>
 void object::test<10>()
 {
 	set_test_name("Testing transformation methods for user specified vectors");
-	Monitoring apiObject("test_files/vivienString.lgc");
+	Monitor apiObject("test_files/vivienString.lgc");
 	std::string from("RSTR_STRING.B1M.LQXFE.1SF");
 	std::string to("RSTR_STRING.B1M.LQXFG.2SF");
 	Eigen::Vector3d testCoord(1, 2, 3);
@@ -615,7 +615,7 @@ template<>
 void object::test<11>()
 {
 	set_test_name("Testing reset method after computation failure");
-	Monitoring apiObject("test_files/vivienString.lgc");
+	Monitor apiObject("test_files/vivienString.lgc");
 
 	Eigen::VectorXd blunderMeasurement(2);
 	blunderMeasurement << 10, 10;
@@ -642,7 +642,7 @@ template<>
 void object::test<12>()
 {
 	set_test_name("Testing disabling wire sensor");
-	Monitoring apiObject("test_files/vivienString.lgc");
+	Monitor apiObject("test_files/vivienString.lgc");
 	bool success = apiObject.adjust();
 	std::string wireId1 = "LQXFE.1SF.Q_WPS";
 	ensure("Residual of active wire sensor should not be 0.", !(apiObject.getEstimateResidual(wireId1).norm() < 1e-12));
@@ -657,7 +657,7 @@ template<>
 void object::test<13>()
 {
 	set_test_name("Testing reset method repeatedly");
-	Monitoring apiObjectStress("test_files/vivienString.lgc");
+	Monitor apiObjectStress("test_files/vivienString.lgc");
 
 	// stress test with a lot of resets and big file
 	for (int j = 0; j < 100; j++)

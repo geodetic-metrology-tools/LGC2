@@ -9,7 +9,7 @@
 
 #include <Eigen/Dense>
 
-#include "Monitoring.h"
+#include "Monitor.h"
 
 static thread_local std::string lastError;
 
@@ -24,7 +24,7 @@ static void eigenVecToArray(const Eigen::VectorXd &vec, double **out, int *len)
 	std::copy(vec.data(), vec.data() + *len, *out);
 }
 
-#define M(handle) (*static_cast<Monitoring *>(handle))
+#define M(handle) (*static_cast<Monitor *>(handle))
 
 #define CATCH_ERR \
 	catch (const std::exception &ex) \
@@ -67,21 +67,21 @@ extern "C"
 
 	// --- Lifecycle -------------------------------------------------------------
 
-	MonitoringHandle moniCreate(const char *inputFilePath)
+	MonitorHandle moniCreate(const char *inputFilePath)
 	{
 		try
 		{
-			return new Monitoring(std::string(inputFilePath));
+			return new Monitor(std::string(inputFilePath));
 		}
 		CATCH_NULL
 	}
 
-	void moniDestroy(MonitoringHandle h)
+	void moniDestroy(MonitorHandle h)
 	{
-		delete static_cast<Monitoring *>(h);
+		delete static_cast<Monitor *>(h);
 	}
 
-	int moniReset(MonitoringHandle h)
+	int moniReset(MonitorHandle h)
 	{
 		try
 		{
@@ -93,7 +93,7 @@ extern "C"
 
 	// --- Execution -------------------------------------------------------------
 
-	int moniAdjust(MonitoringHandle h)
+	int moniAdjust(MonitorHandle h)
 	{
 		try
 		{
@@ -102,7 +102,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetStatus(MonitoringHandle h)
+	int moniGetStatus(MonitorHandle h)
 	{
 		try
 		{
@@ -111,7 +111,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetSigma0(MonitoringHandle h, double *out)
+	int moniGetSigma0(MonitorHandle h, double *out)
 	{
 		try
 		{
@@ -121,7 +121,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniWriteLGCInputFile(MonitoringHandle h)
+	int moniWriteLGCInputFile(MonitorHandle h)
 	{
 		try
 		{
@@ -133,7 +133,7 @@ extern "C"
 
 	// --- Observations ----------------------------------------------------------
 
-	int moniSetActivationStatus(MonitoringHandle h, const char *id, int status)
+	int moniSetActivationStatus(MonitorHandle h, const char *id, int status)
 	{
 		try
 		{
@@ -143,7 +143,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetActivationStatus(MonitoringHandle h, const char *id)
+	int moniGetActivationStatus(MonitorHandle h, const char *id)
 	{
 		try
 		{
@@ -152,7 +152,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniUpdateMeas(MonitoringHandle h, const char *id, const double *data, int len)
+	int moniUpdateMeas(MonitorHandle h, const char *id, const double *data, int len)
 	{
 		try
 		{
@@ -163,7 +163,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniSetObsSigma(MonitoringHandle h, const char *id, const double *data, int len)
+	int moniSetObsSigma(MonitorHandle h, const char *id, const double *data, int len)
 	{
 		try
 		{
@@ -174,7 +174,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetMeas(MonitoringHandle h, const char *id, double **outData, int *outLen)
+	int moniGetMeas(MonitorHandle h, const char *id, double **outData, int *outLen)
 	{
 		try
 		{
@@ -184,7 +184,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetEstimateResidual(MonitoringHandle h, const char *obsName, double **outData, int *outLen)
+	int moniGetEstimateResidual(MonitorHandle h, const char *obsName, double **outData, int *outLen)
 	{
 		try
 		{
@@ -194,7 +194,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetCalcMeas(MonitoringHandle h, const char *obsName, double **outData, int *outLen)
+	int moniGetCalcMeas(MonitorHandle h, const char *obsName, double **outData, int *outLen)
 	{
 		try
 		{
@@ -204,7 +204,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetObsSigma(MonitoringHandle h, const char *obsName, double **outData, int *outLen)
+	int moniGetObsSigma(MonitorHandle h, const char *obsName, double **outData, int *outLen)
 	{
 		try
 		{
@@ -216,7 +216,7 @@ extern "C"
 
 	// --- Parameter control -----------------------------------------------------
 
-	int moniSetFixedPointParameter(MonitoringHandle h, const char *name, int idx, double val)
+	int moniSetFixedPointParameter(MonitorHandle h, const char *name, int idx, double val)
 	{
 		try
 		{
@@ -226,7 +226,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniSetFixedFrameParameter(MonitoringHandle h, const char *name, int idx, double val)
+	int moniSetFixedFrameParameter(MonitorHandle h, const char *name, int idx, double val)
 	{
 		try
 		{
@@ -236,7 +236,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniSetFixedSagParameter(MonitoringHandle h, const char *name, int idx, double val)
+	int moniSetFixedSagParameter(MonitorHandle h, const char *name, int idx, double val)
 	{
 		try
 		{
@@ -246,7 +246,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniFreezePointParameter(MonitoringHandle h, const char *name, int idx, double val)
+	int moniFreezePointParameter(MonitorHandle h, const char *name, int idx, double val)
 	{
 		try
 		{
@@ -256,7 +256,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniFreezeFrameParameter(MonitoringHandle h, const char *name, int idx, double val)
+	int moniFreezeFrameParameter(MonitorHandle h, const char *name, int idx, double val)
 	{
 		try
 		{
@@ -266,7 +266,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniFreezeSagParameter(MonitoringHandle h, const char *name, int idx, double val)
+	int moniFreezeSagParameter(MonitorHandle h, const char *name, int idx, double val)
 	{
 		try
 		{
@@ -276,7 +276,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniUnfreezePointParameter(MonitoringHandle h, const char *name, int idx)
+	int moniUnfreezePointParameter(MonitorHandle h, const char *name, int idx)
 	{
 		try
 		{
@@ -286,7 +286,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniUnfreezeFrameParameter(MonitoringHandle h, const char *name, int idx)
+	int moniUnfreezeFrameParameter(MonitorHandle h, const char *name, int idx)
 	{
 		try
 		{
@@ -296,7 +296,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniUnfreezeSagParameter(MonitoringHandle h, const char *name, int idx)
+	int moniUnfreezeSagParameter(MonitorHandle h, const char *name, int idx)
 	{
 		try
 		{
@@ -308,7 +308,7 @@ extern "C"
 
 	// --- Estimation results ----------------------------------------------------
 
-	int moniGetPointEstimate(MonitoringHandle h, const char *name, double **outData, int *outLen)
+	int moniGetPointEstimate(MonitorHandle h, const char *name, double **outData, int *outLen)
 	{
 		try
 		{
@@ -318,7 +318,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetPointEstimateInFrame(MonitoringHandle h, const char *name, const char *frame, double **outData, int *outLen)
+	int moniGetPointEstimateInFrame(MonitorHandle h, const char *name, const char *frame, double **outData, int *outLen)
 	{
 		try
 		{
@@ -328,7 +328,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetFrameEstimate(MonitoringHandle h, const char *name, double **outData, int *outLen)
+	int moniGetFrameEstimate(MonitorHandle h, const char *name, double **outData, int *outLen)
 	{
 		try
 		{
@@ -338,7 +338,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetSagEstimate(MonitoringHandle h, const char *name, double **outData, int *outLen)
+	int moniGetSagEstimate(MonitorHandle h, const char *name, double **outData, int *outLen)
 	{
 		try
 		{
@@ -348,7 +348,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetPointEstimatePrec(MonitoringHandle h, const char *name, double **outData, int *outLen)
+	int moniGetPointEstimatePrec(MonitorHandle h, const char *name, double **outData, int *outLen)
 	{
 		try
 		{
@@ -358,7 +358,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetPointEstimatePrecInFrame(MonitoringHandle h, const char *name, const char *frame, double **outData, int *outLen)
+	int moniGetPointEstimatePrecInFrame(MonitorHandle h, const char *name, const char *frame, double **outData, int *outLen)
 	{
 		try
 		{
@@ -368,7 +368,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetFrameEstimatePrec(MonitoringHandle h, const char *name, double **outData, int *outLen)
+	int moniGetFrameEstimatePrec(MonitorHandle h, const char *name, double **outData, int *outLen)
 	{
 		try
 		{
@@ -378,7 +378,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetSagEstimatePrec(MonitoringHandle h, const char *name, double **outData, int *outLen)
+	int moniGetSagEstimatePrec(MonitorHandle h, const char *name, double **outData, int *outLen)
 	{
 		try
 		{
@@ -390,7 +390,7 @@ extern "C"
 
 	// --- Transformations -------------------------------------------------------
 
-	int moniTransformCoordinates(MonitoringHandle h, const double *in3, const char *from, const char *to, double *out3)
+	int moniTransformCoordinates(MonitorHandle h, const double *in3, const char *from, const char *to, double *out3)
 	{
 		try
 		{
@@ -404,7 +404,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniTransformDirection(MonitoringHandle h, const double *in3, const char *from, const char *to, double *out3)
+	int moniTransformDirection(MonitorHandle h, const double *in3, const char *from, const char *to, double *out3)
 	{
 		try
 		{
@@ -420,7 +420,7 @@ extern "C"
 
 	// --- Round-of-measurement results ------------------------------------------
 
-	int moniGetECWSData(MonitoringHandle h, const char *romName, double *outEstimate, double *outPrec)
+	int moniGetECWSData(MonitorHandle h, const char *romName, double *outEstimate, double *outPrec)
 	{
 		try
 		{
@@ -432,7 +432,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	int moniGetECWIData(MonitoringHandle h, const char *romName, double **outEstimate, int *outEstLen, double **outPrec, int *outPrecLen)
+	int moniGetECWIData(MonitorHandle h, const char *romName, double **outEstimate, int *outEstLen, double **outPrec, int *outPrecLen)
 	{
 		try
 		{

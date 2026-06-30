@@ -202,7 +202,7 @@ windows64_pyLGC_release:
 #   <project>/-/jobs/artifacts/<branch>/download?job=linux_monitoring_library
 #   <project>/-/jobs/artifacts/<branch>/download?job=windows64_monitoring_library
 # Each bundle serves BOTH the Python ctypes wrapper and direct C/C++ linking
-# (one native library carries the C++ Monitoring class and the moni* C ABI).
+# (one native library carries the C++ Monitor class and the moni* C ABI).
 
 linux_monitoring_library:
     stage: release
@@ -216,7 +216,7 @@ linux_monitoring_library:
         - cp build/LGC_API/libLGC_API.so            monitoring_library/
         - cp source/LGC_API/python/pyMonitoring.py  monitoring_library/
         - cp source/LGC_API/python/tests/requirements.txt monitoring_library/
-        - cp source/LGC_API/headers/Monitoring.h    monitoring_library/
+        - cp source/LGC_API/headers/Monitor.h    monitoring_library/
         - cp source/LGC_API/headers/pyMonitoring_C.h monitoring_library/
         - cp source/LGC_API/BUNDLE_README.md        monitoring_library/README.md
     artifacts:
@@ -241,7 +241,7 @@ windows64_monitoring_library:
         - cp build/LGC_API/Release/LGC_API.lib       monitoring_library/
         - cp source/LGC_API/python/pyMonitoring.py   monitoring_library/
         - cp source/LGC_API/python/tests/requirements.txt monitoring_library/
-        - cp source/LGC_API/headers/Monitoring.h     monitoring_library/
+        - cp source/LGC_API/headers/Monitor.h     monitoring_library/
         - cp source/LGC_API/headers/pyMonitoring_C.h monitoring_library/
         - cp source/LGC_API/BUNDLE_README.md         monitoring_library/README.md
     artifacts:
