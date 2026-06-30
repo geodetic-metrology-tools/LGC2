@@ -15,7 +15,7 @@ right 	0 1 0	DEFORM sag1
 P1 0 0 0 DEFORM sag2
 P2 0 1 0 DEFORM sag2
 *ENDFRAME
-% observations are chosen such that VS=0.001, VC=0.002, RS=0.003, RC=0.004 (units sag:meter, curvature:unitless)
+% observations are chosen such that ZS=0.001, ZC=0.002, XS=0.003, XC=0.004 (units sag:meter, curvature:unitless)
 *OBSXYZ
 left 	0.007 -1 0.003	1 1 0.1234 ID leftObs
 middle 	0.003 0  0.001	1 1 0.1234 ID middleObs

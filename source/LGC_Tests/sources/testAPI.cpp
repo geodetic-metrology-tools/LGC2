@@ -526,7 +526,7 @@ void object::test<8>()
 	ensure("sag parameter should be estimated correctly", sagParEst.isApprox(sagParEstExpected));
 
 	// now freeze the curvature values to 0
-	// VC =>index 1
+	// ZC => index 1 (vertical curvature)
 	apiObject.freezeSagParameter("sag1", 1, 0.0);
 	// apiObject.freezeSagParameter("sag1", 3, 0.0);
 	apiObject.adjust();
@@ -667,5 +667,70 @@ void object::test<13>()
 		ensure("Results should be ready", apiObjectStress.getStatus());
 		apiObjectStress.reset();
 	}
+}
+template<>
+template<>
+void object::test<14>()
+{
+	set_test_name("Testing sag parameter freezing and masking on minimalSag");
+	// sag1 indices: 0=ZS, 1=ZC, 2=XS, 3=XC (all free -> freeze/unfreeze, not setFixed)
+	Monitor apiObject("test_files/minimalSag.lgc");
+
+	// freeze all sag parameters at 0 -> points stay at nominal positions
+	for (int idx = 0; idx < 4; ++idx)
+	{
+		apiObject.freezeSagParameter("sag1", idx, 0.0);
+	}
+	apiObject.adjust();
+
+	Eigen::Vector3d leftNominal(0, -1, 0);
+	Eigen::Vector3d middleNominal(0, 0, 0);
+	Eigen::Vector3d rightNominal(0, 1, 0);
+	ensure("left at nominal", (apiObject.getPointEstimate("left") - leftNominal).norm() < 1e-12);
+	ensure("middle at nominal", (apiObject.getPointEstimate("middle") - middleNominal).norm() < 1e-12);
+	ensure("right at nominal", (apiObject.getPointEstimate("right") - rightNominal).norm() < 1e-12);
+
+	// fix sag to the true values from the input file -> residuals vanish
+	// (re-freezing an already-frozen free param just overwrites its value)
+	double trueSag[4] = {0.001, 0.002, 0.003, 0.004};
+	for (int idx = 0; idx < 4; ++idx)
+	{
+		apiObject.freezeSagParameter("sag1", idx, trueSag[idx]);
+	}
+	apiObject.adjust();
+
+	ensure("leftObs residual zero", apiObject.getEstimateResidual("leftObs").norm() < 1e-9);
+	ensure("middleObs residual zero", apiObject.getEstimateResidual("middleObs").norm() < 1e-9);
+	ensure("rightObs residual zero", apiObject.getEstimateResidual("rightObs").norm() < 1e-9);
+
+	// keep ZS frozen at 0.001, pin XS/XC to 0, leave ZC free; flat heights -> ZC converges to 0
+	apiObject.unfreezeSagParameter("sag1", 1); // ZC must become free again
+	apiObject.freezeSagParameter("sag1", 2, 0.0);
+	apiObject.freezeSagParameter("sag1", 3, 0.0);
+
+	Eigen::Vector3d leftObs(0.007, -1, 0.001);
+	Eigen::Vector3d middleObs(0.003, 0, 0.001);
+	Eigen::Vector3d rightObs(0.007, 1, 0.001);
+	apiObject.updateMeas("leftObs", leftObs);
+	apiObject.updateMeas("middleObs", middleObs);
+	apiObject.updateMeas("rightObs", rightObs);
+	apiObject.adjust();
+
+	Eigen::VectorXd sagEst = apiObject.getSagEstimate("sag1");
+	ensure_equals("ZS stays frozen at 0.001", sagEst(0), 0.001);
+	ensure("ZC converges to 0", fabs(sagEst(1)) < 1e-9);
+
+	// sag2 params are fixed in the input file -> setFixedSagParameter.
+	// offset(y) = (XS+XC*y^2, 0, ZS+ZC*y^2), here sag2=(ZS,ZC,XS,XC)=(1,2,3,4)
+	double fixedSag[4] = {1.0, 2.0, 3.0, 4.0};
+	for (int idx = 0; idx < 4; ++idx)
+	{
+		apiObject.setFixedSagParameter("sag2", idx, fixedSag[idx]);
+	}
+	apiObject.adjust();
+	Eigen::Vector3d P1Expected(3, 0, 1); // y=0: (XS, 0, ZS)
+	Eigen::Vector3d P2Expected(7, 1, 3); // y=1: (XS+XC, 1, ZS+ZC)
+	ensure("P1 moved by sag2 offset", (apiObject.getPointEstimate("P1") - P1Expected).norm() < 1e-12);
+	ensure("P2 moved by sag2 offset", (apiObject.getPointEstimate("P2") - P2Expected).norm() < 1e-12);
 }
 }; // namespace tut
