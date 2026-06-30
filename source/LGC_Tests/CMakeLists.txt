@@ -116,3 +116,19 @@ list(APPEND COPY_TESTFILES ${ADDITIONAL_TESTFILES})
 foreach(test_file ${COPY_TESTFILES})
 	file(COPY "${test_file}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/test_files")
 endforeach()
+
+# Multi-config generators (e.g. Visual Studio) run the test from a per-config
+# subdir: $<TARGET_FILE_DIR:LGC_Tests> == build/LGC_Tests/<CONFIG>, which is the
+# test's WORKING_DIRECTORY. The configure-time file(COPY) above lands in the
+# config-agnostic build/LGC_Tests/test_files, one level too high, so the inputs
+# are not found ("Cannot open file: test_files/..."). Mirror them next to the
+# executable at build time. CMAKE_CONFIGURATION_TYPES is empty for single-config
+# generators (Ninja/Makefiles), where the file(COPY) location is already correct.
+if(CMAKE_CONFIGURATION_TYPES)
+	add_custom_command(TARGET LGC_Tests POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		        "${CMAKE_CURRENT_BINARY_DIR}/test_files"
+		        "$<TARGET_FILE_DIR:LGC_Tests>/test_files"
+		COMMENT "Staging test_files next to LGC_Tests (multi-config generator)"
+	)
+endif()
