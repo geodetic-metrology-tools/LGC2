@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: CERN
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma warning(push)
 #pragma warning(disable : 4512)
 #include <tut/tut.hpp>
