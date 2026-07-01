@@ -61,7 +61,7 @@ void TSimulationOutputFileWriter::writeSimSummary(TLGCData &project, int numberO
 
 	TFRAMEWriter frameWriter(*getStream(), &project);
 
-	// Tteration through the tree nodes
+	// Iteration through the tree nodes
 	for (TDataTreeIterator itTree = project.getTree().begin(); itTree != project.getTree().end(); itTree++)
 	{
 		frameWriter.writeFRAMESimu(itTree); // Writes the simulation summary
@@ -75,7 +75,7 @@ void TSimulationOutputFileWriter::writeLastSimResult(TLGCData &project, int numb
 
 	TFRAMEWriter frameWriter(*getStream(), fProjectData);
 
-	// Tteration through the tree nodes
+	// Iteration through the tree nodes
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 	{
 		frameWriter.writeFRAMEAll(itTree); // Write all the information (also the simulated observed values) for the last iteration
@@ -118,9 +118,9 @@ void TSimulationOutputFileWriter::writeSimTableDescription(const std::string &pr
 	(*stream)<<"SUMMARY AFTER: " << i	<< " SIMULATIONS" <<endl;
 
 	TLGCApp::updateProcessingElapsedSeconds();
-	(*stream) << "#CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS ";
+	(*stream) << "#COMPUTED ON " << TLGCApp::getStartProcessingTimestamp() << ". ELAPSED TIME: ";
 	(*stream).writeDouble(0, 7, TLGCApp::getProcessingElapsedSeconds());
-	(*stream) << "\n"
+	(*stream) << " s" << "\n"
 			  << "\n"
 			  << "\n";
 	// write title

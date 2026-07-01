@@ -31,7 +31,7 @@ void THLSRWriter::writeHLSRResultsHeader()
 	//First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the hlsr
-	(*stream).writeString(obsWidth, "OBSERVED"); //mesured ws distance
+	(*stream).writeString(obsWidth, "OBSERVED"); //measured ws distance
 	(*stream).writeString(obsResWidth, "SIGMA"); //sigma DIST
 	(*stream).writeString(obsWidth, "CALC"); //estimated offset
 	(*stream).writeString(obsResWidth, "RES"); //residual
@@ -79,7 +79,7 @@ void THLSRWriter::writeECWSResults(const  TECWSROM& ecwsrom)
 	//write header
 	writeHLSRHeader(ecwsrom);
 	
-	//data summury
+	//data summary
 	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
 	writeHLSRResultsHeader(); // write the title line for the observations
 
@@ -187,8 +187,8 @@ void THLSRWriter::writeHLSRSynthesisHeader()
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF. POINT"); //plane name
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
 	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 
@@ -211,10 +211,10 @@ void THLSRWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*>& mea
 	for (auto const& ItMEAS : meassum) {
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); //Reference point
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residual max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residual min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//mean residual
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // std dev
 		(*stream) << endl;
 	}
 }

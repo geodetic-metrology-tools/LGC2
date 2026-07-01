@@ -206,7 +206,7 @@ void TLEVELWriter::writeDLEVResults(const std::list<TDLEV> &measDLEV, const TIns
 		(*stream).writeDouble(obsWidth, lengthPrecision, itDlev.getDistanceResidual() + itDlev.getDistance());
 		// residual
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.getDistanceResidual().getMMetresValue());
-		// residual/sima
+		// residual/sigma
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev.getDistanceResidual().getMetresValue() / itDlev.target.sigmaCombinedDist.getMetresValue());
 
 		// Collimation angle
@@ -396,10 +396,10 @@ void TLEVELWriter::writeLEVELSynthesisHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "DLEV_PLANE"); // plane name
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -428,10 +428,10 @@ void TLEVELWriter::writeLEVELResultsSynthesis(std::list<const TLGCObsSummary *> 
 	{
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, itDlev->getObsText()); // Reference point
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getResMax()); // residu max
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getResMin()); // residu min
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getStdev()); // ecart type
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getResMax()); // residual max
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getResMin()); // residual min
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getMean()); // mean residual
+		(*stream).writeDouble(obsResWidth, lengthResPrecision, itDlev->getStdev()); // std dev
 		(*stream) << endl;
 	}
 }

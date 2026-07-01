@@ -25,7 +25,7 @@ void TObservationWriter::writeObsTitle(const std::string &description, const int
 {
 	TAStreamFormatter &stream = getStreamRef();
 	// Title
-	stream << description << getSeparator() << "(NB. = " << numObs << " )" << getSeparator() << endl;
+	stream << description << getSeparator() << "(COUNT = " << numObs << " )" << getSeparator() << endl;
 
 	return;
 }
@@ -297,9 +297,9 @@ void TObservationWriter::writeReliabilityHeader(std::string name1, std::string n
 	(*stream).writeStringLeft(nameWidth,	name1); // name of the first point
 	(*stream).writeStringLeft(nameWidth,	name2); // name of the second point
 	(*stream).writeStringLeft(nameWidth,	name3); // name of the third point
-	(*stream).writeString(obsWidth,	Observation); //mesured
+	(*stream).writeString(obsWidth,	Observation); //measured
 	(*stream).writeString(obsResWidth,	"SIGMA"); //sigma
-	(*stream).writeString(obsResWidth,	"RES"); //residue 
+	(*stream).writeString(obsResWidth,	"RES"); //residual 
 	(*stream).writeString(obsResWidth,			"ZI");//local reliability statistic zi
 	(*stream).writeString(3,			"");//zi flag
 	(*stream).writeString(8,			"WI");//Gross-error detection statistics wi
@@ -315,9 +315,9 @@ void TObservationWriter::writeReliabilityHeader(std::string name1, std::string n
 	(*stream).writeString(nameWidth, ""); // name of the first point
 	(*stream).writeString(nameWidth, ""); // name of the second point
 	(*stream).writeString(nameWidth, ""); // name of the third point (third point's name vs third point name)
-	(*stream).writeString(obsWidth, unit1); // mesured
+	(*stream).writeString(obsWidth, unit1); // measured
 	(*stream).writeString(obsResWidth, unit2); // sigma
-	(*stream).writeString(obsResWidth, unit2); // residue
+	(*stream).writeString(obsResWidth, unit2); // residual
 	(*stream).writeString(obsResWidth, "(%)"); // local reliability statistic zi
 	(*stream).writeString(3, ""); // zi flag
 	(*stream).writeString(8, ""); // Gross-error detection statistics wi
@@ -510,7 +510,7 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic &stat
 std::string	TObservationWriter::getObsDescription(TALGCObjectWriter::ELGCObservations key)
 {
 	static const char *descriptions[] = {
-		"PLR3D OBSERVATIONS", "Unit Vector Measurement (UVEC)", "Unit Vector Measurement + Distance (UVD)", "HORIZONTAL ANGLE OBSERVATIONS (ANGL)", "ZENITHAL ANGLE OBSERVATIONS (ZEND)",
+		"PLR3D OBSERVATIONS", "UNIT VECTOR MEASUREMENTS (UVEC)", "UNIT VECTOR MEASUREMENT + DISTANCE (UVD)", "HORIZONTAL ANGLE OBSERVATIONS (ANGL)", "ZENITHAL ANGLE OBSERVATIONS (ZEND)",
 		"SPATIAL DISTANCE OBSERVATIONS (DIST)", "OFFSETS TO A THEODOLITE PLANE (ECTH)", "OFFSETS TO A THEODOLITE DIRECTION (ECDIR)", "HORIZONTAL DISTANCES (DHOR)",
 		"SPATIAL DISTANCES (DSPT)", "VERTICAL DISTANCES (DLEV)", "HORIZONTAL DISTANCES (DLEVDHOR)", "VERTICAL DISTANCES (DVER)", "HORIZONTAL OFFSETS TO A VERTICAL PLANE (ECHO)",
 		"OFFSETS TO A SPATIAL LINE (ECSP)", "OFFSETS TO A VERTICAL LINE (ECVE)", "ORIENTATIONS (ORIE)", "POINT OF ORIENTATION (PDOR)", "RADIAL CONSTRAINTS (RADI)",

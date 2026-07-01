@@ -138,19 +138,19 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
 	(*stream) << " | ";
 
-	(*stream).writeString(obsWidth, "OBS_ANGL"); // mesured ANGL
+	(*stream).writeString(obsWidth, "OBS_ANGL"); // measured ANGL
 	(*stream).writeString(obsResWidth, "S_ANGL"); // sigma ANGL
 	(*stream).writeString(obsWidth, "CALC_ANGL"); // estimated ANGL
 	(*stream).writeString(obsResWidth, "R_ANGL"); // residual
 	(*stream) << " | ";
 
-	(*stream).writeString(obsWidth, "OBS_ZEND"); // mesured ZEND
+	(*stream).writeString(obsWidth, "OBS_ZEND"); // measured ZEND
 	(*stream).writeString(obsResWidth, "S_ZEND"); // sigma ZEND
 	(*stream).writeString(obsWidth, "CALC_ZEND"); // estimated ZEND
 	(*stream).writeString(obsResWidth, "R_ZEND"); // residual ZEND
 	(*stream) << " | ";
 
-	(*stream).writeString(obsWidth, "OBS_DIST"); // mesured DIST
+	(*stream).writeString(obsWidth, "OBS_DIST"); // measured DIST
 	(*stream).writeString(obsResWidth, "S_DIST"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALC_DIST"); // estimated DIST
 	(*stream).writeString(obsResWidth, "R_DIST"); // residual
@@ -164,11 +164,11 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream) << " | ";
 	}
 
-	(*stream).writeString(obsResWidth, "ANGL"); // ecart
-	(*stream).writeString(obsResWidth, "ZEND"); // ecart
+	(*stream).writeString(obsResWidth, "ANGL"); // deviation
+	(*stream).writeString(obsResWidth, "ZEND"); // deviation
 	(*stream) << " | ";
 
-	(*stream).writeString(obsResWidth, "SENSI"); // sensibilite
+	(*stream).writeString(obsResWidth, "SENSI"); // sensitivity
 	(*stream).writeString(obsWidth, "CONST"); // provisional dist corr
 	(*stream).writeString(obsResWidth, "SCONST"); // sigma distance corr
 	if (isAllfixed)
@@ -237,11 +237,11 @@ void TTSTNWriter::writePLRResultsHeader(int nOObs)
 		(*stream) << " | ";
 	}
 
-	(*stream).writeString(obsResWidth, "(MM)"); // ecart
-	(*stream).writeString(obsResWidth, "(MM)"); // ecart
+	(*stream).writeString(obsResWidth, "(MM)"); // deviation
+	(*stream).writeString(obsResWidth, "(MM)"); // deviation
 	(*stream) << " | ";
 
-	(*stream).writeString(obsResWidth, "(MM/CM)"); // sensibilite
+	(*stream).writeString(obsResWidth, "(MM/CM)"); // sensitivity
 	(*stream).writeString(obsWidth, "(M)"); // distance corr
 	(*stream).writeString(obsResWidth, "(MM)"); // sigma distance corr
 	if (isAllfixed)
@@ -299,11 +299,11 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	// Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
-	(*stream).writeString(obsWidth, "OBSERVED"); // mesured ANGL
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured ANGL
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma ANGL
 	(*stream).writeString(obsWidth, "CALC"); // estimated ANGL
 	(*stream).writeString(obsResWidth, "RES"); // residual
-	(*stream).writeString(obsResWidth, "OFFSET"); // ecart
+	(*stream).writeString(obsResWidth, "OFFSET"); // deviation
 	(*stream).writeString(obsResWidth, "RES"); // residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); // Name of the target
 	// (*stream).writeString(obsWidth,	"H_TRGT"); //provisional target height
@@ -319,11 +319,11 @@ void TTSTNWriter::writeANGLResultsHeader(int nOObs)
 	// Third line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ""); // POSITION
-	(*stream).writeString(obsWidth, "(GON)"); // mesured ANGL
+	(*stream).writeString(obsWidth, "(GON)"); // measured ANGL
 	(*stream).writeString(obsResWidth, "(CC)"); // sigma ANG
 	(*stream).writeString(obsWidth, "(GON)"); // estimated ANGL
 	(*stream).writeString(obsResWidth, "(CC)"); // residual
-	(*stream).writeString(obsResWidth, "(MM)"); // ecart
+	(*stream).writeString(obsResWidth, "(MM)"); // deviation
 	(*stream).writeString(obsResWidth, "/SIG"); // residual/sigma
 	(*stream).writeString(nameWidth, ""); // TARGET ID
 	// (*stream).writeString(obsWidth,	"(M)"); //provisional target height
@@ -350,11 +350,11 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	// Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
-	(*stream).writeString(obsWidth, "OBSERVED"); // mesured ZEND
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured ZEND
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma ZEND
 	(*stream).writeString(obsWidth, "CALC"); // estimated ZEND
 	(*stream).writeString(obsResWidth, "RES"); // residual
-	(*stream).writeString(obsResWidth, "OFFSET"); // ecart
+	(*stream).writeString(obsResWidth, "OFFSET"); // deviation
 	(*stream).writeString(obsResWidth, "RES"); // residual/sigma
 	(*stream).writeString(nameWidth, "TRGT"); // Name of the target
 	(*stream).writeString(obsWidth, "H_TRGT"); // provisional target height
@@ -372,11 +372,11 @@ void TTSTNWriter::writeZENDResultsHeader(int nOObs)
 	(*stream) << TABs;
 
 	(*stream).writeStringLeft(nameWidth, ""); // POSITION
-	(*stream).writeString(obsWidth, "(GON)"); // mesured ZEND
+	(*stream).writeString(obsWidth, "(GON)"); // measured ZEND
 	(*stream).writeString(obsResWidth, "(CC)"); // sigma ZEND
 	(*stream).writeString(obsWidth, "(GON)"); // estimated ZEND
 	(*stream).writeString(obsResWidth, "(CC)"); // residual
-	(*stream).writeString(obsResWidth, "(MM)"); // ecart
+	(*stream).writeString(obsResWidth, "(MM)"); // deviation
 	(*stream).writeString(obsResWidth, "/SIG"); // residual/sigma
 	(*stream).writeString(nameWidth, ""); // TARGET ID
 	(*stream).writeString(obsWidth, "(M)"); // provisional target height
@@ -404,11 +404,11 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	// Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
-	(*stream).writeString(obsWidth, "OBSERVED"); // mesured DIST
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured DIST
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALC"); // estimated DIST
 	(*stream).writeString(obsResWidth, "RES"); // residual
-	(*stream).writeString(obsResWidth, "SENSI"); // sensibilite
+	(*stream).writeString(obsResWidth, "SENSI"); // sensitivity
 	(*stream).writeString(obsResWidth, "RES"); // residual/sigma
 	(*stream).writeString(obsWidth, "CONST"); // dist corr
 	(*stream).writeString(obsResWidth, "SCONST"); // sigma of provisional dist corr
@@ -434,7 +434,7 @@ void TTSTNWriter::writeDISTResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "(MM)"); // sigma observed value
 	(*stream).writeString(obsWidth, "(M)"); // estimated DIST
 	(*stream).writeString(obsResWidth, "(MM)"); // residual
-	(*stream).writeString(obsResWidth, "(MM/CM)"); // ecart
+	(*stream).writeString(obsResWidth, "(MM/CM)"); // deviation
 	(*stream).writeString(obsResWidth, "/SIG"); // residual/sigma
 	(*stream).writeString(obsWidth, "(M)"); // provisional dist corr
 	(*stream).writeString(obsResWidth, "(MM)"); // sigma of provisional dist corr
@@ -467,7 +467,7 @@ void TTSTNWriter::writeDHORResultsHeader(int nOObs)
 	// Second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
-	(*stream).writeString(obsWidth, "OBSERVED"); // mesured DHOR
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured DHOR
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma DHOR
 	(*stream).writeString(obsWidth, "CALC"); // estimated DHOR
 	(*stream).writeString(obsResWidth, "RES"); // residual
@@ -514,18 +514,18 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(2);
 
-	// summuray
+	// summary
 	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECTH), nOObs);
 	////////////////////////////////////////////////////////////
 	// first line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POINT"); // second point's Name
-	(*stream).writeString(obsWidth, "OBSERVED"); // mesured ECTH
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured ECTH
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma ECTH
 	(*stream).writeString(obsWidth, "CALC"); // estimated ECTH
 	(*stream).writeString(obsResWidth, "RES"); // offset ECTH
 	(*stream).writeString(obsResWidth, "RES/SIG"); // offset/sigma
-	(*stream).writeString(obsWidth, "AZIMUT"); // azimut
+	(*stream).writeString(obsWidth, "AZIMUTH"); // azimuth
 	(*stream).writeString(nameWidth, "SCALE"); // SCALE ID
 	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ECTH
 	(*stream).writeString(obsResWidth, "PPM"); // observation PPM error ECTH
@@ -540,7 +540,7 @@ void TTSTNWriter::writeECTHResultsHeader(int nOObs)
 	// second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ""); // station
-	(*stream).writeString(obsWidth, "(M)"); // mesured ECTH
+	(*stream).writeString(obsWidth, "(M)"); // measured ECTH
 	(*stream).writeString(obsResWidth, "(MM)"); // sigma ECTH
 	(*stream).writeString(obsWidth, "(M)"); // estimated ECTH
 	(*stream).writeString(obsResWidth, "(MM)"); // offset ECTH
@@ -564,18 +564,18 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 	int obsIdWidth = getObsIdWidth();
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(2);
-	// summuray
+	// summary
 	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECDIR), nOObs);
 	////////////////////////////////////////////////////////////
 	// first line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POINT"); // second point's Name
-	(*stream).writeString(obsWidth, "OBSERVED"); // mesured ECDIR
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured ECDIR
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma ECDIR
 	(*stream).writeString(obsWidth, "CALC"); // estimated ECDIR
 	(*stream).writeString(obsResWidth, "RES"); // offset ECDIR
 	(*stream).writeString(obsResWidth, "RES/SIG"); // offset/sigma
-	(*stream).writeString(obsWidth, "AZIMUT"); // azimut
+	(*stream).writeString(obsWidth, "AZIMUTH"); // azimuth
 	(*stream).writeString(obsWidth, "ZEND"); // zenithal distance
 	(*stream).writeString(nameWidth, "SCALE"); // SCALE ID
 	(*stream).writeString(obsResWidth, "OBSE"); // observation sigma ECDIR
@@ -594,7 +594,7 @@ void TTSTNWriter::writeECDIRResultsHeader(int nOObs)
 	// second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, ""); // station
-	(*stream).writeString(obsWidth, "(M)"); // mesured ECDIR
+	(*stream).writeString(obsWidth, "(M)"); // measured ECDIR
 	(*stream).writeString(obsResWidth, "(MM)"); // sigma ECDIR
 	(*stream).writeString(obsWidth, "(M)"); // estimated ECDIR
 	(*stream).writeString(obsResWidth, "(MM)"); // offset ECDIR
@@ -822,7 +822,7 @@ void TTSTNWriter::writePLRResults(const std::list<TPLR3D> &measPLR3D, const TIns
 			(*stream) << " | ";
 		}
 
-		// ECART
+		// DEVIATION
 		TReal dist = getEstEuclDistance(ItPLR3D.targetPos, instrPos);
 
 		(*stream).writeDouble(obsResWidth, lengthResPrecision, ItPLR3D.getAngleResidual(EPLR3DAngles::kANGL).getRadiansValue() * dist * M2MM);
@@ -1732,10 +1732,10 @@ void TTSTNWriter::writeANGLHeaderSynthesis()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); // instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	// second line
@@ -1761,10 +1761,10 @@ void TTSTNWriter::writeDISTHeaderSynthesis()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); // instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	// second line
@@ -1777,7 +1777,7 @@ void TTSTNWriter::writeDISTHeaderSynthesis()
 	(*stream) << endl;
 }
 
-void TTSTNWriter::writePLRRHeaderynthesis()
+void TTSTNWriter::writePLRHeaderSynthesis()
 {
 	TAStreamFormatter *stream = getStream();
 	int nameWidth = getNameWidth();
@@ -1793,20 +1793,20 @@ void TTSTNWriter::writePLRRHeaderynthesis()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "TSTN_POS"); // instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << TABs;
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << TABs;
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -1844,10 +1844,10 @@ void TTSTNWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary *> &me
 	{
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); // Reference point
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residu max
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residu min
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residual max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residual min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // mean residual
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // std dev
 		(*stream) << endl;
 	}
 }

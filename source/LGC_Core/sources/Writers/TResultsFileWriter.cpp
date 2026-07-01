@@ -176,7 +176,7 @@ void TResultsFileWriter::writeTitle()
 	(*stream) << endl;
 
 	// write date and time
-	(*stream) << "CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "COMPUTED ON " << TLGCApp::getStartProcessingTimestamp() << ". ELAPSED TIME: " << TLGCApp::getProcessingElapsedSeconds() << " s" << endl;
 	(*stream) << "*********************************************************************************************************************************** " << endl << endl;
 }
 
@@ -230,27 +230,27 @@ void TResultsFileWriter::writeDataSummary()
 
 	// Reading *VYZ
 	if (fNumVyzPoint != 0)
-		writePointDataSummary("POINTS FIXED IN X (VYZ)", fNumVyzPoint);
+		writePointDataSummary("VARIABLE POINTS IN YZ ONLY (VYZ)", fNumVyzPoint);
 
 	// Reading *VXZ
 	if (fNumVxzPoint != 0)
-		writePointDataSummary("POINTS FIXED IN Y (VXZ)", fNumVxzPoint);
+		writePointDataSummary("VARIABLE POINTS IN XZ ONLY (VXZ)", fNumVxzPoint);
 
 	// Reading *VXY
 	if (fNumVxyPoint != 0)
-		writePointDataSummary("POINTS FIXED IN Z (VXY)", fNumVxyPoint);
+		writePointDataSummary("VARIABLE POINTS IN XY ONLY (VXY)", fNumVxyPoint);
 
 	// Reading *VX
 	if (fNumVxPoint != 0)
-		writePointDataSummary("VARIABLE IN X ONLY (VX)", fNumVxPoint);
+		writePointDataSummary("VARIABLE POINTS IN X ONLY (VX)", fNumVxPoint);
 
 	// Reading *VY
 	if (fNumVyPoint != 0)
-		writePointDataSummary("VARIABLE IN Y ONLY (VY)", fNumVyPoint);
+		writePointDataSummary("VARIABLE POINTS IN Y ONLY (VY)", fNumVyPoint);
 
 	// Reading *VZ
 	if (fNumVzPoint != 0)
-		writePointDataSummary("VARIABLE IN Z ONLY (VZ)", fNumVzPoint);
+		writePointDataSummary("VARIABLE POINTS IN Z ONLY (VZ)", fNumVzPoint);
 
 	// Reading Observations
 	int fNumHorAng = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kANGL);
@@ -472,7 +472,7 @@ void TResultsFileWriter::writeSigmaAPosteriori()
 
 	if (fProjectData->getConfig().useRegularizationOnly.isActive() || fProjectData->getConfig().useRegularization.isActive())
 	{
-		(*stream) << "THE COMPUTATION USES A lEVENBERG-MARQUARDT ALGORITHM, TO SEE ITS LIMITATIONS SEE THE USERGUIDE";
+		(*stream) << "THE COMPUTATION USES A LEVENBERG-MARQUARDT ALGORITHM, TO SEE ITS LIMITATIONS SEE THE USERGUIDE";
 	}
 	(*stream) << endl;
 
@@ -534,7 +534,7 @@ void TResultsFileWriter::writeFramesResults()
 	TAStreamFormatter *stream = getStream();
 	TFRAMEWriter frameWriter(*stream, fProjectData);
 
-	// Tteration through the tree nodes
+	// Iteration through the tree nodes
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 	{
 		frameWriter.writeFRAMEAll(itTree); // Writes

@@ -51,7 +51,7 @@ void	TFautFileWriter::writeFile(TLGCData const * const ds)
 	this->writeTitle();
 	this->writeDataSummary();
 
-	//Tteration through the tree nodes
+	//Iteration through the tree nodes
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++){	
 		frameWriter.writeFRAMEAllReliability(itTree);	//Writes 
 	}
@@ -81,7 +81,7 @@ void	TFautFileWriter::writeTitle()
 	(*stream)<<(TLGCApp::getCopyright())<<endl;
 
 	//last compilation
-	(*stream)<<"Last compilation : "<<__DATE__<<endl<<endl<<endl;
+	(*stream)<<"Last compilation: "<<__DATE__<<endl<<endl<<endl;
 
 	//write title
 	(*stream)<<"*********************************************************************************************************************************** "<<endl;
@@ -90,7 +90,7 @@ void	TFautFileWriter::writeTitle()
 	(*stream)<<endl;
 
 	// write date and time
-	(*stream) << "CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "COMPUTED ON " << TLGCApp::getStartProcessingTimestamp() << ". ELAPSED TIME: " << TLGCApp::getProcessingElapsedSeconds() << " s" << endl;
 	(*stream)<<"*********************************************************************************************************************************** "<<endl<<endl<<endl<<endl;
 }
 

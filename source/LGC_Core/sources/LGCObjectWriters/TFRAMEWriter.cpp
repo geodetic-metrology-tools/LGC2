@@ -471,7 +471,7 @@ void TFRAMEWriter::initialiseAllObsSummaries()
 	allObsxyzYSummaries_.clear();
 	allObsxyzZSummaries_.clear();
 
-	// Tteration through the tree nodes
+	// Iteration through the tree nodes
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 	{
 		auto &tmeas = (*itTree)->measurements;
@@ -1910,19 +1910,19 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	}
 	if (status == TSpatialStatus::kVz)
 	{
-		title = "POINTS VARIABLE IN Z ONLY";
+		title = "VARIABLE POINTS IN Z ONLY";
 	}
 	if (status == TSpatialStatus::kVxy)
 	{
-		title = "INVARIABLE POINTS IN Z";
+		title = "VARIABLE POINTS IN XY ONLY";
 	}
 	if (status == TSpatialStatus::kVxz)
 	{
-		title = "INVARIABLE POINTS IN Y";
+		title = "VARIABLE POINTS IN XZ ONLY";
 	}
 	if (status == TSpatialStatus::kVyz)
 	{
-		title = "INVARIABLE POINTS IN X";
+		title = "VARIABLE POINTS IN YZ ONLY";
 	}
 	if (status == TSpatialStatus::kVxyz)
 	{
@@ -1948,7 +1948,7 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	}
 
 	if (!localFRAME)
-		(*stream) << "(NB. = " << ptNumber << ",  REFERENCE FRAME = " << referentialName << " )";
+		(*stream) << "(COUNT = " << ptNumber << ",  REFERENCE FRAME = " << referentialName << " )";
 
 	(*stream) << "\n";
 
@@ -2046,7 +2046,7 @@ void TFRAMEWriter::writeEllipsoidHeader()
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line
-	stream->writeStringLeft(nameWidth, "NOM");
+	stream->writeStringLeft(nameWidth, "NAME");
 	// Direction vectors: (+0.000, -0.000, +0.000) => 24
 	const int vecwidth(24);
 	stream->writeString(vecwidth, "UNIT VECT X");

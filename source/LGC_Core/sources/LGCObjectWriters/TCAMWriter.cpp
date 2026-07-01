@@ -66,18 +66,18 @@ void TCAMWriter::writeUVDResultsHeader(int nOObs)
 	//(*stream).writeString(obsWidth,	"CONST CALC"); //calculated distance corr
 	//(*stream).writeString(obsResWidth,	"SCCONST");  //sigma distance corr
 
-	(*stream).writeString(obsWidth, "OBSXV"); //mesured x vector component
+	(*stream).writeString(obsWidth, "OBSXV"); //measured x vector component
 	(*stream).writeString(obsResWidth, "SXV"); //sigma x vector component
 	(*stream).writeString(obsWidth, "CALCXV"); //estimated x vector component 
 	(*stream).writeString(obsResWidth, "RESXV"); //residual
 
 
-	(*stream).writeString(obsWidth, "OBSYV"); //mesured y vector component
+	(*stream).writeString(obsWidth, "OBSYV"); //measured y vector component
 	(*stream).writeString(obsResWidth, "SYV"); //sigma y vector component
 	(*stream).writeString(obsWidth, "CALCYV"); //estimated y vector component 
 	(*stream).writeString(obsResWidth, "RESYV"); //residual 
 
-	(*stream).writeString(obsWidth, "OBSDIST"); //mesured DIST
+	(*stream).writeString(obsWidth, "OBSDIST"); //measured DIST
 	(*stream).writeString(obsResWidth, "SDIST"); //sigma DIST
 	(*stream).writeString(obsWidth, "CALCDIST"); //estimated DIST 
 	(*stream).writeString(obsResWidth, "RESDIST"); //residual
@@ -130,13 +130,13 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //Position of the target
 	//(*stream).writeString(obsWidth,	"HEIGHT"); //target height
 
-	(*stream).writeString(obsWidth, "OBSXV"); //mesured x vector component
+	(*stream).writeString(obsWidth, "OBSXV"); //measured x vector component
 	(*stream).writeString(obsResWidth, "SXV"); //sigma x vector component
 	(*stream).writeString(obsWidth, "CALCXV"); //estimated x vector component 
 	(*stream).writeString(obsResWidth, "RESXV"); //residual
 
 
-	(*stream).writeString(obsWidth, "OBSYV"); //mesured y vector component
+	(*stream).writeString(obsWidth, "OBSYV"); //measured y vector component
 	(*stream).writeString(obsResWidth, "SYV"); //sigma y vector component
 	(*stream).writeString(obsWidth, "CALCYV"); //estimated y vector component 
 	(*stream).writeString(obsResWidth, "RESYV"); //residual 
@@ -490,18 +490,18 @@ void TCAMWriter::writeUVDSynthesisHeader()
 	//First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
-	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
-	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //std dev
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //std dev
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //std dev
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -538,14 +538,14 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	//First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); //instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
-	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //std dev
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //std dev
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -578,10 +578,10 @@ void TCAMWriter::writeResultsSynthesisHeaderUnitless()
 	//First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //std dev
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -608,10 +608,10 @@ void TCAMWriter::writeResultsSynthesisHeaderDistance()
 	//First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
-	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); //residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); //std dev
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
 	//second line
@@ -633,10 +633,10 @@ void TCAMWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary*> &meas
 	for (auto const& ItMEAS : meassum) {
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); //Reference point
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residu max
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residu min
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax());//residual max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin());//residual min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean());//mean residual
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // std dev
 		(*stream) << endl;
 	}
 }

@@ -46,11 +46,11 @@ public:
 		/// write a title of an observation, including description and number of obs.
 		void writeObsTitle(const std::string& description, const int numObs);
 
-		/// write summary of statistics for a group of angle measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
+		/// write summary of statistics for a group of angle measurements
 		void writeAngleResultsSummary(const TLGCObsSummary& summary, std::string TABs);
-		/// write summary of statistics for a group of distance measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
+		/// write summary of statistics for a group of distance measurements
         void writeDistanceResultsSummary(const TLGCObsSummary& summary, std::string TABs);
-		/// write summary of statistics for a group of distance measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
+		/// write summary of statistics for a group of unitless measurements
         void writeUnitlessResultsSummary(const TLGCObsSummary& summary, std::string TABs);
 		
 		/// write a histogram for the group of measurements

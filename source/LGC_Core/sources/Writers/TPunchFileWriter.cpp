@@ -236,7 +236,7 @@ void TPunchFileWriter::writeTitle()
 	}
 
 	// write date and time
-	(*stream) << "#CALCULATION OF " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "#COMPUTED ON " << TLGCApp::getStartProcessingTimestamp() << ". ELAPSED TIME: " << TLGCApp::getProcessingElapsedSeconds() << " s" << endl;
 	(*stream) << "#";
 	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 		(*stream) << "*SPHE";
@@ -1014,7 +1014,7 @@ TReal TPunchFileWriter::getN(LGCAdjustablePoint const &point)
 	else
 		fGeoidModel = TRefSystemFactory::EGeoid::kNoGeoid;
 
-	// Toujours en CCS pendant le calcul TAReferenceFrame* pointRefFrame = getStreamFormatter()->getReferenceFrame();
+	// point coordinates are in CCS during the calculation
 	TAReferenceFrame *ccs = TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kCCS);
 	TAGeoidModel *geoid = TRefSystemFactory::getRefSystemFactory()->getGeoid(fGeoidModel);
 
@@ -1089,7 +1089,7 @@ void TPunchFileWriter::writeFrameSectionData()
 	int anglePrecision = getAnglePrecision() + 5;
 	int lengthPrecision = getLengthPrecision() + 5;
 
-	// Tteration through the tree nodes
+	// Iteration through the tree nodes
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 	{
 		if (itTree->get()->frame.getName() != "ROOT")

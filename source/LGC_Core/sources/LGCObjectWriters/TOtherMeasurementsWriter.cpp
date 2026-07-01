@@ -76,7 +76,7 @@ void TOtherMeasurementWriter::writeORIEResultsHeader()
 	(*stream).writeString(obsResWidth, "SIGMA"); //sigma 
 	(*stream).writeString(obsWidth, "CALC"); //estimated orie 
 	(*stream).writeString(obsResWidth, "RES"); //residual
-	(*stream).writeString(obsResWidth, "RES/SIG");//residu/sigma
+	(*stream).writeString(obsResWidth, "RES/SIG");//residual/sigma
 	(*stream).writeString(nameWidth, "TRGT");     //Name of the target
 	(*stream).writeString(obsResWidth, "OBSE");   // observation sigma ORIE
 	(*stream).writeString(obsResWidth, "TCSE");   // target centering sigma
@@ -92,7 +92,7 @@ void TOtherMeasurementWriter::writeORIEResultsHeader()
 	(*stream).writeString(obsResWidth, "(CC)"); // sigma observed value
 	(*stream).writeString(obsWidth, "(GON)"); // estimated orie
 	(*stream).writeString(obsResWidth, "(CC)"); // residual
-	(*stream).writeString(obsResWidth, ""); // residu/sigma
+	(*stream).writeString(obsResWidth, ""); // residual/sigma
 	(*stream).writeString(nameWidth, ""); // TARGET ID
 	(*stream).writeString(obsResWidth, "(CC)"); // observation sigma ORIE
 	(*stream).writeString(obsResWidth, "(MM)"); // target centering sigma
@@ -809,8 +809,8 @@ void TOtherMeasurementWriter::writeResultsSynthesisHeader()
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
 	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
@@ -838,8 +838,8 @@ void TOtherMeasurementWriter::writeResultsSynthesisHeaderAngles()
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "INSTR_POS"); //instrument
 	(*stream).writeString(obsResWidth, "RES_MAX"); //residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); //residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); //residu mean
+	(*stream).writeString(obsResWidth, "RES_MIN"); //residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); //residual mean
 	(*stream).writeString(obsResWidth, "STD_DEV"); //ecart type
 	(*stream) << endl;
 	///////////////////////////////////////////////////////////////////////////////////
@@ -864,10 +864,10 @@ void TOtherMeasurementWriter::writeDefResultsSynthesis(std::list<const TLGCObsSu
 	{
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); // Reference point
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residu max
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residu min
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residual max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residual min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // mean residual
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // std dev
 		(*stream) << endl;
 	}
 }

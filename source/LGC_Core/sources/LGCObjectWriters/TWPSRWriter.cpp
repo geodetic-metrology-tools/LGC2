@@ -35,12 +35,12 @@ void TWPSRWriter::writeWPSRResultsHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the wpsr
-	(*stream).writeString(obsWidth, "OBSX"); // mesured ws distance
+	(*stream).writeString(obsWidth, "OBSX"); // measured ws distance
 	(*stream).writeString(obsResWidth, "SX"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALCX"); // estimated offset
 	(*stream).writeString(obsResWidth, "RESX"); // residual
 	(*stream).writeString(obsResWidth, "RESX/SX"); // residual/sigma
-	(*stream).writeString(obsWidth, "OBSZ"); // mesured ws distance
+	(*stream).writeString(obsWidth, "OBSZ"); // measured ws distance
 	(*stream).writeString(obsResWidth, "SZ"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALCZ"); // estimated offset
 	(*stream).writeString(obsResWidth, "RESZ"); // residual
@@ -264,10 +264,10 @@ void TWPSRWriter::writeWPSRSynthesisHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF. POINT"); // plane name
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -291,10 +291,10 @@ void TWPSRWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary *> &me
 	{
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); // Reference point
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residu max
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residu min
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residual max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residual min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // mean residual
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // std dev
 		(*stream) << endl;
 	}
 }

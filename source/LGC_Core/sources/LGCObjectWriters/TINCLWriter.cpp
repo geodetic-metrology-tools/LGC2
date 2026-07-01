@@ -35,7 +35,7 @@ void TINCLWriter::writeINCLResultsHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the scale
-	(*stream).writeString(obsWidth, "OBSERVED"); // mesured offset
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured offset
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma DIST
 	(*stream).writeString(obsWidth, "CALC"); // estimated offset
 	(*stream).writeString(obsResWidth, "RES"); // residual
@@ -317,10 +317,10 @@ void TINCLWriter::writeINCLSynthesisHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "STATION"); // plane name
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MEAN"); // residu mean
-	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << "\n";
 
 	///////////////////////////////////////////////////////////////////////////////////

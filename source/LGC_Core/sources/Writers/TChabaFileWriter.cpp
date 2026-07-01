@@ -322,7 +322,7 @@ void TChabaFileWriter::writeTransformedSecondaryPoints(const std::vector<LGCAdju
 	std::string sep = stream->getSeparator();
 
 	// write column headings
-	writeStringLeftSep(getNameWidth(), "NOM");
+	writeStringLeftSep(getNameWidth(), "NAME");
 	writeStringSep(getCoordWidth(), "X(M)");
 	writeStringSep(getCoordWidth(), "Y(M)");
 	writeStringSep(getCoordWidth(), "Z(M)");
