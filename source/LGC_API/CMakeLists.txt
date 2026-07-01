@@ -37,6 +37,15 @@ add_library(${PROJECT_NAME} SHARED ${API_HEADERS} ${API_SOURCES})
 # Export the flat C ABI (moni* functions) — the only exported surface of this DLL.
 target_compile_definitions(${PROJECT_NAME} PRIVATE MONITOR_C_EXPORTS)
 
+# On ELF (Linux) default visibility would ALSO export the internal C++ Monitor
+# class; its mangled symbols collide with the header-only facade in a consumer
+# binary (symbol interposition -> a facade-layout object dispatched to the
+# internal method -> memory corruption / crash). Hide everything and export only
+# moni* (which carry visibility("default") in Monitor_C.h), matching Windows.
+if(NOT MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE -fvisibility=hidden -fvisibility-inlines-hidden)
+endif()
+
 target_link_libraries(${PROJECT_NAME}
 	LGC_Core
 	LSAlgorithms
