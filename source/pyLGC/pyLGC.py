@@ -46,6 +46,7 @@ def _sig(name, restype, argtypes):
     return fn
 
 _get_last_error       = _sig("lgcGetLastError",       _cp,  [])
+_get_version          = _sig("lgcGetLGCVersion",      _cp,  [])
 _free_double          = _sig("lgcFreeDoubleArray",     None, [_dp])
 _free_int             = _sig("lgcFreeIntArray",        None, [_ip])
 
@@ -78,6 +79,10 @@ _adj_get_est          = _sig("lgcAdjObjGetEstVector", _int, [_vp, _dpp, _ip])
 def _last_error():
     msg = _get_last_error()
     return msg.decode("utf-8") if msg else "Unknown error"
+
+def getLGCVersion():
+    """Return the LGC2 library version string, e.g. "vMAJOR.MINOR.PATCH"."""
+    return _get_version().decode("utf-8")
 
 def _check(result):
     if result == -1:

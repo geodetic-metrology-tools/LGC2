@@ -4,6 +4,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <string_view>
 
 #include <ConsoleLogHandler.hpp>
 #include <FileLogHandler.hpp>
@@ -13,9 +14,57 @@
 #include "FileUtils.h"
 #include "TFileLogger.h" // Will be obsolete soon
 #include "TLGCApp.h"
+#include "Version.h"
+
+namespace
+{
+void printVersion()
+{
+	std::cout << "LGC2 " << getLGCVersion() << '\n';
+}
+} // namespace
 
 int main(int argc, char *argv[])
 {
+	/* Handle -h/-V before any other setup (no log files, no -i required).
+	Help takes priority over Version regardless of argument order, hence two passes.
+	Lowercase -v is intentionally not --version; it's conventionally used for 'verbose'. */
+	for (int i = 1; i < argc; i++)
+	{
+		const std::string_view arg{argv[i]};
+		if (arg == "-h" || arg == "-H" || arg == "--help")
+		{
+			printVersion();
+			std::cout << "\nUsage: LGC -i <inputFile> [-o <outputFile>] [-n <maxIterations>] [-d [<logFile>]] [-v] [-h]\n\n"
+			             "Options:\n"
+			             "  -i, -I <file>      Input file (required)\n"
+			             "  -o, -O <file>      Output file (default: <input>.res)\n"
+			             "  -n, -N <int>       Maximum number of iterations (default: "
+			          << MAX_ITERATIONS
+			          << ")\n"
+			             "  -d, -D [<file>]    Enable debug logging, optionally to <file>\n"
+			             "  -V, --version      Print version information and exit\n"
+			             "  -h, -H, --help     Print this help message and exit\n";
+			return 0;
+		}
+	}
+	for (int i = 1; i < argc; i++)
+	{
+		const std::string_view arg{argv[i]};
+		if (arg == "-V" || arg == "--version")
+		{
+			/* GNU Coding Standards for --version: the first line must be parseable as
+			"ProgramName Version", with the version number as the last token, followed
+			by a short copyright/license/no-warranty notice. */
+			printVersion();
+			std::cout << TLGCApp::getCopyright() << '\n'
+			          << R"(This is free software; see the source for copying conditions. There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+)";
+			return 0;
+		}
+	}
+
 	// ********  WILL BE OBSOLETE SOON !!!  WILL BE OBSOLETE SOON !!!   *********
 #ifdef __linux__
 	const std::string logFilePath2 = svlTools::getCurrentDirectory() + slash + "LOGFile.log";
@@ -45,9 +94,10 @@ int main(int argc, char *argv[])
 		// Create a proper .log file with TFileLogger format for no arguments
 		TFileLogger errorLog(logFilePath, "LGC output file");
 		errorLog.writeReportHeader("Reading input file:");
-		errorLog << TFileLogger::e_logType::LOG_ERROR << "No arguments provided. Atleast input file argument \"-i\" must be specified";
+		errorLog << TFileLogger::e_logType::LOG_ERROR << "No arguments provided. At least input file argument \"-i\" must be specified";
 
-		std::cerr << "[ERROR]: No arguments provided. Atleast input file argument \"-i\" must be specified" << '\n';
+		std::cerr << "[ERROR]: No arguments provided. At least input file argument \"-i\" must be specified" << '\n';
+		std::cerr << "Use -h or --help for usage information." << '\n';
 		std::cerr << "Error details logged to: " << logFilePath << '\n';
 		return 1;
 	}

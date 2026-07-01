@@ -20,6 +20,8 @@
 #include <TVAdjustableObject.h>
 #include <UEOIndices.h>
 
+#include "Version.h"
+
 static thread_local std::string lastError;
 
 // ---------------------------------------------------------------------------
@@ -94,6 +96,12 @@ extern "C"
 	const char *lgcGetLastError(void)
 	{
 		return lastError.c_str();
+	}
+
+	const char *lgcGetLGCVersion(void)
+	{
+		static const std::string version = getLGCVersion();
+		return version.c_str();
 	}
 
 	void lgcFreeDoubleArray(double *ptr)

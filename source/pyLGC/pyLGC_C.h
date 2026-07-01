@@ -26,6 +26,9 @@ extern "C"
 	/* Error handling — returns message from last failed call (thread-local). */
 	PYLGC_API const char *lgcGetLastError(void);
 
+	/* Returns the LGC2 library version string, e.g. "vMAJOR.MINOR.PATCH". */
+	PYLGC_API const char *lgcGetLGCVersion(void);
+
 	/* Memory management — caller must free arrays returned by the API. */
 	PYLGC_API void lgcFreeDoubleArray(double *ptr);
 	PYLGC_API void lgcFreeIntArray(int *ptr);

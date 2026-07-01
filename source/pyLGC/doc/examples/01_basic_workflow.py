@@ -5,6 +5,8 @@ This script demonstrates the core API mechanics of pyLGC for surveyors.
 
 import pyLGC
 
+print(f"Using pyLGC / LGC2 engine version: {pyLGC.getLGCVersion()}")
+
 # 1. LOAD THE NETWORK
 # The Evaluator parses the .lgc2 file and initializes the network geometry.
 ev = pyLGC.Evaluator("Title-Example.lgc2")

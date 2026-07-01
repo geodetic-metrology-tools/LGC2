@@ -14,6 +14,14 @@ def ev():
     return pyLGC.Evaluator(LGC_FILE)
 
 
+# --- Version ---
+
+def test_get_version():
+    version = pyLGC.getLGCVersion()
+    assert version.startswith("v")
+    assert version.count(".") == 2
+
+
 # --- Loading ---
 
 def test_load_dimensions(ev):
