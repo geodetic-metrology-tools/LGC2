@@ -7,7 +7,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "Monitor.h"
+#include "MonitorCore.h"
 #include "TAStreamFormatter.h"
 
 template<typename AdjustableObject>

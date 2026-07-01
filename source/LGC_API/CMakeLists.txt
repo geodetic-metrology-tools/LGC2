@@ -10,17 +10,18 @@ SET(API_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources)
 					
 # Create a variable containing all .h files:
 set(API_HEADERS
-	${API_INCLUDE_PATH}/Monitor.h
+	${API_INCLUDE_PATH}/Monitor.h       # header-only C++ facade over the C ABI (shipped)
+	${API_INCLUDE_PATH}/MonitorCore.h   # internal implementation class (not exported)
 	${API_INCLUDE_PATH}/MonitorImpl.h
-	${API_INCLUDE_PATH}/pyMonitoring_C.h
+	${API_INCLUDE_PATH}/Monitor_C.h     # flat C ABI (shipped)
 )
 
 # Create a variable containing all .cpp files:
 set(API_SOURCES
 	${API_SOURCES_PATH}/MonitorImpl.cpp
-	# Flat C ABI exported alongside the C++ Monitor class, so a single
-	# LGC_API.dll serves both C++ consumers and the ctypes Python wrapper.
-	${API_SOURCES_PATH}/pyMonitoring_C.cpp
+	# The flat C ABI (moni*) is the ONLY exported surface of the DLL; both the
+	# C++ facade (Monitor.h) and the ctypes Python wrapper sit on top of it.
+	${API_SOURCES_PATH}/Monitor_C.cpp
 )
 
 # Define VS folders:
@@ -33,8 +34,8 @@ source_group("\\Sources" FILES ${API_CPP})
 # Create a dynamic library from sources:
 add_library(${PROJECT_NAME} SHARED ${API_HEADERS} ${API_SOURCES})
 
-# Export the flat C ABI (moni* functions) from this DLL as well.
-target_compile_definitions(${PROJECT_NAME} PRIVATE PYMONITORING_C_EXPORTS)
+# Export the flat C ABI (moni* functions) — the only exported surface of this DLL.
+target_compile_definitions(${PROJECT_NAME} PRIVATE MONITOR_C_EXPORTS)
 
 target_link_libraries(${PROJECT_NAME}
 	LGC_Core

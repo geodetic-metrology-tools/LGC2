@@ -5,7 +5,7 @@
 #ifndef TMONITORIMPL
 #define TMONITORIMPL
 
-#include "Monitor.h"
+#include "MonitorCore.h"
 
 // STL
 #include <chrono>

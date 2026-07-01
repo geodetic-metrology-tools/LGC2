@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "pyMonitoring_C.h"
+#include "Monitor_C.h"
 
 #include <algorithm>
 #include <string>
 
 #include <Eigen/Dense>
 
-#include "Monitor.h"
+#include "MonitorCore.h"
 
 static thread_local std::string lastError;
 

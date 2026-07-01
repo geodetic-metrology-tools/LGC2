@@ -1,20 +1,21 @@
 # LGC2 Monitor library - bundle
 
 Self-contained bundle for BOTH the Python monitoring API and direct C/C++ use of
-the monitoring library. A single native library serves all of them (it carries
-the C++ `Monitor` class and the flat `moni*` C ABI):
+the monitoring library. The native library exports a single, stable flat **C ABI**
+(the `moni*` functions); the C++ `Monitor` class and the Python wrapper are thin
+layers on top of it, so only C types ever cross the library boundary.
 
-    Windows : LGC_API.dll   (+ LGC_API.lib for C++ linking)
+    Windows : LGC_API.dll   (+ LGC_API.lib for linking)
     Linux   : libLGC_API.so
 
 ## Contents
 
-    LGC_API.dll / libLGC_API.so   native monitoring library (also exports the C ABI)
-    LGC_API.lib                   (Windows only) import library for C++ linking
+    LGC_API.dll / libLGC_API.so   native monitoring library (exports the moni* C ABI)
+    LGC_API.lib                   (Windows only) import library
+    Monitor.h                     header-only C++ facade (class Monitor) over the C ABI
+    Monitor_C.h                   flat C ABI header (moni* functions, for C / other FFI)
     pyMonitoring.py               Python ctypes wrapper (class Monitor)
     requirements.txt              Python dependencies (numpy)
-    Monitor.h                  C++ header (class Monitor)
-    pyMonitoring_C.h              flat C ABI header (moni* functions, for C / other FFI)
 
 ## Python (plug and play)
 
@@ -30,11 +31,14 @@ the C++ `Monitor` class and the flat `moni*` C ABI):
 No compiler and no pybind are needed - pyMonitoring.py loads the native library
 directly via ctypes.
 
-## C++ (link against the library)
+## C++ (header-only facade)
 
-`Monitor.h` includes <Eigen/Dense>, so Eigen (header-only) is required at
-compile time. Eigen is NOT shipped in this bundle - point the compiler at your
-own Eigen.
+`Monitor.h` is a header-only facade: it is compiled in YOUR translation unit and
+only calls the flat C ABI, so it works with any compiler, C++ runtime and C++
+standard - it does NOT have to match the toolchain the library was built with.
+It includes <Eigen/Dense>; point the compiler at your own Eigen (header-only, not
+shipped). Because only C types cross the boundary, your Eigen version is entirely
+your own choice.
 
     Windows (MSVC):
       cl /std:c++17 /EHsc /I "<this folder>" /I "<your Eigen>" app.cpp LGC_API.lib
@@ -51,6 +55,6 @@ own Eigen.
 
 ## C / other languages (flat C ABI)
 
-Use `pyMonitoring_C.h` (the `extern "C"` `moni*` functions) and load
+Use `Monitor_C.h` (the `extern "C"` `moni*` functions) and load
 LGC_API.dll / libLGC_API.so directly from any FFI (ctypes, MATLAB loadlibrary,
 Julia ccall, ...). No Eigen needed - the C ABI passes plain `double*` arrays.
