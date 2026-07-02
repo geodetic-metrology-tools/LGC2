@@ -64,6 +64,22 @@ def test_results_json(moni):
     assert "LGCVersion" in results
     assert "LGC_DATA" in results
 
+    # the root-frame post-processing quantities (skipped by adjust for performance)
+    # are refreshed for the snapshot
+    points = results["LGC_DATA"]["points"]
+    for p in points:
+        if p["fFramePosition_Name"] == "ROOT":
+            assert p["fEstimatedValueInRoot"]["fVector"] == pytest.approx(p["fEstimatedValue"]["fVector"])
+    assert any(any(any(row) for row in p["fCovarianceMatrixInRoot"]) for p in points)
+
+    # cross-check: the serialized root-frame values equal the API transform methods,
+    # which run the same transformCovar/TLOR2LOR machinery on demand
+    for p in points:
+        est = moni.getPointEstimate(p["fName"], "ROOT")
+        prec = moni.getPointEstimatePrec(p["fName"], "ROOT")
+        assert np.array(p["fEstimatedValueInRoot"]["fVector"]) == pytest.approx(est, abs=1e-12)
+        assert np.sqrt(np.diag(p["fCovarianceMatrixInRoot"])) == pytest.approx(prec, abs=1e-12)
+
 
 def test_results_json_records_masking():
     m = pyMonitoring.Monitor(MINIMAL)

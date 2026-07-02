@@ -247,6 +247,15 @@ std::string Monitor::MonitorImpl::getResultsJson()
 {
 	if (!estimationStatus)
 		throw std::runtime_error("No adjustment results available - call adjust() first.");
+	// The root-frame values/covariances are post-processing quantities which adjust()
+	// deliberately does NOT compute for performance reasons (the main program fills them
+	// in TLGCCalculation::run after the solve). Refresh them here so the snapshot is
+	// self-consistent; the cost is paid per snapshot, not per adjust cycle.
+	for (auto it = project->getPoints().begin(); it != project->getPoints().end(); ++it)
+	{
+		it->setCovarianceMatrixInRoot(project.get());
+		it->transformEstimatedCoordinates(project.get());
+	}
 	JSONObjectSerializer obj;
 	obj.addProperty("LGCVersion", getLGCVersion());
 	obj.addProperty("LGC_DATA", project.get());
