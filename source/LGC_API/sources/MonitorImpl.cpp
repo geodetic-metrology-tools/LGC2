@@ -18,7 +18,6 @@ bool isFreeVar(const AdjustableObject &adjObj, int idx)
 	return std::find(freeIdx.begin(), freeIdx.end(), idx) != freeIdx.end();
 }
 
-
 // constructor
 Monitor::Monitor(const std::string &inputFilePath) : pimpl_(std::make_unique<MonitorImpl>(inputFilePath)), fFilePath(inputFilePath)
 {
@@ -339,7 +338,6 @@ void Monitor::MonitorImpl::setFixedFrameParameter(const std::string &frameName, 
 		throw std::runtime_error("Index " + std::to_string(idx) + " of frame " + frameName + " is not a fixed variable. ");
 	}
 
-
 	// set the parameter
 	if (idx < 3)
 	{
@@ -375,12 +373,11 @@ void Monitor::MonitorImpl::setFixedPointParameter(const std::string &pointName, 
 	}
 
 	pointRef.setEstVal(idx, val);
-	
 }
 
 void Monitor::MonitorImpl::setFixedSagParameter(const std::string &sagName, int idx, double val)
 {
-	if (idx<0 || idx>3)
+	if (idx < 0 || idx > 3)
 	{
 		throw std::runtime_error("Index of sag element " + sagName + " has to be 0,1,2 or 3.");
 	}
@@ -402,7 +399,6 @@ void Monitor::MonitorImpl::setFixedSagParameter(const std::string &sagName, int 
 	}
 
 	sagRef.setEstValue(idx, val);
-
 }
 
 void Monitor::MonitorImpl::freezeFrameParameter(const std::string &frameName, int idx, double val)
@@ -515,14 +511,14 @@ void Monitor::MonitorImpl::freezePointParameter(const std::string &pointName, in
 	}
 
 	// freeze the parameter
-	//pointRef.setEstVal(idx, TLength(val));
+	// pointRef.setEstVal(idx, TLength(val));
 	pointRef.setValue(pointRef.getCoordinateUnknIndex(idx), val);
 	project->fParameterMask.insert(pointRef.getCoordinateUnknIndex(idx));
 }
 
 void Monitor::MonitorImpl::freezeSagParameter(const std::string &sagName, int idx, double val)
 {
-	if (idx<0 || idx>3)
+	if (idx < 0 || idx > 3)
 	{
 		throw std::runtime_error("Index of sag element " + sagName + " has to be 0,1,2 or 3.");
 	}
@@ -547,7 +543,6 @@ void Monitor::MonitorImpl::freezeSagParameter(const std::string &sagName, int id
 	// freeze the parameter
 	sagRef.setEstValue(idx, val);
 	project->fParameterMask.insert(sagRef.getUnknIndex(idx));
-
 }
 
 void Monitor::MonitorImpl::unfreezePointParameter(const std::string &pointName, int idx)
@@ -591,8 +586,8 @@ void Monitor::MonitorImpl::unfreezePointParameter(const std::string &pointName, 
 }
 
 void Monitor::MonitorImpl::unfreezeSagParameter(const std::string &sagName, int idx)
-{	// unfreeze a sag parameter that is free in the original configuration
-	if (idx<0 || idx>3)
+{ // unfreeze a sag parameter that is free in the original configuration
+	if (idx < 0 || idx > 3)
 	{
 		throw std::runtime_error("Index of sag element " + sagName + " has to be 0,1,2 or 3.");
 	}
@@ -631,7 +626,6 @@ void Monitor::MonitorImpl::unfreezeSagParameter(const std::string &sagName, int 
 	{
 		throw std::runtime_error("Index " + std::to_string(idx) + " of sag element " + sagName + " was not frozen. Nothing to unfreeze!");
 	}
-
 }
 
 void Monitor::MonitorImpl::createParameterReferences()
@@ -680,28 +674,70 @@ void Monitor::MonitorImpl::createMeasurementReferences()
 		for (auto &itTSTN : meas.fTSTN)
 			for (auto &itROM : itTSTN->roms)
 			{
-				for (auto &m : itROM->measPLR3D) reg(m);
-				for (auto &m : itROM->measANGL) reg(m);
-				for (auto &m : itROM->measZEND) reg(m);
-				for (auto &m : itROM->measDIST) reg(m);
-				for (auto &m : itROM->measDHOR) reg(m);
-				for (auto &m : itROM->measECTH) reg(m);
-				for (auto &m : itROM->measECDIR) reg(m);
+				for (auto &m : itROM->measPLR3D)
+					reg(m);
+				for (auto &m : itROM->measANGL)
+					reg(m);
+				for (auto &m : itROM->measZEND)
+					reg(m);
+				for (auto &m : itROM->measDIST)
+					reg(m);
+				for (auto &m : itROM->measDHOR)
+					reg(m);
+				for (auto &m : itROM->measECTH)
+					reg(m);
+				for (auto &m : itROM->measECDIR)
+					reg(m);
 			}
-		for (auto &itCAM : meas.fCAM) { for (auto &m : itCAM.measUVD) reg(m); for (auto &m : itCAM.measUVEC) reg(m); }
-		for (auto &itEDM : meas.fEDM) for (auto &m : itEDM.measDSPT) reg(m);
-		for (auto &itLEVEL : meas.fLEVEL) for (auto &m : itLEVEL.measDLEV) reg(m);
-		for (auto &rom : meas.fECHO) for (auto &m : rom.measECHO) reg(m);
-		for (auto &rom : meas.fECVE) for (auto &m : rom.measECVE) reg(m);
-		for (auto &rom : meas.fECSP) for (auto &m : rom.measECSP) reg(m);
-		for (auto &rom : meas.fORIE) for (auto &m : rom.measORIE) reg(m);
-		for (auto &rom : meas.fINCLY) for (auto &m : rom.measINCLY) reg(m);
-		for (auto &rom : meas.fROLLY) for (auto &m : rom.measROLLY) reg(m);
-		for (auto &rom : meas.fECWS) { romRefs.ecwsRoms.insert({rom.romName, rom}); for (auto &m : rom.measECWS) reg(m); }
-		for (auto &rom : meas.fECWI) { romRefs.ecwiRoms.insert({rom.romName, rom}); for (auto &m : rom.measECWI) reg(m); }
-		for (auto &m : meas.fDVER) reg(m);
-		for (auto &m : meas.fRADI) reg(m);
-		for (auto &m : meas.fOBSXYZ) reg(m);
+		for (auto &itCAM : meas.fCAM)
+		{
+			for (auto &m : itCAM.measUVD)
+				reg(m);
+			for (auto &m : itCAM.measUVEC)
+				reg(m);
+		}
+		for (auto &itEDM : meas.fEDM)
+			for (auto &m : itEDM.measDSPT)
+				reg(m);
+		for (auto &itLEVEL : meas.fLEVEL)
+			for (auto &m : itLEVEL.measDLEV)
+				reg(m);
+		for (auto &rom : meas.fECHO)
+			for (auto &m : rom.measECHO)
+				reg(m);
+		for (auto &rom : meas.fECVE)
+			for (auto &m : rom.measECVE)
+				reg(m);
+		for (auto &rom : meas.fECSP)
+			for (auto &m : rom.measECSP)
+				reg(m);
+		for (auto &rom : meas.fORIE)
+			for (auto &m : rom.measORIE)
+				reg(m);
+		for (auto &rom : meas.fINCLY)
+			for (auto &m : rom.measINCLY)
+				reg(m);
+		for (auto &rom : meas.fROLLY)
+			for (auto &m : rom.measROLLY)
+				reg(m);
+		for (auto &rom : meas.fECWS)
+		{
+			romRefs.ecwsRoms.insert({rom.romName, rom});
+			for (auto &m : rom.measECWS)
+				reg(m);
+		}
+		for (auto &rom : meas.fECWI)
+		{
+			romRefs.ecwiRoms.insert({rom.romName, rom});
+			for (auto &m : rom.measECWI)
+				reg(m);
+		}
+		for (auto &m : meas.fDVER)
+			reg(m);
+		for (auto &m : meas.fRADI)
+			reg(m);
+		for (auto &m : meas.fOBSXYZ)
+			reg(m);
 	}
 }
 
@@ -881,7 +917,7 @@ Eigen::VectorXd Monitor::MonitorImpl::getFrameEstimate(const std::string &frameI
 }
 
 Eigen::VectorXd Monitor::MonitorImpl::getSagEstimate(const std::string &sagId)
-{	
+{
 	if (paramRefs.SAGS.count(sagId) == 0)
 	{
 		throw std::runtime_error("No Sag element with Id " + sagId + " found");
@@ -899,9 +935,8 @@ Eigen::VectorXd Monitor::MonitorImpl::getFrameEstimatePrec(const std::string &fr
 
 	const auto &f = paramRefs.FRAMES.at(frameId);
 	Eigen::VectorXd resultVector(7);
-	resultVector << f.getEstimatedPrecisionTransl(0), f.getEstimatedPrecisionTransl(1), f.getEstimatedPrecisionTransl(2),
-		f.getEstimatedPrecisionRot(0), f.getEstimatedPrecisionRot(1), f.getEstimatedPrecisionRot(2),
-		f.getEstimatedPrecisionScale();
+	resultVector << f.getEstimatedPrecisionTransl(0), f.getEstimatedPrecisionTransl(1), f.getEstimatedPrecisionTransl(2), f.getEstimatedPrecisionRot(0),
+		f.getEstimatedPrecisionRot(1), f.getEstimatedPrecisionRot(2), f.getEstimatedPrecisionScale();
 	return resultVector;
 }
 

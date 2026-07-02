@@ -8,10 +8,11 @@
 #pragma warning(pop)
 
 #include <chrono>
-#include <SimpleTimer.h>
 #include <iomanip>
 #include <iostream>
 #include <random>
+
+#include <SimpleTimer.h>
 
 #include "Monitor.h"
 
@@ -70,7 +71,6 @@ void object::test<1>()
 	// check if sigmas were affected by activation and deactivation of measurements
 	ensure_equals("Sigma before deactivation and after reactivation should be equal.", sigmaBeforeDeactivation, sigmaAfterReactivation, 1e-6);
 	ensure_equals("Sigma after deactivation should be 0 because the remaining observation can be fitted with 0 residual.", sigmaAfterDeactivation, 0.0, 1e-9);
-	
 
 	// change the obsxyz observation and make new estimation
 	Eigen::VectorXd newMeas(3);
@@ -492,12 +492,12 @@ void object::test<7>()
 		std::cout << "offset calculation without nominal points " << std::endl;
 		std::cout << mockup.getPointEstimate(pointNameAligned, frameNominal) - mockup.getPointEstimate(pointNameAligned, frameAligned) << std::endl;
 
-		//wireRom wireNetworkResult = mockup.getECWIData("GIWPN.T1LX");
-		//std::cout << "Wire network name= " << wireNetworkResult.romName << " data (dx,dz,bearing,slope,sag) = " << wireNetworkResult.estimate << " with precision"
+		// wireRom wireNetworkResult = mockup.getECWIData("GIWPN.T1LX");
+		// std::cout << "Wire network name= " << wireNetworkResult.romName << " data (dx,dz,bearing,slope,sag) = " << wireNetworkResult.estimate << " with precision"
 		//		  << wireNetworkResult.prec << std::endl;
 
 		//// get sigmaZero
-		//std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
+		// std::cout << "Sigma 0 aposteriori =" << mockup.getSigma0() << std::endl;
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
@@ -587,7 +587,7 @@ void object::test<9>()
 	for (int j = 0; j < 10; j++)
 	{
 		bool success = apiObject.adjust();
-	ensure("StringTest need to be computable", success);
+		ensure("StringTest need to be computable", success);
 		compTimer.step();
 	}
 	std::cout << "comp times stringtest" << std::endl;
@@ -635,7 +635,6 @@ void object::test<11>()
 	bool isNormalSigma = (sigma0 < 2) && (sigma0 > 0.5);
 	ensure("Computation should have recovered", success);
 	ensure("Computation should have normal sigma0", isNormalSigma);
-
 }
 template<>
 template<>

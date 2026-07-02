@@ -94,8 +94,8 @@ public:
 	// get the sigma0 after adjustment
 	double getSigma0();
 	// transform coordinates/directions
-	Eigen::Vector3d transformCoordinates(const Eigen::Vector3d& coord, const std::string& from, const std::string& to);
-	Eigen::Vector3d transformDirection(const Eigen::Vector3d& dir, const std::string& from, const std::string& to);
+	Eigen::Vector3d transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to);
+	Eigen::Vector3d transformDirection(const Eigen::Vector3d &dir, const std::string &from, const std::string &to);
 	// for water and wire network related data
 	waterRom getECWSData(const std::string &ecwsRomName);
 	wireRom getECWIData(const std::string &ecwiRomName);
@@ -143,7 +143,7 @@ private:
 		std::unordered_map<std::string, LGCAdjustablePlane &> PLANES;
 		std::unordered_map<std::string, TAdjustableLength &> LENGTHS;
 		std::unordered_map<std::string, TAdjustableHelmertTransformation &> FRAMES;
-		std::unordered_map<std::string, LGCAdjustableSag&> SAGS;
+		std::unordered_map<std::string, LGCAdjustableSag &> SAGS;
 	} paramRefs;
 
 	// status of estimation. True if estimation results are ready for extraction.

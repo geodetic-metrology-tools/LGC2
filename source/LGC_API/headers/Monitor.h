@@ -56,7 +56,13 @@ public:
 	Monitor(Monitor &&o) noexcept : h_(o.h_) { o.h_ = nullptr; }
 	Monitor &operator=(Monitor &&o) noexcept
 	{
-		if (this != &o) { if (h_) moniDestroy(h_); h_ = o.h_; o.h_ = nullptr; }
+		if (this != &o)
+		{
+			if (h_)
+				moniDestroy(h_);
+			h_ = o.h_;
+			o.h_ = nullptr;
+		}
 		return *this;
 	}
 
@@ -156,7 +162,7 @@ private:
 		moniFreeDoubleArray(p);
 		return v;
 	}
-	template <class Fn>
+	template<class Fn>
 	Eigen::VectorXd vec(Fn fn, const std::string &n)
 	{
 		double *p = nullptr;
@@ -164,7 +170,7 @@ private:
 		chk(fn(h_, n.c_str(), &p, &len));
 		return toVec(p, len);
 	}
-	template <class Fn>
+	template<class Fn>
 	Eigen::VectorXd vec2(Fn fn, const std::string &n, const std::string &frame)
 	{
 		double *p = nullptr;
