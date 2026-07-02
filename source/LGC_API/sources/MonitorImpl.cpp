@@ -235,6 +235,17 @@ void Monitor::MonitorImpl::initialize()
 		throw std::runtime_error("Error during problem initialization: " + inputFilePath);
 	}
 
+	// Fill the root-frame copies of the provisional values (output-only quantities,
+	// serialized via getResultsJson) expressed in CCS. Must stay before the first
+	// adjust: the subframe->root transform has to use the provisional frame parameters.
+	// NOTE: the CLI's post-solve changeProvValueToCCS is intentionally NOT applied - it
+	// mutates the provisional values of points defined in Root in place (one-shot, output formatting only), which
+	// would corrupt the repeated adjust cycles of the monitoring loop.
+	for (auto it = project->getPoints().begin(); it != project->getPoints().end(); ++it)
+	{
+		it->transformProvisionalCoordinates(project.get());
+	}
+
 	algorithm.reset(new TLSAlgorithm(*project.get()));
 	// make measurements & parameters accessible
 	createMeasurementReferences();
