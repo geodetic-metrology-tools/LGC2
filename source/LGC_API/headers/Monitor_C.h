@@ -25,8 +25,9 @@ extern "C"
 	/* Error handling — returns message from last failed call (thread-local). */
 	MONITOR_C_API const char *moniGetLastError(void);
 
-	/* Memory management — caller must free arrays returned by the API. */
+	/* Memory management — caller must free arrays/strings returned by the API. */
 	MONITOR_C_API void moniFreeDoubleArray(double *ptr);
+	MONITOR_C_API void moniFreeString(char *ptr);
 
 	/* Lifecycle. moniCreate returns NULL on error (check moniGetLastError).
 	   The remaining calls return 0 on success and -1 on error, unless noted. */
@@ -70,6 +71,10 @@ extern "C"
 	MONITOR_C_API int moniGetPointEstimatePrecInFrame(MonitorHandle h, const char *name, const char *frame, double **outData, int *outLen);
 	MONITOR_C_API int moniGetFrameEstimatePrec(MonitorHandle h, const char *name, double **outData, int *outLen);
 	MONITOR_C_API int moniGetSagEstimatePrec(MonitorHandle h, const char *name, double **outData, int *outLen);
+
+	/* Serialized snapshot of the adjusted project (UTF-8 JSON, heap-allocated —
+	   free with moniFreeString). Errors if no successful moniAdjust happened yet. */
+	MONITOR_C_API int moniGetResultsJson(MonitorHandle h, char **outJson);
 
 	/* Transformations — in3 and out3 are caller-allocated arrays of length 3. */
 	MONITOR_C_API int moniTransformCoordinates(MonitorHandle h, const double *in3, const char *from, const char *to, double *out3);

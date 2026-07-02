@@ -65,6 +65,11 @@ extern "C"
 		delete[] ptr;
 	}
 
+	void moniFreeString(char *ptr)
+	{
+		delete[] ptr;
+	}
+
 	// --- Lifecycle -------------------------------------------------------------
 
 	MonitorHandle moniCreate(const char *inputFilePath)
@@ -129,6 +134,28 @@ extern "C"
 			return 0;
 		}
 		CATCH_ERR
+	}
+
+	// Always exported so the ABI does not depend on build flags; without the
+	// serializer it reports an error instead of dropping the symbol.
+	int moniGetResultsJson(MonitorHandle h, char **outJson)
+	{
+#if USE_SERIALIZER
+		try
+		{
+			const std::string json = M(h).getResultsJson();
+			*outJson = new char[json.size() + 1];
+			std::copy(json.begin(), json.end(), *outJson);
+			(*outJson)[json.size()] = '\0';
+			return 0;
+		}
+		CATCH_ERR
+#else
+		(void)h;
+		(void)outJson;
+		lastError = "LGC_API was built without serializer support (USE_SERIALIZER=0).";
+		return -1;
+#endif
 	}
 
 	// --- Observations ----------------------------------------------------------

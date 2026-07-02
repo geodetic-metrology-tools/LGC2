@@ -11,6 +11,7 @@ Two layers:
     using the same minimal fixtures with known closed-form expected results.
 """
 
+import json
 import math
 
 import numpy as np
@@ -52,6 +53,33 @@ def test_adjust_succeeds(moni):
 def test_sigma0_positive_after_adjust(moni):
     moni.adjust()
     assert moni.getSigma0() > 0.0
+
+
+def test_results_json(moni):
+    # results are only available after a successful adjustment
+    with pytest.raises(RuntimeError):
+        moni.getResultsJson()
+    moni.adjust()
+    results = json.loads(moni.getResultsJson())
+    assert "LGCVersion" in results
+    assert "LGC_DATA" in results
+
+
+def test_results_json_records_masking():
+    m = pyMonitoring.Monitor(MINIMAL)
+    m.adjust()
+    raw = m.getResultsJson()
+    assert json.loads(raw)["LGC_DATA"]["fParameterMask"] == []
+    # "active_":false also occurs for inactive config options -> compare counts
+    inactive_before = raw.count('"active_":false')
+
+    # freeze a parameter and deactivate an observation -> recorded in the snapshot
+    m.freezePointParameter("P2", 0, 0.0)
+    m.setActivationStatus("testObs2", False)
+    m.adjust()
+    raw = m.getResultsJson()
+    assert len(json.loads(raw)["LGC_DATA"]["fParameterMask"]) == 1
+    assert raw.count('"active_":false') == inactive_before + 1
 
 
 def test_point_estimate_shape(moni):

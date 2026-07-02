@@ -861,6 +861,8 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("config", config);
 	obj.addProperty("fLSRelatedInfo", fLSRelatedInfo);
 	obj.addProperty("fMeasInfo", fMeasInfo);
+	// masked (frozen/fixed) parameter indices, records whether the adjustment ran with masked parameters
+	obj.addProperty("fParameterMask", fParameterMask);
 	obj.addProperty("fPointInfo", fPointInfo);
 	obj.addProperty("fRelErrors", fRelErrors);
 	obj.addProperty("fUEOIndices", fUEOIndices);

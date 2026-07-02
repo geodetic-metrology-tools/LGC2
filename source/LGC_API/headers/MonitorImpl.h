@@ -64,8 +64,10 @@ public:
 	bool adjust();
 	// for checking the estimation status
 	bool getStatus() { return estimationStatus; };
-	// write Json output file
-	void writeResultFile();
+#if USE_SERIALIZER
+	// serialized snapshot of the adjusted project (JSON string)
+	std::string getResultsJson();
+#endif
 	// write input file with current measurement data
 	void writeLGCInputFile();
 

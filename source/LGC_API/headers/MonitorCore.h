@@ -48,11 +48,9 @@ public:
 	// reset the Monitor object to a freshly constructed object
 	DECLSPEC void reset(); 
 
-	// DECLSPEC void Monitor::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation);
-	//  write the results from the current estimation in a json file with timestamp
-
 #if USE_SERIALIZER
-	DECLSPEC void writeResultFile();
+	// serialized snapshot of the adjusted project (JSON string); requires a successful adjust()
+	DECLSPEC std::string getResultsJson();
 #endif
 	// write lgc input file with current measurements with timestamp
 	DECLSPEC void writeLGCInputFile();

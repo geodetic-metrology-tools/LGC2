@@ -9,6 +9,7 @@
 
 #include "MonitorCore.h"
 #include "TAStreamFormatter.h"
+#include "Version.h"
 
 template<typename AdjustableObject>
 bool isFreeVar(const AdjustableObject &adjObj, int idx)
@@ -30,12 +31,10 @@ DECLSPEC void Monitor::reset()
 	pimpl_ = std::make_unique<MonitorImpl>(fFilePath);
 }
 
-// void Monitor::writeJsonFile(TLGCData const *const dat, const std::string &outputFileLocation)
-
 #if USE_SERIALIZER
-void Monitor::writeResultFile()
+std::string Monitor::getResultsJson()
 {
-	pimpl_->writeResultFile();
+	return pimpl_->getResultsJson();
 }
 #endif
 
@@ -244,18 +243,14 @@ void Monitor::MonitorImpl::initialize()
 }
 
 #if USE_SERIALIZER
-void Monitor::MonitorImpl::writeResultFile()
+std::string Monitor::MonitorImpl::getResultsJson()
 {
+	if (!estimationStatus)
+		throw std::runtime_error("No adjustment results available - call adjust() first.");
 	JSONObjectSerializer obj;
-	//jsonSerializerObject ser;
-	//SerializerObject::SerializationHelper obj = ser.getSerializationHelper();
+	obj.addProperty("LGCVersion", getLGCVersion());
 	obj.addProperty("LGC_DATA", project.get());
-	auto now = std::chrono::system_clock::now();
-	auto in_time_t = std::chrono::system_clock::to_time_t(now);
-	std::stringstream filename;
-	filename << "resultDump_" << std::put_time(std::localtime(&in_time_t), "%Y-%m-%dT%H_%M_%S_%S") << ".json";
-	std::ofstream fout(filename.str());
-	fout << obj.getStringRepresentation();
+	return obj.getStringRepresentation();
 }
 #endif
 

@@ -1,9 +1,9 @@
 PROJECT (LGC_API)
 
-# Do not use the serializer in the API
-set(USE_SERIALIZER 0)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/)
+# USE_SERIALIZER is inherited from the top-level CMakeLists (default 1); it
+# gates getResultsJson's implementation (the moni* ABI itself is unconditional).
+# ${CMAKE_SOURCE_DIR} is needed for the generated Version.h.
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers/ ${CMAKE_SOURCE_DIR})
 
 SET(API_INCLUDE_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/headers/)
 SET(API_SOURCES_PATH 	${CMAKE_CURRENT_SOURCE_DIR}/sources)

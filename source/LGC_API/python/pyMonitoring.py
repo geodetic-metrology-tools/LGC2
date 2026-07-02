@@ -57,6 +57,7 @@ def _sig(name, restype, argtypes):
 
 _get_last_error = _sig("moniGetLastError", _cp, [])
 _free_double = _sig("moniFreeDoubleArray", None, [_dp])
+_free_string = _sig("moniFreeString", None, [_vp])
 
 _create = _sig("moniCreate", _vp, [_cp])
 _destroy = _sig("moniDestroy", None, [_vp])
@@ -94,6 +95,8 @@ _get_point_prec = _sig("moniGetPointEstimatePrec", _int, [_vp, _cp, _dpp, _ip])
 _get_point_prec_frame = _sig("moniGetPointEstimatePrecInFrame", _int, [_vp, _cp, _cp, _dpp, _ip])
 _get_frame_prec = _sig("moniGetFrameEstimatePrec", _int, [_vp, _cp, _dpp, _ip])
 _get_sag_prec = _sig("moniGetSagEstimatePrec", _int, [_vp, _cp, _dpp, _ip])
+
+_get_results_json = _sig("moniGetResultsJson", _int, [_vp, ctypes.POINTER(_vp)])
 
 _transform_coord = _sig("moniTransformCoordinates", _int, [_vp, _dp, _cp, _cp, _dp])
 _transform_dir = _sig("moniTransformDirection", _int, [_vp, _dp, _cp, _cp, _dp])
@@ -259,6 +262,18 @@ class Monitor:
 
     def getSagEstimatePrec(self, sagName):
         return _doubles(_get_sag_prec, self._h, sagName.encode("utf-8"))
+
+    def getResultsJson(self):
+        """Serialized snapshot of the adjusted project as a JSON string.
+
+        Requires a successful adjust(); feed it to json.loads() or archive it.
+        """
+        ptr = _vp()
+        _check(_get_results_json(self._h, ctypes.byref(ptr)))
+        try:
+            return ctypes.cast(ptr, _cp).value.decode("utf-8")
+        finally:
+            _free_string(ptr)
 
     # --- Transformations ---
 

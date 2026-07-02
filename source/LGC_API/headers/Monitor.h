@@ -100,6 +100,16 @@ public:
 	Eigen::VectorXd getCalcMeas(const std::string &obsName) { return vec(moniGetCalcMeas, obsName); }
 	Eigen::VectorXd getObsSigma(const std::string &obsName) { return vec(moniGetObsSigma, obsName); }
 
+	// serialized snapshot of the adjusted project (JSON); requires a successful adjust()
+	std::string getResultsJson()
+	{
+		char *p = nullptr;
+		chk(moniGetResultsJson(h_, &p));
+		std::string json = p ? p : "";
+		moniFreeString(p);
+		return json;
+	}
+
 	Eigen::Vector3d transformCoordinates(const Eigen::Vector3d &coord, const std::string &from, const std::string &to)
 	{
 		Eigen::Vector3d out;

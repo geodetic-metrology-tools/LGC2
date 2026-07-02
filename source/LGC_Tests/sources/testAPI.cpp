@@ -733,4 +733,62 @@ void object::test<14>()
 	ensure("P1 moved by sag2 offset", (apiObject.getPointEstimate("P1") - P1Expected).norm() < 1e-12);
 	ensure("P2 moved by sag2 offset", (apiObject.getPointEstimate("P2") - P2Expected).norm() < 1e-12);
 }
+
+template<>
+template<>
+void object::test<15>()
+{
+	set_test_name("Testing getResultsJson");
+	Monitor apiObject("test_files/minimalTest.lgc2");
+
+	// results are only available after a successful adjustment
+	try
+	{
+		apiObject.getResultsJson();
+		fail("getResultsJson before adjust() must throw");
+	}
+	catch (const std::runtime_error &)
+	{
+	}
+
+	apiObject.adjust();
+	const std::string json = apiObject.getResultsJson();
+	ensure("JSON is not empty", !json.empty());
+	ensure("JSON is an object", json.front() == '{' && json.back() == '}');
+	ensure("JSON contains the version stamp", json.find("\"LGCVersion\"") != std::string::npos);
+	ensure("JSON contains the project data", json.find("\"LGC_DATA\"") != std::string::npos);
+
+	// updating an observation invalidates the estimation -> throws again
+	Eigen::VectorXd newMeas(3);
+	newMeas << 1, 2, 3;
+	apiObject.updateMeas("testObs1", newMeas);
+	try
+	{
+		apiObject.getResultsJson();
+		fail("getResultsJson after updateMeas must throw");
+	}
+	catch (const std::runtime_error &)
+	{
+	}
+
+	// the snapshot records whether the adjustment ran with masked parameters/observations
+	apiObject.adjust();
+	const std::string unmaskedJson = apiObject.getResultsJson();
+	ensure("unmasked run: empty parameter mask", unmaskedJson.find("\"fParameterMask\":[]") != std::string::npos);
+
+	apiObject.freezePointParameter("P2", 0, 0.0);
+	apiObject.setActivationStatus("testObs2", false);
+	apiObject.adjust();
+	const std::string maskedJson = apiObject.getResultsJson();
+	ensure("masked parameter is recorded", maskedJson.find("\"fParameterMask\":[]") == std::string::npos);
+	// "active_":false also occurs for inactive config options -> deactivating one
+	// observation must add exactly one more inactive flag
+	auto countInactive = [](const std::string &s) {
+		size_t count = 0;
+		for (size_t pos = s.find("\"active_\":false"); pos != std::string::npos; pos = s.find("\"active_\":false", pos + 1))
+			++count;
+		return count;
+	};
+	ensure_equals("deactivated observation is recorded", countInactive(maskedJson), countInactive(unmaskedJson) + 1);
+}
 }; // namespace tut

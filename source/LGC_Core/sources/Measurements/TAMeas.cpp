@@ -11,6 +11,8 @@
 template<typename TTarget>
 void TAMeas<TTarget>::serialize(ObjectSerializer &obj) const
 {
+	// activation status (records observations masked/deactivated e.g. via the monitoring API)
+	TStatusObject::serialize(obj);
 	obj.addProperty("eolcomment", eolcomment);
 	obj.addProperty("fMeasIdx", fMeasIdx);
 	obj.addProperty("line", line);
