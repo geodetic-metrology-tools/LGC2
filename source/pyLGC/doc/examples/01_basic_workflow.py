@@ -38,7 +38,7 @@ ev.evaluate()
 # getMisclosure() returns a 1D NumPy array representing the difference between
 # field measurements and theoretical measurements (the 'w' vector).
 w_vector = ev.getMisclosure()
-rms_before = (sum(x*x for x in w_vector) / len(w_vector))**0.5
+rms_before = (sum(x * x for x in w_vector) / len(w_vector)) ** 0.5
 print(f"\nInitial RMS of Misclosures: {rms_before:.6e}")
 
 
@@ -60,7 +60,7 @@ if ok:
     # Now getMisclosure() returns the a posteriori residuals (the 'v' vector).
     v_vector = ev.getMisclosure()
 
-    rms_after = (sum(x*x for x in v_vector) / len(v_vector))**0.5
+    rms_after = (sum(x * x for x in v_vector) / len(v_vector)) ** 0.5
     print(f"Adjustment Succeeded! Post-Adjustment RMS: {rms_after:.6e}")
 else:
     print("Adjustment Failed to Converge!")
