@@ -51,7 +51,8 @@ class TKeyOLOC : public TAOptionKey
 {
 public:
 	// Constructor
-	TKeyOLOC(TLGCData &project, int nb_allowed_keywords = nb_allowed_oloc, const char **keywords = allowed_OLOC) : TAOptionKey(project, OLOC)
+	TKeyOLOC(TLGCData &project, int nb_allowed_keywords = nb_allowed_verticalReferencial, const char **keywords = allowed_VERTICALREFERENTIAL) :
+		TAOptionKey(project, OLOC)
 	{
 		for (int i(0); i < nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -65,7 +66,8 @@ class TKeyRS2K : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyRS2K(TLGCData &project, int nb_allowed_keywords = nb_allowed_rs2k, const char **keywords = allowed_RS2K) : TAOptionKey(project, RS2K)
+	TKeyRS2K(TLGCData &project, int nb_allowed_keywords = nb_allowed_verticalReferencial, const char **keywords = allowed_VERTICALREFERENTIAL) :
+		TAOptionKey(project, RS2K)
 	{
 		for (int i(0); i < nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -79,7 +81,7 @@ class TKeyLEP : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeyLEP(TLGCData &project, int nb_allowed_keywords = nb_allowed_lep, const char **keywords = allowed_LEP) : TAOptionKey(project, LEP)
+	TKeyLEP(TLGCData &project, int nb_allowed_keywords = nb_allowed_verticalReferencial, const char **keywords = allowed_VERTICALREFERENTIAL) : TAOptionKey(project, LEP)
 	{
 		for (int i(0); i < nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -93,7 +95,8 @@ class TKeySPHE : public TAOptionKey
 {
 public:
 	/// Constructor
-	TKeySPHE(TLGCData &project, int nb_allowed_keywords = nb_allowed_sphe, const char **keywords = allowed_SPHE) : TAOptionKey(project, SPHE)
+	TKeySPHE(TLGCData &project, int nb_allowed_keywords = nb_allowed_verticalReferencial, const char **keywords = allowed_VERTICALREFERENTIAL) :
+		TAOptionKey(project, SPHE)
 	{
 		for (int i(0); i < nb_allowed_keywords; i++)
 			allowed_keywords.emplace_back(keywords[i]);
@@ -326,7 +329,7 @@ public:
 	/// Tokenize and initialize options for the output processing
 	virtual void parse(const std::vector<std::string> &, bool activeLine, int);
 };
-class TKeyLM: public TAOptionKey
+class TKeyLM : public TAOptionKey
 {
 public:
 	/// Constructor

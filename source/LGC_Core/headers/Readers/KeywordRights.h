@@ -156,11 +156,7 @@ const int nb_allowed_incl = 30;
 const int nb_allowed_hlsr = 30;
 const int nb_allowed_wpsr = 30;
 // referentials
-const int nb_allowed_oloc = 28;
-const int nb_allowed_rs2k = 28;
-const int nb_allowed_lep = 28;
-const int nb_allowed_sphe = 28;
-const int nb_allowed_customG = 28;
+const int nb_allowed_verticalReferencial = 28;
 // options
 const int nb_allowed_faut = 32;
 const int nb_allowed_defa = 32;
@@ -310,14 +306,8 @@ const char *allowed_WPSR[nb_allowed_wpsr] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, 
 	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
 
 // Reference systems
-const char *allowed_OLOC[nb_allowed_oloc] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS,
-	HIST, EREL, ERELFRAME, COVAR, CHABA, CONSI, JSON, LM};
-const char *allowed_RS2K[nb_allowed_rs2k] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS,
-	HIST, EREL, ERELFRAME, COVAR, CHABA, CONSI, JSON, LM};
-const char *allowed_LEP[nb_allowed_lep] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS, HIST,
-	EREL, ERELFRAME, COVAR, CHABA, CONSI, JSON, LM};
-const char *allowed_SPHE[nb_allowed_sphe] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS,
-	HIST, EREL, ERELFRAME, COVAR, CHABA, CONSI, JSON, LM};
+const char *allowed_VERTICALREFERENTIAL[nb_allowed_verticalReferencial] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ,
+	PDOR, FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR, CHABA, CONSI, JSON, LM};
 // Options
 const char *allowed_DEFA[nb_allowed_defa] = {APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME, PDOR,
 	FMTP, NODUP, SOBS, HIST, EREL, ERELFRAME, COVAR, CHABA, CONSI, JSON, LM};
