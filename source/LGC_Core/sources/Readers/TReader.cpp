@@ -351,7 +351,7 @@ bool TReader::read(std::istream &lgcStream)
 				}
 			}
 
-			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
+			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE || currentkey == CUSTOMG)
 				isReferenceSystemDefined = true;
 
 			try
@@ -402,7 +402,7 @@ bool TReader::read(std::istream &lgcStream)
 		// Define OLOC as default
 		project.getConfig().referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
 
-		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
+		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Vertical reference surface been provided between OLOC, RS2K, LEP, SPHE and CUSTOMG. It will be OLOC by default";
 	}
 
 	if (project.getCurrentNode().ID.size() != 1)

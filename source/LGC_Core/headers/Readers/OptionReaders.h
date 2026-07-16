@@ -103,6 +103,20 @@ public:
 	virtual void parse(const std::vector<std::string> &, bool activeLine, int);
 };
 
+class TKeyCUSTOMG : public TAOptionKey
+{
+public:
+	/// Constructor
+	TKeyCUSTOMG(TLGCData &project, int nb_allowed_keywords = nb_allowed_customG, const char **keywords = allowed_CUSTOMG) : TAOptionKey(project, CUSTOMG)
+	{
+		for (int i(0); i < nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	/// Tokenize and initialize options for the referential
+	virtual void parse(const std::vector<std::string> &, bool activeLine, int);
+};
+
 //////////////////
 // Calc Options //
 //////////////////

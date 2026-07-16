@@ -76,6 +76,7 @@ namespace
 #define RS2K "RS2K"
 #define LEP "LEP"
 #define SPHE "SPHE"
+#define CUSTOMG "CUSTOMG"
 // header - options
 #define FAUT "FAUT"
 #define APRI "APRI"
@@ -159,6 +160,7 @@ const int nb_allowed_oloc = 28;
 const int nb_allowed_rs2k = 28;
 const int nb_allowed_lep = 28;
 const int nb_allowed_sphe = 28;
+const int nb_allowed_customG = 28;
 // options
 const int nb_allowed_faut = 32;
 const int nb_allowed_defa = 32;
