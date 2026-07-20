@@ -126,32 +126,49 @@ linux_build_and_test:
 # SBOM           #
 ##################
 
+# Install Syft from GitHub releases into the job workspace.
+# CERN k8s runners only allow certain registries (not Docker Hub), and the
+# official anchore/syft image is distroless (no shell) so GitLab cannot use it
+# as the job image.
+.syft_install:
+    before_script:
+        - |
+          set -euo pipefail
+          mkdir -p "${CI_PROJECT_DIR}/.syft-bin"
+          SYFT_VER="${SYFT_VERSION#v}"
+          echo "Installing Syft ${SYFT_VERSION}"
+          curl -sSfL \
+            "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VER}_linux_amd64.tar.gz" \
+            | tar -xz -C "${CI_PROJECT_DIR}/.syft-bin" syft
+          export PATH="${CI_PROJECT_DIR}/.syft-bin:${PATH}"
+          syft version
+
 # Generate a CycloneDX SBOM with Syft after Linux compilation.
 # Scans compiled binaries + FetchContent deps (_deps) and the source tree.
 # Publishes JSON artifacts and a GitLab CycloneDX report for the Dependency List.
 linux_sbom:
     stage: sbom
-    image:
-        name: "anchore/syft:${SYFT_VERSION}"
-        entrypoint: [""]
+    image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
+    extends: .syft_install
     needs:
         - job: linux_build_and_test
           artifacts: true
     script:
         - mkdir -p sbom
         - |
+          export PATH="${CI_PROJECT_DIR}/.syft-bin:${PATH}"
           SOURCE_VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
           echo "Generating SBOM with Syft ${SYFT_VERSION} (version=${SOURCE_VERSION})"
 
           # Build outputs: LGC binary, pyLGC .so, and CMake FetchContent deps
-          /syft dir:build \
+          syft dir:build \
             --source-name LGC2 \
             --source-version "${SOURCE_VERSION}" \
             -o cyclonedx-json=sbom/lgc-linux-build.cdx.json \
             -o spdx-json=sbom/lgc-linux-build.spdx.json
 
           # Source tree (declared/vendored components, licenses); exclude build noise
-          /syft dir:. \
+          syft dir:. \
             --exclude './build/**' \
             --exclude './build32/**' \
             --exclude './out/**' \
@@ -178,24 +195,24 @@ linux_sbom:
                 - sbom/lgc-source.cdx.json
 
 # Generate a CycloneDX SBOM for Windows build outputs.
-# Uses the Linux Syft image (it catalogs PE binaries) so we do not need a
-# Windows runner just for SBOM generation. Source-tree SBOM is produced once
-# by linux_sbom to avoid duplicate Dependency List reports.
+# Runs on the Linux SUSoft image (Syft catalogs PE binaries) so we do not need
+# a Windows runner just for SBOM. Source-tree SBOM is produced once by
+# linux_sbom to avoid duplicate Dependency List reports.
 windows_sbom:
     stage: sbom
-    image:
-        name: "anchore/syft:${SYFT_VERSION}"
-        entrypoint: [""]
+    image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
+    extends: .syft_install
     needs:
         - job: windows64_build_and_test
           artifacts: true
     script:
         - mkdir -p sbom
         - |
+          export PATH="${CI_PROJECT_DIR}/.syft-bin:${PATH}"
           SOURCE_VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
           echo "Generating Windows SBOM with Syft ${SYFT_VERSION} (version=${SOURCE_VERSION})"
 
-          /syft dir:build \
+          syft dir:build \
             --source-name LGC2 \
             --source-version "${SOURCE_VERSION}" \
             -o cyclonedx-json=sbom/lgc-windows-build.cdx.json \
