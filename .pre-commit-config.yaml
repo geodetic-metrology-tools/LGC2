@@ -35,14 +35,12 @@ repos:
       - id: debug-statements
         exclude: '\.cpp$|\.h$'  # C++ files don't have Python debug statements
 
-  # CMake formatting (optional - uncomment if you want to enforce CMake formatting)
-  # - repo: https://github.com/cheshirekow/cmake-format-precommit
-  #   rev: v0.6.13
-  #   hooks:
-  #     - id: cmake-format
-  #       additional_dependencies: [pyyaml]
-  #     - id: cmake-lint
-  #       additional_dependencies: [pyyaml]
+  # Python linting and formatting (Ruff)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.21
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
 
   # clang-format: pinned version ensures all machines and CI use the same formatter
   - repo: https://github.com/pre-commit/mirrors-clang-format
