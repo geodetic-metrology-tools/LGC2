@@ -217,6 +217,11 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
   - IDE formatters (e.g. Visual Studio "Format Document") must also use v22.1.5 to avoid spurious diffs — see troubleshooting below
   - Uses project-specific style (tabs, 170 char limit, etc.)
   - Modifies files in-place
+- **ruff-check**: Lints Python code with [Ruff](https://docs.astral.sh/ruff/)
+  - Runs on committed `.py` files
+- **ruff-format**: Formats Python code with Ruff (Black-compatible style)
+  - Runs on committed `.py` files
+  - Modifies files in-place
 
 ### General Checks
 
