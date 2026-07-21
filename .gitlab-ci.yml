@@ -134,13 +134,16 @@ linux_build_and_test:
     before_script:
         - |
           set -euo pipefail
-          mkdir -p "${CI_PROJECT_DIR}/.syft-bin"
+          # Install outside the project tree so a source scan of "." cannot
+          # pick up Syft's own embedded Go modules as LGC dependencies.
+          SYFT_BIN_DIR="${SYFT_BIN_DIR:-/tmp/syft-bin}"
+          mkdir -p "${SYFT_BIN_DIR}"
           SYFT_VER="${SYFT_VERSION#v}"
-          echo "Installing Syft ${SYFT_VERSION}"
+          echo "Installing Syft ${SYFT_VERSION} into ${SYFT_BIN_DIR}"
           curl -sSfL \
             "https://github.com/anchore/syft/releases/download/${SYFT_VERSION}/syft_${SYFT_VER}_linux_amd64.tar.gz" \
-            | tar -xz -C "${CI_PROJECT_DIR}/.syft-bin" syft
-          export PATH="${CI_PROJECT_DIR}/.syft-bin:${PATH}"
+            | tar -xz -C "${SYFT_BIN_DIR}" syft
+          export PATH="${SYFT_BIN_DIR}:${PATH}"
           syft version
 
 # Generate a CycloneDX SBOM with Syft after Linux compilation.
@@ -156,18 +159,32 @@ linux_sbom:
     script:
         - mkdir -p sbom
         - |
-          export PATH="${CI_PROJECT_DIR}/.syft-bin:${PATH}"
+          export PATH="${SYFT_BIN_DIR:-/tmp/syft-bin}:${PATH}"
           SOURCE_VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
           echo "Generating SBOM with Syft ${SYFT_VERSION} (version=${SOURCE_VERSION})"
 
-          # Build outputs: LGC binary, pyLGC .so, and CMake FetchContent deps
+          echo "Build artifact inventory:"
+          ls -la build/LGC build/pyLGC/libpyLGC_C.so build/_deps 2>/dev/null || true
+          file build/LGC build/pyLGC/libpyLGC_C.so 2>/dev/null || true
+
+          # Scan artifacted build tree (LGC, pyLGC .so, FetchContent _deps).
+          # Also scan the main binary explicitly so the ELF cataloger can
+          # record dynamically linked libraries.
           syft dir:build \
             --source-name LGC2 \
             --source-version "${SOURCE_VERSION}" \
             -o cyclonedx-json=sbom/lgc-linux-build.cdx.json \
             -o spdx-json=sbom/lgc-linux-build.spdx.json
 
-          # Source tree (declared/vendored components, licenses); exclude build noise
+          if [ -f build/LGC ]; then
+            syft file:build/LGC \
+              --source-name LGC \
+              --source-version "${SOURCE_VERSION}" \
+              -o cyclonedx-json=sbom/lgc-linux-elf.cdx.json \
+              -o spdx-json=sbom/lgc-linux-elf.spdx.json
+          fi
+
+          # Source tree; keep tool/build dirs out of the inventory
           syft dir:. \
             --exclude './build/**' \
             --exclude './build32/**' \
@@ -177,6 +194,7 @@ linux_sbom:
             --exclude './.vs/**' \
             --exclude './.vscode/**' \
             --exclude './sbom/**' \
+            --exclude './.syft-bin/**' \
             --source-name LGC2 \
             --source-version "${SOURCE_VERSION}" \
             -o cyclonedx-json=sbom/lgc-source.cdx.json \
@@ -192,6 +210,7 @@ linux_sbom:
         reports:
             cyclonedx:
                 - sbom/lgc-linux-build.cdx.json
+                - sbom/lgc-linux-elf.cdx.json
                 - sbom/lgc-source.cdx.json
 
 # Generate a CycloneDX SBOM for Windows build outputs.
@@ -208,9 +227,12 @@ windows_sbom:
     script:
         - mkdir -p sbom
         - |
-          export PATH="${CI_PROJECT_DIR}/.syft-bin:${PATH}"
+          export PATH="${SYFT_BIN_DIR:-/tmp/syft-bin}:${PATH}"
           SOURCE_VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
           echo "Generating Windows SBOM with Syft ${SYFT_VERSION} (version=${SOURCE_VERSION})"
+
+          echo "Windows artifact inventory:"
+          ls -la build/Release/LGC.exe build/pyLGC/Release/pyLGC_C.dll 2>/dev/null || true
 
           syft dir:build \
             --source-name LGC2 \
