@@ -18,10 +18,9 @@ All source and data files include SPDX headers or are declared in [`REUSE.toml`]
 
 ## Third-Party Components
 
-The declared SBOM is **generated automatically** by
-[`scripts/generate-declared-sbom.py`](./scripts/generate-declared-sbom.py) from
-CMake `FetchContent`, `.gitmodules`, `requirements.txt`, and the sections below
-(plus SurveyLib’s NOTICE). You do **not** edit SBOM JSON by hand.
+The CI SBOM is produced by Syft and **augmented** with metadata discovered
+from CMake (`FetchContent`, `find_package`), `.gitmodules`, and this NOTICE
+(for licenses / path-based deps). See `scripts/generate-declared-sbom.py`.
 
 When you add a path-based dependency (not FetchContent/submodule/pip), document
 it here with License and Source so attribution and SBOM stay in sync:

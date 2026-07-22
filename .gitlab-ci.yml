@@ -126,34 +126,6 @@ linux_build_and_test:
 # SBOM           #
 ##################
 
-# Authoritative third-party SBOM — auto-discovered from the repo
-# (FetchContent, .gitmodules, requirements.txt, NOTICE files). No hand-edited inventory.
-declared_sbom:
-    stage: sbom
-    image: python:3.11-slim
-    needs: []
-    script:
-        - |
-          set -euo pipefail
-          SOURCE_VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
-          mkdir -p sbom
-          python3 scripts/generate-declared-sbom.py \
-            --out-dir sbom \
-            --version "${SOURCE_VERSION}"
-          echo "Auto-discovered SBOM files:"
-          ls -la sbom/lgc-declared.* sbom/discovered-components.json
-    artifacts:
-        name: "sbom-declared-$CI_COMMIT_SHORT_SHA"
-        expire_in: 30 days
-        paths:
-            - sbom/lgc-declared.cdx.json
-            - sbom/lgc-declared.spdx.json
-            - sbom/discovered-components.json
-            - sbom/sbom-efficacy-report.json
-        reports:
-            cyclonedx:
-                - sbom/lgc-declared.cdx.json
-
 # Install Syft from GitHub releases into the job workspace.
 # CERN k8s runners only allow certain registries (not Docker Hub), and the
 # official anchore/syft image is distroless (no shell) so GitLab cannot use it
@@ -174,9 +146,8 @@ declared_sbom:
           export PATH="${SYFT_BIN_DIR}:${PATH}"
           syft version
 
-# Generate a CycloneDX SBOM with Syft after Linux compilation.
-# Scans compiled binaries + FetchContent deps (_deps) and the source tree.
-# Publishes JSON artifacts and a GitLab CycloneDX report for the Dependency List.
+# Syft scan after Linux build, then augment with CMake/NOTICE discovery
+# (versions, licenses, PURLs, dependency graph) into one CycloneDX report.
 linux_sbom:
     stage: sbom
     image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
@@ -195,9 +166,6 @@ linux_sbom:
           ls -la build/LGC build/pyLGC/libpyLGC_C.so build/_deps 2>/dev/null || true
           file build/LGC build/pyLGC/libpyLGC_C.so 2>/dev/null || true
 
-          # Scan artifacted build tree (LGC, pyLGC .so, FetchContent _deps).
-          # Also scan the main binary explicitly so the ELF cataloger can
-          # record dynamically linked libraries.
           syft dir:build \
             --source-name LGC2 \
             --source-version "${SOURCE_VERSION}" \
@@ -212,21 +180,11 @@ linux_sbom:
               -o spdx-json=sbom/lgc-linux-elf.spdx.json
           fi
 
-          # Source tree; keep tool/build dirs out of the inventory
-          syft dir:. \
-            --exclude './build/**' \
-            --exclude './build32/**' \
-            --exclude './out/**' \
-            --exclude './source/out/**' \
-            --exclude './.git/**' \
-            --exclude './.vs/**' \
-            --exclude './.vscode/**' \
-            --exclude './sbom/**' \
-            --exclude './.syft-bin/**' \
-            --source-name LGC2 \
-            --source-version "${SOURCE_VERSION}" \
-            -o cyclonedx-json=sbom/lgc-source.cdx.json \
-            -o spdx-json=sbom/lgc-source.spdx.json
+          python3 scripts/generate-declared-sbom.py ci \
+            --out-dir sbom \
+            --syft sbom/lgc-linux-build.cdx.json \
+            --version "${SOURCE_VERSION}"
+          cp sbom/lgc-augmented.cdx.json sbom/lgc-linux-augmented.cdx.json
 
           echo "SBOM files:"
           ls -la sbom/
@@ -237,14 +195,9 @@ linux_sbom:
             - sbom/
         reports:
             cyclonedx:
-                - sbom/lgc-linux-build.cdx.json
-                - sbom/lgc-linux-elf.cdx.json
-                - sbom/lgc-source.cdx.json
+                - sbom/lgc-linux-augmented.cdx.json
 
-# Generate a CycloneDX SBOM for Windows build outputs.
-# Runs on the Linux SUSoft image (Syft catalogs PE binaries) so we do not need
-# a Windows runner just for SBOM. Source-tree SBOM is produced once by
-# linux_sbom to avoid duplicate Dependency List reports.
+# Syft scan of Windows build outputs, then same discovery augmentation.
 windows_sbom:
     stage: sbom
     image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
@@ -268,6 +221,12 @@ windows_sbom:
             -o cyclonedx-json=sbom/lgc-windows-build.cdx.json \
             -o spdx-json=sbom/lgc-windows-build.spdx.json
 
+          python3 scripts/generate-declared-sbom.py ci \
+            --out-dir sbom \
+            --syft sbom/lgc-windows-build.cdx.json \
+            --version "${SOURCE_VERSION}"
+          cp sbom/lgc-augmented.cdx.json sbom/lgc-windows-augmented.cdx.json
+
           echo "SBOM files:"
           ls -la sbom/
     artifacts:
@@ -277,7 +236,7 @@ windows_sbom:
             - sbom/
         reports:
             cyclonedx:
-                - sbom/lgc-windows-build.cdx.json
+                - sbom/lgc-windows-augmented.cdx.json
 
 # Build and upload the LGC application
 linux_release:
