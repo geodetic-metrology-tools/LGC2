@@ -126,6 +126,34 @@ linux_build_and_test:
 # SBOM           #
 ##################
 
+# Authoritative third-party SBOM — auto-discovered from the repo
+# (FetchContent, .gitmodules, requirements.txt, NOTICE files). No hand-edited inventory.
+declared_sbom:
+    stage: sbom
+    image: python:3.11-slim
+    needs: []
+    script:
+        - |
+          set -euo pipefail
+          SOURCE_VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
+          mkdir -p sbom
+          python3 scripts/generate-declared-sbom.py \
+            --out-dir sbom \
+            --version "${SOURCE_VERSION}"
+          echo "Auto-discovered SBOM files:"
+          ls -la sbom/lgc-declared.* sbom/discovered-components.json
+    artifacts:
+        name: "sbom-declared-$CI_COMMIT_SHORT_SHA"
+        expire_in: 30 days
+        paths:
+            - sbom/lgc-declared.cdx.json
+            - sbom/lgc-declared.spdx.json
+            - sbom/discovered-components.json
+            - sbom/sbom-efficacy-report.json
+        reports:
+            cyclonedx:
+                - sbom/lgc-declared.cdx.json
+
 # Install Syft from GitHub releases into the job workspace.
 # CERN k8s runners only allow certain registries (not Docker Hub), and the
 # official anchore/syft image is distroless (no shell) so GitLab cannot use it

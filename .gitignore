@@ -12,6 +12,14 @@ source/Version.h
 # Build artifacts
 out/
 
+# Generated SBOM outputs (auto-produced by scripts/generate-declared-sbom.py / Syft CI)
+/sbom/**/lgc-*.cdx.json
+/sbom/**/lgc-*.spdx.json
+/sbom/discovered-components.json
+/sbom/declared-components.json
+/sbom/sbom-efficacy-report.json
+/sbom/sbom/
+
 # Python
 __pycache__/
 *.pyc
