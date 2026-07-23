@@ -279,7 +279,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 		TLOR2LOR transfo = TLOR2LOR(it.second.positionInTree, fProjectData->getTree().begin(), "transfo");
 		// transform coordinates in root
 		transfo.transform(stationRoot);
-		LGCAdjustablePoint ptInRoot(stationRoot, 0, 0, 0, it.first.getName(), it.first.getReferenceFrame(), it.first.getFrameTreePosition());
+		LGCAdjustablePoint ptInRoot(stationRoot, 0, 0, 0, it.first.getName(), it.first.getReferenceFrame(), it.first.getGeoid(), it.first.getFrameTreePosition());
 
 		delta d;
 		d.dx = stationRoot.getX() - it.first.getEstValue(0);

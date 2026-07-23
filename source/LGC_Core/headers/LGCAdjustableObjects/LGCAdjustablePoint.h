@@ -117,9 +117,10 @@ public:
 		\param[in] isZHfixed The Z component of the point, fixed (not adjusted) if set to TRUE.
 		\param[in] name Name of the adjustable point.
 		\param[in] referential Reference frame used (OLOC, RS2K, LEP, SPHE).
+		\param[in] geoid Geoid used for H transformations.
 		\param[in] positionInTree iterator on the local object reference frame in which the point is defined.
 	*/
-	LGCAdjustablePoint(const TPositionVector &pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string &name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree);
+	LGCAdjustablePoint(const TPositionVector &pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string &name, TRefSystemFactory::ERefFrame referential, TRefSystemFactory::EGeoid geoid, TDataTreeIterator positionInTree);
 
 	/// Create an unitialized point.
 	static LGCAdjustablePoint createUninitialized(const std::string &name);

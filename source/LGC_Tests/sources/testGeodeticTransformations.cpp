@@ -283,10 +283,21 @@ namespace tut
 		TXYH2CCS::XYHg1985Machine2CCS(posit2);
 		ensure_equals("Transformed value should match",posit2.getZ().getMetresValue(), 2049.3495494283,1e-9);
 		
-
 		TPositionVector posit3(1.0,1.0,-1949.34193663989,TCoordSysFactory::ECoordSys::k2DPlusH);
 		TXYH2CCS::XYHs2CCS(posit3);
 		ensure_equals("Transformed value should match",posit3.getZ().getMetresValue(), 50.0,1e-9);
+
+		TPositionVector posit6(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k2DPlusH);
+		TXYH2CCS::XYH2CCS(posit6, TRefSystemFactory::EGeoid::kCG2000Machine);
+		ensure_equals("Transformed value should match", posit6.getZ().getMetresValue(), 2049.34656894826, 1e-9);
+
+		TPositionVector posit7(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k2DPlusH);
+		TXYH2CCS::XYH2CCS(posit7, TRefSystemFactory::EGeoid::kCG1985Machine);
+		ensure_equals("Transformed value should match", posit7	.getZ().getMetresValue(), 2049.3495494283, 1e-9);
+
+		TPositionVector posit8(1.0, 1.0, -1949.34193663989, TCoordSysFactory::ECoordSys::k2DPlusH);
+		TXYH2CCS::XYH2CCS(posit8, TRefSystemFactory::EGeoid::kCGSphere);
+		ensure_equals("Transformed value should match", posit8.getZ().getMetresValue(), 50.0, 1e-9);
 
 		TPositionVector posit3inv(1.0,1.0,50.0,TCoordSysFactory::ECoordSys::k3DCartesian);
 		TXYH2CCS::CCS2XYHs(posit3inv);

@@ -203,11 +203,12 @@ void TPointTransformer::transform2DH2CCS(TPositionVector &pv)
 
 	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
 	{
-		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-			TXYH2CCS::XYHs2CCS(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
-			TXYH2CCS::XYHg2000Machine2CCS(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
-			TXYH2CCS::XYHg1985Machine2CCS(pv);
+		TXYH2CCS::XYH2CCS(pv, fGeoidModel);
+		//if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
+		//	TXYH2CCS::XYHs2CCS(pv);
+		//else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
+		//	TXYH2CCS::XYHg2000Machine2CCS(pv);
+		//else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
+		//	TXYH2CCS::XYHg1985Machine2CCS(pv);
 	}
 }

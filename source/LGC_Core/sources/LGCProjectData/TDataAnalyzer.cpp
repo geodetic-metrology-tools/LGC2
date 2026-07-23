@@ -495,7 +495,7 @@ bool TDataAnalyzer::checkParameters()
 
 					// The Adjustable Point automated creation should be a POIN if IHFIX, otherwise should be a VXY
 					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(
-						stationPoint, false, false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fTree.begin());
+						stationPoint, false, false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fData.getConfig().geoid, fTree.begin());
 
 					// Add the line number of the DLEV for this point.
 					fRefPt.line = itLEVEL->line;
@@ -546,7 +546,7 @@ bool TDataAnalyzer::checkParameters()
 				/*Fixed reference point for the ECHO measurement*/
 				std::shared_ptr<LGCAdjustablePoint> refPoint = std::make_shared<LGCAdjustablePoint>(
 					TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), true, true, true,
-					"ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fTree.begin());
+					"ECHO_line" + std::to_string(itECHO->line), fData.getConfig().referential, fData.getConfig().geoid, fTree.begin());
 				itECHO->fReferencePoint = refPoint;
 
 				/*Calculation of the initial approximation value for the theta angle of the plane.*/
@@ -696,7 +696,7 @@ bool TDataAnalyzer::checkParameters()
 
 					itECVE->fPtLine = &fData.getPoints().addObject(
 						LGCAdjustablePoint(TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian), false,
-							false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fTree.begin()));
+							false, true, "ECVE_line" + std::to_string(itECVE->line), fData.getConfig().referential, fData.getConfig().geoid, fTree.begin()));
 				}
 				else
 					outputMessages << TFileLogger::e_logType::LOG_WARNING << "ECVE group of measurements defined, using *ECVE keyword, but no measurement found.";

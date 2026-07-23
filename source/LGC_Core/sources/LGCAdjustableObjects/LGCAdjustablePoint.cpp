@@ -23,8 +23,8 @@ LGCAdjustablePoint::LGCAdjustablePoint(const std::string &name) : TAdjustablePoi
 {
 }
 
-LGCAdjustablePoint::LGCAdjustablePoint(const TPositionVector &pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string &name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree) :
-	TAdjustablePoint(pos, isXfixed, isYfixed, isZHfixed, name, referential), fFramePosition(positionInTree)
+LGCAdjustablePoint::LGCAdjustablePoint(const TPositionVector &pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string &name, TRefSystemFactory::ERefFrame referential, TRefSystemFactory::EGeoid geoid, TDataTreeIterator positionInTree) :
+	TAdjustablePoint(pos, isXfixed, isYfixed, isZHfixed, name, geoid), fFramePosition(positionInTree)
 {
 }
 
@@ -68,6 +68,7 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		{
 			fProvisionalHeightInRoot = fProvisionalValueInRoot.getH();
+			//TXYH2CCS::XYH2CCS(fProvisionalValueInRoot, );
 			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 				TXYH2CCS::XYHs2CCS(fProvisionalValueInRoot);
 			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)

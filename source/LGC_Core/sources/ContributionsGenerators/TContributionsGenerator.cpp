@@ -1222,6 +1222,7 @@ DVERContrib TContributionsGenerator::getDVERContrib(const TDVER &dver)
 		fPointTransfo.set2MLATransformation(target);
 		fPointTransfo.transformMLA2CGRF(targetC); // transform to CGRF
 
+		// to be modified with universal transformer
 		if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
 		{
 			TXYH2CCS::CCS2XYHs(station);
@@ -1532,12 +1533,14 @@ ECWSContrib TContributionsGenerator::getECWSContrib(const TECWSROM &ecwsROM, con
 	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
-		if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-			TXYH2CCS::XYHg2000Machine2CCS(wsPos);
-		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-			TXYH2CCS::XYHg1985Machine2CCS(wsPos);
-		else
-			TXYH2CCS::XYHs2CCS(wsPos);
+		TXYH2CCS::XYH2CCS(wsPos, fPointTransfo.getGeoidModel());
+
+		//if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
+		//	TXYH2CCS::XYHg2000Machine2CCS(wsPos);
+		//else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
+		//	TXYH2CCS::XYHg1985Machine2CCS(wsPos);
+		//else
+		//	TXYH2CCS::XYHs2CCS(wsPos);
 	}
 
 	// Target must be defined in the frame where the WPS sensor is
