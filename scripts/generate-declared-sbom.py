@@ -80,6 +80,43 @@ DISPLAY_NAMES = {
     "doxygen": "Doxygen",
 }
 
+# Authoritative PURL templates: {version} optional; omit @ when version unknown.
+# Prefer well-known package-URL types over opaque pkg:generic when possible.
+AUTHORITATIVE_PURL = {
+    "lgc2": (
+        "pkg:generic/cern/lgc2",
+        "https://github.com/geodetic-metrology-tools/LGC2",
+    ),
+    "lgc": ("pkg:generic/cern/lgc", "https://github.com/geodetic-metrology-tools/LGC2"),
+    "pylgc_c": (
+        "pkg:generic/cern/pylgc",
+        "https://github.com/geodetic-metrology-tools/LGC2",
+    ),
+    "eigen": ("pkg:generic/eigen", "https://gitlab.com/libeigen/eigen"),
+    "tut": (
+        "pkg:github/mrzechonek/tut-framework",
+        "https://github.com/mrzechonek/tut-framework",
+    ),
+    "tree.hh": ("pkg:github/kpeeters/tree.hh", "https://github.com/kpeeters/tree.hh"),
+    "rapidjson": (
+        "pkg:github/Tencent/rapidjson",
+        "https://github.com/Tencent/rapidjson",
+    ),
+    "numpy": ("pkg:pypi/numpy", "https://pypi.org/project/numpy/"),
+    "pytest": ("pkg:pypi/pytest", "https://pypi.org/project/pytest/"),
+    "openssl": ("pkg:generic/openssl", "https://www.openssl.org/"),
+    "python3": ("pkg:generic/python", "https://www.python.org/"),
+    "openmp": ("pkg:generic/openmp", "https://www.openmp.org/"),
+    "doxygen": ("pkg:generic/doxygen", "https://www.doxygen.nl/"),
+    "reframe": (
+        "pkg:generic/swisstopo/reframe",
+        "https://www.swisstopo.admin.ch/en/geodetic-software-resources-dll-jar",
+    ),
+}
+
+# Binary / application names emitted by Syft that belong to this project
+PROJECT_BINARY_NAMES = {"lgc", "pylgc_c", "libpylgc_c"}
+
 # Logical dependency graph edges (parent → children). Keys are lowercase names.
 GRAPH_EDGES: dict[str, list[str]] = {
     "lgc2": [
@@ -172,9 +209,15 @@ def is_plausible_version(value: str) -> bool:
 
 def guess_purl(name: str, version: str | None, homepage: str) -> str:
     """Build a Package URL. Version is only appended when it is a real version."""
+    key = name.lower()
+    ver = version if version and is_plausible_version(version) else None
+
+    if key in AUTHORITATIVE_PURL:
+        base, _home = AUTHORITATIVE_PURL[key]
+        return f"{base}@{ver}" if ver else base
+
     home = (homepage or "").rstrip("/")
     home = re.sub(r"\.git$", "", home)
-    ver = version if version and is_plausible_version(version) else None
 
     gh = re.search(r"github\.com[/:]([^/]+)/([^/]+)$", home)
     if gh:
@@ -185,21 +228,98 @@ def guess_purl(name: str, version: str | None, homepage: str) -> str:
     gl = re.search(r"gitlab(?:\.com|\.cern\.ch)/(.+)$", home)
     if gl:
         path = gl.group(1)
-        # generic gitlab path encoding
-        base = (
-            f"pkg:golang/{path}" if False else f"pkg:generic/{path.replace('/', '%2F')}"
-        )
-        # Prefer clearer generic form used by many SBOMs:
         base = f"pkg:generic/{path.replace('/', '-')}"
         return f"{base}@{ver}" if ver else base
 
-    if name.lower() in {"numpy", "pytest"}:
-        base = f"pkg:pypi/{name.lower()}"
+    if key in {"numpy", "pytest"}:
+        base = f"pkg:pypi/{key}"
         return f"{base}@{ver}" if ver else base
 
-    slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    slug = re.sub(r"[^a-z0-9]+", "-", key).strip("-")
     base = f"pkg:generic/{slug}"
     return f"{base}@{ver}" if ver else base
+
+
+def read_cmake_project_version(root: Path) -> str | None:
+    """Read EXE_VERSION_* from source/CMakeLists.txt → e.g. 2.11.0."""
+    cmake = root / "source" / "CMakeLists.txt"
+    if not cmake.is_file():
+        return None
+    text = cmake.read_text(encoding="utf-8", errors="ignore")
+    parts = {}
+    for key in ("MAJOR", "MINOR", "PATCH"):
+        m = re.search(rf'set\s*\(\s*EXE_VERSION_{key}\s+"([^"]+)"\s*\)', text)
+        if m:
+            parts[key] = m.group(1)
+    if {"MAJOR", "MINOR", "PATCH"} <= parts.keys():
+        return f"{parts['MAJOR']}.{parts['MINOR']}.{parts['PATCH']}"
+    return None
+
+
+def probe_command_version(commands: list[list[str]], patterns: list[str]) -> str | None:
+    """Run command candidates and extract a version with the first matching regex."""
+    for cmd in commands:
+        try:
+            out = subprocess.check_output(
+                cmd, text=True, stderr=subprocess.STDOUT, timeout=10
+            )
+        except Exception:
+            continue
+        for pat in patterns:
+            m = re.search(pat, out, re.IGNORECASE | re.MULTILINE)
+            if m:
+                ver = m.group(1).strip()
+                if is_plausible_version(ver):
+                    return ver
+    return None
+
+
+def resolve_find_package_versions() -> dict[str, str]:
+    """Best-effort runtime versions for common find_package() deps."""
+    found: dict[str, str] = {}
+
+    py = probe_command_version(
+        [["python3", "--version"], ["python", "--version"]],
+        [r"Python\s+(\d+\.\d+\.\d+)"],
+    )
+    if py:
+        found["python3"] = py
+
+    ossl = probe_command_version(
+        [["openssl", "version"], ["openssl", "version", "-v"]],
+        [r"OpenSSL\s+(\d+\.\d+\.\d+[a-z0-9]*)"],
+    )
+    if ossl:
+        found["openssl"] = ossl
+
+    dox = probe_command_version(
+        [["doxygen", "--version"], ["doxygen", "-v"]],
+        [r"^(\d+\.\d+(?:\.\d+)?)"],
+    )
+    if dox:
+        found["doxygen"] = dox
+
+    # OpenMP: no stable CLI; try compiler predefined macros when gcc/clang present
+    omp = probe_command_version(
+        [
+            [
+                "bash",
+                "-lc",
+                "echo | ${CXX:-c++} -fopenmp -dM -E - 2>/dev/null | grep _OPENMP",
+            ],
+            [
+                "sh",
+                "-c",
+                "echo | ${CXX:-c++} -fopenmp -dM -E - 2>/dev/null | grep _OPENMP",
+            ],
+        ],
+        [r"_OPENMP\s+(\d+)"],
+    )
+    if omp:
+        # _OPENMP date-code e.g. 201511 → keep as openmp-spec marker
+        found["openmp"] = omp
+
+    return found
 
 
 def bom_ref_for(comp: dict) -> str:
@@ -285,6 +405,7 @@ def discover_find_package(root: Path) -> list[dict]:
     # find_package(Name ...)  — skip ${module} indirections
     pattern = re.compile(r"find_package\s*\(\s*([A-Za-z][A-Za-z0-9._+-]*)")
     seen: set[str] = set()
+    runtime_versions = resolve_find_package_versions()
     for path in iter_cmake_files(root):
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
@@ -301,15 +422,17 @@ def discover_find_package(root: Path) -> list[dict]:
             seen.add(key)
             # Tooling packages are optional; runtime-ish ones required when linked
             scope = "optional" if key in {"doxygen", "python3"} else "required"
+            version = runtime_versions.get(key)
+            homepage = AUTHORITATIVE_PURL.get(key, ("", ""))[1]
             comps.append(
                 {
                     "id": key,
                     "name": nice,
-                    "version": None,
+                    "version": version,
                     "license": None,
                     "type": "library",
-                    "purl": guess_purl(nice, None, ""),
-                    "homepage": "",
+                    "purl": guess_purl(nice, version, homepage),
+                    "homepage": homepage,
                     "scope": scope,
                     "discovery": "find_package",
                     "source": path.relative_to(root).as_posix(),
@@ -632,6 +755,7 @@ def discover_all(root: Path) -> dict:
 
     components = sorted(store.values(), key=lambda c: c["name"].lower())
     graph = build_dependency_graph(components)
+    cmake_ver = read_cmake_project_version(root)
 
     return {
         "project": {
@@ -639,13 +763,24 @@ def discover_all(root: Path) -> dict:
             "description": "CERN LGC survey and alignment software",
             "license": "GPL-3.0-or-later",
             "type": "application",
-            "purl": "pkg:generic/cern/lgc2",
+            "version": cmake_ver,
+            "purl": guess_purl(
+                "LGC2",
+                cmake_ver,
+                "https://github.com/geodetic-metrology-tools/LGC2",
+            ),
             "homepage": "https://github.com/geodetic-metrology-tools/LGC2",
         },
         "components": components,
         "dependencies": graph,
         "discovery": {k: len(v) for k, v in buckets.items()}
-        | {"merged_total": len(components)},
+        | {
+            "merged_total": len(components),
+            "find_package_versions_resolved": sorted(
+                k for k, v in resolve_find_package_versions().items() if v
+            ),
+            "cmake_project_version": cmake_ver,
+        },
     }
 
 
@@ -736,6 +871,82 @@ def discovery_to_stub_cdx(discovery: dict, version: str) -> dict:
     }
 
 
+def strip_weak_cpes(component: dict) -> None:
+    """Remove Syft-guessed CPEs that are not version-qualified / not trustworthy."""
+    cpe = component.get("cpe")
+    if isinstance(cpe, str):
+        # Drop wildcards like cpe:2.3:a:LGC:LGC:*:*:*:*:*:*:*:*
+        if ":*:" in cpe or cpe.endswith(":*") or ":UNKNOWN:" in cpe.upper():
+            component.pop("cpe", None)
+        # Also drop CPE when component version is still unknown
+        elif str(component.get("version", "")).upper() in {
+            "",
+            "UNKNOWN",
+            "NOASSERTION",
+        }:
+            component.pop("cpe", None)
+
+    props = component.get("properties")
+    if isinstance(props, list):
+        component["properties"] = [
+            p
+            for p in props
+            if not (
+                isinstance(p, dict) and str(p.get("name", "")).startswith("syft:cpe")
+            )
+        ]
+
+
+def normalize_syft_project_binaries(
+    components: list[dict], product_version: str, cmake_version: str | None
+) -> None:
+    """Replace UNKNOWN versions on LGC/pyLGC binaries; drop weak CPEs."""
+    preferred = cmake_version or product_version
+    for c in components:
+        if c.get("type") == "file":
+            strip_weak_cpes(c)
+            continue
+        name = (c.get("name") or "").lower().replace("-", "_")
+        # normalize libpyLGC_C → pylgc_c
+        name = name.removeprefix("lib")
+        if name in PROJECT_BINARY_NAMES or name in {"lgc", "pylgc_c"}:
+            ver = str(c.get("version") or "")
+            if not ver or ver.upper() in {"UNKNOWN", "NOASSERTION"}:
+                c["version"] = preferred
+                c.setdefault("properties", []).append(
+                    {
+                        "name": "lgc:inventory:version_source",
+                        "value": "cmake-project-version"
+                        if cmake_version
+                        else "git-or-ci-version",
+                    }
+                )
+            # Prefer library for the shared binding; keep application for the CLI
+            if "pylgc" in name:
+                c["type"] = "library"
+            else:
+                c["type"] = "application"
+            c["purl"] = guess_purl(
+                "LGC" if name == "lgc" else "pyLGC_C",
+                c.get("version"),
+                "https://github.com/geodetic-metrology-tools/LGC2",
+            )
+            # Project binaries: omit invented CPEs (no NVD entries for these names)
+            c.pop("cpe", None)
+            props = c.get("properties")
+            if isinstance(props, list):
+                c["properties"] = [
+                    p
+                    for p in props
+                    if not (
+                        isinstance(p, dict)
+                        and str(p.get("name", "")).startswith("syft:cpe")
+                    )
+                ]
+        else:
+            strip_weak_cpes(c)
+
+
 def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
     """Merge discovered metadata into a Syft CycloneDX document."""
     out = json.loads(json.dumps(syft))  # deep copy
@@ -744,29 +955,44 @@ def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
     out["metadata"] = out.get("metadata") or {}
     out["metadata"]["timestamp"] = _now_iso()
 
+    cmake_version = read_cmake_project_version(REPO_ROOT)
+    # Prefer semver for the product root when available; keep git/tag as property
+    root_version = cmake_version or product_version
+
     tools = out["metadata"].setdefault("tools", {})
     tool_comps = tools.setdefault("components", [])
     tool_comps.append(
         {
             "type": "application",
             "name": "lgc-sbom-augment",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "author": "CERN LGC2",
         }
     )
 
     meta_comp = out["metadata"].setdefault("component", {})
+    meta_comp["type"] = "application"
     meta_comp["name"] = discovery["project"]["name"]
-    meta_comp["version"] = product_version
-    meta_comp["bom-ref"] = f"{discovery['project']['name']}@{product_version}"
+    meta_comp["version"] = root_version
+    meta_comp["bom-ref"] = f"{discovery['project']['name']}@{root_version}"
     meta_comp["licenses"] = [{"license": {"id": discovery["project"]["license"]}}]
     if discovery["project"].get("purl"):
-        meta_comp["purl"] = discovery["project"]["purl"]
+        # Attach versioned project PURL when we have a concrete version
+        meta_comp["purl"] = guess_purl(
+            discovery["project"]["name"],
+            root_version,
+            discovery["project"].get("homepage", ""),
+        )
+    meta_comp.pop("cpe", None)
 
     props = out["metadata"].setdefault("properties", [])
     props.append({"name": "lgc:sbom:kind", "value": "syft-augmented-with-discovery"})
+    if cmake_version and product_version and cmake_version != product_version:
+        props.append({"name": "lgc:inventory:git_or_ci_ref", "value": product_version})
 
     existing = out.setdefault("components", [])
+    normalize_syft_project_binaries(existing, product_version, cmake_version)
+
     by_name = {
         (c.get("name") or "").lower(): c for c in existing if c.get("type") != "file"
     }
@@ -787,12 +1013,16 @@ def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
             if cdx.get("externalReferences"):
                 target["externalReferences"] = cdx["externalReferences"]
             target["scope"] = cdx.get("scope", target.get("scope", "required"))
+            # Never keep weak Syft CPEs on overlaid deps
+            strip_weak_cpes(target)
+            target.pop("cpe", None)
         else:
+            strip_weak_cpes(cdx)
             existing.append(cdx)
             by_name[key] = cdx
 
     # Rebuild dependency graph from discovery + keep Syft deps that don't conflict
-    root_ref = f"{discovery['project']['name']}@{product_version}"
+    root_ref = f"{discovery['project']['name']}@{root_version}"
     new_deps = []
     for d in discovery.get("dependencies") or []:
         entry: dict[str, Any] = {
@@ -811,10 +1041,17 @@ def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
         name = (c.get("name") or "").lower()
         if name in discovered_names or name in {"lgc2"}:
             continue
+        # Refresh bom-ref if we rewrote binary version
+        if (
+            name in PROJECT_BINARY_NAMES
+            or name.removeprefix("lib") in PROJECT_BINARY_NAMES
+        ):
+            c["bom-ref"] = bom_ref_for(
+                {"name": c.get("name"), "version": c.get("version")}
+            )
         ref = c.get("bom-ref") or c.get("name")
         if ref:
             syft_extra_refs.append(ref)
-            # ensure leaf
             if not any(x.get("ref") == ref for x in new_deps):
                 new_deps.append({"ref": ref})
 
