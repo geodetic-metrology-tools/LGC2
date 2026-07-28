@@ -1,48 +1,68 @@
 # Pre-commit hooks for LGC2
 # See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
+#
+# Hook sources (three categories):
+#   1. Upstream open-source hooksets (pin each repo directly)
+#   2. Shared APC hooks from apc/common/pre-commit-utils
+#   3. LGC2-specific hooks (project policy / local tooling)
+#
+# Catalogue of recommended upstream hooks:
+#   https://gitlab.cern.ch/apc/common/pre-commit-utils/-/blob/master/docs/catalogue.md
 
 default_language_version:
   python: python3
 
 repos:
-  # General pre-commit hooks
+  # ---------------------------------------------------------------------------
+  # 1. Upstream hooksets
+  # ---------------------------------------------------------------------------
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      # Prevent large files from being committed
       - id: check-added-large-files
         args: ['--maxkb=1000']
-      # Check for files that would conflict in case-insensitive filesystems
       - id: check-case-conflict
-      # Check for merge conflicts
       - id: check-merge-conflict
-      # Check YAML syntax
       - id: check-yaml
         args: ['--unsafe']  # Allow custom YAML tags used in GitLab CI
-      # Check JSON syntax
       - id: check-json
-      # Check for files that don't end in a newline
       - id: end-of-file-fixer
-        exclude: '\.txt$'  # Exclude test output files
-      # Remove trailing whitespace
+        exclude: '\.txt$'  # Exclude LGC test output files
       - id: trailing-whitespace
-        exclude: '\.txt$'  # Exclude test output files
-      # Ensure files use LF line endings
+        exclude: '\.txt$'  # Exclude LGC test output files
       - id: mixed-line-ending
         args: ['--fix=lf']
-      # Check for debugging statements
-      - id: debug-statements
-        exclude: '\.cpp$|\.h$'  # C++ files don't have Python debug statements
 
-  # Python linting and formatting (Ruff)
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.21
     hooks:
       - id: ruff-check
       - id: ruff-format
 
-  # clang-format: pinned version ensures all machines and CI use the same formatter
+  # ---------------------------------------------------------------------------
+  # 2. Shared APC hooks — apc/common/pre-commit-utils
+  #    Pin to a release tag when available; commit SHA until then.
+  # ---------------------------------------------------------------------------
+
+  - repo: https://gitlab.cern.ch/apc/common/pre-commit-utils
+    rev: 2a2897b3d7f1eac7d0c187fb289dee9d09b568bf
+    hooks:
+      - id: check-utf8-encoding
+        exclude: 'test_files/.*\.txt$'
+      - id: reuse-committed-files
+      - id: check-todos
+      - id: prevent-direct-branch-commit
+        args: [--branch, master, --branch, appwidevs]
+      - id: check-signoff
+
+  # ---------------------------------------------------------------------------
+  # 3. LGC2-specific hooks
+  #    Project formatting follows LGC's .clang-format (-style=file), not a
+  #    default upstream style. The mirror pin keeps the binary version fixed
+  #    across machines/CI. Add other project-only checks as repo: local.
+  # ---------------------------------------------------------------------------
+
   - repo: https://github.com/pre-commit/mirrors-clang-format
     rev: v22.1.5
     hooks:
@@ -50,110 +70,13 @@ repos:
         types_or: [c++, c]
         args: ["-style=file"]
 
-  # Check for common C++ issues and project requirements
-  - repo: local
-    hooks:
-      # Check REUSE compliance for committed files only
-      - id: reuse-committed-files
-        name: Check REUSE compliance (committed files only)
-        entry: bash
-        language: system
-        pass_filenames: true
-        args:
-          - -c
-          - |
-            # Check if reuse command is available, install if not.
-            # The 'charset-normalizer' extra is required since reuse>=3 made
-            # encoding-detection backends optional; without it, `reuse lint-file`
-            # fails with NoEncodingModuleError when it has to sniff a file's
-            # encoding (e.g. .lgc2 inputs, generated test outputs).
-            if ! command -v reuse &> /dev/null; then
-              echo "REUSE tool not found. Installing..."
-              pip install "reuse[charset-normalizer]"
-              if [ $? -ne 0 ]; then
-                echo "Error: Failed to install reuse tool"
-                exit 1
-              fi
-            fi
-
-            # Check each committed file individually
-            echo "Checking REUSE compliance for committed files..."
-            FAILED=0
-            for file in "$@"; do
-              if ! reuse lint-file "$file" > /dev/null 2>&1; then
-                echo "REUSE compliance check failed for: $file"
-                reuse lint-file "$file"
-                FAILED=1
-              fi
-            done
-
-            if [ $FAILED -eq 0 ]; then
-              echo "All committed files are REUSE compliant"
-            else
-              exit 1
-            fi
-          - --
-
-      # Check that text files are UTF-8 encoded
-      - id: check-utf8-encoding
-        name: Check UTF-8 encoding
-        entry: python3
-        language: system
-        files: '\.(cpp|h|hpp|c|md|cmake|sh|yml|yaml|json)$'
-        exclude: 'test_files/.*\.txt$'  # Exclude test output files
-        args:
-          - -c
-          - |
-            import sys
-            for filepath in sys.argv[1:]:
-                try:
-                    with open(filepath, 'rb') as f:
-                        f.read().decode('utf-8')
-                except UnicodeDecodeError:
-                    print(f"ERROR: {filepath} is not valid UTF-8")
-                    sys.exit(1)
-
-      # Check for Signed-off-by in commit message (recommended, required for MR)
-      - id: check-signoff
-        name: Check for Signed-off-by line (recommended)
-        entry: bash
-        language: system
-        stages: [commit-msg]
-        always_run: true
-        args:
-          - -c
-          - |
-            if ! grep -q "^Signed-off-by:" "$1"; then
-              echo ""
-              echo "Warning: Commit message does not include a Signed-off-by line."
-              echo ""
-              echo "This is not required for development commits, but ALL commits"
-              echo "must be signed-off before creating a merge request."
-              echo ""
-              echo "To sign this commit: git commit -s"
-              echo "To sign later: git commit --amend -s --no-edit"
-              echo ""
-              echo "To skip this check: git commit --no-verify"
-              echo ""
-              exit 1
-            fi
-          - --
-
-      # Check for TODO/FIXME comments (informational only - won't fail)
-      - id: check-todos
-        name: Check for TODO/FIXME comments
-        entry: bash -c 'git diff --cached --name-only --diff-filter=ACM | grep -E "\.(cpp|h|hpp|c)$" | xargs -r grep -nH "TODO\|FIXME" || true'
-        language: system
-        pass_filenames: false
-        verbose: true
-
-      # Prevent commits to master/appwidevs branches
-      - id: prevent-direct-master-commit
-        name: Prevent direct commits to master/appwidevs
-        entry: bash -c 'BRANCH=$(git rev-parse --abbrev-ref HEAD); if [[ "$BRANCH" == "master" || "$BRANCH" == "appwidevs" ]]; then echo "Direct commits to $BRANCH are not allowed. Please create a feature branch."; exit 1; fi'
-        language: system
-        pass_filenames: false
-        always_run: true
+  # - repo: local
+  #   hooks:
+  #     - id: example-lgc2-only-check
+  #       name: Example LGC2-only check
+  #       entry: bash -c 'echo "replace with a real LGC2-only check"; exit 0'
+  #       language: system
+  #       pass_filenames: false
 
 # Configuration
 fail_fast: false  # Run all hooks even if one fails
