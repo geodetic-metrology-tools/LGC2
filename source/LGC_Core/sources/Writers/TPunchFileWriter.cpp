@@ -136,7 +136,7 @@ void TPunchFileWriter::writePoint(LGCAdjustablePoint const &point, TLGCConfig::T
 
 		// Set new coordinates to the point expressed in the root
 		LGCAdjustablePoint point_int_root = LGCAdjustablePoint(estimatedValue, point.isCoordinateFixed(0), point.isCoordinateFixed(1), point.isCoordinateFixed(2),
-			point.getName(), point.getReferenceFrame(), point.getFrameTreePosition());
+			point.getName(), point.getReferenceFrame(), point.getGeoid(), point.getFrameTreePosition());
 		point_int_root.eolcomment = point.eolcomment;
 
 		return point_int_root;
@@ -907,7 +907,7 @@ void TPunchFileWriter::writeXYZSigmaData(LGCAdjustablePoint const &point)
 
 			// Set new coordinates to the point expressed in the root
 			LGCAdjustablePoint point_int_root = LGCAdjustablePoint(estimatedValue, point.isCoordinateFixed(0), point.isCoordinateFixed(1), point.isCoordinateFixed(2),
-				point.getName(), point.getReferenceFrame(), point.getFrameTreePosition());
+				point.getName(), point.getReferenceFrame(), point.getGeoid(), point.getFrameTreePosition());
 			point_int_root.eolcomment = point.eolcomment;
 
 			return point_int_root;

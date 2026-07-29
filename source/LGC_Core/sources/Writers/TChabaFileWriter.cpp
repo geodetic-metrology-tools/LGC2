@@ -279,7 +279,7 @@ void TChabaFileWriter::writeTransformedPoints(const std::vector<std::pair<LGCAdj
 		TLOR2LOR transfo = TLOR2LOR(it.second.positionInTree, fProjectData->getTree().begin(), "transfo");
 		// transform coordinates in root
 		transfo.transform(stationRoot);
-		LGCAdjustablePoint ptInRoot(stationRoot, 0, 0, 0, it.first.getName(), it.first.getReferenceFrame(), it.first.getFrameTreePosition());
+		LGCAdjustablePoint ptInRoot(stationRoot, 0, 0, 0, it.first.getName(), it.first.getReferenceFrame(), it.first.getGeoid(), it.first.getFrameTreePosition());
 
 		delta d;
 		d.dx = stationRoot.getX() - it.first.getEstValue(0);
@@ -359,13 +359,7 @@ void TChabaFileWriter::writePUNPoint(const LGCAdjustablePoint &it, TFreeVector s
 	if (it.getReferenceFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		// transform Z in H
-		if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-			TXYH2CCS::CCS2XYHs(xyhToValue);
-		else if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-			TXYH2CCS::CCS2XYHg2000Machine(xyhToValue);
-		else if (it.getReferenceFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-			TXYH2CCS::CCS2XYHg1985Machine(xyhToValue);
-
+		TXYH2CCS::CCS2XYH(xyhToValue, it.getGeoid());
 		(*stream) << xyhToValue.getH();
 	}
 

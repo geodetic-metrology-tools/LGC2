@@ -35,7 +35,10 @@ void TKeyOLOC::parse(const std::vector<std::string> &, bool activeLine, int)
 
 	// nothing to parse, using local cartesion coordinate system
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
+		fconfig.geoid = TRefSystemFactory::EGeoid::kNoGeoid;
+	}
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
@@ -47,7 +50,10 @@ void TKeyRS2K::parse(const std::vector<std::string> &, bool activeLine, int)
 
 	// nothing to parse, using grid geoid
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg00Machine;
+		fconfig.geoid = TRefSystemFactory::EGeoid::kCG2000Machine;
+	}
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
@@ -59,7 +65,10 @@ void TKeyLEP::parse(const std::vector<std::string> &, bool activeLine, int)
 
 	// nothing to parse, using parabolic ellipsoid
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
+		fconfig.geoid = TRefSystemFactory::EGeoid::kCG1985Machine;
+	}
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }
@@ -71,7 +80,10 @@ void TKeySPHE::parse(const std::vector<std::string> &, bool activeLine, int)
 
 	// nothing to parse, using spherical reference frame
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS;
+		fconfig.geoid = TRefSystemFactory::EGeoid::kCGSphere;
+	}
 	else
 		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
 }

@@ -1222,21 +1222,9 @@ DVERContrib TContributionsGenerator::getDVERContrib(const TDVER &dver)
 		fPointTransfo.set2MLATransformation(target);
 		fPointTransfo.transformMLA2CGRF(targetC); // transform to CGRF
 
-		if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-		{
-			TXYH2CCS::CCS2XYHs(station);
-			TXYH2CCS::CCS2XYHs(target);
-		}
-		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-		{
-			TXYH2CCS::CCS2XYHg2000Machine(station);
-			TXYH2CCS::CCS2XYHg2000Machine(target);
-		}
-		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-		{
-			TXYH2CCS::CCS2XYHg1985Machine(station);
-			TXYH2CCS::CCS2XYHg1985Machine(target);
-		}
+		TXYH2CCS::CCS2XYH(station, fPointTransfo.getGeoid());
+		TXYH2CCS::CCS2XYH(target, fPointTransfo.getGeoid());
+
 		/*IMPORTANT ENABLE CGRF, APPLIES IN POINT AND TRANSFORMATION CONTRIBUTIONS*/
 		fPointTransfo.setCGRF(true);
 		// Calculating the distance meas
@@ -1532,12 +1520,7 @@ ECWSContrib TContributionsGenerator::getECWSContrib(const TECWSROM &ecwsROM, con
 	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
-		if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-			TXYH2CCS::XYHg2000Machine2CCS(wsPos);
-		else if (fPointTransfo.getRefFrame() == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-			TXYH2CCS::XYHg1985Machine2CCS(wsPos);
-		else
-			TXYH2CCS::XYHs2CCS(wsPos);
+		TXYH2CCS::XYH2CCS(wsPos, fPointTransfo.getGeoid());
 	}
 
 	// Target must be defined in the frame where the WPS sensor is

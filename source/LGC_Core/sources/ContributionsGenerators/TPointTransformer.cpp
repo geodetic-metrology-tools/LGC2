@@ -186,12 +186,7 @@ void TPointTransformer::transformCCS22DH(TPositionVector &pv)
 
 	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
 	{
-		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-			TXYH2CCS::CCS2XYHs(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
-			TXYH2CCS::CCS2XYHg2000Machine(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
-			TXYH2CCS::CCS2XYHg1985Machine(pv);
+		TXYH2CCS::CCS2XYH(pv, fGeoidModel);
 	}
 }
 
@@ -203,11 +198,6 @@ void TPointTransformer::transform2DH2CCS(TPositionVector &pv)
 
 	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
 	{
-		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-			TXYH2CCS::XYHs2CCS(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
-			TXYH2CCS::XYHg2000Machine2CCS(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
-			TXYH2CCS::XYHg1985Machine2CCS(pv);
+		TXYH2CCS::XYH2CCS(pv, fGeoidModel);
 	}
 }
