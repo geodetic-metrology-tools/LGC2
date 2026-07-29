@@ -50,7 +50,7 @@ void object::test<1>()
 	set_test_name("Testing Adjustable objects");
 	TPositionVector position1(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k3DCartesian);
 	TDataTreeIterator iter;
-	LGCAdjustablePoint p(position1, true, false, false, "point1", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
+	LGCAdjustablePoint p(position1, true, false, false, "point1", TRefSystemFactory::ERefFrame::kLocalRefFrame, TRefSystemFactory::EGeoid::kNoGeoid, iter);
 	TFreeVector ll(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k3DCartesian);
 
 	//////////////////////// Testing LGCAdjustableLine ////////////////////////
@@ -88,7 +88,7 @@ void object::test<1>()
 	ensure_equals("Second active point place is 2", p.getRelativeUnknIndices().at(1), 2);
 
 	TPositionVector position2(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k2DPlusH);
-	LGCAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
+	LGCAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, TRefSystemFactory::EGeoid::kCG2000Machine, iter);
 	pH.setFirstUidx(5);
 	ensure_equals("Reference system of provisional value should match", pH.getProvisionalValue().getCoordSys(), TCoordSysFactory::ECoordSys::k2DPlusH);
 	ensure_equals("Provisional value should match", pH.getProvisionalValue().getX().getMetresValue(), 1.0);
@@ -307,7 +307,7 @@ void object::test<3>()
 	// Measurements are tested more properly in testReaders -- Testing measurement input --
 	TPositionVector posit(1.0, 1.0, 1.0, TCoordSysFactory::ECoordSys::k3DCartesian);
 	TDataTreeIterator iter;
-	const LGCAdjustablePoint pos(posit, false, false, false, "point", TRefSystemFactory::ERefFrame::kLocalRefFrame, iter);
+	const LGCAdjustablePoint pos(posit, false, false, false, "point", TRefSystemFactory::ERefFrame::kLocalRefFrame, TRefSystemFactory::EGeoid::kNoGeoid, iter);
 
 	const TInstrumentData::TPOLAR instrument{};
 

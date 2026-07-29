@@ -120,7 +120,7 @@ void object::test<3>()
 
 	TPositionVector position2(1.0, 2.0, 3.0, TCoordSysFactory::ECoordSys::k2DPlusH);
 	TDataTreeIterator iter;
-	LGCAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, iter);
+	LGCAdjustablePoint pH(position2, false, false, true, "pointH1", TRefSystemFactory::ERefFrame::kCernXYHg00Machine, TRefSystemFactory::EGeoid::kCG2000Machine, iter);
 	// point should be fixed
 	ensure_equals("0 unknowns introduced", pH.getNumUnkn(), 0);
 	ensure_equals("Point is  fixed", pH.isFixed(), true);
