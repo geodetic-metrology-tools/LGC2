@@ -233,6 +233,8 @@ struct TLGCConfig
 	TFautDetect faut;
 	/// See \ref TRefSystemFactory
 	TRefSystemFactory::ERefFrame referential;
+	/// See \ref TRefSystemFactory
+	TRefSystemFactory::EGeoid geoid;
 
 	/// Sets all points to be fixed points in spite of their configuration
 	TBinaryOption allfixed;
