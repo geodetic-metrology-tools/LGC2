@@ -111,6 +111,9 @@ public:
 	/// Returns a reference on the reference frame
 	const TRefSystemFactory::ERefFrame &getRefFrame() { return fRefFrame; }
 
+	/// Returns a reference on the geoid model used
+	const TRefSystemFactory::EGeoid &getGeoid() { return fGeoidModel; }
+
 	/// Returns a reference on the name of the last station used
 	const std::string &getLastStnPtName() { return fLastStationPtName; }
 

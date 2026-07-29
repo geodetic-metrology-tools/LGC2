@@ -23,8 +23,15 @@ LGCAdjustablePoint::LGCAdjustablePoint(const std::string &name) : TAdjustablePoi
 {
 }
 
-LGCAdjustablePoint::LGCAdjustablePoint(const TPositionVector &pos, bool isXfixed, bool isYfixed, bool isZHfixed, const std::string &name, TRefSystemFactory::ERefFrame referential, TDataTreeIterator positionInTree) :
-	TAdjustablePoint(pos, isXfixed, isYfixed, isZHfixed, name, referential), fFramePosition(positionInTree)
+LGCAdjustablePoint::LGCAdjustablePoint(const TPositionVector &pos,
+	bool isXfixed,
+	bool isYfixed,
+	bool isZHfixed,
+	const std::string &name,
+	TRefSystemFactory::ERefFrame referential,
+	TRefSystemFactory::EGeoid geoid,
+	TDataTreeIterator positionInTree) :
+	TAdjustablePoint(pos, isXfixed, isYfixed, isZHfixed, name, referential, geoid), fFramePosition(positionInTree)
 {
 }
 
@@ -68,12 +75,7 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		{
 			fProvisionalHeightInRoot = fProvisionalValueInRoot.getH();
-			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-				TXYH2CCS::XYHs2CCS(fProvisionalValueInRoot);
-			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-				TXYH2CCS::XYHg2000Machine2CCS(fProvisionalValueInRoot);
-			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-				TXYH2CCS::XYHg1985Machine2CCS(fProvisionalValueInRoot);
+			TXYH2CCS::XYH2CCS(fProvisionalValueInRoot, fGeoid);
 		}
 	}
 	else
@@ -89,13 +91,7 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 			{
 				TPositionVector fProvisionalInRootForHCalc(fProvisionalValueInRoot);
-
-				if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-					TXYH2CCS::CCS2XYHs(fProvisionalInRootForHCalc);
-				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-					TXYH2CCS::CCS2XYHg2000Machine(fProvisionalInRootForHCalc);
-				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-					TXYH2CCS::CCS2XYHg1985Machine(fProvisionalInRootForHCalc);
+				TXYH2CCS::CCS2XYH(fProvisionalInRootForHCalc, fGeoid);
 
 				fProvisionalHeightInRoot = fProvisionalInRootForHCalc.getH();
 			}
@@ -113,15 +109,7 @@ void LGCAdjustablePoint::changeProvValueToCCS(const TLGCData *fData)
 	if (root == getFrameTreePosition())
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
-		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
-		{
-			if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-				TXYH2CCS::XYHs2CCS(fProvisionalValue);
-			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-				TXYH2CCS::XYHg2000Machine2CCS(fProvisionalValue);
-			else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-				TXYH2CCS::XYHg1985Machine2CCS(fProvisionalValue);
-		}
+		TXYH2CCS::XYH2CCS(fProvisionalValue, fGeoid); // Is this ever used ? To be tested !!!!!!!!!!!!!!!
 	}
 }
 
@@ -148,13 +136,7 @@ void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
 	if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		TPositionVector fEstimatedInRootForHCalc(fEstimatedValueInRoot);
-
-		if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-			TXYH2CCS::CCS2XYHs(fEstimatedInRootForHCalc);
-		else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-			TXYH2CCS::CCS2XYHg2000Machine(fEstimatedInRootForHCalc);
-		else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-			TXYH2CCS::CCS2XYHg1985Machine(fEstimatedInRootForHCalc);
+		TXYH2CCS::CCS2XYH(fEstimatedInRootForHCalc, fGeoid);
 
 		fEstimatedHeightInRoot = fEstimatedInRootForHCalc.getH();
 	}
