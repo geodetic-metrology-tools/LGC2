@@ -119,7 +119,7 @@ void object::test<3>()
 	const LGCAdjustablePlane &plane1 = *dataset.getPlanes().begin();
 	TPositionVector PT = dataset.getPoints().getObject("PT").getEstimatedValue();
 	TPositionVector PTxyH = PT;
-	TXYH2CCS::CCS2XYHg2000Machine(PTxyH);
+	TXYH2CCS::CCS2XYH(PTxyH, TRefSystemFactory::EGeoid::kCG2000Machine);
 	/*Compared to LGC1 result (there is not distance from the reference point)*/
 	ensure_equals("(Point z coordinate - reference point distance) should match", PTxyH.getH().getMetresValue() - plane1.getRefPtDistEstimatedValue().getMetresValue(),
 		100.0000001, 1e-7);
@@ -325,20 +325,20 @@ void object::test<9>()
 
 	TPositionVector PT = dataset.getPoints().getObject("pt1").getEstimatedValue();
 
-	TXYH2CCS::CCS2XYHg2000Machine(PT);
+	TXYH2CCS::CCS2XYH(PT, TRefSystemFactory::EGeoid::kCG2000Machine);
 	ensure_equals("PT1 x coordinate should match", PT.getX().getMetresValue(), -978.6772806, 1e-7);
 	ensure_equals("PT1 h coordinate should match", PT.getH().getMetresValue(), 469.8346234, 1e-7);
 
 	TPositionVector PT2 = dataset.getPoints().getObject("pt2").getEstimatedValue();
-	TXYH2CCS::CCS2XYHg2000Machine(PT2);
+	TXYH2CCS::CCS2XYH(PT2, TRefSystemFactory::EGeoid::kCG2000Machine);
 	ensure_equals("PT2 h coordinate should match", PT2.getH().getMetresValue(), 439.8353643, 1e-7);
 
 	TPositionVector PT3 = dataset.getPoints().getObject("pt3").getEstimatedValue();
-	TXYH2CCS::CCS2XYHg2000Machine(PT3);
+	TXYH2CCS::CCS2XYH(PT3, TRefSystemFactory::EGeoid::kCG2000Machine);
 	ensure_equals("PT3 h coordinate should match", PT3.getH().getMetresValue(), 419.8369359, 1e-7);
 
 	TPositionVector PT4 = dataset.getPoints().getObject("pt4").getEstimatedValue();
-	TXYH2CCS::CCS2XYHg2000Machine(PT4);
+	TXYH2CCS::CCS2XYH(PT4, TRefSystemFactory::EGeoid::kCG2000Machine);
 	ensure_equals("PT4 h coordinate should match", PT4.getH().getMetresValue(), 429.8388728, 1e-7);
 }
 
