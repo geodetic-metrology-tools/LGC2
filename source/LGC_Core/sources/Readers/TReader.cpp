@@ -752,10 +752,11 @@ bool TReader::expandDeformDirectives()
 		TPositionVector provValue = origPoint.getProvisionalValue();
 		TDataTreeIterator framePos = origPoint.getFrameTreePosition();
 		TRefSystemFactory::ERefFrame refFrame = origPoint.getReferenceFrame();
+		TRefSystemFactory::EGeoid geoid = origPoint.getGeoid();
 		bool fx = origPoint.isCoordinateFixed(0), fy = origPoint.isCoordinateFixed(1), fz = origPoint.isCoordinateFixed(2);
 
 		// Create the _ref_<sagname> point with the same fixed state as the original (preserving coordinates, frame position)
-		LGCAdjustablePoint refPoint(provValue, fx, fy, fz, refName, refFrame, framePos);
+		LGCAdjustablePoint refPoint(provValue, fx, fy, fz, refName, refFrame, geoid, framePos);
 		// inherit the original point's input-file line so the generated point traces back to its definition
 		refPoint.line = lineNum;
 
