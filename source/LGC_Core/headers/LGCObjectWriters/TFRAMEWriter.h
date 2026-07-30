@@ -50,11 +50,6 @@ public:
 	*/
 	void writePoints(TDataTreeIterator frameIt);
 
-	/// Transformation needed if necessary to transform to MLA system
-	static void transfXYH2XYZ(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf);
-	/// Transformation needed if necessary to transform to MLA system
-	static void transfXYZ2XYH(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf);
-
 private:
 	/// Writes translation parameter related stuff
 	void writeTranslationParameter(const TAdjustableHelmertTransformation &frameDef, int transl);
