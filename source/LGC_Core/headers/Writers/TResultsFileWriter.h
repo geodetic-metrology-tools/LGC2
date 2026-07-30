@@ -97,9 +97,6 @@ private:
 
 		/// number of each point's type and observation's type
 
-	void transfUsingGeoid(TPositionVector& pv, const TRefSystemFactory::ERefFrame& rf);
-
-
 		size_t							fNumberOfPoints;
 		size_t							fNumberOfUnknOfPoints;
 		bool withEllipses;
