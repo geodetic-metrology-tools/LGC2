@@ -546,16 +546,6 @@ void TResultsFileWriter::writeFramesResults()
 		frameWriter.writeSagAdjustable();
 }
 
-void TResultsFileWriter::transfUsingGeoid(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf)
-{
-	if (rf == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-		TXYH2CCS::CCS2XYHs(pv);
-	else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-		TXYH2CCS::CCS2XYHg2000Machine(pv);
-	else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-		TXYH2CCS::CCS2XYHg1985Machine(pv);
-}
-
 // write the summary for the number of measurements of the given description
 void TResultsFileWriter::writeMeasDataSummary(const std::string description, const int numObs)
 {
