@@ -222,6 +222,34 @@ struct TLGCConfig
 #endif
 	};
 
+	/*!
+	Specifies the geoid type and an optional file path for custom implementations.
+	*/
+	class TGeoid : public TBinaryOption
+	{
+	public:
+		/// The desired geoid type
+		TRefSystemFactory::EGeoid type;
+
+		/// Optional path to a custom geoid file
+		std::string filePath;
+
+		/// The default behavior sets no geoid
+		TGeoid() : TBinaryOption(), type(TRefSystemFactory::EGeoid::kNoGeoid), filePath("") {}
+
+		/*!
+			\brief Enables the geoid configuration.
+			\param geoidType The reference system geoid type.
+			\param path Optional file path for the custom geoid.
+		*/
+		TGeoid(TRefSystemFactory::EGeoid geoidType, const std::string &path = "") : TBinaryOption(true), type(geoidType), filePath(path) {}
+
+#if USE_SERIALIZER
+		// Inherited via Serializable
+		virtual void serialize(ObjectSerializer &obj) const override;
+#endif
+	};
+
 	/// The title of the adjustment including newlines
 	std::string title;
 	/// See \ref Simulation
@@ -231,7 +259,7 @@ struct TLGCConfig
 	/// See \ref TRefSystemFactory
 	TRefSystemFactory::ERefFrame referential;
 	/// See \ref TRefSystemFactory
-	TRefSystemFactory::EGeoid geoid;
+	TGeoid geoid;
 
 	/// Sets all points to be fixed points in spite of their configuration
 	TBinaryOption allfixed;
@@ -334,6 +362,7 @@ inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 	obj.addProperty("pdor", pdor);
 	obj.addProperty("pointNameWidth", pointNameWidth);
 	obj.addProperty("referential", referential);
+	obj.addProperty("geoid", geoid);
 	obj.addProperty("sim", sim);
 	obj.addProperty("title", title);
 
@@ -383,6 +412,13 @@ inline void TLGCConfig::TPrecision::serialize(ObjectSerializer &obj) const
 {
 	obj.addProperty("digits", digits);
 	obj.addProperty("convCrit", convCrit);
+}
+
+inline void TLGCConfig::TGeoid::serialize(ObjectSerializer &obj) const
+{
+	TBinaryOption::serialize(obj);
+	obj.addProperty("type", type);
+	obj.addProperty("filePath", filePath);
 }
 
 #endif // USE_SERIALIZER

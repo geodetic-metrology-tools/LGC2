@@ -76,6 +76,7 @@ namespace
 #define RS2K "RS2K"
 #define LEP "LEP"
 #define SPHE "SPHE"
+#define CUSTOMG "CUSTOMG"
 // header - options
 #define FAUT "FAUT"
 #define APRI "APRI"
@@ -184,7 +185,7 @@ const int nb_allowed_frame = 10;
 const int nb_allowed_sagelement = 34; // adjustable object: definition (after INSTR) and re-attachment of pairs (after measurement / point keywords)
 const int nb_allowed_ef = 25;
 const int nb_allowed_end = 0;
-const int nb_allowed_titr = 4;
+const int nb_allowed_titr = 5;
 
 // lgc1
 const int nb_allowed_angl_lgc1 = 15;
@@ -356,7 +357,7 @@ const char *allowed_FRAME[nb_allowed_frame] = {CAM, DSPT, CALA, POIN, FRAME, END
 const char *allowed_ENDFRAME[nb_allowed_ef] = {
 	TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ROLLY, ECWS, ECWI, SAGELEMENT};
 const char *allowed_END[1] = {};
-const char *allowed_TITR[nb_allowed_titr] = {OLOC, RS2K, LEP, SPHE};
+const char *allowed_TITR[nb_allowed_titr] = {OLOC, RS2K, LEP, SPHE, CUSTOMG};
 
 // lgc1
 const char *allowed_ANGL_lgc1[nb_allowed_angl_lgc1] = {ANGL, ZENI, ZENH, DMES, DTHE, ECTH, DHOR, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, END};

@@ -61,12 +61,14 @@ void TInputFileWriter::writeHeader()
 	(*stream) << config.title << endl;
 
 	// Ref system:
-	if (config.referential == TRefSystemFactory::kCernXYHg85Machine)
+	if (config.geoid.type == TRefSystemFactory::kCG1985Machine)
 		(*stream) << "*LEP" << endl;
-	else if (config.referential == TRefSystemFactory::kCERNXYHsSphereSPS)
+	else if (config.geoid.type == TRefSystemFactory::kCGSphere)
 		(*stream) << "*SPHE" << endl;
-	else if (config.referential == TRefSystemFactory::kCernXYHg00Machine)
+	else if (config.geoid.type == TRefSystemFactory::kCG2000Machine)
 		(*stream) << "*RS2K" << endl;
+	else if (config.geoid.type == TRefSystemFactory::kCUSTOMgeoid)
+		(*stream) << "*CUSTOMG" << endl;
 	else
 		(*stream) << "*OLOC" << endl;
 

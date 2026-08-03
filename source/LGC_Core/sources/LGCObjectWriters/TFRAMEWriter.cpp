@@ -1943,22 +1943,24 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 
 	(*stream) << title << separator;
 
-	std::string referentialName;
+	std::string geoidName;
 	bool systemWithH = true;
-	if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-		referentialName = "SPHE";
-	else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-		referentialName = "RS2K";
-	else if (fProjectData->getConfig().referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-		referentialName = "LEP";
+	if (fProjectData->getConfig().geoid.type == TRefSystemFactory::EGeoid::kCGSphere)
+		geoidName = "SPHE";
+	else if (fProjectData->getConfig().geoid.type == TRefSystemFactory::EGeoid::kCG2000Machine)
+		geoidName = "RS2K";
+	else if (fProjectData->getConfig().geoid.type == TRefSystemFactory::EGeoid::kCG1985Machine)
+		geoidName = "LEP";
+	else if (fProjectData->getConfig().geoid.type == TRefSystemFactory::EGeoid::kCUSTOMgeoid)
+		geoidName = "CUSTOMG	";
 	else
 	{
-		referentialName = "OLOC";
+		geoidName = "OLOC";
 		systemWithH = false;
 	}
 
 	if (!localFRAME)
-		(*stream) << "(NB. = " << ptNumber << ",  REFERENTIEL = " << referentialName << " )";
+		(*stream) << "(NB. = " << ptNumber << ",  REFERENTIEL = " << geoidName << " )";
 
 	(*stream) << "\n";
 

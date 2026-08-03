@@ -185,7 +185,7 @@ void TLSSimulation::updateResValues()
 		{
 			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 			{
-				TXYH2CCS::XYH2CCS(provisionalValue, fData.getConfig().geoid);
+				TXYH2CCS::XYH2CCS(provisionalValue, fData.getConfig().geoid.type);
 			}
 		}
 
