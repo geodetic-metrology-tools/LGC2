@@ -53,6 +53,7 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyRS2K(project)));
 	finterpreters.emplace_back(UPK(new TKeyLEP(project)));
 	finterpreters.emplace_back(UPK(new TKeySPHE(project)));
+	finterpreters.emplace_back(UPK(new TKeyCUSTOMG(project)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyOLOC(project, nb_allowed_oloc_lgc1, allowed_OLOC_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyRS2K(project, nb_allowed_rs2k_lgc1, allowed_RS2K_lgc1)));
 	finterpreters_lgc1.emplace_back(UPK(new TKeyLEP(project, nb_allowed_lep_lgc1, allowed_LEP_lgc1)));
@@ -351,7 +352,7 @@ bool TReader::read(std::istream &lgcStream)
 				}
 			}
 
-			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
+			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE || currentkey == CUSTOMG)
 				isReferenceSystemDefined = true;
 
 			try
@@ -402,7 +403,7 @@ bool TReader::read(std::istream &lgcStream)
 		// Define OLOC as default
 		project.getConfig().referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
 
-		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
+		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP, SPHE and CUSTOMG. It will be OLOC by default";
 	}
 
 	if (project.getCurrentNode().ID.size() != 1)
@@ -547,7 +548,7 @@ bool TReader::readLgc1File(std::istream &lgcStream)
 				}
 			}
 
-			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE)
+			if (currentkey == OLOC || currentkey == RS2K || currentkey == LEP || currentkey == SPHE || currentkey == CUSTOMG)
 				isReferenceSystemDefined = true;
 
 			try
@@ -583,7 +584,7 @@ bool TReader::readLgc1File(std::istream &lgcStream)
 	}
 
 	if (!isReferenceSystemDefined)
-		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP & SPHE. It will be OLOC by default";
+		outputMessages << TFileLogger::e_logType::LOG_WARNING << "Reference System hasn't been provided between OLOC, RS2K, LEP, SPHE and CUSTOMG. It will be OLOC by default";
 
 	project.setLGCv1(true);
 

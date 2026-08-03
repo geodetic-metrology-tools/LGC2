@@ -37,10 +37,10 @@ void TKeyOLOC::parse(const std::vector<std::string> &, bool activeLine, int)
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
-		fconfig.geoid = TRefSystemFactory::EGeoid::kNoGeoid;
+		fconfig.geoid = TLGCConfig::TGeoid(TRefSystemFactory::EGeoid::kNoGeoid);
 	}
 	else
-		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
+		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP, SPHE or CUSTOMG).");
 }
 
 void TKeyRS2K::parse(const std::vector<std::string> &, bool activeLine, int)
@@ -52,10 +52,10 @@ void TKeyRS2K::parse(const std::vector<std::string> &, bool activeLine, int)
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg00Machine;
-		fconfig.geoid = TRefSystemFactory::EGeoid::kCG2000Machine;
+		fconfig.geoid = TLGCConfig::TGeoid(TRefSystemFactory::EGeoid::kCG2000Machine);
 	}
 	else
-		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
+		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP, SPHE or CUSTOMG).");
 }
 
 void TKeyLEP::parse(const std::vector<std::string> &, bool activeLine, int)
@@ -67,10 +67,10 @@ void TKeyLEP::parse(const std::vector<std::string> &, bool activeLine, int)
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
-		fconfig.geoid = TRefSystemFactory::EGeoid::kCG1985Machine;
+		fconfig.geoid = TLGCConfig::TGeoid(TRefSystemFactory::EGeoid::kCG1985Machine);
 	}
 	else
-		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
+		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP, SPHE or CUSTOMG).");
 }
 
 void TKeySPHE::parse(const std::vector<std::string> &, bool activeLine, int)
@@ -82,10 +82,38 @@ void TKeySPHE::parse(const std::vector<std::string> &, bool activeLine, int)
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 	{
 		fconfig.referential = TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS;
-		fconfig.geoid = TRefSystemFactory::EGeoid::kCGSphere;
+		fconfig.geoid = TLGCConfig::TGeoid(TRefSystemFactory::EGeoid::kCGSphere);
 	}
 	else
-		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP or SPHE).");
+		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP, SPHE or CUSTOMG).");
+}
+
+void TKeyCUSTOMG::parse(const std::vector<std::string> &tokens, bool activeLine, int)
+{
+	if (!activeLine)
+		throw std::runtime_error("Reference system keywords cannot be deactivated");
+
+	if (tokens.size() < 2)
+		throw std::runtime_error("Keyword *CUSTOMG expects a file path argument.");
+
+	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
+	{
+		fconfig.referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
+
+		// Extract the path and remove quotes if they exist
+		std::string path = tokens.at(2);
+		if (path.length() >= 2 && path.front() == '"' && path.back() == '"')
+		{
+			path = path.substr(1, path.length() - 2);
+		}
+
+		// Initialize TGeoid with the custom type and the file path
+		fconfig.geoid = TLGCConfig::TGeoid(TRefSystemFactory::EGeoid::kCUSTOMgeoid, path);
+	}
+	else
+	{
+		throw std::runtime_error("Only one reference system option can be specified (either OLOC, RS2K, LEP, SPHE or CUSTOMG).");
+	}
 }
 
 //////////////////

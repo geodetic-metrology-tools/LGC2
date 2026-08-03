@@ -97,18 +97,27 @@ void object::test<3>()
 
 	r1.parse(empty, true, -1);
 	ensure("Refsystem must be OLOC", cfg.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame);
+	ensure("No geoid OLOC", cfg.geoid.type == TRefSystemFactory::EGeoid::kNoGeoid);
 	TKeyRS2K r2(proj);
 	cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 	r2.parse(empty, true, -1);
 	ensure("Refsystem must be RS2K", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg00Machine);
+	ensure("RS2K geoid is CG2000Magine", cfg.geoid.type == TRefSystemFactory::EGeoid::kCG2000Machine);
 	TKeySPHE r3(proj);
 	cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 	r3.parse(empty, true, -1);
 	ensure("Refsystem must be SPHE", cfg.referential == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS);
+	ensure("geoid must be SPHE", cfg.geoid.type == TRefSystemFactory::EGeoid::kCGSphere);
 	TKeyLEP r4(proj);
 	cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
 	r4.parse(empty, true, -1);
 	ensure("Refsystem must be LEP", cfg.referential == TRefSystemFactory::ERefFrame::kCernXYHg85Machine);
+	ensure("LEP geoid is CG85Magine", cfg.geoid.type == TRefSystemFactory::EGeoid::kCG1985Machine);
+	TKeyCUSTOMG r5(proj);
+	cfg.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
+	r5.parse(tokenizefileString("*CUSTOMG \"C:/Test/pathToGrid/Grid.xyz\""), true, -1);
+	ensure("Refsystem must be CUSTOMG", cfg.geoid.type == TRefSystemFactory::EGeoid::kCUSTOMgeoid);
+	ensure("Path must be specified", cfg.geoid.filePath == "C:/Test/pathToGrid/Grid.xyz");
 
 	// calc options
 	//
