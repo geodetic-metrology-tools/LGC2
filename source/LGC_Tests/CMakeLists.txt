@@ -47,6 +47,7 @@ set(tests_SOURCES
 	sources/testDLEV.cpp
 	sources/testSAG.cpp
 	sources/testCliParser.cpp
+	sources/testCustomGeoid.cpp
 )
 
 set(tests_INPUT
@@ -75,6 +76,7 @@ set(tests_INPUT
 	headers/testDLEV.h
 	headers/testPOLAR.h
 	headers/testSAG.h
+	headers/testCustomGeoid.h
 )
 
 add_executable(LGC_Tests ${tests_INPUT} ${tests_SOURCES})

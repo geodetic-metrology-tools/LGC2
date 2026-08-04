@@ -221,8 +221,9 @@ void object::test<4>()
 {
 	set_test_name("Testing point input");
 
-	// set points to be in LEP reference frame
+	// set points to be in LEP reference frame and use LEP geoid
 	cfg.referential = TRefSystemFactory::ERefFrame::kCernXYHg85Machine;
+	cfg.geoid = TLGCConfig::TGeoid(TRefSystemFactory::EGeoid::kCG1985Machine);
 
 	TKeyCALA pr1(proj);
 

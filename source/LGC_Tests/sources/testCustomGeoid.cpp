@@ -50,6 +50,12 @@ void object::test<1>()
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 	Behavior successCalc = calcul.computeResults(fileWriter);
 
+
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getX() << "\n";
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getY() << "\n";
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getZ() << "\n";
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getH() << "\n";
+
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
 } // namespace tut
