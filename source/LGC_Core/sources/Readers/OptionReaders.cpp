@@ -109,6 +109,7 @@ void TKeyCUSTOMG::parse(const std::vector<std::string> &tokens, bool activeLine,
 
 		// Initialize TGeoid with the custom type and the file path
 		fconfig.geoid = TLGCConfig::TGeoid(TRefSystemFactory::EGeoid::kCUSTOMgeoid, path);
+		TRefSystemFactory::getRefSystemFactory()->updateCustomGeoid(path);
 	}
 	else
 	{
