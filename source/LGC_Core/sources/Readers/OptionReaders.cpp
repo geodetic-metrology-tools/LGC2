@@ -98,7 +98,7 @@ void TKeyCUSTOMG::parse(const std::vector<std::string> &tokens, bool activeLine,
 
 	if (fconfig.referential == TRefSystemFactory::ERefFrame::kNotInGraph)
 	{
-		fconfig.referential = TRefSystemFactory::ERefFrame::kLocalRefFrame;
+		fconfig.referential = TRefSystemFactory::ERefFrame::kETRF93;
 
 		// Extract the path and remove quotes if they exist
 		std::string path = tokens.at(2);
