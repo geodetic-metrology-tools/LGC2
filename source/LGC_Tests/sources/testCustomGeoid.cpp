@@ -38,6 +38,30 @@ template<>
 template<>
 void object::test<1>()
 {
+	set_test_name("Testing reading RS2K");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readRS2K.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestCUSTOMGEOID::RS2K_PARSE);
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getX() << "\n";
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getY() << "\n";
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getZ() << "\n";
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedHeightInRoot() << "\n";
+
+	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+}
+
+template<>
+template<>
+void object::test<2>()
+{
 	set_test_name("Testing reading CUSTOM Geoid path");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
@@ -54,7 +78,7 @@ void object::test<1>()
 	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getX() << "\n";
 	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getY() << "\n";
 	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getZ() << "\n";
-	std::cout << projTest->getPoints().getObject("P0").getEstimatedValue().getH() << "\n";
+	std::cout << projTest->getPoints().getObject("P0").getEstimatedHeightInRoot() << "\n";
 
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
