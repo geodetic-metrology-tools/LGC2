@@ -91,6 +91,10 @@ protected:
 
 	// Template pattern: insert the correct point object into the collection by subclass implementation
 	virtual LGCAdjustablePoint &insertPoint(const std::string &ID, TReal x, TReal y, TReal z) = 0;
+	
+	// Helper method to eliminate duplicate point insertion logic
+	LGCAdjustablePoint &createAndAddPoint(const std::string &ID, TReal x, TReal y, TReal z, bool isXfixed, bool isYfixed, bool isZHfixed);
+
 
 	TAPointKey &operator=(const TAPointKey &);
 };
