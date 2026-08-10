@@ -554,10 +554,11 @@ def cmd_ci(args: argparse.Namespace) -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     load_args = argparse.Namespace(deps_file=args.deps_file, out_dir=args.out_dir)
     cmd_load(load_args)
+    output = args.output or (args.out_dir / "lgc-augmented.cdx.json")
     aug_args = argparse.Namespace(
         deps_file=args.deps_file,
         syft=args.syft,
-        output=args.out_dir / "lgc-augmented.cdx.json",
+        output=output,
         version=args.version,
     )
     cmd_augment(aug_args)
@@ -593,6 +594,12 @@ def main() -> None:
     p_ci.add_argument("--deps-file", type=Path, default=DEFAULT_DEPS_FILE)
     p_ci.add_argument("--out-dir", type=Path, default=REPO_ROOT / "sbom")
     p_ci.add_argument("--syft", type=Path, required=True)
+    p_ci.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Augmented CycloneDX path (default: <out-dir>/lgc-augmented.cdx.json)",
+    )
     p_ci.add_argument("--version", default="")
     p_ci.set_defaults(func=cmd_ci)
 

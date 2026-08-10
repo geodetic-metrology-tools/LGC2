@@ -184,8 +184,8 @@ linux_sbom:
             --deps-file dependency.csv \
             --out-dir sbom \
             --syft sbom/lgc-linux-build.cdx.json \
+            --output sbom/lgc-linux-augmented.cdx.json \
             --version "${SOURCE_VERSION}"
-          cp sbom/lgc-augmented.cdx.json sbom/lgc-linux-augmented.cdx.json
 
           echo "SBOM files:"
           ls -la sbom/
@@ -227,8 +227,8 @@ windows_sbom:
             --deps-file dependency.csv \
             --out-dir sbom \
             --syft sbom/lgc-windows-build.cdx.json \
+            --output sbom/lgc-windows-augmented.cdx.json \
             --version "${SOURCE_VERSION}"
-          cp sbom/lgc-augmented.cdx.json sbom/lgc-windows-augmented.cdx.json
 
           echo "SBOM files:"
           ls -la sbom/
