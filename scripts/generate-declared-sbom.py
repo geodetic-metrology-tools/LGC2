@@ -218,7 +218,7 @@ def build_dependency_graph(
     components: list[dict], project_name: str = "LGC2"
 ) -> list[dict]:
     """Build graph from the parent column in dependency.csv."""
-    by_id = {c["id"]: c for c in components}
+    # id → bom-ref for resolving parent names (e.g. SurveyLib) to component refs
     refs = {c["id"]: c["bom-ref"] for c in components}
     # parent name (display) → list of child refs
     edges: dict[str, list[str]] = {}
@@ -255,7 +255,6 @@ def build_dependency_graph(
                 f"(must be {project_name!r} or a listed dependency name)"
             )
 
-    _ = by_id  # kept for clarity / future checks
     return deps
 
 
