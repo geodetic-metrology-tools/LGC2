@@ -18,12 +18,13 @@ All source and data files include SPDX headers or are declared in [`REUSE.toml`]
 
 ## Third-Party Components
 
-The CI SBOM is produced by Syft and **augmented** with metadata discovered
-from CMake (`FetchContent`, `find_package`), `.gitmodules`, and this NOTICE
-(for licenses / path-based deps). See `scripts/generate-declared-sbom.py`.
+Machine-readable dependency inventory for SBOM generation:
+[`dependency.csv`](./dependency.csv) (single source of truth).
+CI builds a Syft SBOM and augments it from that file via
+`scripts/generate-declared-sbom.py`.
 
-When you add a path-based dependency (not FetchContent/submodule/pip), document
-it here with License and Source so attribution and SBOM stay in sync:
+When you add a dependency, add a row to `dependency.csv` and document it below
+for human/legal attribution:
 
 ### Eigen
 - License: MPL-2.0

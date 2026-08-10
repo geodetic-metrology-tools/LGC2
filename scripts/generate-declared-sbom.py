@@ -2,35 +2,26 @@
 # SPDX-FileCopyrightText: CERN
 # SPDX-License-Identifier: GPL-3.0-or-later
 """
-Discover LGC2 dependencies and optionally augment a Syft CycloneDX SBOM.
+Generate / augment LGC2 CycloneDX SBOMs from dependency.csv (single source of truth).
 
-Discovery (writes sbom/discovered-components.json):
-  - CMake FetchContent_Declare (GIT_REPOSITORY + GIT_TAG / commit SHA)
-  - CMake find_package(...)
-  - Git submodules (.gitmodules + git rev-parse when available)
-  - NOTICE.md / SurveyLib NOTICE.md  → licenses + path-based deps ONLY
-  - README "Component | Version" table → versions ONLY (never the License table)
-  - source/pyLGC/tests/requirements.txt
-
-Augmentation (Syft CDX + discovery → one CycloneDX document):
-  - Keeps Syft components (binaries / ELF hints)
-  - Adds/overlays discovered libraries with correct version, license, PURL
-  - Builds dependency relationships (direct + transitive via SurveyLib)
-  - Preserves lgc:inventory:* properties
+dependency.csv columns:
+  name, version, license, homepage, purl, scope, parent
 
 Usage:
-  python scripts/generate-declared-sbom.py discover --out-dir sbom
+  python scripts/generate-declared-sbom.py load --out-dir sbom
   python scripts/generate-declared-sbom.py augment \\
-      --discovery sbom/discovered-components.json \\
+      --deps-file dependency.csv \\
       --syft sbom/lgc-linux-build.cdx.json \\
       --output sbom/lgc-linux-augmented.cdx.json \\
       --version 2.11.0
+  python scripts/generate-declared-sbom.py ci \\
+      --out-dir sbom --syft sbom/lgc-linux-build.cdx.json --version $CI_COMMIT_SHORT_SHA
 """
 
 from __future__ import annotations
 
 import argparse
-import configparser
+import csv
 import json
 import re
 import subprocess
@@ -41,116 +32,18 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_DEPS_FILE = REPO_ROOT / "dependency.csv"
 
-LICENSE_ALIASES = {
-    "mpl-2.0": "MPL-2.0",
-    "mit": "MIT",
-    "bsd-3-clause": "BSD-3-Clause",
-    "bsd 3-clause": "BSD-3-Clause",
-    "bsd-2-clause": "BSD-2-Clause",
-    'bsd 2-clause "simplified" license': "BSD-2-Clause",
-    "bsd 2-clause": "BSD-2-Clause",
-    "gnu general public license v3.0 or later": "GPL-3.0-or-later",
-    "gnu general public license v3.0": "GPL-3.0",
-    "gpl-3.0-or-later": "GPL-3.0-or-later",
-    "gpl-3.0": "GPL-3.0",
-    "custom permissive license": "LicenseRef-counted-ptr",
-}
-
-# SPDX / license-looking tokens must never be stored as version
-LICENSE_LIKE = set(LICENSE_ALIASES.keys()) | {
-    "mpl-2.0",
-    "gpl-3.0-or-later",
-    "gpl-3.0",
-    "bsd-2-clause",
-    "bsd-3-clause",
-    "mit",
-    "apache-2.0",
-    "noassertion",
-}
-
-DISPLAY_NAMES = {
-    "treehh": "tree.hh",
-    "rapidjson": "RapidJSON",
-    "surveylib": "SurveyLib",
-    "susoftcmakecommon": "SUSoftCMakeCommon",
-    "python3": "Python3",
-    "openmp": "OpenMP",
-    "openssl": "OpenSSL",
-    "doxygen": "Doxygen",
-}
-
-# Authoritative PURL templates: {version} optional; omit @ when version unknown.
-# Prefer well-known package-URL types over opaque pkg:generic when possible.
-AUTHORITATIVE_PURL = {
-    "lgc2": (
-        "pkg:generic/cern/lgc2",
-        "https://github.com/geodetic-metrology-tools/LGC2",
-    ),
-    "lgc": ("pkg:generic/cern/lgc", "https://github.com/geodetic-metrology-tools/LGC2"),
-    "pylgc_c": (
-        "pkg:generic/cern/pylgc",
-        "https://github.com/geodetic-metrology-tools/LGC2",
-    ),
-    "eigen": ("pkg:generic/eigen", "https://gitlab.com/libeigen/eigen"),
-    "tut": (
-        "pkg:github/mrzechonek/tut-framework",
-        "https://github.com/mrzechonek/tut-framework",
-    ),
-    "tree.hh": ("pkg:github/kpeeters/tree.hh", "https://github.com/kpeeters/tree.hh"),
-    "rapidjson": (
-        "pkg:github/Tencent/rapidjson",
-        "https://github.com/Tencent/rapidjson",
-    ),
-    "numpy": ("pkg:pypi/numpy", "https://pypi.org/project/numpy/"),
-    "pytest": ("pkg:pypi/pytest", "https://pypi.org/project/pytest/"),
-    "openssl": ("pkg:generic/openssl", "https://www.openssl.org/"),
-    "python3": ("pkg:generic/python", "https://www.python.org/"),
-    "openmp": ("pkg:generic/openmp", "https://www.openmp.org/"),
-    "doxygen": ("pkg:generic/doxygen", "https://www.doxygen.nl/"),
-    "reframe": (
-        "pkg:generic/swisstopo/reframe",
-        "https://www.swisstopo.admin.ch/en/geodetic-software-resources-dll-jar",
-    ),
-}
-
-# Binary / application names emitted by Syft that belong to this project
 PROJECT_BINARY_NAMES = {"lgc", "pylgc_c", "libpylgc_c"}
 
-# Logical dependency graph edges (parent → children). Keys are lowercase names.
-GRAPH_EDGES: dict[str, list[str]] = {
-    "lgc2": [
-        "surveylib",
-        "susoftcmakecommon",
-        "eigen",
-        "tut",
-        "tree.hh",
-        "numpy",
-        "pytest",
-        "python3",
-        "openmp",
-    ],
-    "surveylib": [
-        "eigen",
-        "tut",
-        "rapidjson",
-        "reframe",
-        "counted_ptr.h",
-        "susoftcmakecommon",
-        "openmp",
-    ],
-}
-
-SKIP_DIR_PARTS = {
-    "build",
-    "build32",
-    "out",
-    ".git",
-    ".vs",
-    ".vscode",
-    "sbom",
-    "CMakeFiles",
-    "_deps",
+REQUIRED_CSV_COLUMNS = {
+    "name",
+    "version",
+    "license",
+    "homepage",
+    "purl",
+    "scope",
+    "parent",
 }
 
 
@@ -158,46 +51,12 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def display_name(name: str) -> str:
-    return DISPLAY_NAMES.get(name.lower(), name)
-
-
-def normalize_license(text: str) -> str:
-    raw = (text or "").strip()
-    if not raw:
-        return "NOASSERTION"
-    key = raw.lower().strip()
-    if key in LICENSE_ALIASES:
-        return LICENSE_ALIASES[key]
-    if re.fullmatch(r"[A-Za-z0-9.+-]+", raw) or raw.startswith("LicenseRef-"):
-        return raw
-    for alias, spdx in LICENSE_ALIASES.items():
-        if alias in key:
-            return spdx
-    return "NOASSERTION"
-
-
-def is_license_like(value: str) -> bool:
-    v = (value or "").strip().lower()
-    if not v:
-        return False
-    if v in LICENSE_LIKE:
-        return True
-    if v.startswith("license"):
-        return True
-    # "BSD 2-Clause", "GPL-3.0-or-later", etc.
-    if re.search(r"\b(gpl|mpl|bsd|mit|apache|license)\b", v):
-        return True
-    return False
-
-
-def is_plausible_version(value: str) -> bool:
+def is_plausible_version(value: str | None) -> bool:
     v = (value or "").strip()
-    if not v or v in {"unknown", "unpinned", "vendored", "NOASSERTION"}:
+    if not v or v.upper() in {"UNKNOWN", "NOASSERTION", "UNPINNED", "VENDORED"}:
         return False
-    if is_license_like(v):
+    if re.search(r"\b(gpl|mpl|bsd|mit|apache|license)\b", v, re.I):
         return False
-    # semver, date, git sha, pep440-ish
     if re.fullmatch(r"[0-9a-f]{7,40}", v):
         return True
     if re.match(r"^\d+(\.\d+)*", v):
@@ -207,41 +66,7 @@ def is_plausible_version(value: str) -> bool:
     return False
 
 
-def guess_purl(name: str, version: str | None, homepage: str) -> str:
-    """Build a Package URL. Version is only appended when it is a real version."""
-    key = name.lower()
-    ver = version if version and is_plausible_version(version) else None
-
-    if key in AUTHORITATIVE_PURL:
-        base, _home = AUTHORITATIVE_PURL[key]
-        return f"{base}@{ver}" if ver else base
-
-    home = (homepage or "").rstrip("/")
-    home = re.sub(r"\.git$", "", home)
-
-    gh = re.search(r"github\.com[/:]([^/]+)/([^/]+)$", home)
-    if gh:
-        org, repo = gh.group(1), gh.group(2)
-        base = f"pkg:github/{org}/{repo}"
-        return f"{base}@{ver}" if ver else base
-
-    gl = re.search(r"gitlab(?:\.com|\.cern\.ch)/(.+)$", home)
-    if gl:
-        path = gl.group(1)
-        base = f"pkg:generic/{path.replace('/', '-')}"
-        return f"{base}@{ver}" if ver else base
-
-    if key in {"numpy", "pytest"}:
-        base = f"pkg:pypi/{key}"
-        return f"{base}@{ver}" if ver else base
-
-    slug = re.sub(r"[^a-z0-9]+", "-", key).strip("-")
-    base = f"pkg:generic/{slug}"
-    return f"{base}@{ver}" if ver else base
-
-
 def read_cmake_project_version(root: Path) -> str | None:
-    """Read EXE_VERSION_* from source/CMakeLists.txt → e.g. 2.11.0."""
     cmake = root / "source" / "CMakeLists.txt"
     if not cmake.is_file():
         return None
@@ -256,80 +81,6 @@ def read_cmake_project_version(root: Path) -> str | None:
     return None
 
 
-def probe_command_version(commands: list[list[str]], patterns: list[str]) -> str | None:
-    """Run command candidates and extract a version with the first matching regex."""
-    for cmd in commands:
-        try:
-            out = subprocess.check_output(
-                cmd, text=True, stderr=subprocess.STDOUT, timeout=10
-            )
-        except Exception:
-            continue
-        for pat in patterns:
-            m = re.search(pat, out, re.IGNORECASE | re.MULTILINE)
-            if m:
-                ver = m.group(1).strip()
-                if is_plausible_version(ver):
-                    return ver
-    return None
-
-
-def resolve_find_package_versions() -> dict[str, str]:
-    """Best-effort runtime versions for common find_package() deps."""
-    found: dict[str, str] = {}
-
-    py = probe_command_version(
-        [["python3", "--version"], ["python", "--version"]],
-        [r"Python\s+(\d+\.\d+\.\d+)"],
-    )
-    if py:
-        found["python3"] = py
-
-    ossl = probe_command_version(
-        [["openssl", "version"], ["openssl", "version", "-v"]],
-        [r"OpenSSL\s+(\d+\.\d+\.\d+[a-z0-9]*)"],
-    )
-    if ossl:
-        found["openssl"] = ossl
-
-    dox = probe_command_version(
-        [["doxygen", "--version"], ["doxygen", "-v"]],
-        [r"^(\d+\.\d+(?:\.\d+)?)"],
-    )
-    if dox:
-        found["doxygen"] = dox
-
-    # OpenMP: no stable CLI; try compiler predefined macros when gcc/clang present
-    omp = probe_command_version(
-        [
-            [
-                "bash",
-                "-lc",
-                "echo | ${CXX:-c++} -fopenmp -dM -E - 2>/dev/null | grep _OPENMP",
-            ],
-            [
-                "sh",
-                "-c",
-                "echo | ${CXX:-c++} -fopenmp -dM -E - 2>/dev/null | grep _OPENMP",
-            ],
-        ],
-        [r"_OPENMP\s+(\d+)"],
-    )
-    if omp:
-        # _OPENMP date-code e.g. 201511 → keep as openmp-spec marker
-        found["openmp"] = omp
-
-    return found
-
-
-def bom_ref_for(comp: dict) -> str:
-    name = comp["name"]
-    ver = comp.get("version")
-    if ver and is_plausible_version(ver):
-        return f"{name}@{ver}"
-    return name
-
-
 def git_rev(path: Path) -> str | None:
     try:
         out = subprocess.check_output(
@@ -342,420 +93,110 @@ def git_rev(path: Path) -> str | None:
         return None
 
 
-def iter_cmake_files(root: Path) -> list[Path]:
-    files: list[Path] = []
-    for path in list(root.rglob("*.cmake")) + list(root.rglob("CMakeLists.txt")):
-        if any(part in SKIP_DIR_PARTS for part in path.parts):
-            continue
-        files.append(path)
-    return files
-
-
-# ---------------------------------------------------------------------------
-# Discoverers — keep license and version on separate code paths
-# ---------------------------------------------------------------------------
-
-
-def discover_fetchcontent(root: Path) -> list[dict]:
-    comps: list[dict] = []
-    pattern = re.compile(
-        r"FetchContent_Declare\s*\(\s*([A-Za-z0-9._-]+)\s*(.*?)\n\s*\)",
-        re.DOTALL | re.MULTILINE,
-    )
-    for path in iter_cmake_files(root):
-        try:
-            text = path.read_text(encoding="utf-8", errors="ignore")
-        except OSError:
-            continue
-        for match in pattern.finditer(text):
-            name = match.group(1)
-            body = match.group(2)
-            repo_m = re.search(r'GIT_REPOSITORY\s+"([^"]+)"', body) or re.search(
-                r"GIT_REPOSITORY\s+(\S+)", body
-            )
-            tag_m = re.search(r"GIT_TAG\s+(\S+)", body)
-            if not repo_m:
-                continue
-            repo = repo_m.group(1).strip().strip('"')
-            tag = tag_m.group(1).strip().strip('"') if tag_m else None
-            if tag:
-                tag = tag.split("#")[0].strip()
-            if tag and not is_plausible_version(tag):
-                tag = None
-            nice = display_name(name)
-            comps.append(
-                {
-                    "id": nice.lower(),
-                    "name": nice,
-                    "version": tag,
-                    "license": None,  # filled only from NOTICE
-                    "type": "library",
-                    "purl": guess_purl(nice, tag, repo),
-                    "homepage": re.sub(r"\.git$", "", repo),
-                    "scope": "required",
-                    "discovery": "fetchcontent",
-                    "source": path.relative_to(root).as_posix(),
-                }
-            )
-    return comps
-
-
-def discover_find_package(root: Path) -> list[dict]:
-    comps: list[dict] = []
-    # find_package(Name ...)  — skip ${module} indirections
-    pattern = re.compile(r"find_package\s*\(\s*([A-Za-z][A-Za-z0-9._+-]*)")
-    seen: set[str] = set()
-    runtime_versions = resolve_find_package_versions()
-    for path in iter_cmake_files(root):
-        try:
-            text = path.read_text(encoding="utf-8", errors="ignore")
-        except OSError:
-            continue
-        for match in pattern.finditer(text):
-            raw = match.group(1)
-            if raw.startswith("$"):
-                continue
-            nice = display_name(raw)
-            key = nice.lower()
-            if key in seen:
-                continue
-            seen.add(key)
-            # Tooling packages are optional; runtime-ish ones required when linked
-            scope = "optional" if key in {"doxygen", "python3"} else "required"
-            version = runtime_versions.get(key)
-            homepage = AUTHORITATIVE_PURL.get(key, ("", ""))[1]
-            comps.append(
-                {
-                    "id": key,
-                    "name": nice,
-                    "version": version,
-                    "license": None,
-                    "type": "library",
-                    "purl": guess_purl(nice, version, homepage),
-                    "homepage": homepage,
-                    "scope": scope,
-                    "discovery": "find_package",
-                    "source": path.relative_to(root).as_posix(),
-                }
-            )
-    return comps
-
-
-def discover_submodules(root: Path) -> list[dict]:
-    gitmodules = root / ".gitmodules"
-    if not gitmodules.is_file():
-        return []
-    parser = configparser.ConfigParser()
-    parser.read(gitmodules, encoding="utf-8")
-    comps = []
-    for section in parser.sections():
-        path = parser.get(section, "path", fallback="")
-        url = parser.get(section, "url", fallback="")
-        if not path:
-            continue
-        name = display_name(Path(path).name)
-        homepage = url
-        if url.startswith("../../"):
-            homepage = (
-                "https://gitlab.cern.ch/apc/susofts/" + url[len("../../") :]
-            ).removesuffix(".git")
-        elif url.endswith(".git"):
-            homepage = url[: -len(".git")]
-        version = git_rev(root / path)
-        comps.append(
-            {
-                "id": name.lower(),
-                "name": name,
-                "version": version,  # commit SHA when checkout present
-                "license": None,
-                "type": "library",
-                "purl": guess_purl(name, version, homepage),
-                "homepage": homepage,
-                "scope": "required",
-                "discovery": "submodule",
-                "source": ".gitmodules",
-            }
-        )
-    return comps
-
-
-def discover_requirements(root: Path) -> list[dict]:
-    req = root / "source" / "pyLGC" / "tests" / "requirements.txt"
-    if not req.is_file():
-        return []
-    comps = []
-    for line in req.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        m = re.match(r"^([A-Za-z0-9_.-]+)\s*(?:[=<>!~]=?\s*(\S+))?", line)
-        if not m:
-            continue
-        name = m.group(1)
-        version = (
-            m.group(2) if m.group(2) and is_plausible_version(m.group(2)) else None
-        )
-        comps.append(
-            {
-                "id": name.lower(),
-                "name": name,
-                "version": version,
-                "license": None,
-                "type": "library",
-                "purl": guess_purl(name, version, f"https://pypi.org/project/{name}/"),
-                "homepage": f"https://pypi.org/project/{name}/",
-                "scope": "optional",
-                "discovery": "requirements.txt",
-                "source": "source/pyLGC/tests/requirements.txt",
-            }
-        )
-    return comps
-
-
-def parse_notice_licenses(notice_path: Path, via: str | None = None) -> list[dict]:
-    """Parse NOTICE for name + license + homepage. Never treat license as version."""
-    if not notice_path.is_file():
-        return []
-    text = notice_path.read_text(encoding="utf-8")
-    m = re.search(
-        r"##\s+Third-Party Components\s*(.*?)(?=\n##\s|\Z)",
-        text,
-        re.DOTALL | re.IGNORECASE,
-    )
-    body = m.group(1) if m else text
-    comps = []
-    for block in re.finditer(
-        r"###\s+(`?)([^`\n]+)\1\s*\n(.*?)(?=\n###\s|\Z)", body, re.DOTALL
-    ):
-        name = block.group(2).strip()
-        section = block.group(3)
-        lic_m = re.search(r"-\s*\*?\*?License\*?\*?:\s*(.+)", section, re.IGNORECASE)
-        src_m = re.search(r"-\s*\*?\*?Source\*?\*?:\s*(\S+)", section, re.IGNORECASE)
-        # Optional explicit Version: line only (not License)
-        ver_m = re.search(r"-\s*\*?\*?Version\*?\*?:\s*(\S+)", section, re.IGNORECASE)
-        license_id = normalize_license(lic_m.group(1) if lic_m else "")
-        homepage = src_m.group(1).strip() if src_m else ""
-        version = None
-        if ver_m:
-            candidate = ver_m.group(1).strip()
-            if is_plausible_version(candidate):
-                version = candidate
-        item = {
-            "id": name.lower(),
-            "name": name,
-            "version": version,
-            "license": license_id,
-            "type": "library",
-            "purl": guess_purl(name, version, homepage),
-            "homepage": homepage,
-            "scope": "required",
-            "discovery": "notice",
-            "source": notice_path.relative_to(REPO_ROOT).as_posix(),
-        }
-        if via:
-            item["via"] = via
-        comps.append(item)
-    return comps
-
-
-def discover_readme_versions(root: Path) -> dict[str, str]:
-    """
-    Only parse the build-requirements table:
-      | Component | Version / Example | Purpose |
-    Never parse the Third-Party license table (| Library | License | Source |).
-    """
-    readme = root / "README.md"
-    if not readme.is_file():
-        return {}
-    versions: dict[str, str] = {}
-    in_version_table = False
-    for line in readme.read_text(encoding="utf-8").splitlines():
-        header = line.lower()
-        if "|" in line and "version" in header and "purpose" in header:
-            in_version_table = True
-            continue
-        if "|" in line and "license" in header and "source" in header:
-            in_version_table = False
-            continue
-        if not in_version_table:
-            continue
-        if re.match(r"^\|\s*-+", line):
-            continue
-        m = re.match(r"\|\s*\*?\*?([A-Za-z0-9._-]+)\*?\*?\s*\|\s*\[?([^\]|]+)", line)
-        if not m:
-            # blank / end of table
-            if line.strip() == "" or not line.strip().startswith("|"):
-                in_version_table = False
-            continue
-        name, ver_cell = m.group(1), m.group(2).strip()
-        ver = ver_cell.split("]")[0].strip()
-        # Skip non-dependency rows
-        if name.lower() in {
-            "c++",
-            "cmake",
-            "nsis",
-            "git",
-            "doxygen",
-            "graphviz",
-            "component",
-        }:
-            continue
-        if is_plausible_version(ver):
-            versions[name.lower()] = ver
-    return versions
-
-
-def merge_component(store: dict[str, dict], item: dict) -> None:
-    key = item["id"]
-    if key not in store:
-        store[key] = dict(item)
-        return
-    cur = store[key]
-
-    # Version: only accept plausible versions; never license strings
-    new_ver = item.get("version")
-    if new_ver and is_plausible_version(new_ver):
-        cur_ver = cur.get("version")
-        if not cur_ver or not is_plausible_version(cur_ver):
-            cur["version"] = new_ver
-        elif len(new_ver) == 40 and len(str(cur_ver)) != 40:
-            # Prefer full git SHA
-            cur["version"] = new_ver
-        elif re.match(r"^\d+\.\d+", new_ver) and not re.match(
-            r"^\d+\.\d+", str(cur_ver)
-        ):
-            cur["version"] = new_ver
-
-    # License: only from NOTICE / explicit license field — never from version
-    new_lic = item.get("license")
-    if new_lic and new_lic != "NOASSERTION":
-        if not cur.get("license") or cur.get("license") == "NOASSERTION":
-            cur["license"] = new_lic
-
-    for field in ("homepage", "description", "via", "type", "scope"):
-        if item.get(field) and not cur.get(field):
-            cur[field] = item[field]
-
-    # Track discovery sources
-    sources = []
-    for s in (cur.get("source"), item.get("source")):
-        if s:
-            sources.extend(x.strip() for x in str(s).split("+"))
-    cur["source"] = " + ".join(sorted({s for s in sources if s}))
-
-    discoveries = []
-    for d in (cur.get("discovery"), item.get("discovery")):
-        if d:
-            discoveries.extend(x.strip() for x in str(d).split("+"))
-    cur["discovery"] = "+".join(sorted({d for d in discoveries if d}))
-
-    # Refresh PURL from best version + homepage
-    cur["purl"] = guess_purl(cur["name"], cur.get("version"), cur.get("homepage", ""))
-
-
-def build_dependency_graph(
-    components: list[dict], project_name: str = "LGC2"
-) -> list[dict]:
-    by_id = {c["id"]: c for c in components}
-    # Ensure root
-    refs = {cid: bom_ref_for(c) for cid, c in by_id.items()}
-    root_ref = project_name
-
-    deps: list[dict] = []
-    # Root edges
-    root_children = []
-    for child_id in GRAPH_EDGES.get("lgc2", []):
-        if child_id in by_id:
-            root_children.append(refs[child_id])
-    # Also attach anything not listed under surveylib as direct if unknown parent
-    survey_kids = set(GRAPH_EDGES.get("surveylib", []))
-    for cid, c in by_id.items():
-        if cid in survey_kids:
-            continue
-        if cid in GRAPH_EDGES.get("lgc2", []):
-            continue
-        # orphans (e.g. OpenSSL, Doxygen) hang off root as optional tooling
-        if c.get("discovery") == "find_package":
-            root_children.append(refs[cid])
-
-    deps.append({"ref": root_ref, "dependsOn": sorted(set(root_children))})
-
-    for parent_id, children in GRAPH_EDGES.items():
-        if parent_id == "lgc2":
-            continue
-        if parent_id not in by_id:
-            continue
-        child_refs = [refs[c] for c in children if c in by_id]
-        deps.append({"ref": refs[parent_id], "dependsOn": sorted(set(child_refs))})
-
-    # Leaf nodes
-    for cid, ref in refs.items():
-        if not any(d["ref"] == ref for d in deps):
-            deps.append({"ref": ref})
-
-    return deps
-
-
-def discover_all(root: Path) -> dict:
-    store: dict[str, dict] = {}
-
-    buckets = {
-        "fetchcontent": discover_fetchcontent(root),
-        "find_package": discover_find_package(root),
-        "submodules": discover_submodules(root),
-        "requirements": discover_requirements(root),
-        "notice": parse_notice_licenses(root / "NOTICE.md"),
-        "surveylib_notice": parse_notice_licenses(
-            root / "lib" / "SurveyLib" / "NOTICE.md", via="SurveyLib"
-        ),
+def enrich_submodule_versions(components: list[dict], root: Path) -> None:
+    """If version empty for known submodules, fill from git checkout SHA."""
+    path_map = {
+        "surveylib": root / "lib" / "SurveyLib",
+        "susoftcmakecommon": root / "lib" / "SUSoftCMakeCommon",
     }
-    for items in buckets.values():
-        for item in items:
-            merge_component(store, item)
+    for c in components:
+        if c.get("version"):
+            continue
+        p = path_map.get(c["id"])
+        if p and p.is_dir():
+            sha = git_rev(p)
+            if sha:
+                c["version"] = sha
+                c["purl"] = with_version(c.get("purl_base") or c.get("purl"), sha)
 
-    # Versions from README version table only
-    for key, ver in discover_readme_versions(root).items():
-        if key in store:
-            merge_component(
-                store,
+
+def with_version(purl_base: str | None, version: str | None) -> str | None:
+    if not purl_base:
+        return None
+    base = purl_base.split("@", 1)[0]
+    if version and is_plausible_version(version):
+        return f"{base}@{version}"
+    return base
+
+
+def bom_ref_for(name: str, version: str | None) -> str:
+    if version and is_plausible_version(version):
+        return f"{name}@{version}"
+    return name
+
+
+def parse_dependency_csv(path: Path) -> list[dict]:
+    if not path.is_file():
+        raise SystemExit(f"dependency file not found: {path}")
+
+    components: list[dict] = []
+    with path.open(encoding="utf-8", newline="") as fh:
+        reader = csv.DictReader(fh)
+        if not reader.fieldnames:
+            raise SystemExit(f"{path}: missing header row")
+        headers = {h.strip() for h in reader.fieldnames if h}
+        missing = REQUIRED_CSV_COLUMNS - headers
+        if missing:
+            raise SystemExit(f"{path}: missing columns: {', '.join(sorted(missing))}")
+
+        for lineno, row in enumerate(reader, start=2):
+            name = (row.get("name") or "").strip()
+            if not name:
+                continue  # skip blank rows
+
+            version = (row.get("version") or "").strip() or None
+            license_id = (row.get("license") or "").strip() or "NOASSERTION"
+            homepage = (row.get("homepage") or "").strip()
+            purl = (row.get("purl") or "").strip() or None
+            scope = (row.get("scope") or "").strip() or "required"
+            parent = (row.get("parent") or "").strip() or "LGC2"
+
+            if scope not in {"required", "optional"}:
+                raise SystemExit(
+                    f"{path}:{lineno}: scope must be 'required' or 'optional', got {scope!r}"
+                )
+            if version and not is_plausible_version(version):
+                raise SystemExit(
+                    f"{path}:{lineno}: version {version!r} looks like a license/invalid value"
+                )
+
+            components.append(
                 {
-                    "id": key,
-                    "name": store[key]["name"],
-                    "version": ver,
-                    "license": None,
-                    "source": "README.md",
-                    "discovery": "readme_version",
-                },
-            )
-        elif key in {"eigen", "tut"}:
-            merge_component(
-                store,
-                {
-                    "id": key,
-                    "name": display_name(key),
-                    "version": ver,
-                    "license": None,
+                    "id": name.lower(),
+                    "name": name,
+                    "version": version,
+                    "license": license_id,
+                    "homepage": homepage,
+                    "purl_base": purl,
+                    "purl": with_version(purl, version),
+                    "scope": scope,
+                    "parent": parent,
                     "type": "library",
-                    "purl": guess_purl(display_name(key), ver, ""),
-                    "homepage": "",
-                    "scope": "required",
-                    "source": "README.md",
-                    "discovery": "readme_version",
-                },
+                    "source": path.name,
+                    "bom-ref": bom_ref_for(name, version),
+                }
             )
 
-    # Sanitize: wipe any license-like versions that slipped through
-    for c in store.values():
-        if c.get("version") and is_license_like(str(c["version"])):
-            c["version"] = None
-        if not c.get("license"):
-            c["license"] = "NOASSERTION"
-        c["purl"] = guess_purl(c["name"], c.get("version"), c.get("homepage", ""))
-        c["bom-ref"] = bom_ref_for(c)
+    if not components:
+        raise SystemExit(f"{path}: no dependencies defined")
+    return components
 
-    components = sorted(store.values(), key=lambda c: c["name"].lower())
-    graph = build_dependency_graph(components)
+
+def build_inventory(deps_file: Path, root: Path) -> dict:
+    components = parse_dependency_csv(deps_file)
+    enrich_submodule_versions(components, root)
+    # refresh bom-ref / purl after enrichment
+    for c in components:
+        c["bom-ref"] = bom_ref_for(c["name"], c.get("version"))
+        c["purl"] = with_version(c.get("purl_base") or c.get("purl"), c.get("version"))
+
     cmake_ver = read_cmake_project_version(root)
+    graph = build_dependency_graph(components, project_name="LGC2")
+
+    try:
+        source = str(deps_file.resolve().relative_to(root.resolve()))
+    except ValueError:
+        source = str(deps_file)
 
     return {
         "project": {
@@ -764,35 +205,63 @@ def discover_all(root: Path) -> dict:
             "license": "GPL-3.0-or-later",
             "type": "application",
             "version": cmake_ver,
-            "purl": guess_purl(
-                "LGC2",
-                cmake_ver,
-                "https://github.com/geodetic-metrology-tools/LGC2",
-            ),
+            "purl": with_version("pkg:generic/cern/lgc2", cmake_ver),
             "homepage": "https://github.com/geodetic-metrology-tools/LGC2",
         },
         "components": components,
         "dependencies": graph,
-        "discovery": {k: len(v) for k, v in buckets.items()}
-        | {
-            "merged_total": len(components),
-            "find_package_versions_resolved": sorted(
-                k for k, v in resolve_find_package_versions().items() if v
-            ),
-            "cmake_project_version": cmake_ver,
-        },
+        "source": source,
     }
 
 
-# ---------------------------------------------------------------------------
-# CycloneDX helpers + Syft augmentation
-# ---------------------------------------------------------------------------
+def build_dependency_graph(
+    components: list[dict], project_name: str = "LGC2"
+) -> list[dict]:
+    """Build graph from the parent column in dependency.csv."""
+    by_id = {c["id"]: c for c in components}
+    refs = {c["id"]: c["bom-ref"] for c in components}
+    # parent name (display) → list of child refs
+    edges: dict[str, list[str]] = {}
+
+    for c in components:
+        parent = c.get("parent") or project_name
+        edges.setdefault(parent, []).append(c["bom-ref"])
+
+    deps: list[dict] = []
+    # Root
+    root_kids = sorted(set(edges.get(project_name, [])))
+    deps.append({"ref": project_name, "dependsOn": root_kids})
+
+    # Intermediate parents that are also components (e.g. SurveyLib)
+    for parent, kids in sorted(edges.items()):
+        if parent == project_name:
+            continue
+        parent_id = parent.lower()
+        parent_ref = refs.get(parent_id, parent)
+        deps.append({"ref": parent_ref, "dependsOn": sorted(set(kids))})
+
+    # Leaves
+    for c in components:
+        ref = c["bom-ref"]
+        if not any(d.get("ref") == ref for d in deps):
+            deps.append({"ref": ref})
+
+    # sanity: parents that are not LGC2 and not in component list
+    known_parents = {project_name} | {c["name"] for c in components}
+    for parent in edges:
+        if parent not in known_parents:
+            raise SystemExit(
+                f"dependency.csv: unknown parent {parent!r} "
+                f"(must be {project_name!r} or a listed dependency name)"
+            )
+
+    _ = by_id  # kept for clarity / future checks
+    return deps
 
 
 def component_to_cdx(comp: dict) -> dict:
-    ref = comp.get("bom-ref") or bom_ref_for(comp)
     out: dict[str, Any] = {
-        "bom-ref": ref,
+        "bom-ref": comp["bom-ref"],
         "type": comp.get("type", "library"),
         "name": comp["name"],
         "scope": comp.get("scope", "required"),
@@ -800,16 +269,10 @@ def component_to_cdx(comp: dict) -> dict:
         "properties": [
             {
                 "name": "lgc:inventory:source",
-                "value": comp.get("source") or "discovered",
+                "value": comp.get("source", "dependency.csv"),
             },
-            {
-                "name": "lgc:inventory:discovered",
-                "value": "true",
-            },
-            {
-                "name": "lgc:inventory:discovery",
-                "value": comp.get("discovery") or "unknown",
-            },
+            {"name": "lgc:inventory:declared", "value": "true"},
+            {"name": "lgc:inventory:parent", "value": comp.get("parent") or "LGC2"},
         ],
     }
     if comp.get("version") and is_plausible_version(str(comp["version"])):
@@ -818,74 +281,20 @@ def component_to_cdx(comp: dict) -> dict:
         out["purl"] = comp["purl"]
     if comp.get("homepage"):
         out["externalReferences"] = [{"type": "website", "url": comp["homepage"]}]
-    if comp.get("via"):
-        out["properties"].append({"name": "lgc:inventory:via", "value": comp["via"]})
-    if comp.get("description"):
-        out["description"] = comp["description"]
     return out
 
 
-def discovery_to_stub_cdx(discovery: dict, version: str) -> dict:
-    """Minimal CDX from discovery alone (used when no Syft input is provided)."""
-    root = discovery["project"]["name"]
-    comps = [component_to_cdx(c) for c in discovery["components"]]
-    deps = []
-    for d in discovery.get("dependencies") or []:
-        entry = {"ref": d["ref"] if d["ref"] != root else f"{root}@{version}"}
-        # remap root
-        if d["ref"] == root:
-            entry["ref"] = f"{root}@{version}"
-        if d.get("dependsOn"):
-            entry["dependsOn"] = d["dependsOn"]
-        deps.append(entry)
-
-    return {
-        "bomFormat": "CycloneDX",
-        "specVersion": "1.6",
-        "serialNumber": f"urn:uuid:{uuid.uuid4()}",
-        "version": 1,
-        "metadata": {
-            "timestamp": _now_iso(),
-            "tools": {
-                "components": [
-                    {
-                        "type": "application",
-                        "name": "lgc-sbom-discover",
-                        "version": "3.0.0",
-                        "author": "CERN LGC2",
-                    }
-                ]
-            },
-            "component": {
-                "bom-ref": f"{root}@{version}",
-                "type": "application",
-                "name": root,
-                "version": version,
-                "licenses": [{"license": {"id": discovery["project"]["license"]}}],
-                "purl": discovery["project"].get("purl"),
-            },
-            "properties": [{"name": "lgc:sbom:kind", "value": "discovery-stub"}],
-        },
-        "components": comps,
-        "dependencies": deps,
-    }
-
-
 def strip_weak_cpes(component: dict) -> None:
-    """Remove Syft-guessed CPEs that are not version-qualified / not trustworthy."""
     cpe = component.get("cpe")
     if isinstance(cpe, str):
-        # Drop wildcards like cpe:2.3:a:LGC:LGC:*:*:*:*:*:*:*:*
         if ":*:" in cpe or cpe.endswith(":*") or ":UNKNOWN:" in cpe.upper():
             component.pop("cpe", None)
-        # Also drop CPE when component version is still unknown
         elif str(component.get("version", "")).upper() in {
             "",
             "UNKNOWN",
             "NOASSERTION",
         }:
             component.pop("cpe", None)
-
     props = component.get("properties")
     if isinstance(props, list):
         component["properties"] = [
@@ -900,16 +309,13 @@ def strip_weak_cpes(component: dict) -> None:
 def normalize_syft_project_binaries(
     components: list[dict], product_version: str, cmake_version: str | None
 ) -> None:
-    """Replace UNKNOWN versions on LGC/pyLGC binaries; drop weak CPEs."""
     preferred = cmake_version or product_version
     for c in components:
         if c.get("type") == "file":
             strip_weak_cpes(c)
             continue
-        name = (c.get("name") or "").lower().replace("-", "_")
-        # normalize libpyLGC_C → pylgc_c
-        name = name.removeprefix("lib")
-        if name in PROJECT_BINARY_NAMES or name in {"lgc", "pylgc_c"}:
+        name = (c.get("name") or "").lower().replace("-", "_").removeprefix("lib")
+        if name in PROJECT_BINARY_NAMES:
             ver = str(c.get("version") or "")
             if not ver or ver.upper() in {"UNKNOWN", "NOASSERTION"}:
                 c["version"] = preferred
@@ -921,17 +327,11 @@ def normalize_syft_project_binaries(
                         else "git-or-ci-version",
                     }
                 )
-            # Prefer library for the shared binding; keep application for the CLI
-            if "pylgc" in name:
-                c["type"] = "library"
-            else:
-                c["type"] = "application"
-            c["purl"] = guess_purl(
-                "LGC" if name == "lgc" else "pyLGC_C",
-                c.get("version"),
-                "https://github.com/geodetic-metrology-tools/LGC2",
+            c["type"] = "library" if "pylgc" in name else "application"
+            base = (
+                "pkg:generic/cern/pylgc" if "pylgc" in name else "pkg:generic/cern/lgc"
             )
-            # Project binaries: omit invented CPEs (no NVD entries for these names)
+            c["purl"] = with_version(base, c.get("version"))
             c.pop("cpe", None)
             props = c.get("properties")
             if isinstance(props, list):
@@ -943,50 +343,53 @@ def normalize_syft_project_binaries(
                         and str(p.get("name", "")).startswith("syft:cpe")
                     )
                 ]
+            c["bom-ref"] = bom_ref_for(c.get("name") or name, c.get("version"))
         else:
             strip_weak_cpes(c)
 
 
-def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
-    """Merge discovered metadata into a Syft CycloneDX document."""
-    out = json.loads(json.dumps(syft))  # deep copy
+def augment_syft_cdx(syft: dict, inventory: dict, product_version: str) -> dict:
+    out = json.loads(json.dumps(syft))
     out["specVersion"] = out.get("specVersion") or "1.6"
     out["serialNumber"] = f"urn:uuid:{uuid.uuid4()}"
     out["metadata"] = out.get("metadata") or {}
     out["metadata"]["timestamp"] = _now_iso()
 
-    cmake_version = read_cmake_project_version(REPO_ROOT)
-    # Prefer semver for the product root when available; keep git/tag as property
+    cmake_version = inventory["project"].get("version") or read_cmake_project_version(
+        REPO_ROOT
+    )
     root_version = cmake_version or product_version
+    root_name = inventory["project"]["name"]
 
     tools = out["metadata"].setdefault("tools", {})
-    tool_comps = tools.setdefault("components", [])
-    tool_comps.append(
+    tools.setdefault("components", []).append(
         {
             "type": "application",
-            "name": "lgc-sbom-augment",
-            "version": "3.1.0",
+            "name": "lgc-sbom-from-dependency-txt",
+            "version": "4.0.0",
             "author": "CERN LGC2",
         }
     )
 
-    meta_comp = out["metadata"].setdefault("component", {})
-    meta_comp["type"] = "application"
-    meta_comp["name"] = discovery["project"]["name"]
-    meta_comp["version"] = root_version
-    meta_comp["bom-ref"] = f"{discovery['project']['name']}@{root_version}"
-    meta_comp["licenses"] = [{"license": {"id": discovery["project"]["license"]}}]
-    if discovery["project"].get("purl"):
-        # Attach versioned project PURL when we have a concrete version
-        meta_comp["purl"] = guess_purl(
-            discovery["project"]["name"],
-            root_version,
-            discovery["project"].get("homepage", ""),
-        )
-    meta_comp.pop("cpe", None)
+    meta = out["metadata"].setdefault("component", {})
+    meta["type"] = "application"
+    meta["name"] = root_name
+    meta["version"] = root_version
+    meta["bom-ref"] = f"{root_name}@{root_version}"
+    meta["licenses"] = [{"license": {"id": inventory["project"]["license"]}}]
+    meta["purl"] = with_version("pkg:generic/cern/lgc2", root_version)
+    meta.pop("cpe", None)
 
     props = out["metadata"].setdefault("properties", [])
-    props.append({"name": "lgc:sbom:kind", "value": "syft-augmented-with-discovery"})
+    props.append(
+        {"name": "lgc:sbom:kind", "value": "syft-augmented-from-dependency-txt"}
+    )
+    props.append(
+        {
+            "name": "lgc:inventory:deps_file",
+            "value": inventory.get("source", "dependency.csv"),
+        }
+    )
     if cmake_version and product_version and cmake_version != product_version:
         props.append({"name": "lgc:inventory:git_or_ci_ref", "value": product_version})
 
@@ -997,12 +400,11 @@ def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
         (c.get("name") or "").lower(): c for c in existing if c.get("type") != "file"
     }
 
-    for disc in discovery["components"]:
+    for disc in inventory["components"]:
         cdx = component_to_cdx(disc)
         key = disc["name"].lower()
         if key in by_name:
             target = by_name[key]
-            # Overlay authoritative fields; keep Syft hashes / extra props
             if "version" in cdx:
                 target["version"] = cdx["version"]
             target["licenses"] = cdx["licenses"]
@@ -1013,7 +415,6 @@ def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
             if cdx.get("externalReferences"):
                 target["externalReferences"] = cdx["externalReferences"]
             target["scope"] = cdx.get("scope", target.get("scope", "required"))
-            # Never keep weak Syft CPEs on overlaid deps
             strip_weak_cpes(target)
             target.pop("cpe", None)
         else:
@@ -1021,44 +422,32 @@ def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
             existing.append(cdx)
             by_name[key] = cdx
 
-    # Rebuild dependency graph from discovery + keep Syft deps that don't conflict
-    root_ref = f"{discovery['project']['name']}@{root_version}"
-    new_deps = []
-    for d in discovery.get("dependencies") or []:
-        entry: dict[str, Any] = {
-            "ref": root_ref if d["ref"] == discovery["project"]["name"] else d["ref"]
-        }
+    root_ref = f"{root_name}@{root_version}"
+    new_deps: list[dict] = []
+    for d in inventory.get("dependencies") or []:
+        entry: dict[str, Any] = {"ref": root_ref if d["ref"] == root_name else d["ref"]}
         if d.get("dependsOn"):
             entry["dependsOn"] = d["dependsOn"]
         new_deps.append(entry)
 
-    # Attach remaining Syft-only components (e.g. LGC binary package) under root
-    discovered_names = {c["name"].lower() for c in discovery["components"]}
-    syft_extra_refs = []
+    declared = {c["name"].lower() for c in inventory["components"]}
+    extra_refs = []
     for c in existing:
         if c.get("type") == "file":
             continue
         name = (c.get("name") or "").lower()
-        if name in discovered_names or name in {"lgc2"}:
+        if name in declared or name == "lgc2":
             continue
-        # Refresh bom-ref if we rewrote binary version
-        if (
-            name in PROJECT_BINARY_NAMES
-            or name.removeprefix("lib") in PROJECT_BINARY_NAMES
-        ):
-            c["bom-ref"] = bom_ref_for(
-                {"name": c.get("name"), "version": c.get("version")}
-            )
         ref = c.get("bom-ref") or c.get("name")
         if ref:
-            syft_extra_refs.append(ref)
+            extra_refs.append(ref)
             if not any(x.get("ref") == ref for x in new_deps):
                 new_deps.append({"ref": ref})
 
     for d in new_deps:
-        if d["ref"] == root_ref and syft_extra_refs:
+        if d["ref"] == root_ref and extra_refs:
             d.setdefault("dependsOn", [])
-            for r in syft_extra_refs:
+            for r in extra_refs:
                 if r not in d["dependsOn"]:
                     d["dependsOn"].append(r)
 
@@ -1066,104 +455,149 @@ def augment_syft_cdx(syft: dict, discovery: dict, product_version: str) -> dict:
     return out
 
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
+def inventory_to_stub_cdx(inventory: dict, version: str) -> dict:
+    root = inventory["project"]["name"]
+    root_version = inventory["project"].get("version") or version
+    comps = [component_to_cdx(c) for c in inventory["components"]]
+    deps = []
+    for d in inventory.get("dependencies") or []:
+        entry: dict[str, Any] = {
+            "ref": f"{root}@{root_version}" if d["ref"] == root else d["ref"]
+        }
+        if d.get("dependsOn"):
+            entry["dependsOn"] = d["dependsOn"]
+        deps.append(entry)
+    return {
+        "bomFormat": "CycloneDX",
+        "specVersion": "1.6",
+        "serialNumber": f"urn:uuid:{uuid.uuid4()}",
+        "version": 1,
+        "metadata": {
+            "timestamp": _now_iso(),
+            "tools": {
+                "components": [
+                    {
+                        "type": "application",
+                        "name": "lgc-sbom-from-dependency-txt",
+                        "version": "4.0.0",
+                        "author": "CERN LGC2",
+                    }
+                ]
+            },
+            "component": {
+                "bom-ref": f"{root}@{root_version}",
+                "type": "application",
+                "name": root,
+                "version": root_version,
+                "licenses": [{"license": {"id": inventory["project"]["license"]}}],
+                "purl": inventory["project"].get("purl"),
+            },
+            "properties": [
+                {"name": "lgc:sbom:kind", "value": "dependency-txt"},
+                {
+                    "name": "lgc:inventory:deps_file",
+                    "value": inventory.get("source", "dependency.csv"),
+                },
+            ],
+        },
+        "components": comps,
+        "dependencies": deps,
+    }
 
 
-def cmd_discover(args: argparse.Namespace) -> None:
-    discovery = discover_all(REPO_ROOT)
+def resolve_version_arg(cli_version: str) -> str:
+    v = (cli_version or "").strip()
+    if v:
+        return v
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"], cwd=REPO_ROOT, text=True
+        ).strip()
+    except Exception:
+        return "local"
+
+
+def cmd_load(args: argparse.Namespace) -> None:
+    inventory = build_inventory(args.deps_file, REPO_ROOT)
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    path = args.out_dir / "discovered-components.json"
-    path.write_text(json.dumps(discovery, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {path}")
-    print(f"Discovery counts: {discovery['discovery']}")
-    for c in discovery["components"]:
+    out = args.out_dir / "discovered-components.json"
+    out.write_text(json.dumps(inventory, indent=2) + "\n", encoding="utf-8")
+    print(
+        f"Wrote {out} ({len(inventory['components'])} components from {args.deps_file})"
+    )
+    for c in inventory["components"]:
         ver = c.get("version") or "(no version)"
-        lic = c.get("license") or "NOASSERTION"
-        assert not is_license_like(str(ver)) or ver in {
-            None,
-            "(no version)",
-        }, f"version/license mixup for {c['name']}: {ver}"
-        print(f"  - {c['name']}: version={ver}  license={lic}  purl={c.get('purl')}")
+        print(
+            f"  - {c['name']}: version={ver} license={c['license']} parent={c['parent']}"
+        )
 
 
 def cmd_augment(args: argparse.Namespace) -> None:
-    discovery = json.loads(args.discovery.read_text(encoding="utf-8"))
-    version = (args.version or "").strip()
-    if not version:
-        try:
-            version = subprocess.check_output(
-                ["git", "rev-parse", "--short", "HEAD"], cwd=REPO_ROOT, text=True
-            ).strip()
-        except Exception:
-            version = "local"
-
+    inventory = build_inventory(args.deps_file, REPO_ROOT)
+    version = resolve_version_arg(args.version)
     if args.syft and args.syft.is_file():
         syft = json.loads(args.syft.read_text(encoding="utf-8"))
-        out = augment_syft_cdx(syft, discovery, version)
+        doc = augment_syft_cdx(syft, inventory, version)
     else:
-        print("No Syft CDX provided/found; emitting discovery-only CycloneDX stub")
-        out = discovery_to_stub_cdx(discovery, version)
-
+        print("No Syft CDX provided; emitting dependency.csv-only CycloneDX")
+        doc = inventory_to_stub_cdx(inventory, version)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {args.output}")
+    args.output.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
     print(
-        f"components={len(out.get('components') or [])} "
-        f"dependencies={len(out.get('dependencies') or [])}"
+        f"Wrote {args.output} "
+        f"(components={len(doc.get('components') or [])}, "
+        f"dependencies={len(doc.get('dependencies') or [])})"
     )
+
+
+def cmd_ci(args: argparse.Namespace) -> None:
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    load_args = argparse.Namespace(deps_file=args.deps_file, out_dir=args.out_dir)
+    cmd_load(load_args)
+    aug_args = argparse.Namespace(
+        deps_file=args.deps_file,
+        syft=args.syft,
+        output=args.out_dir / "lgc-augmented.cdx.json",
+        version=args.version,
+    )
+    cmd_augment(aug_args)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    p_disc = sub.add_parser("discover", help="Write discovered-components.json")
-    p_disc.add_argument("--out-dir", type=Path, default=REPO_ROOT / "sbom")
-    p_disc.set_defaults(func=cmd_discover)
-
-    p_aug = sub.add_parser("augment", help="Augment Syft CDX with discovery metadata")
-    p_aug.add_argument(
-        "--discovery",
-        type=Path,
-        default=REPO_ROOT / "sbom" / "discovered-components.json",
+    p_load = sub.add_parser(
+        "load", help="Parse dependency.csv → discovered-components.json"
     )
+    p_load.add_argument("--deps-file", type=Path, default=DEFAULT_DEPS_FILE)
+    p_load.add_argument("--out-dir", type=Path, default=REPO_ROOT / "sbom")
+    p_load.set_defaults(func=cmd_load)
+
+    # keep old name as alias
+    p_disc = sub.add_parser("discover", help="Alias for 'load'")
+    p_disc.add_argument("--deps-file", type=Path, default=DEFAULT_DEPS_FILE)
+    p_disc.add_argument("--out-dir", type=Path, default=REPO_ROOT / "sbom")
+    p_disc.set_defaults(func=cmd_load)
+
+    p_aug = sub.add_parser("augment", help="Augment Syft CDX using dependency.csv")
+    p_aug.add_argument("--deps-file", type=Path, default=DEFAULT_DEPS_FILE)
     p_aug.add_argument("--syft", type=Path, default=None)
     p_aug.add_argument(
-        "--output",
-        type=Path,
-        default=REPO_ROOT / "sbom" / "lgc-augmented.cdx.json",
+        "--output", type=Path, default=REPO_ROOT / "sbom" / "lgc-augmented.cdx.json"
     )
     p_aug.add_argument("--version", default="")
     p_aug.set_defaults(func=cmd_augment)
 
-    # Convenience: discover + augment in one shot (CI)
-    p_all = sub.add_parser("ci", help="Discover then augment Syft CDX (CI entrypoint)")
-    p_all.add_argument("--out-dir", type=Path, default=REPO_ROOT / "sbom")
-    p_all.add_argument("--syft", type=Path, required=True)
-    p_all.add_argument("--version", default="")
-    p_all.set_defaults(func=None)
+    p_ci = sub.add_parser("ci", help="Load dependency.csv then augment Syft CDX")
+    p_ci.add_argument("--deps-file", type=Path, default=DEFAULT_DEPS_FILE)
+    p_ci.add_argument("--out-dir", type=Path, default=REPO_ROOT / "sbom")
+    p_ci.add_argument("--syft", type=Path, required=True)
+    p_ci.add_argument("--version", default="")
+    p_ci.set_defaults(func=cmd_ci)
 
     args = parser.parse_args()
-    if args.cmd == "ci":
-        version = (
-            args.version.strip()
-            or subprocess.check_output(
-                ["git", "rev-parse", "--short", "HEAD"], cwd=REPO_ROOT, text=True
-            ).strip()
-        )
-        disc_args = argparse.Namespace(out_dir=args.out_dir)
-        cmd_discover(disc_args)
-        aug_args = argparse.Namespace(
-            discovery=args.out_dir / "discovered-components.json",
-            syft=args.syft,
-            output=args.out_dir / "lgc-augmented.cdx.json",
-            version=version,
-        )
-        cmd_augment(aug_args)
-    else:
-        args.func(args)
+    args.func(args)
 
 
 if __name__ == "__main__":

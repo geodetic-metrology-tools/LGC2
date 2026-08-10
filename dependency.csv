@@ -1,0 +1,15 @@
+name,version,license,homepage,purl,scope,parent
+Eigen,3.4.0,MPL-2.0,https://gitlab.com/libeigen/eigen,pkg:generic/eigen,required,LGC2
+TUT,2016-12-19,BSD-2-Clause,https://github.com/mrzechonek/tut-framework,pkg:github/mrzechonek/tut-framework,required,LGC2
+tree.hh,ba91aab1a9642585d747b8d2371ab69290b36664,GPL-3.0,https://github.com/kpeeters/tree.hh,pkg:github/kpeeters/tree.hh,required,LGC2
+SurveyLib,,GPL-3.0-or-later,https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib,pkg:generic/cern/surveylib,required,LGC2
+SUSoftCMakeCommon,,GPL-3.0-or-later,https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon,pkg:generic/cern/susoftcmakecommon,required,LGC2
+RapidJSON,973dc9c06dcd3d035ebd039cfb9ea457721ec213,MIT,https://github.com/Tencent/rapidjson,pkg:github/Tencent/rapidjson,required,SurveyLib
+Reframe,,BSD-3-Clause,https://www.swisstopo.admin.ch/en/geodetic-software-resources-dll-jar,pkg:generic/swisstopo/reframe,optional,SurveyLib
+counted_ptr.h,,LicenseRef-counted-ptr,http://snowball.digitalspace.net/cpp/,pkg:generic/counted-ptr,required,SurveyLib
+OpenMP,,NOASSERTION,https://www.openmp.org/,pkg:generic/openmp,required,LGC2
+OpenSSL,,Apache-2.0,https://www.openssl.org/,pkg:generic/openssl,optional,LGC2
+Python3,,PSF-2.0,https://www.python.org/,pkg:generic/python,optional,LGC2
+Doxygen,,GPL-2.0-or-later,https://www.doxygen.nl/,pkg:generic/doxygen,optional,LGC2
+numpy,,BSD-3-Clause,https://pypi.org/project/numpy/,pkg:pypi/numpy,optional,LGC2
+pytest,,MIT,https://pypi.org/project/pytest/,pkg:pypi/pytest,optional,LGC2

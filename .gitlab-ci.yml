@@ -146,8 +146,8 @@ linux_build_and_test:
           export PATH="${SYFT_BIN_DIR}:${PATH}"
           syft version
 
-# Syft scan after Linux build, then augment with CMake/NOTICE discovery
-# (versions, licenses, PURLs, dependency graph) into one CycloneDX report.
+# Syft scan after Linux build, then augment from dependency.csv
+# (versions, licenses, PURLs, parent graph) into one CycloneDX report.
 linux_sbom:
     stage: sbom
     image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
@@ -181,6 +181,7 @@ linux_sbom:
           fi
 
           python3 scripts/generate-declared-sbom.py ci \
+            --deps-file dependency.csv \
             --out-dir sbom \
             --syft sbom/lgc-linux-build.cdx.json \
             --version "${SOURCE_VERSION}"
@@ -190,14 +191,15 @@ linux_sbom:
           ls -la sbom/
     artifacts:
         name: "sbom-linux-$CI_COMMIT_SHORT_SHA"
-        expire_in: 30 days
+        # Keep indefinitely: SBOMs are small and useful for release provenance.
+        expire_in: never
         paths:
             - sbom/
         reports:
             cyclonedx:
                 - sbom/lgc-linux-augmented.cdx.json
 
-# Syft scan of Windows build outputs, then same discovery augmentation.
+# Syft scan of Windows build outputs, then same dependency.csv augmentation.
 windows_sbom:
     stage: sbom
     image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
@@ -222,6 +224,7 @@ windows_sbom:
             -o spdx-json=sbom/lgc-windows-build.spdx.json
 
           python3 scripts/generate-declared-sbom.py ci \
+            --deps-file dependency.csv \
             --out-dir sbom \
             --syft sbom/lgc-windows-build.cdx.json \
             --version "${SOURCE_VERSION}"
@@ -231,7 +234,7 @@ windows_sbom:
           ls -la sbom/
     artifacts:
         name: "sbom-windows-$CI_COMMIT_SHORT_SHA"
-        expire_in: 30 days
+        expire_in: never
         paths:
             - sbom/
         reports:
