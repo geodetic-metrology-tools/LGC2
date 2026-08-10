@@ -172,13 +172,16 @@ linux_sbom:
             -o cyclonedx-json=sbom/lgc-linux-build.cdx.json \
             -o spdx-json=sbom/lgc-linux-build.spdx.json
 
-          if [ -f build/LGC ]; then
-            syft file:build/LGC \
-              --source-name LGC \
-              --source-version "${SOURCE_VERSION}" \
-              -o cyclonedx-json=sbom/lgc-linux-elf.cdx.json \
-              -o spdx-json=sbom/lgc-linux-elf.spdx.json
-          fi
+          # Optional ELF-only scan of the LGC binary. Disabled for now to keep
+          # CI artifacts lightweight; the augment step only uses lgc-linux-build.*.
+          # Re-enable if a dedicated binary/shared-lib inventory is needed later:
+          # if [ -f build/LGC ]; then
+          #   syft file:build/LGC \
+          #     --source-name LGC \
+          #     --source-version "${SOURCE_VERSION}" \
+          #     -o cyclonedx-json=sbom/lgc-linux-elf.cdx.json \
+          #     -o spdx-json=sbom/lgc-linux-elf.spdx.json
+          # fi
 
           python3 scripts/generate-declared-sbom.py ci \
             --deps-file dependency.csv \
