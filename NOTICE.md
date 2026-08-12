@@ -35,7 +35,7 @@ for human/legal attribution:
 - Source: https://github.com/mrzechonek/tut-framework
 
 ### tree.hh
-- License: GNU General Public License v3.0
+- License: GNU General Public License v3.0 only (GPL-3.0-only)
 - Source: https://github.com/kpeeters/tree.hh
 
 ### SurveyLib

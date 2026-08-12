@@ -440,7 +440,7 @@ This distinction and file classification are defined in [`REUSE.toml`](./REUSE.t
 |----------|----------|--------|
 | Eigen | MPL-2.0 | [https://gitlab.com/libeigen/eigen](https://gitlab.com/libeigen/eigen) |
 | TUT | BSD 2-Clause | [https://github.com/mrzechonek/tut-framework](https://github.com/mrzechonek/tut-framework) |
-| tree.hh | GPL-3.0-or-later | [https://github.com/kpeeters/tree.hh](https://github.com/kpeeters/tree.hh) |
+| tree.hh | GPL-3.0-only | [https://github.com/kpeeters/tree.hh](https://github.com/kpeeters/tree.hh) |
 | SurveyLib | GPL-3.0-or-later | [https://github.com/geodetic-metrology-tools/SurveyLib](https://github.com/geodetic-metrology-tools/SurveyLib) |
 | SUSoftCMakeCommon | GPL-3.0-or-later | [https://github.com/geodetic-metrology-tools/SUSoftCMakeCommon](https://github.com/geodetic-metrology-tools/SUSoftCMakeCommon) |
 

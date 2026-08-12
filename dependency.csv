@@ -1,7 +1,7 @@
 name,version,license,homepage,purl,scope,parent
 Eigen,3.4.0,MPL-2.0,https://gitlab.com/libeigen/eigen,pkg:generic/eigen,required,LGC2
 TUT,2016-12-19,BSD-2-Clause,https://github.com/mrzechonek/tut-framework,pkg:github/mrzechonek/tut-framework,required,LGC2
-tree.hh,ba91aab1a9642585d747b8d2371ab69290b36664,GPL-3.0,https://github.com/kpeeters/tree.hh,pkg:github/kpeeters/tree.hh,required,LGC2
+tree.hh,ba91aab1a9642585d747b8d2371ab69290b36664,GPL-3.0-only,https://github.com/kpeeters/tree.hh,pkg:github/kpeeters/tree.hh,required,LGC2
 SurveyLib,,GPL-3.0-or-later,https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib,pkg:generic/cern/surveylib,required,LGC2
 SUSoftCMakeCommon,,GPL-3.0-or-later,https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon,pkg:generic/cern/susoftcmakecommon,required,LGC2
 RapidJSON,973dc9c06dcd3d035ebd039cfb9ea457721ec213,MIT,https://github.com/Tencent/rapidjson,pkg:github/Tencent/rapidjson,required,SurveyLib
