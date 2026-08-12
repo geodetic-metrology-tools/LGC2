@@ -32,7 +32,7 @@ for human/legal attribution:
 
 ### TUT
 - License: BSD 2-Clause "Simplified" License
-- Source: https://github.com/martinmoene/tut
+- Source: https://github.com/mrzechonek/tut-framework
 
 ### tree.hh
 - License: GNU General Public License v3.0
