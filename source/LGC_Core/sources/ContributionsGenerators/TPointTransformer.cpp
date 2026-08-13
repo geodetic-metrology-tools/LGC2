@@ -87,7 +87,7 @@ TFreeVector TPointTransformer::getLocalVerticalInCCS(const std::string &originNa
 
 void TPointTransformer::transform2MLA(TPositionVector &pv)
 {
-	fccs2cgrf.transform(pv);
+	//fccs2cgrf.transform(pv);
 	fcgrf2ilg.transform(pv);
 	filg2ila.transform(pv);
 	fla2mla.transform(pv);
@@ -95,7 +95,7 @@ void TPointTransformer::transform2MLA(TPositionVector &pv)
 
 void TPointTransformer::transform2MLA(TFreeVector &fv)
 {
-	fccs2cgrf.transform(fv);
+	//fccs2cgrf.transform(fv);
 	fcgrf2ilg.transform(fv);
 	filg2ila.transform(fv);
 	fla2mla.transform(fv);
