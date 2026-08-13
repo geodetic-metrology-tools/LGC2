@@ -2147,7 +2147,7 @@ void TFRAMEWriter::writeResultsPtsData(AdjPointIter pt, bool localFRAME)
 		stream->setLengthUnits(TLength::EUnits::kMetres);
 		converter.write3Coordinates(coordWidth, coordPrecision, separator, estimatedValue);
 
-		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame && fProjectData->getConfig().geoid.type != TRefSystemFactory::EGeoid::kCUSTOMgeoid)
 		{
 			writeDouble(coordWidth, coordPrecision, pt->getEstimatedHeightInRoot());
 			(*stream) << separator;
