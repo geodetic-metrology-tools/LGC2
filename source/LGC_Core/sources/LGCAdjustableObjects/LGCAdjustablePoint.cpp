@@ -72,7 +72,30 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 	{
 		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
 		fProvisionalValueInRoot = fProvisionalValue;
-		if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+		if (fData->getConfig().geoid.type == TRefSystemFactory::EGeoid::kCUSTOMgeoid)
+		{
+			// TAReferenceFrame *ETRF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kETRF93));
+			//
+			// TReal xOrigin = 4395448.30314;
+			// TReal yOrigin = 465755.01889;
+			// TReal zOrigin = 4583484.78227;
+			// TSpatialPosition p0 = TSpatialPosition(ETRF93, xOrigin, yOrigin, zOrigin, TCoordSysFactory::k3DCartesian);
+			//
+			// TLocalSystemOrigin lso(p0, TAngle(0), TAngle(0), "P0_ETRF93");
+			// TAReferenceFrame *MLA(TRefSystemFactory::getRefSystemFactory()->getNewLocalRefFrame(lso, TRefSystemFactory::kCUSTOMgeoid, TRefSystemFactory::kMLACustomGeoid));
+			//
+			// TSpatialPosition provisionalPosition = TSpatialPosition(
+			//      ETRF93, fProvisionalValueInRoot.getX(), fProvisionalValueInRoot.getY(), fProvisionalValueInRoot.getH(), TCoordSysFactory::k3DCartesian);
+			//
+			// provisionalPosition.transform(MLA);
+			// TLength xTransform(provisionalPosition.getCoordinates(TCoordSysFactory::k3DCartesian).getX());
+			// TLength yTransform(provisionalPosition.getCoordinates(TCoordSysFactory::k3DCartesian).getY());
+			// TLength zTransform(provisionalPosition.getCoordinates(TCoordSysFactory::k3DCartesian).getZ());
+			//
+			// fProvisionalValueInRoot = TPositionVector(xTransform, yTransform, zTransform, TCoordSysFactory::k3DCartesian);
+			
+		}
+		else if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 		{
 			fProvisionalHeightInRoot = fProvisionalValueInRoot.getH();
 			TXYH2CCS::XYH2CCS(fProvisionalValueInRoot, fGeoid);
@@ -88,7 +111,7 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 		transfo.transform(fProvisionalValueInRoot);
 		try
 		{
-			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame && fGeoid != TRefSystemFactory::EGeoid::kCUSTOMgeoid)
 			{
 				TPositionVector fProvisionalInRootForHCalc(fProvisionalValueInRoot);
 				TXYH2CCS::CCS2XYH(fProvisionalInRootForHCalc, fGeoid);
@@ -133,7 +156,7 @@ void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
 		transfo.transform(fEstimatedValueInRoot);
 	}
 
-	if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
+	if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame && fGeoid != TRefSystemFactory::EGeoid::kCUSTOMgeoid)
 	{
 		TPositionVector fEstimatedInRootForHCalc(fEstimatedValueInRoot);
 		TXYH2CCS::CCS2XYH(fEstimatedInRootForHCalc, fGeoid);
