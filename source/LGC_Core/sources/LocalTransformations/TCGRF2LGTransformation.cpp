@@ -16,8 +16,8 @@ TCGRF2LGTransformation::TCGRF2LGTransformation(TPositionVector& ILGorigin, bool 
 	: fILGOrigin(ILGorigin),fInitialised(false)
 {	
 	//transform the origin of the LG in CGRF
-	auto pCCS2CGRF = TCCS2CGRFTransformation(isSphere);
-	pCCS2CGRF.transform(fILGOrigin);
+	//auto pCCS2CGRF = TCCS2CGRFTransformation(isSphere);
+	//pCCS2CGRF.transform(fILGOrigin);
 
 	if (isSphere)
 
