@@ -127,13 +127,14 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 
 void LGCAdjustablePoint::changeProvValueToCCS(const TLGCData *fData)
 {
-	TDataTreeIterator root = fData->getTree().begin();
-	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
-	if (root == getFrameTreePosition())
-	{
-		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
-		TXYH2CCS::XYH2CCS(fProvisionalValue, fGeoid); // Is this ever used ? To be tested !!!!!!!!!!!!!!!
-	}
+	fProvisionalValue.setCoordSys(TCoordSysFactory::ECoordSys::k3DCartesian);
+	//TDataTreeIterator root = fData->getTree().begin();
+	//TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
+	//if (root == getFrameTreePosition())
+	//{
+	//	// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
+	//	TXYH2CCS::XYH2CCS(fProvisionalValue, fGeoid); 
+	//}
 }
 
 void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
