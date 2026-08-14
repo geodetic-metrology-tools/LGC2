@@ -137,16 +137,16 @@ void object::test<4>()
 	auto H4E = projTest->getPoints().getObject("H4.XBPF.22716.E");
 	auto H4S = projTest->getPoints().getObject("H4.XBPF.22716.S");
 
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getX() << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getY() << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getZ() << "\n";
+	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getX() << "(" << H4E.getDXValue() << ")" << "\n";
+	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getY() << "(" << H4E.getDYValue() << ")" << "\n";
+	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getZ() << "(" << H4E.getDZValue() << ")" << "\n";
 	std::cout << std::setprecision(12) << H4E.getEstimatedHeightInRoot() << "\n";
 	std::cout << std::setprecision(12) << "dist with provisional value: " << H4E.getEstimatedValue().dist(H4E.getProvisionalValue()) << "\n";
 
-	std::cout << std::setprecision(12) << H4S.getEstimatedValue().getX() << "\n";
-	std::cout << std::setprecision(12) << H4S.getEstimatedValue().getY() << "\n";
-	std::cout << std::setprecision(12) << H4S.getEstimatedValue().getZ() << "\n";
-	std::cout << std::setprecision(12) << H4S.getEstimatedHeightInRoot() << "\n";
+	//std::cout << std::setprecision(12) << H4S.getEstimatedValue().getX() << "\n";
+	//std::cout << std::setprecision(12) << H4S.getEstimatedValue().getY() << "\n";
+	//std::cout << std::setprecision(12) << H4S.getEstimatedValue().getZ() << "\n";
+	//std::cout << std::setprecision(12) << H4S.getEstimatedHeightInRoot() << "\n";
 
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
