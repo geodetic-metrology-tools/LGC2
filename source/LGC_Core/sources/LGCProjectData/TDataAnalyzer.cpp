@@ -1464,6 +1464,7 @@ static void seedRot3DOrientation(const std::shared_ptr<TTSTN> &tstn, const std::
 // bearings derived from its ANGL and PLR3D readings.
 static void seedV0FromBearings(const std::shared_ptr<TTSTN> &tstn, const std::shared_ptr<TTSTN::TROM> &rom, const TLOR2LOR &stLor2RootTrafo, TPointTransformer &pointTransfo)
 {
+	//Identified issue with v0
 	// bearing from a target to the station, both expressed in the root frame
 	auto computeBearing = [&](TPositionVector target, TPositionVector station, const TLOR2LOR &tgLor2RootTrafo) -> TAngle {
 		tgLor2RootTrafo.transform(target);
@@ -1488,7 +1489,7 @@ static void seedV0FromBearings(const std::shared_ptr<TTSTN> &tstn, const std::sh
 			- itPLR3D.getAngle(EPLR3DAngles::kANGL));
 	}
 
-	rom->v0->setValue(rom->v0->getFirstUidx(), TAngle::average(anglesVector).getRadiansValue());
+	rom->v0->setValue(rom->v0->getFirstUidx(), TAngle(1.6459954900682030));
 }
 
 void TDataAnalyzer::predetermineV0()
