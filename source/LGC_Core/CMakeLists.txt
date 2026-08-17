@@ -51,6 +51,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/LGCProject/Global.h
 	${CORE_INCLUDE_PATH}/LGCProject/Defaults.h
 	${CORE_INCLUDE_PATH}/LGCProject/DoxygenModulesDefinitions.h
+	${CORE_INCLUDE_PATH}/LGCProject/CliParser.h
 	${CORE_INCLUDE_PATH}/LGCProjectData/TTreeEntry.h
 	${CORE_INCLUDE_PATH}/LGCProjectData/TLGCStatistic.h
 	${CORE_INCLUDE_PATH}/LGCProjectData/TLGCData.h
@@ -136,6 +137,7 @@ set(Core_SOURCES
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TOtherMeasurementsWriter.cpp
 	${CORE_SOURCES_PATH}/LGCObjectWriters/TObservationWriter.cpp
 	${CORE_SOURCES_PATH}/LGCProject/TLGCApp.cpp
+	${CORE_SOURCES_PATH}/LGCProject/CliParser.cpp
 	${CORE_SOURCES_PATH}/LGCProjectData/TLGCStatistic.cpp
 	${CORE_SOURCES_PATH}/LGCProjectData/TLGCData.cpp
 	${CORE_SOURCES_PATH}/LGCProjectData/TDataAnalyzer.cpp

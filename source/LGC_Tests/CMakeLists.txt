@@ -46,6 +46,7 @@ set(tests_SOURCES
 	sources/testEREL.cpp
 	sources/testDLEV.cpp
 	sources/testSAG.cpp
+	sources/testCliParser.cpp
 )
 
 set(tests_INPUT

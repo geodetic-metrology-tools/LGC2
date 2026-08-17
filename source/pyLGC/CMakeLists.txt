@@ -3,6 +3,8 @@ option(PYLGC_RUN_TESTS_AFTER_BUILD "Run pyLGC pytest as a POST_BUILD step" ON)
 
 add_library(pyLGC_C SHARED pyLGC_C.cpp pyLGC_C.h)
 
+target_include_directories(pyLGC_C PRIVATE ${CMAKE_SOURCE_DIR})
+
 target_compile_definitions(pyLGC_C PRIVATE PYLGC_C_EXPORTS)
 
 target_link_libraries(pyLGC_C PRIVATE

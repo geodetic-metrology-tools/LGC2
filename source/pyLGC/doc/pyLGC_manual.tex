@@ -268,6 +268,17 @@ dimensions of the problem:
 \end{center}
 
 %--------------------------------------------------------------------------
+\subsection{Module-Level Functions}
+%--------------------------------------------------------------------------
+
+\begin{description}[style=nextline, leftmargin=1.5em]
+\item[\code{getLGCVersion() -> str}]
+    Return the version string of the underlying LGC2 native library, in
+    the form \code{"vMAJOR.MINOR.PATCH"} (e.g.\ \code{"v2.11.0"}) --- the
+    same version reported by \code{LGC2 -{}-version} on the command line.
+\end{description}
+
+%--------------------------------------------------------------------------
 \subsection{Class \code{Evaluator}}
 %--------------------------------------------------------------------------
 

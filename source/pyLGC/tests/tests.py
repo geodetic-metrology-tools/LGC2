@@ -1,5 +1,7 @@
 """Test suite for pyLGC bindings."""
 
+import re
+
 import numpy as np
 from numpy.linalg import norm
 import pytest
@@ -14,7 +16,24 @@ def ev():
     return pyLGC.Evaluator(LGC_FILE)
 
 
+# --- Version ---
+
+
+def test_get_version():
+    version = pyLGC.getLGCVersion()
+    assert re.fullmatch(r"v\d+\.\d+\..+", version), (
+        f"Unexpected version format: {version!r}"
+    )
+
+    # Regression: these must NOT match (previously the loose startswith/count(".") check let them through).
+    for invalid in ("v.a.b", "v1..2", "v2.1a.0", "v2.1.", "vA.1.0", "v2a.1.0"):
+        assert not re.fullmatch(r"v\d+\.\d+\..+", invalid), (
+            f"Regex should reject {invalid!r}"
+        )
+
+
 # --- Loading ---
+
 
 def test_load_dimensions(ev):
     idx = ev.getProblemDimensions()
@@ -22,15 +41,18 @@ def test_load_dimensions(ev):
     assert idx.EIndex > 0
     assert idx.OIndex > 0
 
+
 def test_get_params_before_evaluate(ev):
     """getEstimatedParameters returns provisional values without needing evaluate()."""
     params = ev.getEstimatedParameters()
     assert len(params) == ev.getProblemDimensions().UIndex
     assert norm(params) > 0  # provisionals should be non-zero
 
+
 def test_load_broken_file():
     with pytest.raises(RuntimeError, match="Errors found"):
         pyLGC.Evaluator(BROKEN_FILE)
+
 
 def test_load_nonexistent_file():
     with pytest.raises(RuntimeError, match="Cannot open"):
@@ -39,12 +61,14 @@ def test_load_nonexistent_file():
 
 # --- Parameter set/get ---
 
+
 def test_set_get_round_trip(ev):
     ev.evaluate()
     params = ev.getEstimatedParameters()
     params[0] += 42.0
     ev.setParameters(params)
     assert abs(ev.getEstimatedParameters()[0] - params[0]) < 1e-10
+
 
 def test_set_get_restore(ev):
     ev.evaluate()
@@ -53,9 +77,11 @@ def test_set_get_restore(ev):
     ev.setParameters(original)
     assert norm(original - ev.getEstimatedParameters(), np.inf) < 1e-10
 
+
 def test_set_wrong_dimension(ev):
     with pytest.raises(RuntimeError, match="wrong dimension"):
         ev.setParameters([1.0, 2.0, 3.0])
+
 
 def test_random_set_get_round_trip(ev):
     rng = np.random.default_rng(42)
@@ -68,12 +94,14 @@ def test_random_set_get_round_trip(ev):
 
 # --- Evaluate ---
 
+
 def test_evaluate_without_set_uses_provisionals(ev):
     ev.evaluate()
     w = ev.getMisclosure()
     A = ev.getFirstDesignMatrix()
     assert len(w) > 0
     assert len(A[2]) > 0
+
 
 def test_evaluate_changes_misclosure(ev):
     ev.evaluate()
@@ -84,11 +112,13 @@ def test_evaluate_changes_misclosure(ev):
     ev.evaluate()
     assert norm(w_before - ev.getMisclosure(), np.inf) > 1e-15
 
+
 def test_evaluate_is_idempotent(ev):
     ev.evaluate()
     w1 = ev.getMisclosure()
     ev.evaluate()
     assert norm(w1 - ev.getMisclosure()) == 0.0
+
 
 def test_multiple_set_evaluate_cycles(ev):
     n = ev.getProblemDimensions().UIndex
@@ -100,14 +130,22 @@ def test_multiple_set_evaluate_cycles(ev):
 
 # --- Getters without evaluate raise ---
 
-@pytest.mark.parametrize("getter", [
-    "getMisclosure", "getFirstDesignMatrix", "getSecondDesignMatrix",
-    "getWeightMatrix", "getConstraintDesignMatrix",
-    "getConstraintMisclosure",
-])
+
+@pytest.mark.parametrize(
+    "getter",
+    [
+        "getMisclosure",
+        "getFirstDesignMatrix",
+        "getSecondDesignMatrix",
+        "getWeightMatrix",
+        "getConstraintDesignMatrix",
+        "getConstraintMisclosure",
+    ],
+)
 def test_getter_without_evaluate_raises(ev, getter):
     with pytest.raises(RuntimeError, match="evaluate"):
         getattr(ev, getter)()
+
 
 @pytest.mark.parametrize("getter", ["getMisclosure", "getFirstDesignMatrix"])
 def test_getter_after_set_without_evaluate_raises(ev, getter):
@@ -117,6 +155,7 @@ def test_getter_after_set_without_evaluate_raises(ev, getter):
 
 
 # --- Matrix/vector shapes ---
+
 
 def test_matrix_shapes(ev):
     ev.evaluate()
@@ -130,14 +169,13 @@ def test_matrix_shapes(ev):
     assert (B[3], B[4]) == (idx.EIndex, idx.OIndex)
     assert len(B[2]) > 0
 
-
-
     P = ev.getWeightMatrix()
     assert (P[3], P[4]) == (idx.OIndex, idx.OIndex)
     assert len(P[2]) > 0
 
     A2 = ev.getConstraintDesignMatrix()
     assert (A2[3], A2[4]) == (idx.CIndex, idx.UIndex)
+
 
 def test_vector_lengths(ev):
     ev.evaluate()
@@ -148,11 +186,13 @@ def test_vector_lengths(ev):
 
 # --- Point and frame lookup ---
 
+
 def test_point_lookup(ev):
     pt = ev.getPoint("H4.XBPF.22716.E")
     assert pt.getName() == "H4.XBPF.22716.E"
     assert len(pt.getRelativeUnknIndices()) == 3
     assert pt.getFirstUidx() >= 0
+
 
 def test_frame_lookup(ev):
     frame = ev.getFrame("testFrame")
@@ -160,13 +200,16 @@ def test_frame_lookup(ev):
     assert len(frame.getRelativeUnknIndices()) == 4
     assert frame.getFirstUidx() >= 0
 
+
 def test_root_frame_is_fixed(ev):
     root = ev.getFrame("ROOT")
     assert len(root.getRelativeUnknIndices()) == 0
 
+
 def test_invalid_point_raises(ev):
     with pytest.raises(RuntimeError, match="not found"):
         ev.getPoint("DOES_NOT_EXIST")
+
 
 def test_invalid_frame_raises(ev):
     with pytest.raises(RuntimeError, match="not found"):
@@ -175,9 +218,11 @@ def test_invalid_frame_raises(ev):
 
 # --- Obs index mapping ---
 
+
 def test_obs_index_to_line_number(ev):
     mapping = ev.getObsIndexToLineNumber()
     assert len(mapping) > 0
+
 
 def test_obs_line_numbers_monotonic(ev):
     """Consecutive obs indices map to non-decreasing line numbers.
@@ -195,10 +240,12 @@ def test_obs_line_numbers_monotonic(ev):
 
 # --- solve ---
 
+
 def test_solve(ev):
     ok, solution = ev.solve()
     assert ok
     assert len(solution) == ev.getProblemDimensions().UIndex
+
 
 def test_getter_after_solve_requires_evaluate(ev):
     ev.solve()
@@ -208,6 +255,7 @@ def test_getter_after_solve_requires_evaluate(ev):
     A = ev.getFirstDesignMatrix()
     assert len(A[2]) > 0
 
+
 def test_solve_then_set_solution_then_evaluate(ev):
     ok, sol = ev.solve()
     ev.setParameters(sol)
@@ -215,11 +263,13 @@ def test_solve_then_set_solution_then_evaluate(ev):
     assert len(ev.getMisclosure()) > 0
     assert len(ev.getFirstDesignMatrix()[2]) > 0
 
+
 def test_solve_twice_no_reset(ev):
     ok1, sol1 = ev.solve()
     ok2, sol2 = ev.solve()
     assert ok1 and ok2
     assert norm(sol1 - sol2, np.inf) < 1.0
+
 
 def test_solve_twice_with_reset(ev):
     params_initial = ev.getEstimatedParameters()
@@ -228,10 +278,12 @@ def test_solve_twice_with_reset(ev):
     _, sol2 = ev.solve()
     assert norm(sol1 - sol2, np.inf) < 1e-8
 
+
 def test_point_frame_after_solve(ev):
     ev.solve()
     assert ev.getPoint("H4.XBPF.22716.E").getName() == "H4.XBPF.22716.E"
     assert ev.getFrame("testFrame").getName() == "testFrame"
+
 
 def test_perturb_after_solve(ev):
     _, sol = ev.solve()
@@ -242,6 +294,7 @@ def test_perturb_after_solve(ev):
 
 
 # --- getEstVector ---
+
 
 def test_getEstVector_free_point(ev):
     """Fully free point: setParameters propagates through to the point's getEstVector."""
@@ -254,7 +307,7 @@ def test_getEstVector_free_point(ev):
     params = ev.getEstimatedParameters()
     uidx = pt.getFirstUidx()
     delta = 100.0
-    params[uidx:uidx+3] += delta
+    params[uidx : uidx + 3] += delta
     ev.setParameters(params)
     assert norm(pt.getEstVector() - est_before - delta, np.inf) < 1e-10
 
@@ -270,7 +323,7 @@ def test_getEstVector_partial_point(ev):
     params = ev.getEstimatedParameters()
     uidx = pt.getFirstUidx()
     delta = 50.0
-    params[uidx:uidx+2] += delta
+    params[uidx : uidx + 2] += delta
     ev.setParameters(params)
 
     est_after = pt.getEstVector()
@@ -295,6 +348,7 @@ def test_getEstVector_fixed_point(ev):
 
 # --- B matrix is negative identity ---
 
+
 def test_B_is_negative_identity(ev):
     """B matrix should be -I for parametric observation models."""
     ev.evaluate()
@@ -309,6 +363,7 @@ def test_B_is_negative_identity(ev):
 
 
 # --- Solution quality ---
+
 
 def test_solve_reduces_misclosure(ev):
     """Solving should reduce the misclosure significantly.
@@ -327,10 +382,8 @@ def test_solve_reduces_misclosure(ev):
     assert w_after / w_before < 1e-5
 
 
-
-
-
 # --- Frame getEstVector ---
+
 
 def test_getEstVector_free_frame(ev):
     """Free frame: setParameters propagates through to the frame's getEstVector."""
@@ -342,12 +395,13 @@ def test_getEstVector_free_frame(ev):
     params = ev.getEstimatedParameters()
     uidx = frame.getFirstUidx()
     delta = 0.01
-    params[uidx:uidx+len(rel)] += delta
+    params[uidx : uidx + len(rel)] += delta
     ev.setParameters(params)
 
     est_after = frame.getEstVector()
     # free components should change by delta
     assert norm(est_after[rel] - est_before[rel] - delta, np.inf) < 1e-10
+
 
 def test_getEstVector_fixed_frame(ev):
     """Fixed frame (ROOT): getEstVector unchanged after setParameters."""

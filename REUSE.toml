@@ -15,6 +15,7 @@ path = [
     "*.yaml",
 	"DCO.txt",
 	"LGC.ico",
+    "**/*.tex",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "CERN"
