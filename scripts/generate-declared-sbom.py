@@ -34,7 +34,10 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DEPS_FILE = REPO_ROOT / "dependency.csv"
 
+# First-party build outputs. Syft's dir scan often catalogs these as type=file
+# with NOASSERTION; we promote them to packages in normalize_syft_project_binaries.
 PROJECT_BINARY_NAMES = {"lgc", "pylgc_c", "libpylgc_c"}
+_PROJECT_BINARY_SUFFIX = re.compile(r"(?:\.so(?:\.\d+)*|\.dll|\.exe|\.dylib)$", re.I)
 
 REQUIRED_CSV_COLUMNS = {
     "name",
@@ -305,46 +308,79 @@ def strip_weak_cpes(component: dict) -> None:
         ]
 
 
+def _binary_basename(raw: str) -> str:
+    s = str(raw).replace("\\", "/")
+    if s.lower().startswith("file:"):
+        s = s.split(":", 1)[1]
+    return s.rsplit("/", 1)[-1].lower()
+
+
+def project_binary_kind(component: dict) -> str | None:
+    """Return 'lgc' or 'pylgc' if this Syft component is a first-party binary."""
+    for raw in (component.get("name"), component.get("bom-ref")):
+        if not raw:
+            continue
+        stem = _PROJECT_BINARY_SUFFIX.sub("", _binary_basename(raw))
+        key = stem.replace("-", "_")
+        if (
+            key in PROJECT_BINARY_NAMES
+            or key.removeprefix("lib") in PROJECT_BINARY_NAMES
+        ):
+            return "pylgc" if "pylgc" in key else "lgc"
+    return None
+
+
 def normalize_syft_project_binaries(
-    components: list[dict], product_version: str, cmake_version: str | None
+    components: list[dict],
+    product_version: str,
+    cmake_version: str | None,
+    license_id: str = "GPL-3.0-or-later",
 ) -> None:
     preferred = cmake_version or product_version
     for c in components:
-        if c.get("type") == "file":
+        kind = project_binary_kind(c)
+        if not kind:
             strip_weak_cpes(c)
             continue
-        name = (c.get("name") or "").lower().replace("-", "_").removeprefix("lib")
-        if name in PROJECT_BINARY_NAMES:
-            ver = str(c.get("version") or "")
-            if not ver or ver.upper() in {"UNKNOWN", "NOASSERTION"}:
-                c["version"] = preferred
-                c.setdefault("properties", []).append(
-                    {
-                        "name": "lgc:inventory:version_source",
-                        "value": "cmake-project-version"
-                        if cmake_version
-                        else "git-or-ci-version",
-                    }
-                )
-            c["type"] = "library" if "pylgc" in name else "application"
-            base = (
-                "pkg:generic/cern/pylgc" if "pylgc" in name else "pkg:generic/cern/lgc"
+
+        was_file = c.get("type") == "file"
+        name = "pyLGC_C" if kind == "pylgc" else "LGC"
+        ver = str(c.get("version") or "")
+        if not ver or ver.upper() in {"UNKNOWN", "NOASSERTION"}:
+            c["version"] = preferred
+            c.setdefault("properties", []).append(
+                {
+                    "name": "lgc:inventory:version_source",
+                    "value": "cmake-project-version"
+                    if cmake_version
+                    else "git-or-ci-version",
+                }
             )
-            c["purl"] = with_version(base, c.get("version"))
-            c.pop("cpe", None)
-            props = c.get("properties")
-            if isinstance(props, list):
-                c["properties"] = [
-                    p
-                    for p in props
-                    if not (
-                        isinstance(p, dict)
-                        and str(p.get("name", "")).startswith("syft:cpe")
-                    )
-                ]
-            c["bom-ref"] = bom_ref_for(c.get("name") or name, c.get("version"))
-        else:
-            strip_weak_cpes(c)
+        c["name"] = name
+        c["type"] = "library" if kind == "pylgc" else "application"
+        c["licenses"] = [{"license": {"id": license_id or "GPL-3.0-or-later"}}]
+        c["scope"] = c.get("scope") or "required"
+        base = "pkg:generic/cern/pylgc" if kind == "pylgc" else "pkg:generic/cern/lgc"
+        c["purl"] = with_version(base, c.get("version"))
+        c.pop("cpe", None)
+        props = c.setdefault("properties", [])
+        if isinstance(props, list):
+            c["properties"] = [
+                p
+                for p in props
+                if not (
+                    isinstance(p, dict)
+                    and str(p.get("name", "")).startswith("syft:cpe")
+                )
+            ]
+            c["properties"].append(
+                {"name": "lgc:inventory:first_party", "value": "true"}
+            )
+            if was_file:
+                c["properties"].append(
+                    {"name": "lgc:inventory:promoted_from", "value": "file"}
+                )
+        c["bom-ref"] = bom_ref_for(name, c.get("version"))
 
 
 def augment_syft_cdx(syft: dict, inventory: dict, product_version: str) -> dict:
@@ -393,7 +429,12 @@ def augment_syft_cdx(syft: dict, inventory: dict, product_version: str) -> dict:
         props.append({"name": "lgc:inventory:git_or_ci_ref", "value": product_version})
 
     existing = out.setdefault("components", [])
-    normalize_syft_project_binaries(existing, product_version, cmake_version)
+    normalize_syft_project_binaries(
+        existing,
+        product_version,
+        cmake_version,
+        license_id=inventory["project"].get("license") or "GPL-3.0-or-later",
+    )
 
     by_name = {
         (c.get("name") or "").lower(): c for c in existing if c.get("type") != "file"
