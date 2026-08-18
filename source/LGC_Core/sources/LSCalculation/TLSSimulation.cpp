@@ -183,7 +183,8 @@ void TLSSimulation::updateResValues()
 		}
 		else
 		{
-			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame && fData.getConfig().geoid.type != TRefSystemFactory::EGeoid::kCUSTOMgeoid)
+			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame && fData.getConfig().geoid.type != TRefSystemFactory::EGeoid::kCUSTOMgeoid
+				&& fData.getConfig().geoid.type != TRefSystemFactory::EGeoid::kCGSphere)
 			{
 				TXYH2CCS::XYH2CCS(provisionalValue, fData.getConfig().geoid.type);
 			}
