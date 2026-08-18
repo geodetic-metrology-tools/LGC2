@@ -273,8 +273,7 @@ void object::test<8>()
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
 	projTest->getFileLogger().writeReportHeader("LGC output file");
 
-	std::stringstream infiler(TestCUSTOMGEOID::CUSTOMGEOID_SPHE_SIMPLE);
-	//std::stringstream infiler(TestCUSTOMGEOID::SPHE_SIMPLE_TSTN);
+	std::stringstream infiler(TestCUSTOMGEOID::SPHE_SIMPLE_TSTN);
 	ensure_equals("Reading Successful", r.read(infiler), true);
 
 	TLGCCalculation calcul(projTest);
@@ -282,18 +281,26 @@ void object::test<8>()
 	Behavior successCalc = calcul.computeResults(fileWriter);
 
 	auto H4E = projTest->getPoints().getObject("H4.XBPF.22716.E");
+	auto H4S = projTest->getPoints().getObject("H4.XBPF.22716.S");
+	
+	TAReferenceFrame *CGRFs(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kCGRFSphere));
+	TAReferenceFrame *CCS(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kCCS));
 
-	std::cout << std::setprecision(12)<< "438" << H4E.getEstimatedValue().getX() - 4380000 << " (" << H4E.getDXValue() << ")" << "\n";
-	std::cout << std::setprecision(12)<< "464" << H4E.getEstimatedValue().getY() - 464000 << " (" << H4E.getDYValue() << ")" << "\n";
-	std::cout << std::setprecision(12)<< "460" << H4E.getEstimatedValue().getZ() - 4600000 << " (" << H4E.getDZValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedHeightInRoot() << "\n";
-	std::cout << std::setprecision(12) << "dist with provisional value H4E: " << H4E.getEstimatedValue().dist(H4E.getProvisionalValue()) << "\n";
+	TSpatialPosition h4sSP(CGRFs, H4S.getEstimatedValue());
+	TSpatialPosition h4eSP(CGRFs, H4E.getEstimatedValue());
 
-	TDataTree tree = projTest->getTree();
-	TDataTreeIterator frameIt = tree.begin();
-	auto romIt = frameIt.node->data->measurements;
+	h4sSP.transform(CCS);
+	h4eSP.transform(CCS);
 
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	// Comparison with coordinates computed using production LGC (v2.11)
+	ensure_equals("H4S CCS X coordinate", h4sSP.getCoordinates(TCoordSysFactory::k3DCartesian).getX(), 759.239832, 1e-6);
+	ensure_equals("H4S CCS Y coordinate", h4sSP.getCoordinates(TCoordSysFactory::k3DCartesian).getY(), 5300.365627, 1e-6);
+	ensure_equals("H4S CCS Z coordinate", h4sSP.getCoordinates(TCoordSysFactory::k3DCartesian).getZ(), 2447.945446, 1e-6);
+	ensure_equals("H4E CCS X coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getX(), 759.119636, 1e-6);
+	ensure_equals("H4E CCS Y coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getY(), 5300.002693, 1e-6);
+	ensure_equals("H4E CCS Z coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getZ(), 2448.022985, 1e-6);
+
 }
 
 } // namespace tut
