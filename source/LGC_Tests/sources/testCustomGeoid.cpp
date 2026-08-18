@@ -12,6 +12,7 @@
 
 #include "TLGCCalculation.h"
 #include "testCustomGeoid.h"
+#include <fstream>
 
 namespace tut
 {
@@ -192,7 +193,6 @@ template<>
 template<>
 void object::test<6>()
 {
-	tut::skip();
 	set_test_name("Simple TSTN observation");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
@@ -209,16 +209,29 @@ void object::test<6>()
 	auto H4E = projTest->getPoints().getObject("H4.XBPF.22716.E");
 	auto H4S = projTest->getPoints().getObject("H4.XBPF.22716.S");
 
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getX() << "(" << H4E.getDXValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getY() << "(" << H4E.getDYValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getZ() << "(" << H4E.getDZValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedHeightInRoot() << "\n";
-	std::cout << std::setprecision(12) << "dist with provisional value: " << H4E.getEstimatedValue().dist(H4E.getProvisionalValue()) << "\n";
+	std::cout << std::setprecision(10) << H4E.getEstimatedValue().getX() << "(" << H4E.getDXValue() << ")" << "\n";
+	std::cout << std::setprecision(10) << H4E.getEstimatedValue().getY() << "(" << H4E.getDYValue() << ")" << "\n";
+	std::cout << std::setprecision(10) << H4E.getEstimatedValue().getZ() << "(" << H4E.getDZValue() << ")" << "\n";
+	std::cout << std::setprecision(10) << H4E.getEstimatedHeightInRoot() << "\n";
+	std::cout << std::setprecision(10) << "dist with provisional value: " << H4E.getEstimatedValue().dist(H4E.getProvisionalValue()) << "\n";
 
 	// std::cout << std::setprecision(12) << H4S.getEstimatedValue().getX() << "\n";
 	// std::cout << std::setprecision(12) << H4S.getEstimatedValue().getY() << "\n";
 	// std::cout << std::setprecision(12) << H4S.getEstimatedValue().getZ() << "\n";
 	// std::cout << std::setprecision(12) << H4S.getEstimatedHeightInRoot() << "\n";
+
+	TAReferenceFrame *ETRF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kETRF93));
+	TAReferenceFrame *CCS(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kCCS));
+
+	//TSpatialPosition h4sSP(CGRFs, H4S.getEstimatedValue());
+	TSpatialPosition h4eSP(ETRF93, H4E.getEstimatedValue());
+
+	//h4sSP.transform(CCS);
+	h4eSP.transform(CCS);
+	std::cout <<  "H4E CCS X coordinate " << h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getX()<< std::endl;
+	std::cout <<  "H4E CCS Y coordinate " << h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getY()<< std::endl;
+	std::cout <<  "H4E CCS Z coordinate " << h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getZ()<< std::endl;
+
 
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
@@ -259,6 +272,27 @@ void object::test<7>()
 	ensure_equals("H4E CCS X coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getX(), 759.119636, 1e-6);
 	ensure_equals("H4E CCS Y coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getY(), 5300.002693, 1e-6);
 	ensure_equals("H4E CCS Z coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getZ(), 2448.022985, 1e-6);
+
+}
+
+template<>
+template<>
+void object::test<8>()
+{
+	set_test_name("Test with North Area Network");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::ifstream infiler("C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestNorthArea\\260202DEP_33003_Network_VS Magnet_Check_ETRF.lgc");
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+
+	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	// Comparison with coordinates computed using production LGC (v2.11)
 
 }
 
