@@ -227,47 +227,6 @@ template<>
 template<>
 void object::test<7>()
 {
-	tut::skip();
-
-	set_test_name("Simple TSTN observation");
-
-	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
-	projTest->getFileLogger().writeReportHeader("LGC output file");
-
-	std::stringstream infiler(TestCUSTOMGEOID::SPHE_TSTN);
-	ensure_equals("Reading Successful", r.read(infiler), true);
-
-	TLGCCalculation calcul(projTest);
-	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
-	Behavior successCalc = calcul.computeResults(fileWriter);
-
-	auto H4E = projTest->getPoints().getObject("H4.XBPF.22716.E");
-	auto H4S = projTest->getPoints().getObject("H4.XBPF.22716.S");
-
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getX() << " (" << H4E.getDXValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getY() << " (" << H4E.getDYValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedValue().getZ() << " (" << H4E.getDZValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4E.getEstimatedHeightInRoot() << "\n";
-	std::cout << std::setprecision(12) << "dist with provisional value H4E: " << H4E.getEstimatedValue().dist(H4E.getProvisionalValue()) << "\n";
-
-	std::cout << std::setprecision(12) << H4S.getEstimatedValue().getX() << " (" << H4S.getDXValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4S.getEstimatedValue().getY() << " (" << H4S.getDYValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4S.getEstimatedValue().getZ() << " (" << H4S.getDZValue() << ")" << "\n";
-	std::cout << std::setprecision(12) << H4S.getEstimatedHeightInRoot() << "\n";
-	std::cout << std::setprecision(12) << "dist with provisional value H4S: " << H4S.getEstimatedValue().dist(H4S.getProvisionalValue()) << "\n";
-
-	TDataTree tree = projTest->getTree();
-	TDataTreeIterator frameIt = tree.begin();
-	auto romIt = frameIt.node->data->measurements;
-	//std::cout << projTest->getAngles().getObject()
-
-	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
-}
-
-template<>
-template<>
-void object::test<8>()
-{
 	set_test_name("Simple TSTN observation");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
