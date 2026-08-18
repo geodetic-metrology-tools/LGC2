@@ -387,7 +387,7 @@ LGCAdjustablePoint &TAPointKey::createAndAddPoint(const std::string &pointName, 
 		if (fconfig.referential == TRefSystemFactory::ERefFrame::kLocalRefFrame)
 			return fpointAccess.addObject(LGCAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k3DCartesian), isXfixed, isYfixed, isZfixed, pointName,
 				fconfig.referential, fconfig.geoid.type, proj.getCurrentPosition()));
-		else
+		else // Should not be always 2D+H here
 			return fpointAccess.addObject(LGCAdjustablePoint(TPositionVector(x, y, z, TCoordSysFactory::ECoordSys::k2DPlusH), isXfixed, isYfixed, isZfixed, pointName,
 				fconfig.referential, fconfig.geoid.type, proj.getCurrentPosition()));
 	}

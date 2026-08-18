@@ -62,6 +62,7 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 	// Iterate to find solution
 	while (!hasReachedCriteria && fNumberOfIterations < fMaxIterations)
 	{
+		std::cout << fNumberOfIterations;
 		bool fillOK = false;
 		fillOK = matrFiller->fillMatrices(&data, inputMtr);
 
