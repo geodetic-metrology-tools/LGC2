@@ -11,6 +11,8 @@
 #include <TReader.h>
 
 #include "TLGCCalculation.h"
+#include "TLGCApp.h"
+
 #include "testCustomGeoid.h"
 #include <fstream>
 
@@ -232,8 +234,14 @@ void object::test<6>()
 	std::cout <<  "H4E CCS Y coordinate " << h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getY()<< std::endl;
 	std::cout <<  "H4E CCS Z coordinate " << h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getZ()<< std::endl;
 
-
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	//std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\SimpleTest\\";
+	//TLGCApp proj(filePath + "CUSTOMGEOID_TSTN_2.lgc", filePath + "CUSTOMGEOID_TSTN_2.res");
+	//ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+	//
+	//TLGCApp projPolar3D(filePath + "CUSTOMGEOID_TSTN_2_polar3D.lgc", filePath + "CUSTOMGEOID_TSTN_2_polar3D.res");
+	//ensure_equals("Calculation successful", projPolar3D.exec().code(), Behavior::BehaviorCode::ERR_noError);
 }
 
 template<>
@@ -273,18 +281,25 @@ void object::test<7>()
 	ensure_equals("H4E CCS Y coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getY(), 5300.002693, 1e-6);
 	ensure_equals("H4E CCS Z coordinate", h4eSP.getCoordinates(TCoordSysFactory::k3DCartesian).getZ(), 2448.022985, 1e-6);
 
+	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\SimpleTest\\";
+	TLGCApp proj(filePath + "SPHE_SIMPLE_TSTN.lgc", filePath + "SPHE_SIMPLE_TSTN.res");
+	ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
 }
 
 template<>
 template<>
 void object::test<8>()
 {
-	set_test_name("Test with North Area Network");
+	set_test_name("Test with North Area Magnet");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
 	projTest->getFileLogger().writeReportHeader("LGC output file");
 
-	std::ifstream infiler("C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestNorthArea\\260202DEP_33003_Network_VS Magnet_Check_ETRF.lgc");
+	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestNorthArea\\test\\";
+	TLGCApp proj(filePath + "260202DEP_33003_Network_VS Magnet_Check_ETRF.lgc", filePath + "260202DEP_33003_Network_VS Magnet_Check_ETRF.res");
+	ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+	std::ifstream infiler(filePath +"260202DEP_33003_Network_VS Magnet_Check_ETRF.lgc");
 	ensure_equals("Reading Successful", r.read(infiler), true);
 
 	TLGCCalculation calcul(projTest);
@@ -294,6 +309,30 @@ void object::test<8>()
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 	// Comparison with coordinates computed using production LGC (v2.11)
 
+}
+
+template<>
+template<>
+void object::test<9>()
+{
+	set_test_name("Test with North Area Network");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestNorthArea\\test\\";
+	TLGCApp proj(filePath + "32840_final_insert_ETRF.lgc", filePath + "32840_final_insert_ETRF.res");
+	ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+	std::ifstream infiler(filePath + "32840_final_insert_ETRF.lgc");
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+
+	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	// Comparison with coordinates computed using production LGC (v2.11)
 }
 
 } // namespace tut
