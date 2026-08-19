@@ -192,10 +192,10 @@ linux_sbom:
 
           echo "SBOM files:"
           ls -la sbom/
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9a-zA-Z._+-]+$/'
     artifacts:
         name: "sbom-linux-$CI_COMMIT_SHORT_SHA"
-        # Keep indefinitely: SBOMs are small and useful for release provenance.
-        expire_in: never
         paths:
             - sbom/
         reports:
@@ -235,9 +235,10 @@ windows_sbom:
 
           echo "SBOM files:"
           ls -la sbom/
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9a-zA-Z._+-]+$/'
     artifacts:
         name: "sbom-windows-$CI_COMMIT_SHORT_SHA"
-        expire_in: never
         paths:
             - sbom/
         reports:
