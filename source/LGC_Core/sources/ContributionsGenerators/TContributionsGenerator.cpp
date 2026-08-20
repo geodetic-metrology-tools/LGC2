@@ -103,7 +103,10 @@ DistMeasContrib TContributionsGenerator::getSpatialDistanceContrib(std::shared_p
 	TReal varTgHeight = pow2q(dist.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
 	TReal varTgCent = pow2q(dist.target.sigmaTargetCentering);
-	TReal variance = varM + pow2q((zTg - zSt + hTg - hInst) / D) * (varInstHeight + varTgHeight) + ((pow2q(yTg - ySt) + pow2q(xSt - xTg)) / pow2q(D)) * (varInstCent + varTgCent);
+	// A height error projects on cos(z), a centring error on sin(z)
+	TReal cosZ = (zTg + hTg - zSt - hInst) / D;
+	TReal sinZ2 = (pow2q(xTg - xSt) + pow2q(yTg - ySt)) / pow2q(D);
+	TReal variance = varM + pow2q(cosZ) * (varInstHeight + varTgHeight) + sinZ2 * (varInstCent + varTgCent);
 
 	DistMeasContrib contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, distCorrContrib, variance};
 	return contrib;
@@ -163,7 +166,10 @@ DistMeasContribFrame TContributionsGenerator::getSpatialDistanceContribInFrame(s
 	TReal varTgHeight = pow2q(dist.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
 	TReal varTgCent = pow2q(dist.target.sigmaTargetCentering);
-	TReal variance = varM + pow2q((zTg - zSt + hTg) / D) * varTgHeight + ((pow2q(yTg - ySt) + pow2q(xSt - xTg)) / pow2q(D)) * (varInstCent + varTgCent);
+	// A height error projects on cos(z), a centring error on sin(z)
+	TReal cosZ = (zTg + hTg - zSt) / D;
+	TReal sinZ2 = (pow2q(xTg - xSt) + pow2q(yTg - ySt)) / pow2q(D);
+	TReal variance = varM + pow2q(cosZ) * varTgHeight + sinZ2 * (varInstCent + varTgCent);
 
 	// Fill the contribution structure
 	DistMeasContribFrame contrib = {calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, 0.0, -1.0, variance};
@@ -201,8 +207,8 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 	// Calculated measurement value
 	TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
 
-	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
-	if (dist2 < nullLimit)
+	TReal distXY2 = pow2q(dist(xSt, ySt, xTg, yTg));
+	if (distXY2 < nullLimit)
 	{
 		generateContributionError(
 			"TContributionGenerator::getHorAnglContrib: Division by zero because station and target are identical or have identical coordinates. Points: "
@@ -210,8 +216,8 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 	}
 
 	TReal a, b, c; // station's contributions coefficients (negative values of these give the target coefficients)
-	a = (-LITERAL(1.0) * (yTg - ySt)) / dist2; // xSt coefficient
-	b = (xTg - xSt) / dist2; // ySt coefficient
+	a = (-LITERAL(1.0) * (yTg - ySt)) / distXY2; // xSt coefficient
+	b = (xTg - xSt) / distXY2; // ySt coefficient
 	c = 0.0; // zSt coefficient
 
 	TReal v0Contrib = -1.0; // contribution for the V0 parameter
@@ -228,7 +234,8 @@ AnglMeasContrib TContributionsGenerator::getHorAnglContrib(std::shared_ptr<TTSTN
 	addTransformationsContributions(tgLor2RootTrafo, angl.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
 	// Variance calculation
-	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
+	// A lateral centring error e turns the direction by e / distXY, a height error does nothing
+	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering)) / distXY2;
 
 	AnglMeasContrib contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance};
 	return contrib;
@@ -247,8 +254,8 @@ AnglMeasContribFrame TContributionsGenerator::getHorAnglContribInFrame(std::shar
 
 	TReal xTg = targetPos.getX().getMetresValue();
 	TReal yTg = targetPos.getY().getMetresValue();
-	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
-	if (dist2 < nullLimit)
+	TReal distXY2 = pow2q(dist(xSt, ySt, xTg, yTg));
+	if (distXY2 < nullLimit)
 	{
 		generateContributionError(
 			"TContributionGenerator::getHorAnglContribInFrame: Division by zero because station and target are identical or have identical coordinates. Points: "
@@ -259,8 +266,8 @@ AnglMeasContribFrame TContributionsGenerator::getHorAnglContribInFrame(std::shar
 	TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - rom->v0->getEstimatedValue() - rom->acst; // ACST is the constant orientation of the instrument
 
 	TReal a, b, c; // station's contributions coefficients (negative values of these give the target coefficients)
-	a = (-LITERAL(1.0) * (yTg - ySt)) / dist2; // xSt coefficient
-	b = (xTg - xSt) / dist2; // ySt coefficient
+	a = (-LITERAL(1.0) * (yTg - ySt)) / distXY2; // xSt coefficient
+	b = (xTg - xSt) / distXY2; // ySt coefficient
 	c = 0.0; // zSt coefficient
 
 	// point contribution
@@ -272,7 +279,8 @@ AnglMeasContribFrame TContributionsGenerator::getHorAnglContribInFrame(std::shar
 	addTransformationsContributions(tg2stTrafo, angl.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
 	// Variance calculation
-	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering));
+	// A lateral centring error e turns the direction by e / distXY, a height error does nothing
+	TReal variance = pow2q(angl.target.sigmaAngl.getRadiansValue()) + (pow2q(station->instrument.sigmaInstrCentering) + pow2q(angl.target.sigmaTargetCentering)) / distXY2;
 
 	AnglMeasContribFrame contrib = {calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, 0.0, 0.0, variance};
 	return contrib;
@@ -354,9 +362,11 @@ AnglMeasContrib TContributionsGenerator::getZenDistContrib(std::shared_ptr<TTSTN
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> targetTransfContributions;
 	addTransformationsContributions(tgLor2RootTrafo, zend.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
+	// A centring error acts through cos(z) / D, a height error through sin(z) / D
+	TReal cosZ = cosq(calcMeas.getRadiansValue());
 	TReal variance = pow2q(zend.target.sigmaZenD.getRadiansValue())
-		+ (((pow2q(dx) + pow2q(dy)) * pow2q(dz)) / (powq(distance3D, 6) * pow2q(sinPhi))) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering))
-		+ pow2q(-c) * (pow2q(station->instrument.sigmaInstrHeight) + pow2q(zend.target.sigmaTargetHt));
+		+ pow2q(cosZ / distance3D) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering))
+		+ pow2q(sinPhi / distance3D) * (pow2q(station->instrument.sigmaInstrHeight) + pow2q(zend.target.sigmaTargetHt));
 
 	AnglMeasContrib contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance};
 	return contrib;
@@ -417,9 +427,11 @@ AnglMeasContribFrame TContributionsGenerator::getZenDistContribInFrame(std::shar
 	addTransformationsContributions(tg2stTrafo, zend.targetPos->getEstimatedValue(), -a, -b, -c, targetTransfContributions);
 
 	// Calculate and return the contributions
+	// A centring error acts through cos(z) / D, a height error through sin(z) / D
+	TReal cosZ = cosq(calcMeas.getRadiansValue());
 	TReal variance = pow2q(zend.target.sigmaZenD.getRadiansValue())
-		+ (((pow2q(dx) + pow2q(dy)) * pow2q(dz)) / (powq(distance3D, 6) * pow2q(sinPhi))) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering))
-		+ pow2q(-c) * pow2q(zend.target.sigmaTargetHt);
+		+ pow2q(cosZ / distance3D) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(zend.target.sigmaTargetCentering))
+		+ pow2q(sinPhi / distance3D) * pow2q(zend.target.sigmaTargetHt);
 
 	AnglMeasContribFrame contrib = {calcMeas, coordContribStation, coordContribTarget, targetTransfContributions, 0.0, 0.0, variance};
 	return contrib;
@@ -540,32 +552,30 @@ PLR3DContrib TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 	contrib.fRyContrib = JacF * (dAdRy * relPos).toRealVector();
 	contrib.fV0Contrib = JacF * (dAdV0 * relPos).toRealVector();
 
-	// Variance calculation -- same as in original combined version
-	double dist2 = pow2q(normMeasuredPosXY);
-	double dX = relPos[0], dY = relPos[1], dZ = relPos[2];
-	double distance3D = relPos.length();
-	TReal sinPhi = dist2 / distance3D;
-	if (fabs(sinPhi) < nullLimit)
+	// Variance calculation
+	TReal distXY2 = pow2q(normMeasuredPosXY);
+	TReal sinZ = normMeasuredPosXY / normMeasuredPos;
+	if (fabs(sinZ) < nullLimit)
 	{
 		generateContributionError("TContributionGenerator::getPolar3DContrib: Division by zero because ZEND angle is zero. Points: " + getNameAndLine(*station->instrumentPos)
 			+ " and " + getNameAndLine(*plr3D.targetPos));
 	}
+	TReal cosZ = z / normMeasuredPos;
 
-	TReal c = (1.0 / (distance3D * sinPhi)) - powq(dZ, 2) / (powq(distance3D, 3) * sinPhi);
-	TVector obsVariance(3);
-	// ANGL
-	obsVariance(0) = pow2q(plr3D.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering));
-	// ZEND
-	obsVariance(1) = pow2q(plr3D.target.sigmaZenD.getRadiansValue())
-		+ (((pow2q(dX) + pow2q(dY)) * pow2q(dZ)) / (powq(distance3D, 6) * pow2q(sinPhi))) * (pow2q(station->instrument.sigmaInstrCentering) + pow2q(plr3D.target.sigmaTargetCentering))
-		+ pow2q(-c) * (pow2q(station->instrument.sigmaInstrHeight) + pow2q(plr3D.target.sigmaTargetHt));
-	// DIST
 	TReal varM = pow2q(plr3D.target.sigmaDist + calcMeas(2) / 1000 * plr3D.target.ppmDist);
 	TReal varInstHeight = pow2q(station->instrument.sigmaInstrHeight);
 	TReal varTgHeight = pow2q(plr3D.target.sigmaTargetHt);
 	TReal varInstCent = pow2q(station->instrument.sigmaInstrCentering);
 	TReal varTgCent = pow2q(plr3D.target.sigmaTargetCentering);
-	obsVariance(2) = varM + pow2q((dZ) / distance3D) * (varInstHeight + varTgHeight) + ((pow2q(dY) + pow2q(dX)) / pow2q(distance3D)) * (varInstCent + varTgCent);
+
+	TVector obsVariance(3);
+	// ANGL: a lateral centring error e turns the direction by e / distXY
+	obsVariance(0) = pow2q(plr3D.target.sigmaAngl.getRadiansValue()) + (varInstCent + varTgCent) / distXY2;
+	// ZEND: a centring error acts through cos(z) / D, a height error through sin(z) / D
+	obsVariance(1) = pow2q(plr3D.target.sigmaZenD.getRadiansValue()) + pow2q(cosZ / normMeasuredPos) * (varInstCent + varTgCent)
+		+ pow2q(sinZ / normMeasuredPos) * (varInstHeight + varTgHeight);
+	// DIST: a height error projects on cos(z), a centring error on sin(z)
+	obsVariance(2) = varM + pow2q(cosZ) * (varInstHeight + varTgHeight) + pow2q(sinZ) * (varInstCent + varTgCent);
 	contrib.fObsVariance = obsVariance;
 
 	return contrib;
@@ -698,7 +708,7 @@ ECTHContrib TContributionsGenerator::getECTHContrib(std::shared_ptr<TTSTN> stati
 
 	// Variance calculation
 	TReal varM = pow2q(ecth.target.sigmaD + calcMeas / 1000 * ecth.target.ppmD);
-	TReal variance = varM + (pow2q(cos(theta + Vo)) + pow2q(sin(theta + Vo))) * pow2q(ecth.target.sigmaInstrCentering);
+	TReal variance = varM + pow2q(ecth.target.sigmaInstrCentering);
 
 	ECTHContrib contrib = {calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance};
 	return contrib;
@@ -776,7 +786,7 @@ ECTHContrib TContributionsGenerator::getECDIRContrib(std::shared_ptr<TTSTN> stat
 
 	// Variance calculation
 	TReal varM = pow2q(ecdir.target.sigmaD + calcMeas / 1000 * ecdir.target.ppmD);
-	TReal variance = varM + (pow2q(cos(theta + Vo) * sin(phi)) + pow2q(sin(theta + Vo) * sin(phi))) * pow2q(ecdir.target.sigmaInstrCentering);
+	TReal variance = varM + pow2q(sin(phi)) * pow2q(ecdir.target.sigmaInstrCentering);
 
 	ECTHContrib contrib = {calcMeas, coordContribStation, coordContribTarget, V0Contrib, distCorrection, stationTransfContributions, targetTransfContributions, variance};
 	return contrib;
@@ -1295,8 +1305,8 @@ AnglMeasContrib TContributionsGenerator::getOrieContrib(const TORIEROM &orieROM,
 	// Calculated measurement value
 	TAngle calcMeas = TAngle::aTan2((xTg - xSt), (yTg - ySt)) - orieROM.fConstantAngle;
 
-	TReal dist2 = pow2q(dist(xSt, ySt, xTg, yTg));
-	if (dist2 < nullLimit)
+	TReal distXY2 = pow2q(dist(xSt, ySt, xTg, yTg));
+	if (distXY2 < nullLimit)
 	{
 		generateContributionError(
 			"TContributionGenerator::getOrieContrib: Division by zero because station and target are identical or have identical x and y coordinates. Points: "
@@ -1304,8 +1314,8 @@ AnglMeasContrib TContributionsGenerator::getOrieContrib(const TORIEROM &orieROM,
 	}
 
 	TReal a, b, c; // station's contributions coefficients (negative values of these give the target coefficients)
-	a = (-LITERAL(1.0) * (yTg - ySt)) / dist2; // xSt coefficient
-	b = (xTg - xSt) / dist2; // ySt coefficient
+	a = (-LITERAL(1.0) * (yTg - ySt)) / distXY2; // xSt coefficient
+	b = (xTg - xSt) / distXY2; // ySt coefficient
 	c = 0.0; // zSt coefficient
 
 	TReal v0Contrib = 0.0; // no V0 parameter for a gyro theodolithe
@@ -1329,7 +1339,8 @@ AnglMeasContrib TContributionsGenerator::getOrieContrib(const TORIEROM &orieROM,
 		-abc.getZ().getMetresValue(), targetTransfContributions);
 
 	// Variance calculation
-	TReal variance = pow2q(orie.target.sigmaAngl.getRadiansValue()) + (1.0 / (dist2)) * (pow2q(orieROM.instrument.sigmaInstrCentering) + pow2q(orie.target.sigmaTargetCentering));
+	// A lateral centring error e turns the azimuth by e / distXY
+	TReal variance = pow2q(orie.target.sigmaAngl.getRadiansValue()) + (pow2q(orieROM.instrument.sigmaInstrCentering) + pow2q(orie.target.sigmaTargetCentering)) / distXY2;
 
 	AnglMeasContrib contrib = {calcMeas, coordContribStation, coordContribTarget, stationTransfContributions, targetTransfContributions, hiContrib, v0Contrib, variance};
 	return contrib;
