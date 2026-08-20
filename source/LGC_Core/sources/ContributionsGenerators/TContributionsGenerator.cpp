@@ -1872,10 +1872,7 @@ UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD
 	// Direction eqs: centering effect roughly sigma/d  :  sigmaC2/d^2
 	// Distance eq:   centering projects onto radial direction, |rhat|^2=1  :  sigmaC2
 	TReal sigmaC2 = pow2q(uvd.target.sigmaTargetCentering) + pow2q(camera.instrument.sigmaInstrCentering);
-	Eigen::Vector3d obsVariance(
-		pow2q(uvd.target.sigmaX)    + sigmaC2 * pow2q(invD),
-		pow2q(uvd.target.sigmaY)    + sigmaC2 * pow2q(invD),
-		pow2q(uvd.target.sigmaDist) + sigmaC2);
+	Eigen::Vector3d obsVariance(pow2q(uvd.target.sigmaX) + sigmaC2 * pow2q(invD), pow2q(uvd.target.sigmaY) + sigmaC2 * pow2q(invD), pow2q(uvd.target.sigmaDist) + sigmaC2);
 
 	UVDContrib contrib;
 	contrib.fStCoordContrib = coordContribStation;
