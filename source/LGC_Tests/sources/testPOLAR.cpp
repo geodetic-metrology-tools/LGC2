@@ -169,4 +169,26 @@ void object::test<8>()
 	// Data is consistent up to the 6-decimal rounding of the observations.
 	ensure_equals("Sigma0 a posteriori small (consistent data)", projTest->getS0APosteriori(), 0.0, 5e-2);
 }
+
+template<>
+template<>
+void object::test<9>()
+{
+	set_test_name("PLR3D height sigmas: sigma Z of the observed points independent of the distance");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/POLAR_HeightSigma.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestPOLAR::POLAR_HEIGHT_SIGMA);
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// sqrt(IHSE^2 + THSE^2) = 5 mm at 1, 10 and 100 m, the instrument adds less than 0.001 mm
+	for (const std::string &name : {"P1", "P10", "P100"})
+		ensure_equals("Sigma Z of " + name + " [mm]", projTest->getPoints().getObject(name).getZEstPrecision().getMMetresValue(), 5.0, 1e-3);
+}
 } // namespace tut

@@ -319,5 +319,33 @@ TA1  1.732051     TH 0.000000
 *END
 )";
 
+//------------------------------ PLR3D height sigmas ------------------------------//
+// A nearly exact instrument with instrument and target height sigmas of 3 mm and 4 mm:
+// for horizontal sights sigma Z of the observed points must be sqrt(3^2 + 4^2) = 5 mm at
+// every distance. REF fixes V0, *APRI keeps the a priori precisions (exact observations).
+char const *const POLAR_HEIGHT_SIGMA = R"(*TITR
+PLR3D height sigmas: sigma Z of the observed points independent of the distance
+*OLOC
+*APRI
+*INSTR
+*POLAR TS1 T1 0.0 0 0 0
+T1 0.1 0.1 0.01 0 0 0 0 0 0 4
+*CALA
+STN 0 0 0
+REF 0 50 0
+*POIN
+P1 1 0 0
+P10 10 0 0
+P100 100 0 0
+*TSTN STN TS1 TRGT T1 IHFIX IH 0.0 IHSE 3
+*V0
+*PLR3D
+REF 0.0 100.0 50.0
+P1 100.0 100.0 1.0
+P10 100.0 100.0 10.0
+P100 100.0 100.0 100.0
+*END
+)";
+
 } // namespace TestPOLAR
 #endif //_LGC_TESTS_POLAR_H
