@@ -74,6 +74,22 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 		fProvisionalValueInRoot = fProvisionalValue;
 		if (fData->getConfig().geoid.type == TRefSystemFactory::EGeoid::kCUSTOMgeoid)
 		{
+			fProvisionalHeightInRoot = fProvisionalValueInRoot.getH();
+			TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
+			if (globalRef == TRefSystemFactory::ERefFrame::kLambert93_ign69)
+			{
+				TAReferenceFrame *RGF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kRGF93));
+				TAReferenceFrame *LAMBERT93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(globalRef));
+				TSpatialPosition provisionalSP(LAMBERT93, fProvisionalValue);
+				provisionalSP.transform(RGF93);
+
+				fProvisionalValueInRoot = provisionalSP.getCoordinates(TCoordSysFactory::k3DCartesian);
+				fProvisionalValue = provisionalSP.getCoordinates(TCoordSysFactory::k3DCartesian);
+				fEstimatedValueInRoot = fProvisionalValueInRoot;
+				fEstimatedValue = fProvisionalValue;
+
+			}
+
 			// TAReferenceFrame *ETRF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kETRF93));
 			//
 			// TReal xOrigin = 4395448.30314;
@@ -129,11 +145,20 @@ void LGCAdjustablePoint::changeProvValueToCCS(const TLGCData *fData)
 {
 	TDataTreeIterator root = fData->getTree().begin();
 	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
-	if (root == getFrameTreePosition())
+	if (globalRef == TRefSystemFactory::ERefFrame::kLambert93_ign69)
 	{
-		// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
-		TXYH2CCS::XYH2CCS(fProvisionalValue, fGeoid); // Is this ever used ? To be tested !!!!!!!!!!!!!!!
+		TAReferenceFrame *RGF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kRGF93));
+		TAReferenceFrame *LAMBERT93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(globalRef));
+		TSpatialPosition provisionalSP(LAMBERT93, fProvisionalValue);
+		//provisionalSP.transform(RGF93);
+
+		//fProvisionalValue = provisionalSP.getCoordinates(TCoordSysFactory::k3DCartesian);
 	}
+	//if (root == getFrameTreePosition())
+	//{
+	//	// the point is defined in the ROOT frame, therefore assign the provisional values in the ROOT frame.
+	//	TXYH2CCS::XYH2CCS(fProvisionalValue, fGeoid); // Is this ever used ? To be tested !!!!!!!!!!!!!!!
+	//}
 }
 
 void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
@@ -141,10 +166,28 @@ void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
 	TDataTreeIterator root = fData->getTree().begin();
 	TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
 
-	if (root == getFrameTreePosition())
+	if (root == getFrameTreePosition() && globalRef != TRefSystemFactory::kLambert93_ign69)
 	{
 		// the point is defined in the ROOT frame, therefore assign the estimated values in the ROOT frame.
 		fEstimatedValueInRoot = fEstimatedValue;
+	}
+	else if (fData->getConfig().geoid.type == TRefSystemFactory::EGeoid::kCUSTOMgeoid)
+	{
+		fEstimatedValueInRoot = fEstimatedValue;
+		fProvisionalValueInRoot = fProvisionalValue;
+		TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
+		if (globalRef == TRefSystemFactory::ERefFrame::kLambert93_ign69)
+		{
+			TAReferenceFrame *RGF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kRGF93));
+			TAReferenceFrame *LAMBERT93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(globalRef));
+			TSpatialPosition provisionalSP(RGF93, fProvisionalValueInRoot);
+			TSpatialPosition estimatedSP(RGF93, fEstimatedValueInRoot);
+			provisionalSP.transform(LAMBERT93);
+			estimatedSP.transform(LAMBERT93);
+
+			fEstimatedValueInRoot = estimatedSP.getCoordinates(TCoordSysFactory::k2DPlusH);
+			fProvisionalValueInRoot = provisionalSP.getCoordinates(TCoordSysFactory::k2DPlusH);
+		}
 	}
 	else
 	{

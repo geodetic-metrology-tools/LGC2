@@ -11,6 +11,7 @@
 #include <TReader.h>
 
 #include "TLGCCalculation.h"
+#include "TLGCApp.h"
 #include "testCustomGeoid.h"
 
 namespace tut
@@ -184,4 +185,28 @@ void object::test<5>()
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
 
+template<>
+template<>
+void object::test<6>()
+{
+	set_test_name("Simple TSTN observation");
+	std::cout << "\n\n\n\ Simple test LAMBERT" <<std::endl;
+	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\SimpleTest\\";
+	TLGCApp proj(filePath + "CUSTOMGEOID_SIMPLE_TSTN_LAMBERT.lgc", filePath + "CUSTOMGEOID_SIMPLE_TSTN_LAMBERT.res");
+	ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+	TLGCApp projRound(filePath + "CUSTOMGEOID_SIMPLE_TSTN_LAMBERT_round.lgc", filePath + "CUSTOMGEOID_SIMPLE_TSTN_LAMBERT_round.res");
+	ensure_equals("Calculation successful", projRound.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+
+	std::ifstream infiler(filePath + "CUSTOMGEOID_SIMPLE_TSTN_LAMBERT.lgc");
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+
+	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+}
 } // namespace tut
