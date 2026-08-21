@@ -23,7 +23,7 @@ TPointTransformer::TPointTransformer(const TDataTree *tree, const TRefSystemFact
 		fGeoidModel = TRefSystemFactory::EGeoid::kCG2000Machine;
 	else if (refFrame == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
 		fGeoidModel = TRefSystemFactory::EGeoid::kCG1985Machine;
-	else if (refFrame == TRefSystemFactory::ERefFrame::kETRF93)
+	else if (refFrame == TRefSystemFactory::ERefFrame::kLambert93_ign69)
 		fGeoidModel = TRefSystemFactory::EGeoid::kCUSTOMgeoid;
 	else
 		fGeoidModel = TRefSystemFactory::EGeoid::kNoGeoid;
