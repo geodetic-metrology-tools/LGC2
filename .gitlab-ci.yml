@@ -14,7 +14,7 @@ pre-commit:
     image: python:3.11-slim
     before_script:
         - apt-get update && apt-get install -y git
-        - pip install pre-commit "reuse[charset-normalizer]"
+        - pip install pre-commit
     script:
         # Only check files that changed in this branch
         - |

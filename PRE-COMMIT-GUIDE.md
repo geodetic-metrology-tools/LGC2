@@ -5,6 +5,7 @@ This guide explains how to set up and use pre-commit hooks in the LGC2 project.
 ## Table of Contents
 
 - [What are Pre-commit Hooks?](#what-are-pre-commit-hooks)
+- [Hook Architecture](#hook-architecture)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
   - [Windows](#windows)
@@ -20,6 +21,21 @@ This guide explains how to set up and use pre-commit hooks in the LGC2 project.
 
 Pre-commit hooks are automated checks that run before each commit to ensure code quality and consistency. They help catch issues early, maintain code standards, and reduce review time.
 
+## Hook Architecture
+
+LGC2 does **not** define custom checks as `repo: local` anymore (except optional project-only experiments). Hooks come from three places, selected in [`.pre-commit-config.yaml`](./.pre-commit-config.yaml):
+
+| Category | Source | Role |
+|----------|--------|------|
+| **1. Upstream** | Public hook repos (e.g. `pre-commit/pre-commit-hooks`, `astral-sh/ruff-pre-commit`) | Pin well-maintained open-source tools directly |
+| **2. Shared APC** | [`apc/common/pre-commit-utils`](https://gitlab.cern.ch/apc/common/pre-commit-utils) | Reusable APC policy hooks (REUSE, UTF-8, DCO, protected branches, …) |
+| **3. LGC2-specific** | Project pin (e.g. `mirrors-clang-format` + `.clang-format`) | Choices that belong to this codebase only |
+
+A catalogue of recommended upstream hooks is maintained in pre-commit-utils:
+https://gitlab.cern.ch/apc/common/pre-commit-utils/-/blob/master/docs/catalogue.md
+
+Shared APC hooks are **published** by that repo (via `.pre-commit-hooks.yaml`); LGC2 only **selects** them by `id` and pins `rev`. pre-commit does not support importing YAML config fragments.
+
 ## Quick Start
 
 For most users, simply run the setup script:
@@ -28,6 +44,8 @@ For most users, simply run the setup script:
 ```bash
 ./setup-pre-commit.sh
 ```
+
+This installs both the `pre-commit` and `commit-msg` git hooks (the latter is required for `check-signoff`).
 
 ## Installation
 
@@ -40,7 +58,7 @@ For most users, simply run the setup script:
    ```bash
    # Git Bash
    ./setup-pre-commit.sh
-
+   ```
 
 #### Option 2: Manual Installation
 
@@ -54,6 +72,7 @@ For most users, simply run the setup script:
    ```bash
    cd C:\path\to\LGC2
    pre-commit install
+   pre-commit install --hook-type commit-msg
    ```
 
 ### Linux
@@ -61,8 +80,7 @@ For most users, simply run the setup script:
 1. Install Python 3 and pip (usually pre-installed):
    ```bash
    # Ubuntu/Debian
-   sudo apt-get update
-   sudo apt-get install python3 python3-pip
+   sudo apt-get update && sudo apt-get install python3 python3-pip
 
    # CentOS/RHEL
    sudo yum install python3 python3-pip
@@ -77,6 +95,7 @@ For most users, simply run the setup script:
    ```bash
    cd /path/to/LGC2
    pre-commit install
+   pre-commit install --hook-type commit-msg
    ```
 
 ## Usage
@@ -103,6 +122,7 @@ pre-commit run --files source/LGC_Core/sources/main.cpp
 Run a specific hook:
 ```bash
 pre-commit run clang-format --all-files
+pre-commit run prevent-direct-branch-commit --all-files
 ```
 
 ### Skipping Hooks (Use Sparingly)
@@ -158,7 +178,7 @@ For CERN users, use your CERN email address.
 
 ### What If I Forget to Sign?
 
-If you commit without the `-s` flag, the pre-commit hook will **warn** you:
+If you commit without the `-s` flag, the shared `check-signoff` hook (commit-msg stage) will **warn** you:
 
 ```
 Warning: Commit message does not include a Signed-off-by line.
@@ -200,45 +220,51 @@ The Signed-off-by line is a lightweight way to certify that you wrote the code o
 
 ## Configured Hooks
 
-### Commit Message Verification
+Hooks below match [`.pre-commit-config.yaml`](./.pre-commit-config.yaml). Names and ownership follow the three categories above.
 
-- **check-signoff**: Verifies that commit messages include a `Signed-off-by` line
-  - This is a Developer Certificate of Origin (DCO) requirement
-  - Local hook: Warns but allows you to skip with `--no-verify`
-  - CI enforcement: Only checks on merge requests, not on development pushes
-  - All commits must be signed before creating a merge request
-  - Use `git commit -s` to add automatically
+### 1. Upstream hooks
 
-### Code Formatting
-
-- **clang-format**: Automatically formats C++ code according to `.clang-format` configuration
-  - Version pinned to v22.1.5 via `pre-commit/mirrors-clang-format` — no separate install needed
-  - **The version matters**: same `.clang-format` config produces different output across versions; v22.1.5 is the project standard
-  - IDE formatters (e.g. Visual Studio "Format Document") must also use v22.1.5 to avoid spurious diffs — see troubleshooting below
-  - Uses project-specific style (tabs, 170 char limit, etc.)
-  - Modifies files in-place
-- **ruff-check**: Lints Python code with [Ruff](https://docs.astral.sh/ruff/)
-  - Runs on committed `.py` files
-- **ruff-format**: Formats Python code with Ruff (Black-compatible style)
-  - Runs on committed `.py` files
-  - Modifies files in-place
-
-### General Checks
+From `pre-commit/pre-commit-hooks`:
 
 - **check-added-large-files**: Prevents files larger than 1MB from being committed
 - **check-case-conflict**: Prevents case-insensitive filename conflicts
 - **check-merge-conflict**: Detects unresolved merge conflict markers
-- **check-yaml**: Validates YAML syntax (e.g., `.gitlab-ci.yml`)
+- **check-yaml**: Validates YAML syntax (e.g., `.gitlab-ci.yml`; uses `--unsafe` for GitLab CI tags)
 - **check-json**: Validates JSON syntax
-- **end-of-file-fixer**: Ensures files end with a newline
-- **trailing-whitespace**: Removes trailing whitespace
+- **end-of-file-fixer**: Ensures files end with a newline (excludes `.txt` test outputs)
+- **trailing-whitespace**: Removes trailing whitespace (excludes `.txt` test outputs)
 - **mixed-line-ending**: Ensures consistent line endings (LF)
-- **check-utf8-encoding**: Ensures all text files use UTF-8 encoding (uses Python, works in CI)
 
-### Project-Specific Hooks
+From `astral-sh/ruff-pre-commit`:
 
-- **check-todos**: Reports TODO/FIXME comments (informational only)
-- **prevent-direct-master-commit**: Blocks direct commits to `master` or `appwidevs` branches
+- **ruff-check**: Lints Python code with [Ruff](https://docs.astral.sh/ruff/)
+- **ruff-format**: Formats Python code with Ruff (Black-compatible style); modifies files in-place
+
+### 2. Shared APC hooks (`apc/common/pre-commit-utils`)
+
+These are **not** local hooks. They are installed from the shared repo when you run `pre-commit install` / CI `pre-commit run`.
+
+- **check-utf8-encoding**: Ensures matched text files are valid UTF-8
+- **reuse-committed-files**: REUSE `lint-file` on each committed file
+  - `reuse[charset-normalizer]` is an **additional dependency of this hook** (managed by pre-commit). You do not need to `pip install reuse` yourself or in CI.
+- **check-todos**: Reports `TODO`/`FIXME` in staged files (informational; does not fail)
+- **prevent-direct-branch-commit**: Blocks commits on protected branches
+  - LGC2 configures: `args: [--branch, master, --branch, appwidevs]`
+  - (Renamed from the old local id `prevent-direct-master-commit`)
+- **check-signoff**: Requires a `Signed-off-by:` line (`commit-msg` stage)
+  - Needs `pre-commit install --hook-type commit-msg`
+  - Local: can skip with `--no-verify`
+  - CI: separate `check-signoff` job still enforces sign-off on merge requests
+
+### 3. LGC2-specific hooks
+
+- **clang-format**: Formats C/C++ using the project `.clang-format` (`-style=file`)
+  - Version pinned to v22.1.5 via `pre-commit/mirrors-clang-format` — no separate system install needed for the hook
+  - **The version matters**: same `.clang-format` config produces different output across versions; v22.1.5 is the project standard
+  - IDE formatters (e.g. Visual Studio "Format Document") must also use v22.1.5 to avoid spurious diffs — see troubleshooting below
+  - Modifies files in-place
+
+Optional project-only checks can be added later under `repo: local` in `.pre-commit-config.yaml`.
 
 ## CI/CD Integration
 
@@ -247,16 +273,18 @@ Pre-commit hooks and commit verification are automatically run in the GitLab CI 
 ### Pre-commit Job
 - **Trigger**: On all merge requests and branch pushes (except `master` and `appwidevs`)
 - **Stage**: `.pre` (runs before build stages)
-- **Image**: `python:3.11-slim` (clang-format v22.1.5 downloaded automatically by pre-commit)
+- **Image**: `python:3.11-slim`
+- **Install**: `pip install pre-commit` only — hook tools (Ruff, clang-format mirror, `reuse`, …) are installed into pre-commit’s own environments from each hook’s `repo` / `additional_dependencies`
 - **Scope**: Only checks files modified in the branch/MR (not entire codebase)
 - **Purpose**: Ensures new/modified code meets quality standards
+- **Note**: The job must be able to clone `apc/common/pre-commit-utils` (same GitLab group access as other APC common projects)
 
 ### Sign-off Check Job
 - **Trigger**: Only on merge requests (not on regular branch pushes)
 - **Stage**: `.pre` (runs before build stages)
 - **Image**: `alpine/git:latest`
 - **Purpose**: Verifies all commits in the merge request have `Signed-off-by` lines
-- **Note**: This only runs when you create a merge request, allowing unsigned commits on development branches
+- **Note**: This only runs when you create a merge request, allowing unsigned commits on development branches. It is independent of the shared `check-signoff` pre-commit hook.
 
 If either stage fails in CI, your merge request cannot be merged until the issues are resolved.
 
@@ -373,12 +401,12 @@ The binary reads `.clang-format` from the project root via the normal directory 
 
 ### Hooks are Modifying My Files
 
-**Expected behavior:** Some hooks (like `clang-format` and `trailing-whitespace`) automatically fix issues.
+**Expected behavior:** Some hooks (like `clang-format`, `ruff-format`, and `trailing-whitespace`) automatically fix issues.
 
 **What to do:**
 1. Review the changes: `git diff`
 2. If changes look good, stage them: `git add .`
-3. Commit again: `git commit`
+3. Commit again: `git commit -s`
 
 ### Hooks are Too Slow
 
@@ -433,6 +461,16 @@ The binary reads `.clang-format` from the project root via the normal directory 
    file -b --mime-encoding filename.cpp
    ```
 
+### Cannot clone `apc/common/pre-commit-utils`
+
+**Problem:** Local or CI `pre-commit` fails while fetching the shared hooks repo.
+
+**Cause:** Missing GitLab access to `apc/common/pre-commit-utils`, or an outdated pinned `rev`.
+
+**Solution:**
+- Confirm you (or the CI job token) can browse/clone that project
+- Update the `rev:` pin in `.pre-commit-config.yaml` to a known-good tag or commit from that repo
+
 ### False Positives
 
 If a hook incorrectly flags something:
@@ -444,7 +482,7 @@ If a hook incorrectly flags something:
 
 ### For Developers
 
-1. **Install hooks immediately** after cloning the repository
+1. **Install hooks immediately** after cloning the repository (`pre-commit` + `commit-msg`)
 2. **Always sign your commits** with `git commit -s` (REQUIRED)
    - Consider creating an alias: `git config --global alias.c 'commit -s'`
 3. **Run hooks before pushing** to catch issues early:
@@ -452,19 +490,21 @@ If a hook incorrectly flags something:
    pre-commit run --all-files
    ```
 4. **Don't skip hooks** unless absolutely necessary
-5. **Keep hooks updated**:
+5. **Keep hooks updated** carefully:
    ```bash
    pre-commit autoupdate
    ```
+   Prefer bumping shared APC hooks by changing the pinned `rev` of `pre-commit-utils` after reviewing that project's changelog/tags.
 6. **Review auto-fixes** before committing
 
 ### For the Project
 
 1. **Document hook changes** in commit messages
-2. **Test new hooks locally** before adding to `.pre-commit-config.yaml`
-3. **Keep hooks fast** - slow hooks reduce productivity
-4. **Be consistent** - ensure local hooks match CI hooks
-5. **Communicate changes** to the team when updating hook configuration
+2. **Prefer shared APC hooks** for policy that other projects need; keep LGC-only choices in category 3
+3. **Test new hooks locally** before adding to `.pre-commit-config.yaml`
+4. **Keep hooks fast** - slow hooks reduce productivity
+5. **Be consistent** - ensure local hooks match CI hooks
+6. **Communicate changes** to the team when updating hook configuration or the `pre-commit-utils` pin
 
 ### Creating Feature Branches
 
@@ -473,7 +513,7 @@ Always create a feature branch before making changes:
 git checkout -b sus-XXXX-feature-description
 ```
 
-The pre-commit hooks will prevent you from accidentally committing directly to `master` or `appwidevs`.
+The `prevent-direct-branch-commit` hook blocks accidental commits to `master` or `appwidevs`.
 
 **Remember to always sign your commits:**
 ```bash
@@ -493,12 +533,12 @@ When doing large-scale refactoring that affects many files:
 
 ## Updating Hooks
 
-To update all hooks to their latest versions:
+To update pinned revisions in `.pre-commit-config.yaml`:
 ```bash
 pre-commit autoupdate
 ```
 
-This updates the versions specified in `.pre-commit-config.yaml`.
+For shared APC hooks, prefer an explicit bump of the `apc/common/pre-commit-utils` `rev` (tag or SHA) after reviewing upstream changes.
 
 ## Customization
 
@@ -516,6 +556,9 @@ To modify hook behavior, edit `.pre-commit-config.yaml`. Common customizations:
 ```yaml
 - id: check-added-large-files
   args: ['--maxkb=2000']  # Increase file size limit
+
+- id: prevent-direct-branch-commit
+  args: [--branch, master, --branch, appwidevs]
 ```
 
 ### Disable a Hook
@@ -528,6 +571,7 @@ Comment it out in `.pre-commit-config.yaml`:
 ## Getting Help
 
 - Pre-commit documentation: https://pre-commit.com/
+- Shared APC hooks: https://gitlab.cern.ch/apc/common/pre-commit-utils
 - Report issues: Create a ticket in the [SUS Jira](https://its.cern.ch/jira/browse/SUS)
 - Ask the team: Contact other LGC2 developers
 
