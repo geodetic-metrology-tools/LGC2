@@ -78,10 +78,11 @@ void LGCAdjustablePoint::transformProvisionalCoordinates(const TLGCData *fData)
 			TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
 			if (globalRef == TRefSystemFactory::ERefFrame::kLambert93_ign69)
 			{
-				TAReferenceFrame *RGF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kRGF93));
+				//TAReferenceFrame *RGF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kRGF93));
+				TAReferenceFrame *CCS(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kCCS));
 				TAReferenceFrame *LAMBERT93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(globalRef));
 				TSpatialPosition provisionalSP(LAMBERT93, fProvisionalValue);
-				provisionalSP.transform(RGF93);
+				provisionalSP.transform(CCS);
 
 				fProvisionalValueInRoot = provisionalSP.getCoordinates(TCoordSysFactory::k3DCartesian);
 				fProvisionalValue = provisionalSP.getCoordinates(TCoordSysFactory::k3DCartesian);
@@ -178,15 +179,16 @@ void LGCAdjustablePoint::transformEstimatedCoordinates(const TLGCData *fData)
 		TRefSystemFactory::ERefFrame globalRef = fData->getConfig().referential;
 		if (globalRef == TRefSystemFactory::ERefFrame::kLambert93_ign69)
 		{
-			TAReferenceFrame *RGF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kRGF93));
-			TAReferenceFrame *LAMBERT93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(globalRef));
-			TSpatialPosition provisionalSP(RGF93, fProvisionalValueInRoot);
-			TSpatialPosition estimatedSP(RGF93, fEstimatedValueInRoot);
-			provisionalSP.transform(LAMBERT93);
-			estimatedSP.transform(LAMBERT93);
-
-			fEstimatedValueInRoot = estimatedSP.getCoordinates(TCoordSysFactory::k2DPlusH);
-			fProvisionalValueInRoot = provisionalSP.getCoordinates(TCoordSysFactory::k2DPlusH);
+			//TAReferenceFrame *RGF93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kRGF93));
+			////TAReferenceFrame *LAMBERT93(TRefSystemFactory::getRefSystemFactory()->getRefFrame(globalRef));
+			//TAReferenceFrame *CCS(TRefSystemFactory::getRefSystemFactory()->getRefFrame(TRefSystemFactory::kCCS));
+			//TSpatialPosition provisionalSP(RGF93, fProvisionalValueInRoot);
+			//TSpatialPosition estimatedSP(RGF93, fEstimatedValueInRoot);
+			//provisionalSP.transform(CCS);
+			//estimatedSP.transform(CCS);
+			//
+			//fEstimatedValueInRoot = estimatedSP.getCoordinates(TCoordSysFactory::k3DCartesian);
+			//fProvisionalValueInRoot = provisionalSP.getCoordinates(TCoordSysFactory::k3DCartesian);
 		}
 	}
 	else

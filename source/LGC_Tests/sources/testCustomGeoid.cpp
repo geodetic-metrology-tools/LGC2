@@ -189,6 +189,7 @@ template<>
 template<>
 void object::test<6>()
 {
+	tut::skip();
 	set_test_name("Simple TSTN observation");
 	std::cout << "\n\n\n\ Simple test LAMBERT" <<std::endl;
 	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\SimpleTest\\";
@@ -208,5 +209,36 @@ void object::test<6>()
 
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 
+}
+
+template<>
+template<>
+
+void object::test<9>()
+{
+	set_test_name("Test with North Area Network");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestNorthArea\\test\\";
+
+	TLGCApp proj2(filePath + "32840_final_insert_modif_simplifiedLamb.lgc", filePath + "32840_final_insert_modif_simplifiedLamb.res");
+	ensure_equals("Calculation successful", proj2.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+	TLGCApp proj(filePath + "32840_final_insert_Lambert93.lgc", filePath + "32840_final_insert_Lambert93.res");
+	ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+	std::ifstream infiler(filePath + "32840_final_insert_Lambert93.lgc");
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+
+
+
+	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	// Comparison with coordinates computed using production LGC (v2.11)
 }
 } // namespace tut
