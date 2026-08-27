@@ -99,6 +99,7 @@ Behavior TLSAlgorithm::iterate2Solution(TLGCData &data, TLSInputMatricesFiller *
 			return Behavior(Behavior::BehaviorCode::ERR_inputData, L"Matrices filling was not successful.\n");
 		}
 		fNumberOfIterations++;
+		std::cout << "iter n° " << fNumberOfIterations << std::endl;
 	}
 
 	// Checks if maximal number of iteration steps has been reached without satisfying the converging criteria
