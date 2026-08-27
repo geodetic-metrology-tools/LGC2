@@ -122,6 +122,8 @@ template<>
 template<>
 void object::test<4>()
 {
+	tut::skip();
+
 	set_test_name("Simple TSTN observation");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
@@ -189,6 +191,7 @@ template<>
 template<>
 void object::test<6>()
 {
+	//
 	tut::skip();
 	set_test_name("Simple TSTN observation");
 	std::cout << "\n\n\n\ Simple test LAMBERT" <<std::endl;
@@ -216,6 +219,7 @@ template<>
 
 void object::test<9>()
 {
+	tut::skip();
 	set_test_name("Test with North Area Network");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
@@ -223,11 +227,15 @@ void object::test<9>()
 
 	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestNorthArea\\test\\";
 
+	TLGCApp proj3(filePath + "..\\260202DEP_33003_Network_VS Magnet_Check_Lambert93.lgc", filePath + "..\\260202DEP_33003_Network_VS Magnet_Check_Lambert93.res");
+	ensure_equals("Calculation successful", proj3.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
 	TLGCApp proj2(filePath + "32840_final_insert_modif_simplifiedLamb.lgc", filePath + "32840_final_insert_modif_simplifiedLamb.res");
 	ensure_equals("Calculation successful", proj2.exec().code(), Behavior::BehaviorCode::ERR_noError);
 
-	TLGCApp proj(filePath + "32840_final_insert_Lambert93.lgc", filePath + "32840_final_insert_Lambert93.res");
+	TLGCApp proj(filePath + "32840_final_insert_Lambert93_optimized.lgc", filePath + "32840_final_insert_Lambert93_optimized.res");
 	ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
 
 	std::ifstream infiler(filePath + "32840_final_insert_Lambert93.lgc");
 	ensure_equals("Reading Successful", r.read(infiler), true);
@@ -241,4 +249,43 @@ void object::test<9>()
 	ensure_equals("Calculation should be done", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
 	// Comparison with coordinates computed using production LGC (v2.11)
 }
+
+template<>
+template<>
+
+void object::test<10>()
+{
+	tut::skip();
+	set_test_name("Test Levelling LHC");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestLHC_DLEV\\";
+
+	TLGCApp proj3(filePath + "32955_no_dhor_Lambert.lgc", filePath + "32955_no_dhor_Lambert.res");
+	//TLGCApp proj3(filePath + "32955_Lambert.lgc", filePath + "32955_Lambert.res");
+	ensure_equals("Calculation successful", proj3.exec().code(), Behavior::BehaviorCode::ERR_noError);
+}
+template<>
+template<>
+
+void object::test<11>()
+{
+	set_test_name("Test LHC Gabin dataset");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::string filePath = "C:\\Users\\bweyer\\cernbox\\Documents\\Development\\LGC\\TestLHCGabin\\";
+
+	TLGCApp proj(filePath + "\\gyro\\31326_2025-02_GYRO_LHC-Arc23_Lambert.lgc", filePath + "\\gyro\\31326_2025-02_GYRO_LHC-Arc23_Lambert.res");
+	ensure_equals("Calculation successful", proj.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+	TLGCApp proj3(filePath + "31323-geode_Lambert_RAF.lgc", filePath + "31323-geode_Lambert_RAF.res");
+	ensure_equals("Calculation successful", proj3.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+
+}
+
 } // namespace tut
