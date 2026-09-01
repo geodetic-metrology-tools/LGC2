@@ -6,17 +6,25 @@ This project, **LGC**, includes third-party software components with their own l
 
 ## LGC License
 
-- **Software License:** GNU General Public License v3.0 or later (GPL-3.0-or-later)  
+- **Software License:** GNU General Public License v3.0 or later (GPL-3.0-or-later)
   See [LICENSE](./LICENSE) for full terms.
-- **Documentation and Non-Code Assets:** Creative Commons Attribution 4.0 International (CC-BY-4.0)  
+- **Documentation and Non-Code Assets:** Creative Commons Attribution 4.0 International (CC-BY-4.0)
   See [LICENSES/CC-BY-4.0.txt](./LICENSES/CC-BY-4.0.txt).
 
-The project follows the [REUSE Specification](https://reuse.software/) to ensure clear and consistent attribution and license documentation.  
+The project follows the [REUSE Specification](https://reuse.software/) to ensure clear and consistent attribution and license documentation.
 All source and data files include SPDX headers or are declared in [`REUSE.toml`](./REUSE.toml).
 
 ---
 
 ## Third-Party Components
+
+Machine-readable dependency inventory for SBOM generation:
+[`dependency.csv`](./dependency.csv) (single source of truth).
+CI builds a Syft SBOM and augments it from that file via
+`scripts/generate-declared-sbom.py`.
+
+When you add a dependency, add a row to `dependency.csv` and document it below
+for human/legal attribution:
 
 ### Eigen
 - License: MPL-2.0
@@ -24,10 +32,10 @@ All source and data files include SPDX headers or are declared in [`REUSE.toml`]
 
 ### TUT
 - License: BSD 2-Clause "Simplified" License
-- Source: https://github.com/martinmoene/tut
+- Source: https://github.com/mrzechonek/tut-framework
 
 ### tree.hh
-- License: GNU General Public License v3.0
+- License: GNU General Public License v3.0 only (GPL-3.0-only)
 - Source: https://github.com/kpeeters/tree.hh
 
 ### SurveyLib
@@ -35,7 +43,7 @@ All source and data files include SPDX headers or are declared in [`REUSE.toml`]
 - Source: https://gitlab.cern.ch/apc/susofts/libraries/SurveyLib
 - Note: SurveyLib itself bundles additional third-party components under their own licenses.
   See SurveyLib’s NOTICE.md for details.
-  
+
 ### SUSoftCMakeCommon
 - License: GNU General Public License v3.0 or later
 - Source: https://gitlab.cern.ch/apc/susofts/shared/SUSoftCMakeCommon
