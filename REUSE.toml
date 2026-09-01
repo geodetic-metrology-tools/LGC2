@@ -16,6 +16,7 @@ path = [
 	"DCO.txt",
 	"LGC.ico",
     "**/*.tex",
+	"dependency.csv",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "CERN"
