@@ -9,6 +9,11 @@
 #include <TReader.h>
 
 #include "TLGCCalculation.h"
+#if USE_SERIALIZER
+#	include <Serializer_json.hpp>
+#	include <TLGCStatistic.h>
+#endif
+#include "testStatistics.h"
 
 namespace tut
 {
@@ -25,12 +30,12 @@ T1  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0
 STN 100 100 0
 REF  0 0 0
 *POIN
-PT  100 1000.5 50  
+PT  100 1000.5 50
 *TSTN STN TS1 IHFIX
 *V0 ACST 200.0
 *PLR3D
-REF  50 100  141.421356237 
-PT  100 100 100 
+REF  50 100  141.421356237
+PT  100 100 100
 *END
 )";
 };
@@ -107,5 +112,41 @@ void object::test<3>()
 	Behavior succesCalc = calcul.computeResults(fileWriter);
 	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
 }
+
+#if USE_SERIALIZER
+template<>
+template<>
+void object::test<4>()
+{
+	set_test_name("Testing JSON output includes FAUT data when *FAUT is active");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/JSON_FAUT.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::string input(Statistics::alpha_beta_default);
+	const std::string marker = "*APRI";
+	const auto pos = input.find(marker);
+	input.insert(pos, "*JSON\n");
+	std::stringstream infiler(input);
+
+	bool succesReading = reader.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	ensure_equals("FAUT check activation successful", projTest->getConfig().faut.isActive(), true);
+	ensure_equals("JSON check activation successful", projTest->getConfig().writeJSON.isActive(), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	JSONObjectSerializer obj;
+	obj.addProperty("FAUT", TLGCFautJsonData(calcul.getData()));
+	const std::string json = obj.getStringRepresentation();
+
+	ensure("JSON contains overall network reliability factor", json.find("overallNetworkReliabilityFactor") != std::string::npos);
+	ensure("JSON contains normalized residuals", json.find("normalizedResiduals") != std::string::npos);
+	ensure("JSON contains smallest detectable fault values", json.find("smallestDetectableFault") != std::string::npos);
+	ensure("JSON contains sigma zero a posteriori", json.find("sigmaZeroAposteriori") != std::string::npos);
+}
+#endif // USE_SERIALIZER
 
 }; // namespace tut

@@ -20,6 +20,10 @@
 #include "TLSResultsMatrices.h"
 #include "TStreamFormatterFactory.h"
 
+#if USE_SERIALIZER
+#	include <TLGCStatistic.h>
+#endif // USE_SERIALIZER
+
 class TLGCData;
 class TLGCCalculation;
 

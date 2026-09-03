@@ -377,6 +377,8 @@ void TLGCApp::writeJsonFiles(TLGCData const *const dat, const std::string &outpu
 		obj.addProperty("startProcessingTimestamp", startProcessingTimestampISO);
 		obj.addProperty("processingElapsedSeconds", processingElapsedSeconds);
 		obj.addProperty("LGC_DATA", dat);
+		if (dat->getConfig().faut.isActive())
+			obj.addProperty("FAUT", TLGCFautJsonData(*dat));
 		if (dat->getConfig().writeJSON_COVAR.isActive())
 			obj.addProperty("ResultsMatrices", fResMtrx);
 
