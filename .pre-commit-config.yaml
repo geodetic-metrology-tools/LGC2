@@ -46,7 +46,7 @@ repos:
   # ---------------------------------------------------------------------------
 
   - repo: https://gitlab.cern.ch/apc/common/pre-commit-utils
-    rev: 2a2897b3d7f1eac7d0c187fb289dee9d09b568bf
+    rev: v0.1.0
     hooks:
       - id: check-utf8-encoding
         exclude: 'test_files/.*\.txt$'
