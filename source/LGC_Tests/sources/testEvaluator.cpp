@@ -75,5 +75,36 @@ void object::test<2>()
 	ensure("LGC solution and regularized Gauss Newton solution should be equal.", (lgcSol - result.sol).norm() < 1e-8);
 
 }
+template<>
+template<>
+void object::test<3>()
+{
+	set_test_name("Testing Evaluator over every adjustable object type");
+	// Evaluator::allAdjustableTypes carries at least one free parameter of every adjustable
+	// object type, see the comments inside the input itself.
+	std::stringstream infiler(Evaluator::allAdjustableTypes);
+
+	TLSEvaluator myEvaluator(infiler);
+	const TLGCData &data = myEvaluator.getData();
+
+	// Guard the coverage of the test: without a free parameter of a given type the round
+	// trip below would silently stop testing that type.
+	ensure("Test must hold a free point.", data.getPoints().numUnknowns() > 0);
+	ensure("Test must hold a free angle.", data.getAngles().numUnknowns() > 0);
+	ensure("Test must hold a free length.", data.getLength().numUnknowns() > 0);
+	ensure("Test must hold a free plane.", data.getPlanes().numUnknowns() > 0);
+	ensure("Test must hold a free sag element.", data.getSags().numUnknowns() > 0);
+	int frameUnknowns = 0;
+	for (auto it(data.getTree().begin()); it != data.getTree().end(); ++it)
+	{
+		const auto &trafo(it.node->data.get()->frame);
+		if (!trafo.isFixed())
+			frameUnknowns += trafo.getNumUnkn();
+	}
+	ensure_equals("Test must hold a frame with all 7 helmert parameters free.", frameUnknowns, 7);
+
+	// Every unknown index must survive setParameters() followed by getEstParams().
+	ensure_equals("Problem with setter/getter of evaluator object.", myEvaluator.testParameterSetAndGet(), true);
+}
 
 }; // namespace tut
