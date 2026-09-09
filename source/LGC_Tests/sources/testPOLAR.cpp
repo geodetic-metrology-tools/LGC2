@@ -169,4 +169,25 @@ void object::test<8>()
 	// Data is consistent up to the 6-decimal rounding of the observations.
 	ensure_equals("Sigma0 a posteriori small (consistent data)", projTest->getS0APosteriori(), 0.0, 5e-2);
 }
+
+template<>
+template<>
+void object::test<9>()
+{
+	set_test_name("Instrument height estimated from PLR3D");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/POLAR_InstrHeight.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestPOLAR::POLAR_INSTRUMENT_HEIGHT);
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	auto stnIt = projTest->getTree().begin().node->data->measurements.fTSTN.begin();
+	ensure_equals("Instrument height", stnIt->get()->instrumentHeightAdjustable->getEstimatedValue().getMetresValue(), 1.0, 1e-9);
+}
 } // namespace tut

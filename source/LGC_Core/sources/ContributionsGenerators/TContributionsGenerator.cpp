@@ -527,8 +527,10 @@ PLR3DContrib TContributionsGenerator::getPolar3DContrib(std::shared_ptr<TTSTN> s
 	contrib.fStTransformContrib = stationTransfContributions;
 
 	// instrument height and target height contribution
-	contrib.fInstrHeightContrib = dFdPosA.col(2); // = dFdPosA* [0,0,1]^T
-	contrib.fTargetHeightContrib = -contrib.fInstrHeightContrib;
+	// relPos.z carries (prismHeight - instrHeight), so the instrument height contribution has the
+	// sign of the station coordinates and the target height contribution that of the target ones
+	contrib.fTargetHeightContrib = dFdPosA.col(2); // = dFdPosA* [0,0,1]^T
+	contrib.fInstrHeightContrib = -contrib.fTargetHeightContrib;
 
 	// Rx Ry V0 contribs
 	// derivatives of the rotation matrix

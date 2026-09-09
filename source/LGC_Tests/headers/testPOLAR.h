@@ -319,5 +319,23 @@ TA1  1.732051     TH 0.000000
 *END
 )";
 
+char const *const POLAR_INSTRUMENT_HEIGHT = R"(*TITR
+PLR3D instrument height
+*OLOC
+*PREC 7
+*INSTR
+*POLAR TS1 T1 0.0 0 0 0
+T1 10 10 0.1 0 0 0 0 0 0 0
+*CALA
+STN 0 0 0
+P1 1 0 0
+% observed from an instrument centre 1 m above STN: 100 gon, 150 gon, sqrt(2)
+*TSTN STN TS1 TRGT T1
+*V0
+*PLR3D
+P1 100.0 150.0 1.4142135623730951
+*END
+)";
+
 } // namespace TestPOLAR
 #endif //_LGC_TESTS_POLAR_H
