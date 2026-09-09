@@ -191,4 +191,25 @@ void object::test<9>()
 	for (const std::string &name : {"P1", "P10", "P100"})
 		ensure_equals("Sigma Z of " + name + " [mm]", projTest->getPoints().getObject(name).getZEstPrecision().getMMetresValue(), 5.0, 1e-3);
 }
+
+template<>
+template<>
+void object::test<10>()
+{
+	set_test_name("Instrument height estimated from PLR3D");
+
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/POLAR_InstrHeight.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(TestPOLAR::POLAR_INSTRUMENT_HEIGHT);
+	ensure_equals("Reading Successful", r.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior successCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", successCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	auto stnIt = projTest->getTree().begin().node->data->measurements.fTSTN.begin();
+	ensure_equals("Instrument height", stnIt->get()->instrumentHeightAdjustable->getEstimatedValue().getMetresValue(), 1.0, 1e-9);
+}
 } // namespace tut

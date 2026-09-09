@@ -319,7 +319,6 @@ struct PLR3DContrib
 	TransformationContrib3DVector fTgTransformContrib;
 
 	Eigen::Vector3d fInstrHeightContrib; //!< Instrument (station) height contribution for the First, Second and Third equation respectively.
-	Eigen::Vector3d fTargetHeightContrib; //!< Target height contribution for the First, Second and Third equation respectively.
 	Eigen::Vector3d fV0Contrib; //!< V0 contribution for the First, Second and Third equation respectively.
 	Eigen::Vector3d fThetaContrib; //!< Theta contribution for the First, Second and Third equation respectively.
 	Eigen::Vector3d fPhiContrib; //!< Phi contribution for the First, Second and Third equation respectively.
