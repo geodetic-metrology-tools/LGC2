@@ -29,6 +29,20 @@ inline std::string stripQuotesFromEOLComment(std::string comment)
 
 /*!
 	\ingroup InputFileReader
+	\brief If the last token is an end-of-line comment ($ or %), store it (quotes stripped).
+*/
+inline void assignEOLCommentFromTokens(std::string &eolcomment, const std::vector<std::string> &tokens)
+{
+	if (tokens.empty())
+		return;
+
+	const char fOfLastToken = tokens.back().at(0);
+	if (fOfLastToken == '$' || fOfLastToken == '%')
+		eolcomment = stripQuotesFromEOLComment(tokens.back());
+}
+
+/*!
+	\ingroup InputFileReader
 	\brief Abstract class for all the keywords.
 */
 class TAKeyWord

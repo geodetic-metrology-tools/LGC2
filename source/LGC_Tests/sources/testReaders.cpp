@@ -659,7 +659,7 @@ void object::test<6>()
 	TKeyDLEV dlev(proj);
 
 	dlev.parse(tokenizefileString("*DLEV LI1 RefPt P2"), true, -1);
-	dlev.parse(tokenizefileString("P1 5 DHOR 1.0 TRGT ST2 OBSE 0.1 PPM 0.01 TH 1.0 THSE 0.1 DSE 0.1 ID LevelObs1"), true, -1);
+	dlev.parse(tokenizefileString("P1 5 DHOR 1.0 TRGT ST2 OBSE 0.1 PPM 0.01 TH 1.0 THSE 0.1 DSE 0.1 ID LevelObs1 $1424171 - \"TSU: 'Good 2F'\""), true, -1);
 	dlev.parse(tokenizefileString("P3 6"), true, -1);
 
 	const auto &levelRound(proj.getCurrentNode().measurements.fLEVEL.back());
@@ -674,6 +674,7 @@ void object::test<6>()
 	ensure_equals("Target for this observation", firstDLEVMeasurement.target.ID, "ST2");
 	ensure_equals("Target's ppm value should be overidden", firstDLEVMeasurement.target.ppmD, 0.01 * MM2M);
 	ensure_equals("Observation ID should match", firstDLEVMeasurement.obsID, "LevelObs1");
+	ensure_equals("EOL comment stored on DLEV measurement", firstDLEVMeasurement.eolcomment, "$1424171 - TSU: 'Good 2F'");
 
 	auto &firstDLEVMeasurement2(*(std::next(levelRound.measDLEV.begin(), 1)));
 	ensure_equals("Name of the target position should match", firstDLEVMeasurement2.targetPos->getName(), "P3");
