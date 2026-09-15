@@ -360,10 +360,7 @@ void TAPointKey::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		pt.updateFixedState(fixedStates[0], fixedStates[1], fixedStates[2]);
 	}
 
-	// If last token starts with a comment chararcter, store it
-	const char fOfLastToken = tokens.back().at(0);
-	if (fOfLastToken == '$' || fOfLastToken == '%')
-		pt.eolcomment = stripQuotesFromEOLComment(tokens.back());
+	assignEOLCommentFromTokens(pt.eolcomment, tokens);
 
 	// remove the newline of the last comment line
 	auto lastchar(hdrcomment.length() - 1);
