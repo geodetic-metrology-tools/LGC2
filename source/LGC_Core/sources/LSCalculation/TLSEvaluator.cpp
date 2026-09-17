@@ -5,15 +5,15 @@
 #include <Eigen/Dense>
 
 #include <Logger.hpp>
+#include <TLSAlgorithm.h>
 #include <TLSEvaluator.h>
+#include <TReader.h>
 
 #include "TAdjustableHelmertTransformation.h"
+#include "TDataAnalyzer.h"
 #include "TLSConsistencyCheck.h"
 #include "TLSInputMatricesFiller.h"
 #include "TLSUniversalMtdComputer.h"
-#include <TLSAlgorithm.h>
-#include <TReader.h>
-#include "TDataAnalyzer.h"
 
 template<typename AdjustableObject>
 void setAdjObjFromParamForCollection(LGCAdjustableObjectCollection<AdjustableObject> &collection, const Eigen::VectorXd &para)
@@ -105,13 +105,14 @@ Eigen::VectorXd TLSEvaluator::getEstParams() const
 	fillParamForCollection(fData->getPlanes(), result);
 	fillParamForCollection(fData->getLength(), result);
 	fillParamForCollection(fData->getLines(), result);
+	fillParamForCollection(fData->getSags(), result);
 	// frames are not organized in adjustable object collection
 	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
 	{
 		const auto &trafo(it.node->data.get()->frame);
 		fillParam(trafo, result);
 	}
-	
+
 	return result;
 }
 
@@ -160,7 +161,7 @@ Eigen::MatrixXd TLSEvaluator::getFiniteDifferenceA(double finiteDiffEpsilon)
 	Eigen::VectorXd testPar = basePar;
 	Eigen::VectorXd jacobianCol = Eigen::VectorXd::Zero(fData->fUEOIndices.EIndex);
 	// the result will be written in a dense matrix object
-	Eigen::MatrixXd finiteDiffJacobian = Eigen::MatrixXd::Zero(fData->fUEOIndices.EIndex,fData->fUEOIndices.UIndex);
+	Eigen::MatrixXd finiteDiffJacobian = Eigen::MatrixXd::Zero(fData->fUEOIndices.EIndex, fData->fUEOIndices.UIndex);
 	for (int j = 0; j < fData->fUEOIndices.UIndex; j++)
 	{
 		testPar = basePar;
@@ -171,7 +172,7 @@ Eigen::MatrixXd TLSEvaluator::getFiniteDifferenceA(double finiteDiffEpsilon)
 		jacobianCol = (testEval - baseEval) / finiteDiffEpsilon;
 		finiteDiffJacobian.col(j) = jacobianCol;
 	}
-	return finiteDiffJacobian;	
+	return finiteDiffJacobian;
 }
 
 bool TLSEvaluator::tryLGCSolve(TVector &solution)
@@ -207,6 +208,7 @@ void TLSEvaluator::setParameters(const Eigen::VectorXd &para)
 	setAdjObjFromParamForCollection(fData->getPlanes(), para);
 	setAdjObjFromParamForCollection(fData->getLength(), para);
 	setAdjObjFromParamForCollection(fData->getLines(), para);
+	setAdjObjFromParamForCollection(fData->getSags(), para);
 	// frames are not organized in adjustable object collection
 	for (auto it(fData->getTree().begin()); it != fData->getTree().end(); ++it)
 	{
