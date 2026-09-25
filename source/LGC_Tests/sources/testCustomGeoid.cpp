@@ -219,7 +219,6 @@ template<>
 
 void object::test<9>()
 {
-	tut::skip();
 	set_test_name("Test with North Area Network");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
@@ -272,6 +271,7 @@ template<>
 
 void object::test<11>()
 {
+	//tut::skip();
 	set_test_name("Test LHC Gabin dataset");
 
 	projTest->getFileLogger().setOutputfileLocation("C:/Temp/readCustomGeoid.txt");
