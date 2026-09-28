@@ -806,14 +806,15 @@ void object::test<7>()
 	TKeyCALA calaSt(proj);
 	calaSt.parse(tokenizefileString("EolSt 0 0 0"), true, -1);
 
-	// TSTN ROM measurements (reuse station/instruments from earlier tests)
+	// TSTN ROM measurements (reuse TS1 from test<5>)
 	TKeyTSTN tstn(proj);
-	tstn.parse(tokenizefileString("*TSTN EolSt P1 TS1"), true, -1);
+	tstn.parse(tokenizefileString("*TSTN EolSt TS1"), true, -1);
 	TKeyV0 v0(proj);
 	v0.parse(tokenizefileString("*V0"), true, -1);
 	auto &rom = proj.getCurrentNode().measurements.fTSTN.back()->roms.back();
 
 	TKeyPLR3D plr(proj);
+	plr.parse(tokenizefileString("*PLR3D"), true, -1);
 	plr.parse(tokenizefileString("P2 1 2 3" + eol), true, -1);
 	ensureEol("PLR3D EOL", rom->measPLR3D.back().eolcomment);
 
