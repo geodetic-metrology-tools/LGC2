@@ -797,8 +797,6 @@ void object::test<7>()
 	auto ensureEol = [&](const std::string &label, const std::string &actual) { ensure_equals(label, actual, kExp); };
 
 	// Point (VXY) — uses assignEOLCommentFromTokens via AdjObjectsReader
-	TKeyCALA calaPt(proj);
-	calaPt.parse(tokenizefileString("EolPt 0 0 0"), true, -1);
 	TKeyVXY vxyPt(proj);
 	vxyPt.parse(tokenizefileString("EolPt 1 0 0" + eol), true, -1);
 	ensureEol("Point VXY EOL", proj.getPoints().getObject("EolPt").eolcomment);
