@@ -888,7 +888,7 @@ void object::test<7>()
 	// Camera measurements
 	TKeyCAMD camd(proj);
 	camd.parse(tokenizefileString("*CAMD BC1 T1 0.0"), true, -1);
-	camd.parse(tokenizefileString("T1 1 0 0 1 1"), true, -1);
+	camd.parse(tokenizefileString("T1 5 5 0.5 0.5"), true, -1);
 	TKeyCAM cam(proj);
 	cam.parse(tokenizefileString("*CAM P1 BC1"), true, -1);
 
