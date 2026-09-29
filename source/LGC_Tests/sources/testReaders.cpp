@@ -659,7 +659,7 @@ void object::test<6>()
 	TKeyDLEV dlev(proj);
 
 	dlev.parse(tokenizefileString("*DLEV LI1 RefPt P2"), true, -1);
-	dlev.parse(tokenizefileString("P1 5 DHOR 1.0 TRGT ST2 OBSE 0.1 PPM 0.01 TH 1.0 THSE 0.1 DSE 0.1 ID LevelObs1"), true, -1);
+	dlev.parse(tokenizefileString("P1 5 DHOR 1.0 TRGT ST2 OBSE 0.1 PPM 0.01 TH 1.0 THSE 0.1 DSE 0.1 ID LevelObs1 $1424171 - \"TSU: 'Good 2F'\""), true, -1);
 	dlev.parse(tokenizefileString("P3 6"), true, -1);
 
 	const auto &levelRound(proj.getCurrentNode().measurements.fLEVEL.back());
@@ -674,6 +674,7 @@ void object::test<6>()
 	ensure_equals("Target for this observation", firstDLEVMeasurement.target.ID, "ST2");
 	ensure_equals("Target's ppm value should be overidden", firstDLEVMeasurement.target.ppmD, 0.01 * MM2M);
 	ensure_equals("Observation ID should match", firstDLEVMeasurement.obsID, "LevelObs1");
+	ensure_equals("EOL comment stored on DLEV measurement", firstDLEVMeasurement.eolcomment, "$1424171 - TSU: 'Good 2F'");
 
 	auto &firstDLEVMeasurement2(*(std::next(levelRound.measDLEV.begin(), 1)));
 	ensure_equals("Name of the target position should match", firstDLEVMeasurement2.targetPos->getName(), "P3");
@@ -781,6 +782,165 @@ void object::test<6>()
 	ensure_equals("SY should match", obsXYZM.getYObservedStDev().getMMetresValue(), 0.5);
 	ensure_equals("SZ should match", obsXYZM.getZObservedStDev().getMMetresValue(), 0.8);
 	ensure_equals("Observation ID should match", obsXYZM.obsID, "3Dobs1");
+}
+
+template<>
+template<>
+void object::test<7>()
+{
+	set_test_name("LGC2 end-of-line comments on all observation types");
+	using namespace LGC;
+
+	const std::string kExp = "$db $note x";
+	const std::string eol = " $db $note \"x\"";
+
+	auto ensureEol = [&](const std::string &label, const std::string &actual) { ensure_equals(label, actual, kExp); };
+
+	// Point (VXY) — uses assignEOLCommentFromTokens via AdjObjectsReader
+	TKeyVXY vxyPt(proj);
+	vxyPt.parse(tokenizefileString("EolPt 1 0 0" + eol), true, -1);
+	ensureEol("Point VXY EOL", proj.getPoints().getObject("EolPt").eolcomment);
+
+	TKeyCALA calaSt(proj);
+	calaSt.parse(tokenizefileString("EolSt 0 0 0"), true, -1);
+
+	// TSTN ROM measurements (reuse TS1 from test<5>)
+	TKeyTSTN tstn(proj);
+	tstn.parse(tokenizefileString("*TSTN EolSt TS1"), true, -1);
+	TKeyV0 v0(proj);
+	v0.parse(tokenizefileString("*V0"), true, -1);
+	auto &rom = proj.getCurrentNode().measurements.fTSTN.back()->roms.back();
+
+	TKeyPLR3D plr(proj);
+	plr.parse(tokenizefileString("*PLR3D"), true, -1);
+	plr.parse(tokenizefileString("P2 1 2 3" + eol), true, -1);
+	ensureEol("PLR3D EOL", rom->measPLR3D.back().eolcomment);
+
+	TKeyZEND zend(proj);
+	zend.parse(tokenizefileString("*ZEND"), true, -1);
+	zend.parse(tokenizefileString("P2 22" + eol), true, -1);
+	ensureEol("ZEND EOL", rom->measZEND.back().eolcomment);
+
+	TKeyDIST dist(proj);
+	dist.parse(tokenizefileString("*DIST"), true, -1);
+	dist.parse(tokenizefileString("P2 40" + eol), true, -1);
+	ensureEol("DIST EOL", rom->measDIST.back().eolcomment);
+
+	TKeyECTH ecth(proj);
+	ecth.parse(tokenizefileString("*ECTH 1 SC1"), true, -1);
+	ecth.parse(tokenizefileString("P2 1.1" + eol), true, -1);
+	ensureEol("ECTH EOL", rom->measECTH.back().eolcomment);
+
+	TKeyECDIR ecdir(proj);
+	ecdir.parse(tokenizefileString("*ECDIR 1 2 SC1"), true, -1);
+	ecdir.parse(tokenizefileString("P2 1.1" + eol), true, -1);
+	ensureEol("ECDIR EOL", rom->measECDIR.back().eolcomment);
+
+	TKeyDHOR dhor(proj);
+	dhor.parse(tokenizefileString("*DHOR"), true, -1);
+	dhor.parse(tokenizefileString("P2 50" + eol), true, -1);
+	ensureEol("DHOR EOL", rom->measDHOR.back().eolcomment);
+
+	// ANGL already covered in test<6>
+
+	TKeyDSPT dspt(proj);
+	dspt.parse(tokenizefileString("*DSPT P1 DM1"), true, -1);
+	dspt.parse(tokenizefileString("P2 63" + eol), true, -1);
+	ensureEol("DSPT EOL", proj.getCurrentNode().measurements.fEDM.back().measDSPT.back().eolcomment);
+
+	TKeyDVER dver(proj);
+	dver.parse(tokenizefileString("*DVER"), true, -1);
+	dver.parse(tokenizefileString("P2 P3 2.0" + eol), true, -1);
+	ensureEol("DVER EOL", proj.getCurrentNode().measurements.fDVER.back().eolcomment);
+
+	// DLEV already covered in test<6>
+
+	TKeyECHO echo(proj);
+	echo.parse(tokenizefileString("*ECHO SC1"), true, -1);
+	echo.parse(tokenizefileString("P2 1.0" + eol), true, -1);
+	ensureEol("ECHO EOL", proj.getCurrentNode().measurements.fECHO.back().measECHO.back().eolcomment);
+
+	TKeyECVE ecve(proj);
+	ecve.parse(tokenizefileString("*ECVE SC1 PtLine P2"), true, -1);
+	ecve.parse(tokenizefileString("P2 1.1" + eol), true, -1);
+	ensureEol("ECVE EOL", proj.getCurrentNode().measurements.fECVE.back().measECVE.back().eolcomment);
+
+	TKeyECSP ecsp(proj);
+	ecsp.parse(tokenizefileString("*ECSP A B SC1"), true, -1);
+	ecsp.parse(tokenizefileString("P2 1.1" + eol), true, -1);
+	ensureEol("ECSP EOL", proj.getCurrentNode().measurements.fECSP.back().measECSP.back().eolcomment);
+
+	TKeyORIE orie(proj);
+	orie.parse(tokenizefileString("*ORIE EolSt TS1"), true, -1);
+	orie.parse(tokenizefileString("P2 100" + eol), true, -1);
+	ensureEol("ORIE EOL", proj.getCurrentNode().measurements.fORIE.back().measORIE.back().eolcomment);
+
+	TKeyRADI radi(proj);
+	radi.parse(tokenizefileString("*RADI 1"), true, -1);
+	radi.parse(tokenizefileString("P1 100" + eol), true, -1);
+	ensureEol("RADI EOL", proj.getCurrentNode().measurements.fRADI.back().eolcomment);
+
+	TKeyOBSXYZ obsxyz(proj);
+	obsxyz.parse(tokenizefileString("*OBSXYZ"), true, -1);
+	obsxyz.parse(tokenizefileString("P2 1 2 3 0.1 0.5 0.8" + eol), true, -1);
+	ensureEol("OBSXYZ EOL", proj.getCurrentNode().measurements.fOBSXYZ.back().eolcomment);
+
+	// Camera measurements
+	TKeyCAMD camd(proj);
+	camd.parse(tokenizefileString("*CAMD BC1 T1 0.0"), true, -1);
+	camd.parse(tokenizefileString("T1 5 5 0.5 0.5"), true, -1);
+	TKeyCAM cam(proj);
+	cam.parse(tokenizefileString("*CAM P1 BC1"), true, -1);
+
+	TKeyUVEC uvec(proj);
+	uvec.parse(tokenizefileString("*UVEC"), true, -1);
+	uvec.parse(tokenizefileString("P2 1 0 0" + eol), true, -1);
+	ensureEol("UVEC EOL", proj.getCurrentNode().measurements.fCAM.back().measUVEC.back().eolcomment);
+
+	TKeyUVD uvd(proj);
+	uvd.parse(tokenizefileString("*UVD"), true, -1);
+	uvd.parse(tokenizefileString("P2 1 0 0 10" + eol), true, -1);
+	ensureEol("UVD EOL", proj.getCurrentNode().measurements.fCAM.back().measUVD.back().eolcomment);
+
+	// ECWS / ECWI (root frame only)
+	TKeyHLSR hlsr(proj);
+	hlsr.parse(tokenizefileString("*HLSR HL1 1 0 0"), true, -1);
+	TKeyECWS ecws(proj);
+	ecws.parse(tokenizefileString("*ECWS HL1 1"), true, -1);
+	ecws.parse(tokenizefileString("P1 1.0" + eol), true, -1);
+	ensureEol("ECWS EOL", proj.getCurrentNode().measurements.fECWS.back().measECWS.back().eolcomment);
+
+	TKeyCALA wirePts(proj);
+	wirePts.parse(tokenizefileString("W0 0 0 0"), true, -1);
+	wirePts.parse(tokenizefileString("W1 10 0 0"), true, -1);
+
+	TKeyWPSR wpsr(proj);
+	wpsr.parse(tokenizefileString("*WPSR WP1 1 1 0 0"), true, -1);
+	TKeyECWI ecwi(proj);
+	ecwi.parse(tokenizefileString("*ECWI WP1 1000 0.001 W0 W1"), true, -1);
+	ecwi.parse(tokenizefileString("P1 1 2" + eol), true, -1);
+	ensureEol("ECWI EOL", proj.getCurrentNode().measurements.fECWI.back().measECWI.back().eolcomment);
+
+	// INCLY / ROLLY (sub-frame)
+	TKeyINCL inclInst(proj);
+	inclInst.parse(tokenizefileString("*INCL I1 1 0 0 0 0 0"), true, -1);
+	TKeyFRAME frame(proj);
+	frame.parse(tokenizefileString("*FRAME EolSub 0 0 0 0 0 0 1"), true, -1);
+	TKeyCALA calaBeam(proj);
+	calaBeam.parse(tokenizefileString("EolBeam 0 0 0"), true, -1);
+
+	TKeyINCLY incly(proj);
+	incly.parse(tokenizefileString("*INCLY I1"), true, -1);
+	incly.parse(tokenizefileString("EolBeam 100" + eol), true, -1);
+	ensureEol("INCLY EOL", proj.getCurrentNode().measurements.fINCLY.back().measINCLY.back().eolcomment);
+
+	TKeyROLLY rolly(proj);
+	rolly.parse(tokenizefileString("*ROLLY I1"), true, -1);
+	rolly.parse(tokenizefileString("EolBeam 100" + eol), true, -1);
+	ensureEol("ROLLY EOL", proj.getCurrentNode().measurements.fROLLY.back().measROLLY.back().eolcomment);
+
+	TKeyENDFRAME endframe(proj);
+	endframe.parse(tokenizefileString("*ENDFRAME"), true, -1);
 }
 
 } // namespace tut

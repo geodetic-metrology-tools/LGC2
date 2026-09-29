@@ -176,10 +176,7 @@ void TKeyUVEC::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		uvec.setActive(getCAM().uvecActive && activeLine); // Active only if ROM is active as well
 		uvec.obsID = std::string(opts.getParamS("ID", uvec.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			uvec.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(uvec.eolcomment, tokens);
 
 		// Measured unit vector save, if it is not a simulation
 		if (hasAllParams)
@@ -247,10 +244,7 @@ void TKeyUVD::parse(const std::vector<std::string> &tokens, bool activeLine, int
 		uvd.setActive(getCAM().uvdActive && activeLine); // Active only if ROM is active as well
 		uvd.obsID = std::string(opts.getParamS("ID", uvd.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			uvd.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(uvd.eolcomment, tokens);
 
 		// Measured unit vector and distance save if it is not a simulation
 		if (hasAllParams)
@@ -352,10 +346,7 @@ void TKeyPLR3D::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		plr.setActive(getROM()->plrActive && activeLine); // Active only if ROM is active as well
 		plr.obsID = std::string(opts.getParamS("ID", plr.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			plr.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(plr.eolcomment, tokens);
 
 		if (hasAllParams)
 		{ // Store value if it is not a simulation
@@ -425,10 +416,7 @@ void TKeyANGL::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		angl.setActive(getROM()->anglActive && activeLine); // Active only if ROM is active as well
 		angl.obsID = std::string(opts.getParamS("ID", angl.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			angl.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(angl.eolcomment, tokens);
 
 		if (hasAllParams)
 			angl.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
@@ -481,10 +469,7 @@ void TKeyZEND::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		zend.setActive(getROM()->zendActive && activeLine); // Active only if ROM is active as well
 		zend.obsID = std::string(opts.getParamS("ID", zend.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			zend.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(zend.eolcomment, tokens);
 
 		if (hasAllParams)
 		{
@@ -554,10 +539,7 @@ void TKeyDIST::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		dist.setActive(getROM()->distActive && activeLine); // Active only if ROM is active as well
 		dist.obsID = std::string(opts.getParamS("ID", dist.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dist.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(dist.eolcomment, tokens);
 	}
 }
 
@@ -615,10 +597,7 @@ void TKeyECTH::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		ecth.setActive(getROM()->ecthActive && activeLine); // Active only if ROM is active as well
 		ecth.obsID = std::string(opts.getParamS("ID", ecth.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			ecth.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(ecth.eolcomment, tokens);
 	}
 }
 
@@ -677,10 +656,7 @@ void TKeyECDIR::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		ecdir.setActive(getROM()->ecdirActive && activeLine); // Active only if ROM is active as well
 		ecdir.obsID = std::string(opts.getParamS("ID", ecdir.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			ecdir.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(ecdir.eolcomment, tokens);
 	}
 }
 
@@ -726,10 +702,7 @@ void TKeyDHOR::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		dhor.setActive(getROM()->dhorActive && activeLine); // Active only if ROM is active as well
 		dhor.obsID = std::string(opts.getParamS("ID", dhor.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dhor.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(dhor.eolcomment, tokens);
 	}
 }
 
@@ -803,10 +776,7 @@ void TKeyDSPT::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		dspt.setActive(proj.getCurrentNode().measurements.fEDM.back().isActive() && activeLine); // Active only if station active as well
 		dspt.obsID = std::string(opts.getParamS("ID", dspt.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dspt.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(dspt.eolcomment, tokens);
 	}
 }
 
@@ -851,10 +821,7 @@ void TKeyDVER::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		dver.setActive(proj.getCurrentNode().measurements.dverActive && activeLine); // Active only if ROM active as well
 		dver.obsID = std::string(opts.getParamS("ID", dver.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			dver.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(dver.eolcomment, tokens);
 	}
 }
 
@@ -952,6 +919,7 @@ void TKeyDLEV::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		dlev.line = line;
 		dlev.setActive(levelGrOfMeas.isActive() && activeLine); // Active only if station active as well
 		dlev.obsID = std::string(opts.getParamS("ID", dlev.obsID));
+		assignEOLCommentFromTokens(dlev.eolcomment, tokens);
 
 		levelGrOfMeas.measDLEV.emplace_back(dlev);
 	}
@@ -1000,6 +968,7 @@ void TKeyECHO::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		echo.line = line;
 		echo.setActive(echoROMLatest.isActive() && activeLine); // Active only if ROM active as well
 		echo.obsID = std::string(opts.getParamS("ID", echo.obsID));
+		assignEOLCommentFromTokens(echo.eolcomment, tokens);
 
 		echoROMLatest.measECHO.emplace_back(echo);
 
@@ -1073,6 +1042,7 @@ void TKeyECVE::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		ecve.line = line;
 		ecve.setActive(ecveROMLatest.isActive() && activeLine); // Active only if ROM active as well
 		ecve.obsID = std::string(opts.getParamS("ID", ecve.obsID));
+		assignEOLCommentFromTokens(ecve.eolcomment, tokens);
 
 		ecveROMLatest.measECVE.emplace_back(ecve);
 
@@ -1136,6 +1106,7 @@ void TKeyECSP::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		ecsp.line = line;
 		ecsp.setActive(ecspROMLatest.isActive() && activeLine); // Active only if ROM active as well
 		ecsp.obsID = std::string(opts.getParamS("ID", ecsp.obsID));
+		assignEOLCommentFromTokens(ecsp.eolcomment, tokens);
 
 		ecspROMLatest.measECSP.emplace_back(ecsp);
 
@@ -1209,10 +1180,7 @@ void TKeyORIE::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		orie.setActive(proj.getCurrentNode().measurements.fORIE.back().isActive() && activeLine); // Active only if ROM active as well
 		orie.obsID = std::string(opts.getParamS("ID", orie.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			orie.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(orie.eolcomment, tokens);
 
 		if (hasAllParams)
 			orie.setAngle(TAngle(std::stor(tokens.at(1)), TAngle::kGons));
@@ -1262,10 +1230,7 @@ void TKeyRADI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		radi.setActive(proj.getCurrentNode().measurements.radiActive && activeLine); // Active only if ROM active as well
 		radi.obsID = std::string(opts.getParamS("ID", radi.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			radi.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(radi.eolcomment, tokens);
 	}
 }
 
@@ -1303,10 +1268,7 @@ void TKeyOBSXYZ::parse(const std::vector<std::string> &tokens, bool activeLine, 
 		obsxyz.setActive(proj.getCurrentNode().measurements.obsxyzActive && activeLine); // Active only if ROM active as well
 		obsxyz.obsID = std::string(opts.getParamS("ID", obsxyz.obsID));
 
-		// If last token starts with a comment character, store it as a end of line comment
-		const char fOfLastToken = tokens.back().at(0);
-		if (fOfLastToken == '$' || fOfLastToken == '%')
-			obsxyz.eolcomment = stripQuotesFromEOLComment(tokens.back());
+		assignEOLCommentFromTokens(obsxyz.eolcomment, tokens);
 	}
 }
 
@@ -1375,6 +1337,7 @@ void TKeyINCLY::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		incly.line = line;
 		incly.setActive(proj.getCurrentNode().measurements.fINCLY.back().isActive() && activeLine); // Active only if ROM active as well
 		incly.obsID = std::string(opts.getParamS("ID", incly.obsID));
+		assignEOLCommentFromTokens(incly.eolcomment, tokens);
 
 		proj.getCurrentNode().measurements.fINCLY.back().measINCLY.emplace_back(incly);
 	}
@@ -1501,6 +1464,7 @@ void TKeyROLLY::parse(const std::vector<std::string> &tokens, bool activeLine, i
 		rolly.line = line; // Store line number for error reporting
 		rolly.setActive(proj.getCurrentNode().measurements.fROLLY.back().isActive() && activeLine); // Active only if ROM is active
 		rolly.obsID = std::string(opts.getParamS("ID", rolly.obsID)); // Set observation ID (optional)
+		assignEOLCommentFromTokens(rolly.eolcomment, tokens);
 
 		// Add the completed measurement to the current measurement round
 		proj.getCurrentNode().measurements.fROLLY.back().measROLLY.emplace_back(rolly);
@@ -1588,6 +1552,7 @@ void TKeyECWS::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		ecws.line = line;
 		ecws.setActive(ecwsROMLatest.isActive() && activeLine); // Active only if ROM active as well
 		ecws.obsID = std::string(opts.getParamS("ID", ecws.obsID));
+		assignEOLCommentFromTokens(ecws.eolcomment, tokens);
 
 		ecwsROMLatest.measECWS.emplace_back(ecws);
 	}
@@ -1682,6 +1647,7 @@ void TKeyECWI::parse(const std::vector<std::string> &tokens, bool activeLine, in
 		ecwi.obsID = std::string(opts.getParamS("ID", ecwi.obsID));
 
 		ecwi.setActive(ecwiROMLatest.isActive() && activeLine); // Active only if ROM active as well
+		assignEOLCommentFromTokens(ecwi.eolcomment, tokens);
 
 		ecwiROMLatest.measECWI.emplace_back(ecwi);
 	}
