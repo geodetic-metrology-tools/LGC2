@@ -7,12 +7,11 @@
 #ifndef TLGC_CALCULATION
 #define TLGC_CALCULATION
 
-
-//STL
+// STL
 #include <memory>
-//SURVEYLIB
+// SURVEYLIB
 #include <Behavior.h>
-//LGC
+// LGC
 #include <TSimulationOutputFileWriter.h>
 
 class TLSResultsMatrices;
@@ -20,9 +19,9 @@ class TLSResultsMatrices;
 	\ingroup LGCCalculation
 	\brief Class responsible for the LGC calculation process.
 */
-class TLGCCalculation{
-
-	public:
+class TLGCCalculation
+{
+public:
 	/*!
 		\brief Constructor.
 
@@ -32,32 +31,31 @@ class TLGCCalculation{
 
 	/*!
 		\brief Calculates results, based on the keywords used (normal calculation, simulation (SIMU), free network adjustmen (LIBR), fixed points and frames (ALLFIXED), etc.)
-	
-    	\note The fact that the Writer is passed to the function is not the final state, it should be treated in the SIMULATION calculation itself! The problem comes
-		      from the initialization of TAStreamFormatter in the TLGCApp. This should change when the Stream formatter SurveyLib issue is resolved!!!
 
-		@param dat[in] fileWriter The writer is only used for SIMULATION, where we output values after each simulation run. 
+		\note The fact that the Writer is passed to the function is not the final state, it should be treated in the SIMULATION calculation itself! The problem comes
+			  from the initialization of TAStreamFormatter in the TLGCApp. This should change when the Stream formatter SurveyLib issue is resolved!!!
+
+		@param dat[in] fileWriter The writer is only used for SIMULATION, where we output values after each simulation run.
 	*/
 	Behavior computeResults(std::shared_ptr<TSimulationOutputFileWriter> fileWriter);
 
 	/// Returns the project data.
-	const TLGCData& getData(){ return *fData.get();}
+	const TLGCData &getData() { return *fData.get(); }
 
 	/// Returns the results matrices.
-	const TLSResultsMatrices& getResultMtr() const { return *fResultsMtr; }
+	const TLSResultsMatrices &getResultMtr() const { return *fResultsMtr; }
 
-	private:
-    
-    // Initialise the observation summaries in measurements
-    void initialiseObsSummaries();
+private:
+	// Initialise the observation summaries in measurements
+	void initialiseObsSummaries();
 
 	// contains references: not assignable
-	TLGCCalculation& operator=(const TLGCCalculation&);
+	TLGCCalculation &operator=(const TLGCCalculation &);
 
 	/// Project data
 	std::shared_ptr<TLGCData> fData;
 
-	int			fMaxIterations; /*!< maximum of iterations that can be carried out */
+	int fMaxIterations; /*!< maximum of iterations that can be carried out */
 	//@}
 
 	/*!
