@@ -27,9 +27,9 @@ class TLGCFrameConstraintGroup
 {
 public:
 	// constructor
-	TLGCFrameConstraintGroup(){};
+	TLGCFrameConstraintGroup() {};
 	// destructor
-	~TLGCFrameConstraintGroup(){};
+	~TLGCFrameConstraintGroup() {};
 
 	void setGroupName(std::string name) { groupName = name; };
 	std::string getGroupName() { return groupName; };
