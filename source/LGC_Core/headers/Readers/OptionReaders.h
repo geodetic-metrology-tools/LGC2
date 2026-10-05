@@ -312,7 +312,7 @@ public:
 	/// Tokenize and initialize options for the output processing
 	virtual void parse(const std::vector<std::string> &, bool activeLine, int);
 };
-class TKeyLM: public TAOptionKey
+class TKeyLM : public TAOptionKey
 {
 public:
 	/// Constructor

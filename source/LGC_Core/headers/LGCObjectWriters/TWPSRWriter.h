@@ -7,11 +7,11 @@
 #pragma once
 
 #ifndef SU_WPSR_WRITER
-#define SU_WPSR_WRITER
+#	define SU_WPSR_WRITER
 
 // LGC
-#include <MeasDef.h>
-#include <TObservationWriter.h>
+#	include <MeasDef.h>
+#	include <TObservationWriter.h>
 
 struct TECWIROM;
 class TLGCStatistic;

@@ -7,15 +7,14 @@
 #ifndef Round_Of_Measurements
 #define Round_Of_Measurements
 
-
-//LGC
-#include <MeasDef.h>
+// LGC
+#include <LGCAdjustableLine.h>
 #include <LGCAdjustablePlane.h>
 #include <LGCAdjustablePoint.h>
-#include <LGCAdjustableLine.h>
+#include <MeasDef.h>
 #include <TPositionVector.h>
-#include "TLGCObsSummary.h"
 
+#include "TLGCObsSummary.h"
 
 /*!
 	\ingroup Measurements
@@ -46,8 +45,8 @@ struct TECHOROM : public TStatusObject
 	TECHOROM(LGCAdjustablePlane *measPlane) : fMeasuredPlane(measPlane), line(NO_VALi) {}
 
 #if USE_SERIALIZER
-		// Inherited via Serializable
-		virtual void serialize(ObjectSerializer &obj) const override;
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
 private:
@@ -60,29 +59,29 @@ private:
 \ingroup Measurements
 \brief This class represents a round of ECSP (TECSP) measurements, which are measuring a single Plane.
 */
-struct TECSPROM : public TStatusObject {
-
+struct TECSPROM : public TStatusObject
+{
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
 	std::list<TECSP> measECSP;
 
-	//Measured line
-	//LGCAdjustableLine* fMeasuredLine;
-	const LGCAdjustablePoint* p1;
-	const LGCAdjustablePoint* p2;
+	// Measured line
+	// LGCAdjustableLine* fMeasuredLine;
+	const LGCAdjustablePoint *p1;
+	const LGCAdjustablePoint *p2;
 
-    /// Initialise observation summaries
-    void initialiseObsSummaries();
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-    const TLGCObsSummary& getECSPObsSummary() const;
-	const TLGCObsSummary& getECSPObsSummary(std::string text) noexcept;
+	const TLGCObsSummary &getECSPObsSummary() const;
+	const TLGCObsSummary &getECSPObsSummary(std::string text) noexcept;
 
 	/// Line of the measurement definition
-	int  line;
+	int line;
 	/// name of the rom
 	std::string romName;
 
-    int romId{ romCounter_++ };
+	int romId{romCounter_++};
 
 	/// the station attribute is a copy of the parameter to override defaults
 	/*TECSPROM(LGCAdjustableLine& measLine) :
@@ -100,20 +99,10 @@ struct TECSPROM : public TStatusObject {
 		line(NO_VALi)
 	{}*/
 
-	TECSPROM(std::string name) :
-		romName(name),
-		line(NO_VALi),
-		p1(nullptr),
-		p2(nullptr)
-	{}
+	TECSPROM(std::string name) : romName(name), line(NO_VALi), p1(nullptr), p2(nullptr) {}
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TECSPROM(std::string name,const LGCAdjustablePoint& point1, const LGCAdjustablePoint& point2) :
-		romName(name),
-		p1(&point1),
-		p2(&point2),
-		line(NO_VALi)
-	{}
+	TECSPROM(std::string name, const LGCAdjustablePoint &point1, const LGCAdjustablePoint &point2) : romName(name), p1(&point1), p2(&point2), line(NO_VALi) {}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -121,46 +110,40 @@ struct TECSPROM : public TStatusObject {
 #endif
 
 private:
+	static int romCounter_;
 
-    static int romCounter_;
-
-    TLGCObsSummary ecspSummary_;
+	TLGCObsSummary ecspSummary_;
 };
 
 /*!
 \ingroup Measurements
 \brief This class represents a round of ECVE (TECVE) measurements, which are measuring a single Plane.
 */
-struct TECVEROM : public TStatusObject {
-
+struct TECVEROM : public TStatusObject
+{
 	/// All ECHO measurements, measuring the 'fmeasuredPlane'
 	std::list<TECVE> measECVE;
 
-	//Measured vertical plane
-	LGCAdjustableLine* fMeasuredLine;
+	// Measured vertical plane
+	LGCAdjustableLine *fMeasuredLine;
 
-    /// Point on the measured line
-    LGCAdjustablePoint const * fPtLine;
+	/// Point on the measured line
+	LGCAdjustablePoint const *fPtLine;
 
-    /// Initialise observation summaries
-    void initialiseObsSummaries();
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-    const TLGCObsSummary& getECVEObsSummary() const;
-	const TLGCObsSummary& getECVEObsSummary(std::string text) noexcept;
-
+	const TLGCObsSummary &getECVEObsSummary() const;
+	const TLGCObsSummary &getECVEObsSummary(std::string text) noexcept;
 
 	/// Line of the measurement definition
-	int  line;
+	int line;
 
-    int romId{ romCounter_++ };
+	int romId{romCounter_++};
 
 	/// the station attribute is a copy of the parameter to override defaults
-    TECVEROM(LGCAdjustablePoint const * ptLine) :
-		fMeasuredLine(nullptr),
-        fPtLine(ptLine),
-		line(NO_VALi)
-	{}
+	TECVEROM(LGCAdjustablePoint const *ptLine) : fMeasuredLine(nullptr), fPtLine(ptLine), line(NO_VALi) {}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -168,92 +151,81 @@ struct TECVEROM : public TStatusObject {
 #endif
 
 private:
+	static int romCounter_;
 
-    static int romCounter_;
-
-    TLGCObsSummary ecveSummary_;
+	TLGCObsSummary ecveSummary_;
 };
 
 /*!
 	\ingroup Measurements
 	\brief This class represents a round of ORIE (TORIE) measurements made from a single position of the instrument.
 */
-struct TORIEROM : public TStatusObject {
+struct TORIEROM : public TStatusObject
+{
+	/// All ORIE measurements
+	std::list<TORIE> measORIE;
 
-		/// All ORIE measurements
-		std::list<TORIE> measORIE;
+	/// The position of the instrument
+	const LGCAdjustablePoint *instrumentPos;
 
-		/// The position of the instrument
-		const LGCAdjustablePoint* instrumentPos;
+	/// The instrument that is used on this station
+	TInstrumentData::TPOLAR instrument;
 
-		/// The instrument that is used on this station
-		TInstrumentData::TPOLAR     instrument;
+	/// Initialise observation summaries
+	void initialiseObsSummaries();
 
-        /// Initialise observation summaries
-        void initialiseObsSummaries();
+	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
+	const TLGCObsSummary &getORIEObsSummary() const;
+	const TLGCObsSummary &getORIEObsSummary(std::string text) noexcept;
 
-		/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-        const TLGCObsSummary& getORIEObsSummary() const;
-		const TLGCObsSummary& getORIEObsSummary(std::string text) noexcept;
+	TAngle fConstantAngle;
 
+	/// Line of the measurement definition
+	int line;
 
-		TAngle fConstantAngle;
+	int romId{romCounter_++};
 
-		/// Line of the measurement definition
-		int  line;
-
-        int romId{ romCounter_++ };
-
-		/// the station attribute is a copy of the parameter to override defaults
-		TORIEROM(const LGCAdjustablePoint& pos, const TInstrumentData::TPOLAR& instrument) :
-			instrumentPos(&pos),
-			instrument(instrument),
-			line(NO_VALi),
-			fConstantAngle(0.0, TAngle::EUnits::kGons)
-		{
-		}
+	/// the station attribute is a copy of the parameter to override defaults
+	TORIEROM(const LGCAdjustablePoint &pos, const TInstrumentData::TPOLAR &instrument) :
+		instrumentPos(&pos), instrument(instrument), line(NO_VALi), fConstantAngle(0.0, TAngle::EUnits::kGons)
+	{
+	}
 
 #if USE_SERIALIZER
-		// Inherited via Serializable
-		virtual void serialize(ObjectSerializer &obj) const override;
+	// Inherited via Serializable
+	virtual void serialize(ObjectSerializer &obj) const override;
 #endif
 
-    private:
-        
-        static int romCounter_;
+private:
+	static int romCounter_;
 
-        TLGCObsSummary orieSummary_;
+	TLGCObsSummary orieSummary_;
 };
 
 /*!
 	\ingroup Measurements
 	\brief This class represents a round of INCLY (TINCLY) measurements made from a single position of the instrument.
 */
-struct TINCLYROM : public TStatusObject {
-
+struct TINCLYROM : public TStatusObject
+{
 	/// All INCLY measurements
 	std::list<TINCLY> measINCLY;
 
 	/// The instrument that is used on this station
-	TInstrumentData::TINCL     instrument;
+	TInstrumentData::TINCL instrument;
 
 	/// Line of the measurement definition
-	int  line;
+	int line;
 	int romId = TINCLYROM::romCounter_++;
 
 	TDataTreeIterator positionInTree;
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TINCLYROM(const TInstrumentData::TINCL& instrument, TDataTreeIterator itTree) :
-		instrument(instrument),
-		line(NO_VALi),
-		positionInTree(itTree)
-	{
-	}
+	TINCLYROM(const TInstrumentData::TINCL &instrument, TDataTreeIterator itTree) : instrument(instrument), line(NO_VALi), positionInTree(itTree) {}
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-	const TLGCObsSummary& getINCLYObsSummary() const;
-	const TLGCObsSummary& getINCLYObsSummary(std::string text) noexcept;
+	const TLGCObsSummary &getINCLYObsSummary() const;
+	const TLGCObsSummary &getINCLYObsSummary(std::string text) noexcept;
 
 	/// Initialise observation summaries
 	void initialiseObsSummaries();
@@ -264,7 +236,6 @@ struct TINCLYROM : public TStatusObject {
 #endif
 
 private:
-
 	static int romCounter_;
 
 	TLGCObsSummary inclySummary_;
@@ -274,13 +245,13 @@ private:
 	\ingroup Measurements
 	\brief This class represents a round of ROLLY (TROLLY) measurements made from a single position of the instrument.
 */
-struct TROLLYROM : public TStatusObject {
-
+struct TROLLYROM : public TStatusObject
+{
 	/// All ROLLY measurements
 	std::list<TROLLY> measROLLY;
 
 	/// The instrument that is used on this station
-	TInstrumentData::TINCL     instrument;
+	TInstrumentData::TINCL instrument;
 
 	/// Line of the measurement definition
 	int line;
@@ -289,16 +260,11 @@ struct TROLLYROM : public TStatusObject {
 	TDataTreeIterator positionInTree;
 
 	/// the station attribute is a copy of the parameter to override defaults
-	TROLLYROM(const TInstrumentData::TINCL& instrument, TDataTreeIterator itTree) :
-		instrument(instrument),
-		line(NO_VALi),
-		positionInTree(itTree)
-	{
-	}
+	TROLLYROM(const TInstrumentData::TINCL &instrument, TDataTreeIterator itTree) : instrument(instrument), line(NO_VALi), positionInTree(itTree) {}
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-	const TLGCObsSummary& getROLLYObsSummary() const;
-	const TLGCObsSummary& getROLLYObsSummary(std::string text) noexcept;
+	const TLGCObsSummary &getROLLYObsSummary() const;
+	const TLGCObsSummary &getROLLYObsSummary(std::string text) noexcept;
 
 	/// Initialise observation summaries
 	void initialiseObsSummaries();
@@ -309,7 +275,6 @@ struct TROLLYROM : public TStatusObject {
 #endif
 
 private:
-
 	static int romCounter_;
 
 	TLGCObsSummary rollySummary_;
@@ -319,42 +284,38 @@ private:
 	\ingroup Measurements
 	\brief This class represents a round of ECWS (TECWS) measurements, which are measuring a single Plane.
 */
-struct TECWSROM : public TStatusObject {
-
+struct TECWSROM : public TStatusObject
+{
 	/// All ECWS measurements, measuring the water surface distance
 	std::list<TECWS> measECWS;
 
 	/// The instrument that is used on this station
-	TInstrumentData::THLSR    instrument;
+	TInstrumentData::THLSR instrument;
 
 	/// name of the rom
 	std::string romName;
 
-	//Measured water surface height, non-owning pointer
-	TAdjustableLength* fMeasuredWSHeight;
+	// Measured water surface height, non-owning pointer
+	TAdjustableLength *fMeasuredWSHeight;
 
-	//1-sigma precision of the water surface
+	// 1-sigma precision of the water surface
 	TLength sigmaWS;
 
 	/// Initialise observation summaries
 	void initialiseObsSummaries();
 
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
-	const TLGCObsSummary& getECWSObsSummary() const;
-	const TLGCObsSummary& getECWSObsSummary(std::string text) noexcept;
+	const TLGCObsSummary &getECWSObsSummary() const;
+	const TLGCObsSummary &getECWSObsSummary(std::string text) noexcept;
 
 	/// Line of the measurement definition
 	int line;
 	int romId = TECWSROM::romCounter_++;
 
-
-	TECWSROM(const TInstrumentData::THLSR& inst, TLength sigmaWS, TAdjustableLength *MeasuredHeight) :
-		instrument(inst),
-		fMeasuredWSHeight(MeasuredHeight),
-		sigmaWS(sigmaWS),
-		romName(""),
-		line(NO_VALi)
-	{}
+	TECWSROM(const TInstrumentData::THLSR &inst, TLength sigmaWS, TAdjustableLength *MeasuredHeight) :
+		instrument(inst), fMeasuredWSHeight(MeasuredHeight), sigmaWS(sigmaWS), romName(""), line(NO_VALi)
+	{
+	}
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -362,7 +323,6 @@ struct TECWSROM : public TStatusObject {
 #endif
 
 private:
-
 	static int romCounter_;
 
 	TLGCObsSummary ecwsSummary_;
