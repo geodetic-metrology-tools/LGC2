@@ -7,15 +7,14 @@
 #ifndef TLS_ALGORITHM
 #define TLS_ALGORITHM
 
-
-//SURVEYLIB
-#include <TALSComputer.h>
+// SURVEYLIB
 #include <Behavior.h>
-//LGC
-#include <TVAbstractAlgorithm.h>
+#include <TALSComputer.h>
+// LGC
+#include <TLSConsistencyCheck.h>
 #include <TLSResultsMatricesExtractor.h>
 #include <TPointTransformer.h>
-#include <TLSConsistencyCheck.h>
+#include <TVAbstractAlgorithm.h>
 
 class TLSInputMatricesFiller;
 class TLSResultsMatrices;
@@ -26,35 +25,27 @@ class TLSResultsMatrices;
 */
 class TLSAlgorithm : public TVAbstractAlgorithm
 {
-
 public:
-	TLSAlgorithm(TLGCData& data);
+	TLSAlgorithm(TLGCData &data);
 
-	/// Run the calculation 
-	Behavior run(TLGCData& data, int fMaxIterations) override;
+	/// Run the calculation
+	Behavior run(TLGCData &data, int fMaxIterations) override;
 
 	/// Return number of iterations made
-	int		getNumberOfIterations() { return fNumberOfIterations; }
-
+	int getNumberOfIterations() { return fNumberOfIterations; }
 
 protected:
 	/// Pointer to the result matrix extractor
 	std::shared_ptr<TLSResultsMatricesExtractor> fExtractor;
 
 	/// Number of equations
-	int		 fNumberOfIterations;
+	int fNumberOfIterations;
 
 	/// Flag if S a posteriori variance exists
-	bool	 fS0APosterioriVariances;
-
+	bool fS0APosterioriVariances;
 
 	/// Iterate to the solution
-	Behavior iterate2Solution(TLGCData& data,
-								TLSInputMatricesFiller* matrFiller,
-								TLSInputMatrices* inputMtr,
-								TALSComputer* computer,
-								int fMaxIterations,
-								TReal convCrit);
+	Behavior iterate2Solution(TLGCData &data, TLSInputMatricesFiller *matrFiller, TLSInputMatrices *inputMtr, TALSComputer *computer, int fMaxIterations, TReal convCrit);
 
 	Behavior computeStatisticsAtCurrentState(TLGCData *data, TLSInputMatricesFiller *matrFiller, TLSInputMatrices *inputMtr, TALSComputer *computer);
 
@@ -64,10 +55,8 @@ protected:
 	void tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr);
 
 private:
-
 	/// Allow transformations between the usual reference frame
 	TPointTransformer fPointTransformer;
-
 };
 
 #endif

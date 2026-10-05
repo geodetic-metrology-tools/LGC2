@@ -12,6 +12,7 @@
 #include <UEOIndices.h>
 // LGC
 #include <map>
+
 #include <Global.h>
 #include <LGCAdjustableObjectCollection.h>
 #include <TFileLogger.h>
@@ -255,7 +256,6 @@ public:
 
 	/// Maps observation vector index to input file line number (built during index assignment)
 	std::map<int, int> fObsIndexToLineNumber;
-
 
 	/// Sets the number of LS iterations.
 	void setNumberOfLSIterations(int noi) { fLSRelatedInfo.fNumberOfLSIterations = noi; }
