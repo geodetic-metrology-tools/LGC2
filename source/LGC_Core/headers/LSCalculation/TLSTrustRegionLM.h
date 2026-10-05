@@ -88,7 +88,7 @@ private:
 	bool checkStepAndUpdateTrustRegion(double &lambda, double &delta, const double predictedReduction, const Eigen::VectorXd &dx, const double actualReduction);
 	// format information on current iterate
 	void formatLine(int iter, const Eigen::VectorXd &dx, double sqrtF, double lmDamping, double predRed, double actRed, double rho, bool accept, int headerEvery) const;
-	
+
 	// helper functions LGC specific: assuming B is invertible
 	double getObjective(const TLSInputMatrices &input) const;
 	Eigen::VectorXd getV(const TLSInputMatrices &input) const;
