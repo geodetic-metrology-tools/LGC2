@@ -7,15 +7,13 @@
 #ifndef SU_FAUT_WRITER
 #define SU_FAUT_WRITER
 
-
-//STL
+// STL
 #include <string>
-//LGC
+// LGC
 #include <TAFileWriter.h>
 
-class	TLGCData;
-class	TAStreamFormatter;
-
+class TLGCData;
+class TAStreamFormatter;
 
 /*!
 	\ingroup Writers
@@ -23,55 +21,50 @@ class	TAStreamFormatter;
 */
 class TFautFileWriter : TAFileWriter
 {
-
 public:
 	/*@name Constructor / Destructor */
 	//@{
-		/// Default constructor 
-		TFautFileWriter(TAStreamFormatter* stream, const TLGCData* project);
+	/// Default constructor
+	TFautFileWriter(TAStreamFormatter *stream, const TLGCData *project);
 
-
-		/// Destructor 
-		virtual ~TFautFileWriter();
+	/// Destructor
+	virtual ~TFautFileWriter();
 	//@}
-
 
 	/*!@name Public member functions*/
 	//@{
-		/// write the point coordinate file corresponding to the given project
-		virtual void writeFile(TLGCData const * const);
+	/// write the point coordinate file corresponding to the given project
+	virtual void writeFile(TLGCData const *const);
 
-		///write the lgc file  when there is an error in the project
-		virtual void writeFile(const std::string error);
+	/// write the lgc file  when there is an error in the project
+	virtual void writeFile(const std::string error);
 	//@}
 
 private:
-	
-	///default constructor 
+	/// default constructor
 	TFautFileWriter();
 
 	/*!@name Private functions for header part of the file */
 	//@{
-		/// write title and date 
-		void	writeTitle();
-		/// write data summary (sigma zero a posteriori, alpha, beta, and others) 
-		void	writeDataSummary();
+	/// write title and date
+	void writeTitle();
+	/// write data summary (sigma zero a posteriori, alpha, beta, and others)
+	void writeDataSummary();
 
 	//@}
 
-	/// Total reliability if possible 
-		void	writeOverallReliability(TLGCData const * const project);
+	/// Total reliability if possible
+	void writeOverallReliability(TLGCData const *const project);
 	/// Network Degrees of freedom (DOF)
-		void    writeNetworkDOF(TLGCData const* const project);
+	void writeNetworkDOF(TLGCData const *const project);
 
 	/*!@name Private Attribute*/
 	//@{
-		TReal	fAlpha;	/*! level of significance, [0;1], default value : 1% */
-		TReal	fBeta; /*! risk of having false values, [0;1], default value : 10% */
+	TReal fAlpha; /*! level of significance, [0;1], default value : 1% */
+	TReal fBeta; /*! risk of having false values, [0;1], default value : 10% */
 	//@}
-
 };
 
 /*@}*/
 
-#endif //SU_FAUT_WRITER
+#endif // SU_FAUT_WRITER
