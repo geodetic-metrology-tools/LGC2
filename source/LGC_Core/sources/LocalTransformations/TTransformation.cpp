@@ -3,51 +3,52 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <TTransformation.h>
+
 #include "Logger.hpp"
 
-TTransformation::TTransformation()  :
-	fTransM(std::unique_ptr<Eigen::Matrix4d>(new Eigen::Matrix4d))
+TTransformation::TTransformation() : fTransM(std::unique_ptr<Eigen::Matrix4d>(new Eigen::Matrix4d))
 {
 	fTransM->setIdentity();
 }
 
-TTransformation::TTransformation(const TTransformation &transformation) : 
-	fTransM(std::unique_ptr<Eigen::Matrix4d>(new Eigen::Matrix4d(*transformation.fTransM)))
-{}
+TTransformation::TTransformation(const TTransformation &transformation) : fTransM(std::unique_ptr<Eigen::Matrix4d>(new Eigen::Matrix4d(*transformation.fTransM)))
+{
+}
 
-
-
-TTransformation TTransformation::getInversedTransformation() const{
+TTransformation TTransformation::getInversedTransformation() const
+{
 	TTransformation t(*this);
 	*(t.fTransM) = t.fTransM->inverse().eval();
 	return t;
 }
 
+TTransformation::~TTransformation()
+{
+}
 
-TTransformation::~TTransformation() {}
-
-
-void TTransformation::setIdentityTransformation(){
+void TTransformation::setIdentityTransformation()
+{
 	fTransM->setIdentity();
 }
 
-void TTransformation::setTransformation(TReal tx, TReal ty, TReal tz, TReal rx, TReal ry, TReal rz, TReal scale){
-	//XYZ order
-	setRotationTransformation(rx,ry,rz);
-	auto& m(*(fTransM));
+void TTransformation::setTransformation(TReal tx, TReal ty, TReal tz, TReal rx, TReal ry, TReal rz, TReal scale)
+{
+	// XYZ order
+	setRotationTransformation(rx, ry, rz);
+	auto &m(*(fTransM));
 
 	zerofy(scale);
-	if(scale == 0.0)
+	if (scale == 0.0)
 		throw std::runtime_error("Scale factor is zero or a very small number!");
-	
-	m(3,3) = 1.0/scale;
+
+	m(3, 3) = 1.0 / scale;
 
 	/*Set translation part*/
-	m(0,3) = tx/scale;
-	m(1,3) = ty/scale;
-	m(2,3) = tz/scale;
+	m(0, 3) = tx / scale;
+	m(1, 3) = ty / scale;
+	m(2, 3) = tz / scale;
 
-// Might be interesting to be able to switch, not enabled yet 
+// Might be interesting to be able to switch, not enabled yet
 #if 0
 	//ZYX order
 	auto& m(*(fTransM));
@@ -83,7 +84,7 @@ void TTransformation::setTransformation(TReal tx, TReal ty, TReal tz, TReal rx, 
 	zerofy(scale);
 	if(scale == 0.0)
 		throw std::runtime_error("Scale factor is zero or a very small number!");
-	
+
 	m(3,3) = 1.0/scale;
 
 	/*Set translation part*/
@@ -93,8 +94,9 @@ void TTransformation::setTransformation(TReal tx, TReal ty, TReal tz, TReal rx, 
 #endif
 }
 
-void TTransformation::setRotationTransformation(TReal rx, TReal ry, TReal rz){
-	auto& m(*(fTransM));
+void TTransformation::setRotationTransformation(TReal rx, TReal ry, TReal rz)
+{
+	auto &m(*(fTransM));
 	TReal rxcos = cosq(rx);
 	zerofy(rxcos);
 
@@ -113,21 +115,21 @@ void TTransformation::setRotationTransformation(TReal rx, TReal ry, TReal rz){
 	TReal rzsin = sinq(rz);
 	zerofy(rzsin);
 
-	m(0,0)  =  rzcos*rycos;
-	m(0,1)  =  rzsin*rycos;
-	m(0,2)  =  -rysin;
-	m(1,0)  =  rzcos*rysin*rxsin-rzsin*rxcos;
-	m(1,1)  =  rzsin*rysin*rxsin+rzcos*rxcos;
-	m(1,2)  =  rycos*rxsin;
-	m(2,0)  =  rzcos*rysin*rxcos+rzsin*rxsin;
-	m(2,1)  =  rzsin*rysin*rxcos-rzcos*rxsin;
-	m(2,2)  =  rycos*rxcos;
+	m(0, 0) = rzcos * rycos;
+	m(0, 1) = rzsin * rycos;
+	m(0, 2) = -rysin;
+	m(1, 0) = rzcos * rysin * rxsin - rzsin * rxcos;
+	m(1, 1) = rzsin * rysin * rxsin + rzcos * rxcos;
+	m(1, 2) = rycos * rxsin;
+	m(2, 0) = rzcos * rysin * rxcos + rzsin * rxsin;
+	m(2, 1) = rzsin * rysin * rxcos - rzcos * rxsin;
+	m(2, 2) = rycos * rxcos;
 }
 
 TTransformation TTransformation::getIdentity()
 {
 	TTransformation t;
-	t.setIdentityTransformation(); 
+	t.setIdentityTransformation();
 	return t;
 }
 
@@ -170,117 +172,125 @@ TransformParameters TTransformation::getTrafoParameters() const
 	return TransformParameters(TAngle(rx), TAngle(ry), TAngle(rz), TLength(tx), TLength(ty), TLength(tz), TReal(s));
 }
 
-void TTransformation::setZeroMatrix(){
+void TTransformation::setZeroMatrix()
+{
 	fTransM->setZero();
 }
 
-void TTransformation::setMatrixIJPosition(int row, int column, TReal value){
-	auto& m(*(fTransM));
+void TTransformation::setMatrixIJPosition(int row, int column, TReal value)
+{
+	auto &m(*(fTransM));
 	m(row, column) = value;
 }
 
-TReal TTransformation::getMmatrixIJPosition(int row, int column) const{
+TReal TTransformation::getMmatrixIJPosition(int row, int column) const
+{
 	assert4D(row);
 	assert4D(column);
-	auto& m(*(fTransM));
-	return m(row,column);
+	auto &m(*(fTransM));
+	return m(row, column);
 }
 
-const Eigen::Matrix4d& TTransformation::getMatrix() const {
-	const auto& m(*(fTransM));
+const Eigen::Matrix4d &TTransformation::getMatrix() const
+{
+	const auto &m(*(fTransM));
 	return m;
 }
 
-
-TTransformation& TTransformation::operator=(const TTransformation& rhs) {
+TTransformation &TTransformation::operator=(const TTransformation &rhs)
+{
 	*(fTransM) = *(rhs.fTransM);
 	return *this;
 }
 
-bool TTransformation::transform(TPositionVector& pv) const{
+bool TTransformation::transform(TPositionVector &pv) const
+{
 	TCoordSysFactory::ECoordSys k3DCart = TCoordSysFactory::ECoordSys::k3DCartesian;
 	bool result = false;
 
-	//If status is not null and vector is in a 3d cart. coordinates.
-	if(pv.isInitialise() && pv.getCoordSys() == k3DCart)
+	// If status is not null and vector is in a 3d cart. coordinates.
+	if (pv.isInitialise() && pv.getCoordSys() == k3DCart)
 	{
 		Eigen::Vector4d pTemp(pv.getX().getMetresValue(), pv.getY().getMetresValue(), pv.getZ().getMetresValue(), 1.0);
-	
-		//Transform
-		Eigen::Vector4d pResult = *(fTransM) * pTemp;
 
-		//pResult is a result of the point transformation in homogeneus coordinates
-		//If w (scale) coordinate is 0, than it is a point at infinity.
+		// Transform
+		Eigen::Vector4d pResult = *(fTransM)*pTemp;
+
+		// pResult is a result of the point transformation in homogeneus coordinates
+		// If w (scale) coordinate is 0, than it is a point at infinity.
 		zerofy(pResult[3]);
-		if(pResult[3] == 0.0)
+		if (pResult[3] == 0.0)
 			throw std::runtime_error("Transformed TPositionVector is a point at infinity");
 
-		//Transform point in homogeneus coordinates back to cartesian coordinates.
-		pv.setX(TLength(pResult[0]/pResult[3]));
-		pv.setY(TLength(pResult[1]/pResult[3]));
-		pv.setZ(TLength(pResult[2]/pResult[3]));
+		// Transform point in homogeneus coordinates back to cartesian coordinates.
+		pv.setX(TLength(pResult[0] / pResult[3]));
+		pv.setY(TLength(pResult[1] / pResult[3]));
+		pv.setZ(TLength(pResult[2] / pResult[3]));
 		result = true;
 	}
 
 	return result;
 }
 
-bool TTransformation::transform(TFreeVector& fv) const{
-	
+bool TTransformation::transform(TFreeVector &fv) const
+{
 	TCoordSysFactory::ECoordSys k3DCart = TCoordSysFactory::ECoordSys::k3DCartesian;
 	bool result = false;
 
-	Eigen::Matrix4d mat(*this->fTransM);		
+	Eigen::Matrix4d mat(*this->fTransM);
 
-	//If status is not null and vector is in a 3d cart. coordinates.
-	if(fv.isInitialise() && fv.getCoordSys()==k3DCart){
-      Eigen::Vector4d pTemp(fv.getX().getMetresValue(), fv.getY().getMetresValue(), fv.getZ().getMetresValue(), 1.0);
-	
-		//TFreeVector is not affected by translation
-		mat(0,3) = 0;
-		mat(1,3) = 0;
-		mat(2,3) = 0;
+	// If status is not null and vector is in a 3d cart. coordinates.
+	if (fv.isInitialise() && fv.getCoordSys() == k3DCart)
+	{
+		Eigen::Vector4d pTemp(fv.getX().getMetresValue(), fv.getY().getMetresValue(), fv.getZ().getMetresValue(), 1.0);
 
-		//Transform
+		// TFreeVector is not affected by translation
+		mat(0, 3) = 0;
+		mat(1, 3) = 0;
+		mat(2, 3) = 0;
+
+		// Transform
 		Eigen::Vector4d pResult = mat * pTemp;
 
-		//pResult is a result of the point transformation in homogeneus coordinates
-		//If w (scale) coordinate is 0, than it is a point at infinity
+		// pResult is a result of the point transformation in homogeneus coordinates
+		// If w (scale) coordinate is 0, than it is a point at infinity
 		zerofy(pResult[3]);
-		if(pResult[3] == 0.0){
+		if (pResult[3] == 0.0)
+		{
 			throw std::runtime_error("Transformed TFreeVector is a point at infinity");
 		}
 
-		//Transform point in homogeneus coordinates to cartesian coordinates
-		fv.setX(TLength(pResult[0]/pResult[3]));
-      fv.setY(TLength(pResult[1]/pResult[3]));
-      fv.setZ(TLength(pResult[2]/pResult[3]));
+		// Transform point in homogeneus coordinates to cartesian coordinates
+		fv.setX(TLength(pResult[0] / pResult[3]));
+		fv.setY(TLength(pResult[1] / pResult[3]));
+		fv.setZ(TLength(pResult[2] / pResult[3]));
 		result = true;
 	}
 
 	return result;
 }
 
-
-TTransformation TTransformation::operator*(const TTransformation& trans) const {
+TTransformation TTransformation::operator*(const TTransformation &trans) const
+{
 	TTransformation t(*this);
 	*(t.fTransM) = *(fTransM) * *(trans.fTransM);
 	return t;
 }
 
-TTransformation& TTransformation::operator*=(const TTransformation& trans) {
+TTransformation &TTransformation::operator*=(const TTransformation &trans)
+{
 	*this = *this * trans;
-	return  *this;
+	return *this;
 }
 
-TPositionVector TTransformation::operator*(const TPositionVector& pos) const
+TPositionVector TTransformation::operator*(const TPositionVector &pos) const
 {
 	TPositionVector result(pos);
 	transform(result);
 	return result;
 }
 
-TFreeVector TTransformation::operator*(const TFreeVector& pos) const
+TFreeVector TTransformation::operator*(const TFreeVector &pos) const
 {
 	TFreeVector result(pos);
 	transform(result);
