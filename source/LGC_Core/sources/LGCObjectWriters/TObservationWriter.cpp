@@ -178,7 +178,8 @@ void TObservationWriter::writeHisto(const TLGCObsSummary &summary, std::string d
 			int k = summary.getHistoScale();
 			std::string ech = "";
 
-			if (description == "ANGL" || description == "ZEND" || description == "ORIE" || description == "PLR3D: ZEND" || description == "INCLY" || description == "ROLLY" || description == "PLR3D: ANGL") /* Angle*/
+			if (description == "ANGL" || description == "ZEND" || description == "ORIE" || description == "PLR3D: ZEND" || description == "INCLY"
+				|| description == "ROLLY" || description == "PLR3D: ANGL") /* Angle*/
 			{
 				switch (k)
 				{
@@ -516,11 +517,11 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic &stat
 // returns a string with the description
 std::string TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key)
 {
-	static const char *descriptions[] = {"PLR3D", "Vecteur directeur (UVEC)", "Vecteur directeur + Distance (UVD)", "ANGLES HORIZONTAUX (ANGL)",
-		"DISTANCES ZENITHALES (ZEND)", "DISTANCES MESUREES (DIST)", "ECART A UN PLAN VERTICAL (ECTH)", "ECART A UNE DIRECTION (ECDIR)", "DISTANCES HORIZONTALES (DHOR)",
-		"DISTANCES SPATIALES (DSPT)", "DISTANCES VERTICALES (DLEV)", "DISTANCES HORIZONTALES (DLEVDHOR)", "DISTANCES VERTICALES (DVER)",
-		"ECARTS DANS LE PLAN HORIZONTAL (ECHO)", "ECARTS A UNE DROITE (ECSP)", "ECARTS A UNE DROITE VERTICALE (ECVE)", "ORIENTATIONS (ORIE)", "POINT D'ORIENTATION (PDOR)",
-		"CONTRAINTES RADIALES (RADI)", "CONTRAINTES 3D SUR UN POINT (OBSXYZ)", "INCLINAISONS/VERTICALE-ASIN (INCLY)", "INCLINAISONS/VERTICALE-ATAN (ROLLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)"};
+	static const char *descriptions[] = {"PLR3D", "Vecteur directeur (UVEC)", "Vecteur directeur + Distance (UVD)", "ANGLES HORIZONTAUX (ANGL)", "DISTANCES ZENITHALES (ZEND)",
+		"DISTANCES MESUREES (DIST)", "ECART A UN PLAN VERTICAL (ECTH)", "ECART A UNE DIRECTION (ECDIR)", "DISTANCES HORIZONTALES (DHOR)", "DISTANCES SPATIALES (DSPT)",
+		"DISTANCES VERTICALES (DLEV)", "DISTANCES HORIZONTALES (DLEVDHOR)", "DISTANCES VERTICALES (DVER)", "ECARTS DANS LE PLAN HORIZONTAL (ECHO)", "ECARTS A UNE DROITE (ECSP)",
+		"ECARTS A UNE DROITE VERTICALE (ECVE)", "ORIENTATIONS (ORIE)", "POINT D'ORIENTATION (PDOR)", "CONTRAINTES RADIALES (RADI)", "CONTRAINTES 3D SUR UN POINT (OBSXYZ)",
+		"INCLINAISONS/VERTICALE-ASIN (INCLY)", "INCLINAISONS/VERTICALE-ATAN (ROLLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)"};
 
 	static_assert((sizeof(descriptions) / sizeof(descriptions[0])) == TALGCObjectWriter::ALWAYS_LAST, "Not enough description strings for enums");
 

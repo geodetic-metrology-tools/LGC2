@@ -9,37 +9,35 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////
 
-#include  "TSimPointSummary.h"
+#include "TSimPointSummary.h"
 
 //////////////////////
 // Default Constructor
 //////////////////////
-TSimPointSummary::TSimPointSummary() : fSumRes(TCoordSysFactory::k3DCartesian),
-fResMin(TCoordSysFactory::k3DCartesian), fResMax(TCoordSysFactory::k3DCartesian),
-fSumRes2(TCoordSysFactory::k3DCartesian)
+TSimPointSummary::TSimPointSummary() :
+	fSumRes(TCoordSysFactory::k3DCartesian), fResMin(TCoordSysFactory::k3DCartesian), fResMax(TCoordSysFactory::k3DCartesian), fSumRes2(TCoordSysFactory::k3DCartesian)
 {
 	fFirstSim = true;
 }
 
-
 //////////////////////
 // Constructor taking a LSCPosVecIterator
 //////////////////////
-TSimPointSummary::TSimPointSummary(const LGCAdjustablePoint& point) :  fSumRes(0,0,0,TCoordSysFactory::k3DCartesian),
-fResMin(0,0,0,TCoordSysFactory::k3DCartesian), fResMax(0,0,0,TCoordSysFactory::k3DCartesian),
-fSumRes2(0,0,0,TCoordSysFactory::k3DCartesian)
+TSimPointSummary::TSimPointSummary(const LGCAdjustablePoint &point) :
+	fSumRes(0, 0, 0, TCoordSysFactory::k3DCartesian),
+	fResMin(0, 0, 0, TCoordSysFactory::k3DCartesian),
+	fResMax(0, 0, 0, TCoordSysFactory::k3DCartesian),
+	fSumRes2(0, 0, 0, TCoordSysFactory::k3DCartesian)
 {
 	fPoint = &point;
 	fFirstSim = true;
 }
 
-
 ///////////////////
 // copy constructor
 ///////////////////
-TSimPointSummary::TSimPointSummary(const TSimPointSummary& source) :  fSumRes(TCoordSysFactory::k3DCartesian),
-fResMin(TCoordSysFactory::k3DCartesian), fResMax(TCoordSysFactory::k3DCartesian),
-fSumRes2(TCoordSysFactory::k3DCartesian)
+TSimPointSummary::TSimPointSummary(const TSimPointSummary &source) :
+	fSumRes(TCoordSysFactory::k3DCartesian), fResMin(TCoordSysFactory::k3DCartesian), fResMax(TCoordSysFactory::k3DCartesian), fSumRes2(TCoordSysFactory::k3DCartesian)
 {
 	*this = source;
 }
@@ -51,11 +49,10 @@ TSimPointSummary::~TSimPointSummary()
 {
 }
 
-
 ///////////////////////////
 // copy assignment operator
 ///////////////////////////
-TSimPointSummary& TSimPointSummary::operator=(const TSimPointSummary& right)
+TSimPointSummary &TSimPointSummary::operator=(const TSimPointSummary &right)
 {
 	if (this != &right)
 	{
@@ -72,11 +69,10 @@ TSimPointSummary& TSimPointSummary::operator=(const TSimPointSummary& right)
 	return *this;
 }
 
-
 ///////////////////////
 // equivalence operator
 ///////////////////////
-bool	TSimPointSummary::operator==(const TSimPointSummary& right) const
+bool TSimPointSummary::operator==(const TSimPointSummary &right) const
 {
 	return fPoint->getName() == right.fPoint->getName();
 	/*return (fPoint == right.fPoint &&
@@ -86,17 +82,16 @@ bool	TSimPointSummary::operator==(const TSimPointSummary& right) const
 		fSumRes2 == right.fSumRes2);*/
 }
 
-
 ////////////////////////////////////////////
 // add a new value in the sum of the residus
 ////////////////////////////////////////////
-void	TSimPointSummary::addNewResValue(const TFreeVector& res)
+void TSimPointSummary::addNewResValue(const TFreeVector &res)
 {
 	fSumRes += res;
-	
-   fSumRes2.setX(fSumRes2.getX() + TLength(powq(res.getX().getMetresValue(), 2)));
-   fSumRes2.setY(fSumRes2.getY() + TLength(powq(res.getY().getMetresValue(), 2)));
-   fSumRes2.setZ(fSumRes2.getZ() + TLength(powq(res.getZ().getMetresValue(), 2)));
+
+	fSumRes2.setX(fSumRes2.getX() + TLength(powq(res.getX().getMetresValue(), 2)));
+	fSumRes2.setY(fSumRes2.getY() + TLength(powq(res.getY().getMetresValue(), 2)));
+	fSumRes2.setZ(fSumRes2.getZ() + TLength(powq(res.getZ().getMetresValue(), 2)));
 
 	if (fFirstSim == true)
 	{
@@ -115,15 +110,20 @@ void	TSimPointSummary::addNewResValue(const TFreeVector& res)
 ////////////////////////////////////////////////////////////
 // update, if necessary, the value of the minimum of residus
 ////////////////////////////////////////////////////////////
-void	TSimPointSummary::ifNecessarySetMin(const TFreeVector& res)
+void TSimPointSummary::ifNecessarySetMin(const TFreeVector &res)
 {
 	if (res.getX() < fResMin.getX())
-	{fResMin.setX(res.getX());}
+	{
+		fResMin.setX(res.getX());
+	}
 	if (res.getY() < fResMin.getY())
-	{fResMin.setY(res.getY());}
+	{
+		fResMin.setY(res.getY());
+	}
 	if (res.getZ() < fResMin.getZ())
-	{fResMin.setZ(res.getZ());}
-	
+	{
+		fResMin.setZ(res.getZ());
+	}
 
 	return;
 }
@@ -131,14 +131,20 @@ void	TSimPointSummary::ifNecessarySetMin(const TFreeVector& res)
 ////////////////////////////////////////////////////////////
 // update, if necessary, the value of the minimum of residus
 ////////////////////////////////////////////////////////////
-void	TSimPointSummary::ifNecessarySetMax(const TFreeVector& res)
+void TSimPointSummary::ifNecessarySetMax(const TFreeVector &res)
 {
 	if (fResMax.getX() < res.getX())
-	{fResMax.setX(res.getX());}
+	{
+		fResMax.setX(res.getX());
+	}
 	if (fResMax.getY() < res.getY())
-	{fResMax.setY(res.getY());}
+	{
+		fResMax.setY(res.getY());
+	}
 	if (fResMax.getZ() < res.getZ())
-	{fResMax.setZ(res.getZ());}
-	
+	{
+		fResMax.setZ(res.getZ());
+	}
+
 	return;
 }

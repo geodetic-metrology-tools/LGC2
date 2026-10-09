@@ -30,7 +30,7 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 	bool useLM = data.getConfig().useRegularization.isActive();
 	if (useLM)
 	{
-		std::shared_ptr<TLGCData> dataPtr(&data, [](TLGCData*){});
+		std::shared_ptr<TLGCData> dataPtr(&data, [](TLGCData *) {});
 		tryRegularizedSolve(dataPtr);
 		bool onlyStatistics = data.getConfig().useRegularizationOnly.isActive();
 		if (onlyStatistics)
@@ -47,7 +47,6 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 	{
 		computationIsOK = iterate2Solution(data, matrFiller.get(), inputMtr.get(), computer.get(), fMaxIterations, data.getConfig().outPrecision.convCrit);
 	}
-
 
 	return computationIsOK;
 }
@@ -173,7 +172,6 @@ Behavior TLSAlgorithm::computeStatisticsAtCurrentState(TLGCData *data, TLSInputM
 		fileLog << TFileLogger::e_logType::LOG_ERROR << "TResidual errors and their related variance-covariance matrix could not be estimated. ";
 		return Behavior(Behavior::BehaviorCode::ERR_LSCalculation, L"TResidual errors and their related variance-covariance matrix could not be estimated!\n");
 	}
-
 }
 
 bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrices *inputMtr, TALSComputer *computer)
@@ -235,7 +233,6 @@ bool TLSAlgorithm::computeVarCovarAndReliability(TLGCData *data, TLSInputMatrice
 
 void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 {
-
 	std::shared_ptr<TLSEvaluator> evalPtr = std::make_shared<TLSEvaluator>(dataPtr);
 
 	TLSTrustRegionLM::Config defaultConfig;
@@ -284,9 +281,8 @@ void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 		}
 		catch (const std::exception &e)
 		{
-				// Handles exceptions derived from std::exception.
-				logWarning()
-				<< "Problem occured during attempting solution of problem with randomly generated initial value: " << std::string(e.what());
+			// Handles exceptions derived from std::exception.
+			logWarning() << "Problem occured during attempting solution of problem with randomly generated initial value: " << std::string(e.what());
 		}
 		catch (...)
 		{
@@ -324,4 +320,3 @@ void TLSAlgorithm::tryRegularizedSolve(std::shared_ptr<TLGCData> dataPtr)
 	// clean errors that potentially happened during input filling
 	fileLog.resetErrorCounter();
 }
-
