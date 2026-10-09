@@ -32,9 +32,9 @@ P2 1 2 3 APRICOV DIAG(1,2,3)
 P3 1 2 3 APRICOV MAT(10,2,3,2,40,2,3,2,30)
 *OBSXYZ
 % this will force xParallel to (0 1 1) (closest point to (0 0 0) on the line), nevertheless huge residual
-xParallel 0 0 0 1 1 1 
+xParallel 0 0 0 1 1 1
 % will force the point to (0.5 0.5 0), huge residual
-xLine 0 0 0 1 1 1 
+xLine 0 0 0 1 1 1
 *FRAME trans 11 12 13 0 0 0 1
 *FRAME P1_RSTI 0 0 0 0 0 10 1
 *FRAME P1_RST 0 0 0 -20 30 -20 1
@@ -61,14 +61,14 @@ char const *const computationHeightFixed = R"(*TITR
 *APRI
 *INSTR
 *POIN
-P0 1 2 3 SZ 0 
+P0 1 2 3 SZ 0
 *VXY
-P1 1 2 3 
+P1 1 2 3
 *OBSXYZ
 % move the points alot in the xy plane -> internally the cartesian z needs to be updated even though its fixed
 % (transformEstimatedValue method)
-P0 1000 2000 3000 1 1 1 
-P1 1000 2000 3000 1 1 1 
+P0 1000 2000 3000 1 1 1
+P1 1000 2000 3000 1 1 1
 *END
 )";
 
@@ -78,8 +78,8 @@ char const *const computationAnglesDefinition = R"(*TITR
 *APRI
 *INSTR
 *POIN
-pointWithSigmaInRoot 0 0 0 BEAR 10 SLOPE 20 ROLL 30 HDEFL 20 SX 3 SY 4 SZ 5 
-pointWithSigmaInRootPerturbed 0 0 0 BEAR 10 SLOPE 20 ROLL 30 HDEFL 20 SX 3 SY 4 SZ 5 
+pointWithSigmaInRoot 0 0 0 BEAR 10 SLOPE 20 ROLL 30 HDEFL 20 SX 3 SY 4 SZ 5
+pointWithSigmaInRootPerturbed 0 0 0 BEAR 10 SLOPE 20 ROLL 30 HDEFL 20 SX 3 SY 4 SZ 5
 % equivalent setup with frames, using the 4 angles in the point sigma definition
 *FRAME RSTI 0 0 0 0 0 10 1
 *FRAME RST 0 0 0 -20 30 -20 1

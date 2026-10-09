@@ -7,45 +7,42 @@
 #ifndef _LGC_TESTS_SIGMA_H
 #define _LGC_TESTS_SIGMA_H
 
-
-namespace TestSUBFRAME {
+namespace TestSUBFRAME
+{
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////// PLR3D
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/*FIXED TRANSFORMATION*/
-char const *const BCAM_PLR3D_setup3= 
-		"*TITR\n"
-		"Testing Input Matrices Filler.\n"
-		"*OLOC\n"
-		"*FAUT\n"
+/*FIXED TRANSFORMATION*/
+char const *const BCAM_PLR3D_setup3 = "*TITR\n"
+									  "Testing Input Matrices Filler.\n"
+									  "*OLOC\n"
+									  "*FAUT\n"
 
-		"*INSTR\n"
-		"*CAMD TS1 T1\n"
-		"T1  5  5  0.5 0.5\n"
+									  "*INSTR\n"
+									  "*CAMD TS1 T1\n"
+									  "T1  5  5  0.5 0.5\n"
 
-		"*CALA\n"
-			"STN  0 0 0\n"
+									  "*CALA\n"
+									  "STN  0 0 0\n"
 
-		"*POIN\n"
-			"PT  0 100 0\n"
-			"PT2  100 100 0\n"
+									  "*POIN\n"
+									  "PT  0 100 0\n"
+									  "PT2  100 100 0\n"
 
-		"*FRAME BCAMFrame 100 0 0 0.0 0.0 0.0 1.0\n"
-		"*CALA\n"
-			"REF  0 0 0\n"
-		"*CAM REF TS1\n"
-			"*UVEC\n"
-				"STN  0  0  1\n"
-				"PT 0  0  1\n"
-				"PT2 0  0  1 \n"
-		"*ENDFRAME\n"
-		;
-
+									  "*FRAME BCAMFrame 100 0 0 0.0 0.0 0.0 1.0\n"
+									  "*CALA\n"
+									  "REF  0 0 0\n"
+									  "*CAM REF TS1\n"
+									  "*UVEC\n"
+									  "STN  0  0  1\n"
+									  "PT 0  0  1\n"
+									  "PT2 0  0  1 \n"
+									  "*ENDFRAME\n";
 
 #if 0
 /*ROTATION RZ TRANSFORMATION, CAMERA AT THE ORIGIN, JUST TO PROVE  THAT FOR RZ = 200 ALSO DOES NOT WORK*/
-char const *const BCAM_PLR3D_CAMORIG = 
+char const *const BCAM_PLR3D_CAMORIG =
 		"*TITR\n"
 		"Testing Input Matrices Filler.\n"
 		"*OLOC\n"
@@ -81,7 +78,7 @@ EXPECTED
 	PT2  100 100 0\n
 
 */
-char const *const BCAM_PLR3D_RZfree_setup3= 
+char const *const BCAM_PLR3D_RZfree_setup3=
 		"*TITR\n"
 		"Testing Input Matrices Filler.\n"
 		"*OLOC\n"
@@ -116,7 +113,7 @@ char const *const BCAM_PLR3D_RZfree_setup3=
 EXPECTED
 	TX = 100
 */
-char const *const BCAM_PLR3D_TXfree_setup3= 
+char const *const BCAM_PLR3D_TXfree_setup3=
 		"*TITR\n"
 		"Testing Input Matrices Filler.\n"
 		"*OLOC\n"
@@ -148,13 +145,13 @@ char const *const BCAM_PLR3D_TXfree_setup3=
 			;
 
 /*TX and RZ free parameters*/
-/* EXPECTED 
+/* EXPECTED
 		RZ = 390 gons
 		TX = 200 meters
 
 	ANOTHER SOLUTION IS FOUND, BUT ALSO 'WORKS', network is not unique
 */
-char const *const BCAM_PLR3D_TXRZfree_setup3_2solutions= 
+char const *const BCAM_PLR3D_TXRZfree_setup3_2solutions=
 		"*TITR\n"
 		"Testing Input Matrices Filler.\n"
 		"*OLOC\n"
@@ -186,11 +183,11 @@ char const *const BCAM_PLR3D_TXRZfree_setup3_2solutions=
 		;
 
 /*TX and RZ free parameters*/
-/* EXPECTED 
+/* EXPECTED
 		RZ = 390 gons
 		TX = 200 meters
 */
-char const *const BCAM_PLR3D_TXRZfree_setup3_TSTNADD = 
+char const *const BCAM_PLR3D_TXRZfree_setup3_TSTNADD =
 		"*TITR\n"
 		"Testing Input Matrices Filler.\n"
 		"*OLOC\n"
@@ -235,7 +232,7 @@ char const *const BCAM_PLR3D_TXRZfree_setup3_TSTNADD =
 	RZ = 200
 
 */
-char const *const BCAM_PLR3D_TXRZfree_setup3_2BCAMs= 
+char const *const BCAM_PLR3D_TXRZfree_setup3_2BCAMs=
 		"*TITR\n"
 		"Testing Input Matrices Filler.\n"
 		"*OLOC\n"
@@ -245,7 +242,7 @@ char const *const BCAM_PLR3D_TXRZfree_setup3_2BCAMs=
 		"*CAMD TS1 T1\n"
 		"T1  5  5  0.5 0.5\n"
 
-	
+
 		"*POIN\n"
 			"PT  0 0 0\n"
 			"PT2  100 100 0\n"
@@ -286,7 +283,7 @@ char const *const BCAM_PLR3D_TXRZfree_setup3_2BCAMs=
 		PT = ( 0 100 0)
 
 */
-char const *const BCAM_DIR3D_setup1 = 
+char const *const BCAM_DIR3D_setup1 =
 		"*TITR\n"
 		"Testing Input Matrices Filler.\n"
 		"*OLOC\n"
@@ -318,7 +315,7 @@ char const *const BCAM_DIR3D_setup1 =
 				"REF2  50  100 141.4213562373095048801\n"*/
 		"*ENDFRAME\n"
 
-		
+
 		"*CALA\n"
 			"TSTNREF  0 0 0\n"
 
@@ -346,5 +343,5 @@ char const *const BCAM_DIR3D_setup1 =
 
 				;
 #endif
-}
+} // namespace TestSUBFRAME
 #endif
