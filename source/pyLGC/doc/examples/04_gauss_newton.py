@@ -6,9 +6,11 @@ from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import spsolve
 import pyLGC
 
+
 def to_csr(tup):
     rows, cols, vals, nr, nc = tup
     return coo_matrix((vals, (rows, cols)), shape=(nr, nc)).tocsr()
+
 
 ev = pyLGC.Evaluator("Title-Example.lgc2")
 

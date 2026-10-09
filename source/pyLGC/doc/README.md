@@ -16,8 +16,8 @@ pdflatex pyLGC_manual.tex
 
 ## Dynamic Code Examples
 
-The code examples in the manual are NOT hardcoded into `pyLGC_manual.tex`. 
+The code examples in the manual are NOT hardcoded into `pyLGC_manual.tex`.
 
-Instead, the LaTeX file dynamically pulls the Python code directly from the `examples/` folder using the `\lstinputlisting` command. 
+Instead, the LaTeX file dynamically pulls the Python code directly from the `examples/` folder using the `\lstinputlisting` command.
 
 If you update any of the `.py` scripts in the `examples/` directory, simply recompile the PDF with `pdflatex` and the manual will automatically reflect the newest code.

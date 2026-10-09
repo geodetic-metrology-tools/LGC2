@@ -7,10 +7,12 @@ import pyLGC
 ev = pyLGC.Evaluator("Title-Example.lgc2")
 ev.evaluate()
 
+
 # Build sparse matrices
 def to_csr(tup):
     rows, cols, vals, nr, nc = tup
     return coo_matrix((vals, (rows, cols)), shape=(nr, nc)).tocsr()
+
 
 A = to_csr(ev.getFirstDesignMatrix())
 P = to_csr(ev.getWeightMatrix())
