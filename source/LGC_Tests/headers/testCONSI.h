@@ -22,27 +22,27 @@ T1  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0
 STN 100 100 0
 REF  0 0 0
 *POIN
-PT  100 1000.5 50  
+PT  100 1000.5 50
 *TSTN STN TS1 IHFIX
 *V0 ACST 200.0
 *PLR3D
-REF  50 100  141.421356237 
-PT  100 100 100 
+REF  50 100  141.421356237
+PT  100 100 100
 *END
 )";
 
-char const *const CONSI_good_config = R"(*TITR                        
-SANS_TITRE                        
+char const *const CONSI_good_config = R"(*TITR
+SANS_TITRE
 *OLOC
 *FAUT
-*CONSI                        
+*CONSI
 *HIST
 *PUNC
-*INSTR                         
-*CALA                        
+*INSTR
+*CALA
  S01  9999.90000  9999.90000   390.20500
  S02  9999.90000  9999.90000   316.94500
-*VZ                        
+*VZ
 LEV064     9999.9     9999.9     0.0
 LEV065     9999.9     9999.9     0.0
 LEV066     9999.9     9999.9     0.0
@@ -56,20 +56,20 @@ LEV066     S02     -1.18943
 LEV067     S01     -1.32555
 *END)";
 
-char const *const CONSI_bad_config = R"(*TITR                        
-SANS_TITRE                        
+char const *const CONSI_bad_config = R"(*TITR
+SANS_TITRE
 *OLOC
 *FAUT
-*CONSI                        
+*CONSI
 *HIST
 *PUNC
-*INSTR                         
-*CALA                        
+*INSTR
+*CALA
 S01  9999.90000  9999.90000   390.20500
 S02  9999.90000  9999.90000   316.94500
 *VXZ
-S03 1 1 1 
-*VZ                        
+S03 1 1 1
+*VZ
 LEV064     9999.9     9999.9     0.0
 LEV065     9999.9     9999.9     0.0
 LEV066     9999.9     9999.9     0.0
@@ -86,17 +86,17 @@ LEV066     S02     -1.18943
 LEV067     S03     -1.32555
 *END)";
 
-char const *const CONSI_ConnectedComponentsTest = R"(*TITR                        
+char const *const CONSI_ConnectedComponentsTest = R"(*TITR
 Goal: Test neighbor determination using sparsity pattern of A matrix
 *OLOC
 *CONSI
 *INSTR
-*EDM EDM1 ET1 0.0 0.0 0.0		
-ET1  0.1  0.0 0 0.0 0.0 0.0 0 0.0	
+*EDM EDM1 ET1 0.0 0.0 0.0
+ET1  0.1  0.0 0 0.0 0.0 0.0 0 0.0
 % three points with distance 1 to each other -> they will form a uniform triangle but this triangle can be moved around
 *VXY
 P0 0 0 0
-P1 1 0 0 
+P1 1 0 0
 *VZ
 P2 0 1 0
 *DSPT P0 EDM1
