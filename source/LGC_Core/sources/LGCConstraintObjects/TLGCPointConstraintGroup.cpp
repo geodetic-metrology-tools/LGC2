@@ -17,7 +17,6 @@ TLGCPointConstraintGroup::TLGCPointConstraintGroup(const TLGCData &projData, con
 	setAffectedPoints(affectedPoints);
 }
 
-
 void TLGCPointConstraintGroup::setAffectedPoints(const std::set<std::string> &affectedPoints)
 {
 	if (affectedPoints.size() == 0)
@@ -40,7 +39,7 @@ void TLGCPointConstraintGroup::setAffectedPoints(const std::set<std::string> &af
 		TLOR2LOR sub2Root(point.getFrameTreePosition(), data.getTree().begin(), "sub2Root");
 		TPositionVector positionInRoot = point.getEstimatedValue();
 		sub2Root.transform(positionInRoot);
-		Eigen::Vector3d rootPos =  positionInRoot.toRealVector();
+		Eigen::Vector3d rootPos = positionInRoot.toRealVector();
 		fProvPosInRoot[pointName] = rootPos;
 		cogInRoot += rootPos;
 	}
@@ -53,8 +52,6 @@ void TLGCPointConstraintGroup::setAffectedPoints(const std::set<std::string> &af
 	{
 		provScale += pow2((fProvPosInRoot[pointName] - provCOG).norm());
 	}
-
-
 }
 
 void TLGCPointConstraintGroup::allPointsAreAffected()
@@ -69,7 +66,7 @@ void TLGCPointConstraintGroup::allPointsAreAffected()
 	setAffectedPoints(allPoints);
 }
 
-void TLGCPointConstraintGroup::setConstraintSignature(const std::array<bool, 7>& usedConstraints)
+void TLGCPointConstraintGroup::setConstraintSignature(const std::array<bool, 7> &usedConstraints)
 {
 	fConstraints = usedConstraints;
 	int dim = std::count(usedConstraints.begin(), usedConstraints.end(), true);
@@ -137,7 +134,6 @@ void TLGCPointConstraintGroup::plotGroupData()
 		logWarning() << pointName;
 	}
 }
-
 
 #if USE_SERIALIZER
 void TLGCPointConstraintGroup::serialize(ObjectSerializer &obj) const

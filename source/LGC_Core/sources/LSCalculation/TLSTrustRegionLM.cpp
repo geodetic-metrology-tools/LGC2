@@ -48,7 +48,6 @@ TLSTrustRegionLM::Result TLSTrustRegionLM::solve(const Eigen::VectorXd &x0)
 	TLSInputMatrices modelEval_xCurr = fEvaluator->getInputMatricesCopy();
 	TLSInputMatrices modelEval_xTrial = modelEval_xCurr;
 
-
 	// current objective
 	double fCurr = 1e+12;
 	// current constraint norm
@@ -72,7 +71,6 @@ TLSTrustRegionLM::Result TLSTrustRegionLM::solve(const Eigen::VectorXd &x0)
 		}
 
 		clipStep(dx, mult, delta);
-		
 
 		xTrial = xCurr + dx;
 		fEvaluator->setParameters(xTrial);
@@ -114,7 +112,6 @@ bool TLSTrustRegionLM::checkConvergence(const Eigen::VectorXd &dx, Status &statu
 	return false;
 }
 
-
 bool TLSTrustRegionLM::solveKKTStep(const TLSInputMatrices &input, double lmDamping, Eigen::VectorXd &dx, Eigen::VectorXd &mult)
 {
 	const auto &A = input.getFirstDgnMtrx();
@@ -131,7 +128,6 @@ bool TLSTrustRegionLM::solveKKTStep(const TLSInputMatrices &input, double lmDamp
 	TSparseMatrix invN1 = invB.transpose() * P * invB;
 	TSparseMatrix N2 = A.transpose() * invN1 * A;
 	TSparseMatrix NBig = constructNBigRegularized(N2, Ac, lmDamping);
-
 
 	// RHS: [-AT * invN1 * W; -Wc]
 	Eigen::VectorXd rhs(n + nc);
@@ -246,14 +242,14 @@ void TLSTrustRegionLM::formatLine(int iter, const Eigen::VectorXd &dx, double sq
 	if (iter % headerEvery == 0)
 	{
 		header << std::setw(6) << "Iter"
-				<< " | " << std::setw(12) << "|dx|_inf"
-				<< " | " << std::setw(12) << "|dx|_2"
-				<< " | " << std::setw(15) << "sigma0"
-				<< " | " << std::setw(12) << "lambda"
-				<< " | " << std::setw(20) << "predicted reduction"
-				<< " | " << std::setw(20) << "actual reduction"
-				<< " | " << std::setw(12) << "rho=aRed/pRed"
-				<< " | " << std::setw(8) << "accept" << '\n';
+			   << " | " << std::setw(12) << "|dx|_inf"
+			   << " | " << std::setw(12) << "|dx|_2"
+			   << " | " << std::setw(15) << "sigma0"
+			   << " | " << std::setw(12) << "lambda"
+			   << " | " << std::setw(20) << "predicted reduction"
+			   << " | " << std::setw(20) << "actual reduction"
+			   << " | " << std::setw(12) << "rho=aRed/pRed"
+			   << " | " << std::setw(8) << "accept" << '\n';
 		std::string headerStr = header.str();
 		std::string underline(headerStr.length() - 1, '-');
 		logInfo() << underline;
@@ -282,4 +278,3 @@ Eigen::VectorXd TLSTrustRegionLM::getV(const TLSInputMatrices &input) const
 {
 	return -input.getSecondDgnBlockDiagInvMtrx() * input.getMisclosureVctr();
 }
-
