@@ -213,11 +213,10 @@ void object::test<2>()
 	expectedApriCovP3 << 10, 2, 3, 2, 40, 2, 3, 2, 30;
 	ensure_equals("apriori covariance matrix not set correctly.", (expectedApriCovP3 - P3.getPointSigmaData().fApriCovMat).norm(), 0.0);
 	ensure_equals("a-posteriori covariance matrix has to match a-priori covariance matrix for P3", P3.getCovarianceMatrix().isApprox(P3.getPointSigmaData().fApriCovMat), true);
-	
+
 	LGCAdjustablePoint ex = ptCollection.getObject("ex");
 	ensure_equals("Offset of a fully fixed point should be zero.", (ex.getPointSigmaData().fRotRes).norm(), 0.0);
 	ensure_equals("The diagonal of the weight matrix of a fixed point should be NaN per convention.", ex.getPointSigmaData().fWeightMatrix.diagonal().array().isNaN().all(), true);
-
 }
 
 template<>
