@@ -61,7 +61,7 @@ BreakConstructorInitializers: AfterColon
 BinPackArguments: true
 BinPackParameters: false
 # Not defined
-#CommentPragmas: 
+#CommentPragmas:
 CompactNamespaces: true
 ReflowComments: true
 
