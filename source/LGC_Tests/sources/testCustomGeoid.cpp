@@ -239,6 +239,12 @@ void object::test<9>()
 	std::ifstream infiler(filePath + "32840_final_insert_Lambert93.lgc");
 	ensure_equals("Reading Successful", r.read(infiler), true);
 
+	TLGCApp proj4(filePath + "32840_final_insert_Lambert93.lgc", filePath + "32840_final_insert_Lambert93.res");
+	ensure_equals("Calculation successful", proj4.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
+	TLGCApp proj5(filePath + "32840_final_insert_Lambert93_SIMU.lgc", filePath + "32840_final_insert_Lambert93_SIMU.res");
+	ensure_equals("Calculation successful", proj5.exec().code(), Behavior::BehaviorCode::ERR_noError);
+
 	TLGCCalculation calcul(projTest);
 	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
 	Behavior successCalc = calcul.computeResults(fileWriter);
