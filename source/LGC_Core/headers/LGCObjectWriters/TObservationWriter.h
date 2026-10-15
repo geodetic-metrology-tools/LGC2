@@ -51,7 +51,7 @@ public:
 	/// write summary of statistics for a group of distance measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
 	void writeDistanceResultsSummary(const TLGCObsSummary &summary, std::string TABs);
 	/// write summary of statistics for a group of distance measurements (RESIDU MOYEN and LIMITES DE CONFIANC), (French version)
-	void writeUnitlessResultsSummary(const TLGCObsSummary &summary, std::string TABs);
+	void writeUnitlessResultsSummary(const TLGCObsSummary &summary, std::string TABs, const std::string &unit = "[]");
 
 	/// write a histogram for the group of measurements
 	void writeHisto(const TLGCObsSummary &summary, std::string description);
@@ -65,6 +65,9 @@ protected:
 	/// write reliability
 	void writeReliabilityCC(int index, const TLGCStatistic &stat);
 	void writeReliabilityMM(int index, const TLGCStatistic &stat);
+	void writeReliabilityPX(int index, const TLGCStatistic &stat);
+	/// write reliability, gross error and nabla multiplied by unitFactor and written with the given decimals
+	void writeReliability(int index, const TLGCStatistic &stat, TReal unitFactor, int decimals);
 
 	//@}
 private:

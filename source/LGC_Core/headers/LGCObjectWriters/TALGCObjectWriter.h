@@ -48,6 +48,7 @@ public:
 		kROLLY,
 		kECWS,
 		kECWI,
+		kUV,
 		ALWAYS_LAST
 	};
 	//@}

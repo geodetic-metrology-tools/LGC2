@@ -123,6 +123,53 @@ private:
 	TKeyPOLAR &operator=(const TKeyPOLAR &);
 };
 
+/*!
+	\brief Pixel camera: a camera instrument (TCAMD) measuring pixel coordinates (UV), its interior orientation is given in a following *IO block.
+*/
+class TKeyCAMPX : public TAInstrumentKey
+{
+public:
+	/*!
+		See \ref TAInstrumentKey::TAInstrumentKey
+	*/
+	TKeyCAMPX(TLGCData &project, int nb_allowed_keywords = nb_allowed_campx, const char **keywords = allowed_CAMPX);
+
+	/*!
+		See \ref TKeyINSTR::parse
+	*/
+	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int);
+
+	/// Returns the ID of the pixel camera defined last, to which a following *IO block belongs
+	const std::string &getCurrentInstrument() const { return currentStation; }
+
+private:
+	TKeyCAMPX &operator=(const TKeyCAMPX &);
+};
+
+/*!
+	\brief Interior orientation block of a pixel camera (CAMPX): one line per parameter with its name, its value and optionally FREE
+	or SE with an a priori sigma.
+*/
+class TKeyCAMPX_IO : public TAInstrumentKey
+{
+public:
+	/*!
+		See \ref TAInstrumentKey::TAInstrumentKey
+		\param camera keyword of the pixel camera, which knows to which instrument the block belongs
+	*/
+	TKeyCAMPX_IO(TLGCData &project, const TKeyCAMPX &camera, int nb_allowed_keywords = nb_allowed_campx_io, const char **keywords = allowed_CAMPX_IO);
+
+	/*!
+		See \ref TKeyINSTR::parse
+	*/
+	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int);
+
+private:
+	const TKeyCAMPX &fCampxKey;
+
+	TKeyCAMPX_IO &operator=(const TKeyCAMPX_IO &);
+};
+
 class TKeyEDM : public TAInstrumentKey
 {
 public:

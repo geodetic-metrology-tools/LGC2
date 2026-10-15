@@ -19,6 +19,7 @@
 // SURVEYLIB
 #include <TAdjustableHelmertTransformation.h>
 #include <TFreeVector.h>
+#include <TInstrumentData.h>
 #include <TLGCPointConstraintGroup.h>
 
 /*!
@@ -364,6 +365,31 @@ struct UVECContrib
 
 	TReal fCalcMeas[2]; //!< Calculated measurement
 	TReal fObsVariance[2]; //!< Variances for the First and Second equation respectively.
+};
+
+/*!
+	\ingroup ContributionsGenerators
+
+	\brief Contributions for the TUV measurement (pixel coordinates) made by a pixel camera (TCAM).
+*/
+struct UVContrib
+{
+	Eigen::Vector2d fCalcMeas; //!< Calculated pixel coordinates u, v
+
+	Eigen::Matrix<double, 2, 3> fStCoordContrib; //!< x,y,z station coordinate contributions for the First and Second equation
+	Eigen::Matrix<double, 2, 3> fTgCoordContrib; //!< x,y,z target coordinate contributions for the First and Second equation
+
+	/// Contributions of the transformations of the TARGET into the camera frame, the node where the UV measurement is written (third equation unused)
+	TransformationContrib3DVector fTgTransformContrib;
+	/// Contributions of the transformations of the STATION point into the camera frame (third equation unused)
+	TransformationContrib3DVector fStTransformContrib;
+
+	/// Interior orientation contributions for the First and Second equation, columns in the order of TInstrumentData::TCAMD::EIOParam
+	Eigen::Matrix<double, 2, TInstrumentData::TCAMD::kNumIOParams> fIOContrib;
+
+	Eigen::Vector2d fObsVariance; //!< Variances of the First and Second equation respectively.
+
+	bool fBehindCamera = false; //!< TRUE if the target is behind the camera (see getUVContrib)
 };
 
 /*!

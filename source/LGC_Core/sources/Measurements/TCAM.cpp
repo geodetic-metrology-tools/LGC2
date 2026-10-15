@@ -16,6 +16,8 @@ void TCAM::initialiseObsSummaries()
 	uvdSummary_.distObsSum.clear();
 	uvecSummary_.xVectorCompObsSum.clear();
 	uvecSummary_.yVectorCompObsSum.clear();
+	uvSummary_.xVectorCompObsSum.clear();
+	uvSummary_.yVectorCompObsSum.clear();
 
 	// Add the residuals of each measurement and initialise the obs summaries:
 
@@ -45,6 +47,18 @@ void TCAM::initialiseObsSummaries()
 
 		uvecSummary_.xVectorCompObsSum.initialise();
 		uvecSummary_.yVectorCompObsSum.initialise();
+	}
+
+	// UV, residuals in pixels
+	if (!measUV.empty())
+	{
+		for (const auto &uv : measUV)
+		{
+			uvSummary_.xVectorCompObsSum.addNewResidual(uv.getXCompVectorResidual());
+			uvSummary_.yVectorCompObsSum.addNewResidual(uv.getYCompVectorResidual());
+		}
+		uvSummary_.xVectorCompObsSum.initialise();
+		uvSummary_.yVectorCompObsSum.initialise();
 	}
 }
 
@@ -81,13 +95,27 @@ void TCAM::serialize(ObjectSerializer &obj) const
 	if (instrumentPos)
 		obj.addProperty("instrumentPos", instrumentPos->getName());
 	obj.addProperty("line", line);
+	obj.addProperty("measUV", measUV);
 	obj.addProperty("measUVD", measUVD);
 	obj.addProperty("measUVEC", measUVEC);
 	obj.addProperty("stnCounter_", stnCounter_);
 	obj.addProperty("stnId", stnId);
+	obj.addProperty("uvActive", uvActive);
 	obj.addProperty("uvdActive", uvdActive);
 	obj.addProperty("uvdSummary_", uvdSummary_);
 	obj.addProperty("uvecActive", uvecActive);
 	obj.addProperty("uvecSummary_", uvecSummary_);
 }
 #endif
+
+const TUVECObsSummary &TCAM::getUVObsSummary() const
+{
+	return uvSummary_;
+}
+
+const TUVECObsSummary &TCAM::getUVObsSummary(std::string text) noexcept
+{
+	uvSummary_.xVectorCompObsSum.setObsText(text);
+	uvSummary_.yVectorCompObsSum.setObsText(text);
+	return uvSummary_;
+}

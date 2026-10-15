@@ -131,6 +131,105 @@ const std::vector<std::string> &TKeyCAMD::parentKeys() const
 	return p;
 }
 
+///////////////////////
+// CAMPX instrument //
+///////////////////////
+TKeyCAMPX::TKeyCAMPX(TLGCData &project, int nb_allowed_keywords, const char **keywords) : TAInstrumentKey(project, CAMPX)
+{
+	for (int i(0); i < nb_allowed_keywords; i++)
+		allowed_keywords.emplace_back(keywords[i]);
+}
+
+void TKeyCAMPX::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
+{
+	if (tokens.at(0) == "*")
+	{
+		// This is the keyword line, optionally followed by SENSOR, the width and the height of the sensor [px]
+		auto &camInstruments(finstruments.fCAMD);
+		const bool withSensor = tokens.size() == 7 && tokens.at(4) == "SENSOR";
+		if (tokens.size() != 4 && !withSensor)
+			throw std::runtime_error(
+				"Keyword *CAMPX expects the instrument, the default target and optionally SENSOR with the width and the height of the sensor in pixels.");
+		// with the actual number of tokens, checked above, only the check for a duplicate applies
+		checkInstrument((int)tokens.size(), camInstruments, tokens);
+
+		auto p = std::make_shared<TInstrumentData::TCAMD>(tokens.at(2), tokens.at(3), TLength(0), line); // no instrument centering
+		p->isPixelCamera = true;
+		if (withSensor)
+		{
+			p->sensorSize = {std::stor(tokens.at(5)), std::stor(tokens.at(6))};
+			if (!(p->sensorSize[0] > 0.0 && p->sensorSize[1] > 0.0))
+				throw std::runtime_error("The width and the height of the sensor must be positive.");
+		}
+
+		// store the new station
+		camInstruments.insert(std::make_pair(tokens.at(2), p));
+		currentStation = tokens.at(2);
+	}
+	else
+	{
+		// This is a target line
+		auto &targets(finstruments.fCAMD[currentStation]->targets);
+		checkTarget(3, targets, tokens);
+
+		auto t = std::make_shared<TInstrumentData::TCAMD::TTarget>(TInstrumentData::TCAMD::TTarget(tokens.at(0),
+			std::stor(tokens.at(1)), // pixels
+			std::stor(tokens.at(2)), // pixels
+			TLength(), // no distance is measured
+			TLength(0), // no target centering
+			line));
+
+		// store the new target
+		targets[tokens.at(0)] = t;
+	}
+}
+
+TKeyCAMPX_IO::TKeyCAMPX_IO(TLGCData &project, const TKeyCAMPX &camera, int nb_allowed_keywords, const char **keywords) :
+	TAInstrumentKey(project, CAMPX_IO), fCampxKey(camera)
+{
+	for (int i(0); i < nb_allowed_keywords; i++)
+		allowed_keywords.emplace_back(keywords[i]);
+}
+
+void TKeyCAMPX_IO::parse(const std::vector<std::string> &tokens, bool /*activeLine*/, int line)
+{
+	if (tokens.at(0) == "*")
+	{
+		// This is the keyword line
+		if (tokens.size() != 2)
+			throw std::runtime_error("Keyword *IO expects no parameters.");
+		return;
+	}
+
+	// This is a parameter line: name, value, optionally FREE and optionally SE with the a priori sigma, which makes the parameter free
+	const std::string syntax = "An interior orientation parameter expects its name, its value, optionally FREE and optionally SE with its a priori sigma.";
+	if (tokens.size() < 2)
+		throw std::runtime_error(syntax);
+	TOptionHelper opts(tokens.cbegin() + 2, tokens.cend());
+	const bool withSigma = opts.has("SE");
+	if (tokens.size() != 2 + opts.has("FREE") + 2 * withSigma)
+		throw std::runtime_error(syntax);
+	const TReal sigma = opts.getParamR("SE", 0.0);
+	if (withSigma && !(sigma > 0.0))
+		throw std::runtime_error("The a priori sigma of an interior orientation parameter must be positive.");
+
+	auto &camera(*finstruments.fCAMD.at(fCampxKey.getCurrentInstrument()));
+	for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+	{
+		if (tokens[0] != TInstrumentData::TCAMD::ioParamNames[i])
+			continue;
+		auto &param = camera.io[i];
+		if (param.line != 0)
+			throw std::runtime_error("The interior orientation parameter " + tokens[0] + " is given twice.");
+		param.value = std::stor(tokens[1]);
+		param.free = opts.has("FREE") || withSigma;
+		param.sigma = sigma;
+		param.line = line;
+		return;
+	}
+	throw std::runtime_error("Unknown interior orientation parameter " + tokens[0] + ", allowed are C, CX, CY, K1, K2, K3, P1, P2, B1 and B2.");
+}
+
 ////////////////////
 // EDM instrument //
 ////////////////////

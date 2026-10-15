@@ -8,12 +8,14 @@
 #define _INSTRUMENTDATA_H_
 
 // STL
+#include <array>
 #include <map>
 
 #include <Global.h>
 // SURVEYLIB
 #include <TAdjustableAngle.h>
 #include <TAdjustableLength.h>
+#include <TAdjustableScalar.h>
 
 #if USE_SERIALIZER
 #	include <Serializer.hpp>
@@ -192,8 +194,8 @@ public:
 			TLength sigmaDist; // [m]
 			TLength sigmaTargetCentering; // [m]
 			int line;
-			TLength sigmaCombinedX; // [m]
-			TLength sigmaCombinedY; // [m]
+			TLength sigmaCombinedX; // [m], [px] for a pixel camera
+			TLength sigmaCombinedY; // [m], [px] for a pixel camera
 			TLength sigmaCombinedDist; // [m]
 
 #if USE_SERIALIZER
@@ -221,8 +223,11 @@ public:
 			ID = other.ID;
 			defTarget = other.defTarget;
 			sigmaInstrCentering = other.sigmaInstrCentering;
-			line - other.line;
+			line = other.line;
 			targets = other.targets;
+			isPixelCamera = other.isPixelCamera;
+			io = other.io;
+			sensorSize = other.sensorSize;
 
 			for (auto &tgt : targets)
 				// Replace the target in the memory
@@ -236,11 +241,66 @@ public:
 		virtual void serialize(ObjectSerializer &obj) const override;
 #endif // USE_SERIALIZER
 
+		/// Interior orientation parameters of a pixel camera (*CAMPX), in the order they are stored
+		enum EIOParam
+		{
+			kC, ///< camera constant [px]
+			kCX, ///< principal point, u component [px]
+			kCY, ///< principal point, v component [px]
+			kK1, ///< radial distortion
+			kK2,
+			kK3,
+			kP1, ///< decentring distortion
+			kP2,
+			kB1, ///< affinity [px]
+			kB2, ///< shear [px]
+			kNumIOParams
+		};
+
+		/// Names of the interior orientation parameters in the *IO block of the input file, in the order of EIOParam
+		static constexpr const char *ioParamNames[kNumIOParams] = {"C", "CX", "CY", "K1", "K2", "K3", "P1", "P2", "B1", "B2"};
+
+		/// TRUE for an interior orientation parameter in pixels, the others are unitless
+		static bool ioParamInPixels(int param) { return param == kC || param == kCX || param == kCY || param == kB1 || param == kB2; }
+
+		/// One parameter of the interior orientation of a pixel camera
+#if USE_SERIALIZER
+		struct TIOParam : public Serializable
+#else
+		struct TIOParam
+#endif // USE_SERIALIZER
+		{
+			TReal value = 0.0; ///< input value: the provisional value, and with SE the a priori value, which a simulation simulates
+			bool free = false; ///< TRUE if the parameter is an unknown: FREE or SE
+			TReal sigma = 0.0; ///< a priori sigma, zero if none
+			int priorObsIndex = -1; ///< observation index of the a priori value, -1 if none
+			int line = 0; ///< line of the parameter in the *IO block, 0 if not given
+			TAdjustableScalar *adjustable = nullptr; ///< the unknown, fixed if not free, shared by all the stations of an instrument in use
+
+#if USE_SERIALIZER
+			// Inherited via Serializable
+			virtual void serialize(ObjectSerializer &obj) const override;
+#endif // USE_SERIALIZER
+		};
+
+		/// Name of the adjustable scalar of an interior orientation parameter of this instrument
+		std::string ioAdjustableName(int param) const { return "Cam_" + ID + "_" + ioParamNames[param]; }
+
+		/// TRUE if the size of the sensor is given
+		bool hasSensor() const { return sensorSize[0] > 0.0; }
+
+		/// TRUE if the pixel coordinates lie on the sensor, or if the sensor size is not given
+		bool isOnSensor(TReal u, TReal v) const { return !hasSensor() || (u >= 0.0 && u <= sensorSize[0] && v >= 0.0 && v <= sensorSize[1]); }
+
 		std::string ID;
 		std::string defTarget;
 		TLength sigmaInstrCentering; // [m]
 		int line;
 		std::map<std::string, std::shared_ptr<TTarget>> targets; /// allows the lookup of targets for this instrument based on the target ID.
+
+		bool isPixelCamera = false; ///< TRUE for *CAMPX: measures pixel coordinates (UV), sigmaX and sigmaY of the targets are in pixels
+		std::array<TIOParam, kNumIOParams> io{}; ///< interior orientation of a pixel camera, in the order of EIOParam
+		std::array<TReal, 2> sensorSize{}; ///< width and height of the sensor of a pixel camera [px], zero if not given
 	};
 
 #if USE_SERIALIZER
@@ -728,6 +788,16 @@ inline void TInstrumentData::TCAMD::serialize(ObjectSerializer &obj) const
 	obj.addProperty("sigmaInstrCentering", sigmaInstrCentering.getMetresValue());
 	obj.addProperty("line", line);
 	obj.addProperty("targets", targets);
+	obj.addProperty("isPixelCamera", isPixelCamera);
+	obj.addProperty("io", io);
+	obj.addProperty("sensorSize", sensorSize);
+}
+
+inline void TInstrumentData::TCAMD::TIOParam::serialize(ObjectSerializer &obj) const
+{
+	obj.addProperty("value", value);
+	obj.addProperty("free", free);
+	obj.addProperty("sigma", sigma);
 }
 
 inline void TInstrumentData::TCAMD::TTarget::serialize(ObjectSerializer &obj) const

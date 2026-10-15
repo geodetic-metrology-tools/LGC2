@@ -127,6 +127,9 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	finterpreters.emplace_back(UPK(new TKeyINSTR(project)));
 	finterpreters.emplace_back(UPK(new TKeyPOLAR(project)));
 	finterpreters.emplace_back(UPK(new TKeyCAMD(project)));
+	TKeyCAMPX *campx = new TKeyCAMPX(project);
+	finterpreters.emplace_back(UPK(campx));
+	finterpreters.emplace_back(UPK(new TKeyCAMPX_IO(project, *campx)));
 	finterpreters.emplace_back(UPK(new TKeyEDM(project)));
 	finterpreters.emplace_back(UPK(new TKeyLEVEL(project)));
 	finterpreters.emplace_back(UPK(new TKeySCALE(project)));
@@ -169,16 +172,20 @@ TReader::TReader(std::shared_ptr<TLGCData> proj) : project(*proj.get())
 	TAKeyWord *cam = new TKeyCAM(project);
 	TAKeyWord *uvec2dCam = new TKeyUVEC(project);
 	TAKeyWord *uvd3dCam = new TKeyUVD(project);
+	TAKeyWord *uvPixelCam = new TKeyUV(project);
 
 	/*set hierarchical structure*/
 	cam->addChild(uvec2dCam);
 	cam->addChild(uvd3dCam);
+	cam->addChild(uvPixelCam);
 	uvec2dCam->setParent(cam);
 	uvd3dCam->setParent(cam);
+	uvPixelCam->setParent(cam);
 	/*add keywords to interpreters*/
 	finterpreters.emplace_back(UPK(cam));
 	finterpreters.emplace_back(UPK(uvec2dCam));
 	finterpreters.emplace_back(UPK(uvd3dCam));
+	finterpreters.emplace_back(UPK(uvPixelCam));
 
 	/*Other observations*/
 	finterpreters.emplace_back(UPK(new TKeyDSPT(project)));
@@ -884,6 +891,7 @@ static void iterateAllMeasurements(TDataTreeIterator itTree, Callback callback)
 	{
 		std::for_each(i.measUVD.begin(), i.measUVD.end(), callback);
 		std::for_each(i.measUVEC.begin(), i.measUVEC.end(), callback);
+		std::for_each(i.measUV.begin(), i.measUV.end(), callback);
 	}
 	for (auto const &i : itTree->get()->measurements.fDVER)
 		callback(i);

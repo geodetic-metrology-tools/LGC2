@@ -117,6 +117,24 @@ public:
 	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int line);
 };
 
+class TKeyUV : public TAMeasurementKey
+{
+public:
+	/// Constructor, the list of allowed keywords is filled
+	TKeyUV(TLGCData &project, int nb_allowed_keywords = nb_allowed_uv, const char **keywords = allowed_UV) : TAMeasurementKey(project, UV)
+	{
+		for (int i(0); i < nb_allowed_keywords; i++)
+			allowed_keywords.emplace_back(keywords[i]);
+	}
+
+	/*!
+		\brief Processes the tokenized line (tokens) of the input file, creates and fills the respective classes to store the data.
+
+		/throws Exception if the keyword is not used correctly.
+	*/
+	virtual void parse(const std::vector<std::string> &tokens, bool activeLine, int line);
+};
+
 class TKeyUVD : public TAMeasurementKey
 {
 public:

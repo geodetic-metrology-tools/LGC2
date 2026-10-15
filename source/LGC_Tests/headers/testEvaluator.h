@@ -22,6 +22,11 @@ Minimal network holding a free unknown of every adjustable object type
 *POLAR TS1 T1 1.0 0 0 0
 T1 10 10 0.1 0 0 0 0 0 0 0
 *SCALE SCL1 0.8 0.1 0.0 0.0 0.0
+% TAdjustableScalar: free camera constant of a pixel camera, true 1000 px
+*CAMPX CAMP TP
+TP 0.1 0.1
+*IO
+C 1000 FREE
 % LGCAdjustableSag: 4 free parameters, true ZS=XS=0.5 m, ZC=XC=1 1/m, base frame ROOT
 *SAGELEMENT sag0 ROOT 0.1 0.1 0.2 0.3 ZS ZC XS XC
 R1 S1
@@ -68,6 +73,10 @@ F3 42.19300889957956
 *ECHO SCL1
 R1 -0.3090169943749474
 R3 0.3090169943749474
+% the camera on R1 looks along the z axis of ROOT at PT: u = C * 40 / 31.5, v = C * 1 / 31.5
+*CAM R1 CAMP
+*UV
+PT 1269.8412698412699 31.746031746031747
 *OBSXYZ
 S1 1.5 1 1.5 1 1 1
 S2 4.5 2 4.5 1 1 1

@@ -124,6 +124,14 @@ void TKeyCAM::parse(const std::vector<std::string> &tokens, bool activeLine, int
 	instrument.defTarget = opts.getParamS("TRGT", instrument.defTarget);
 	instrument.sigmaInstrCentering = TLength(opts.getParamRmm2m("ICSE", instrument.sigmaInstrCentering));
 
+	if (instrument.isPixelCamera)
+	{
+		if (!(instrument.io[TInstrumentData::TCAMD::kC].value > 0.0))
+			throw std::runtime_error("Pixel camera " + instrument.ID + ": the camera constant C has to be given in the *IO block and has to be positive.");
+		if (opts.has("ICSE"))
+			throw std::runtime_error("Pixel camera " + instrument.ID + ": no instrument centering (ICSE), give the station point a sigma instead.");
+	}
+
 	// emplace this Camera
 	proj.getCurrentNode().measurements.fCAM.emplace_back(cam);
 }
@@ -137,6 +145,9 @@ void TKeyUVEC::parse(const std::vector<std::string> &tokens, bool activeLine, in
 
 	if (firstline)
 	{ // If this is the line starting with *UVEC, where only default target can be changed, use the default from the CAM definition or override it
+		if (getCAM().instrument.isPixelCamera)
+			throw std::runtime_error("UVEC measurements cannot be made with a pixel camera instrument (*CAMPX), use *UV.");
+
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		defaultTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
 		getCAM().uvecActive = getCAM().isActive() && activeLine; // Active only if station is active as well
@@ -200,12 +211,82 @@ void TKeyUVEC::parse(const std::vector<std::string> &tokens, bool activeLine, in
 	}
 }
 
+void TKeyUV::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
+{
+	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
+
+	if (firstline)
+	{ // If this is the line starting with *UV, where only default target can be changed, use the default from the CAM definition or override it
+		if (!getCAM().instrument.isPixelCamera)
+			throw std::runtime_error("UV measurements need a pixel camera instrument (*CAMPX).");
+
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+		defaultTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
+		getCAM().uvActive = getCAM().isActive() && activeLine; // Active only if station is active as well
+	}
+	else
+	{ // Get here, if the line does NOT start with a "*", it means that is the concrete measurement
+		bool hasAllParams = (tokens.size() > 2) && isNumber(tokens.at(1)) && isNumber(tokens.at(2));
+		if (!hasAllParams && !proj.getConfig().sim.isActive())
+			throw std::runtime_error("A UV measurement must have at least 3 entries: "
+									 "The observed point and its 2 pixel coordinates.");
+
+		// prepare the options analysis, i.e. searching for optional keywords
+		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
+		// look up the observed point
+		const auto &obspt(fpoints.getObject(tokens.at(0)));
+		// get a camera reference to update default values
+		auto &camera(getCAM());
+
+		// NODUP used
+		if (proj.getConfig().nodup.isActive())
+			for (auto &point : camera.measUV)
+				if (obspt.getName() == point.targetPos->getName())
+					throw std::runtime_error("An UV measurement is duplicated");
+
+		// get a copy of the specified target and update it
+		auto tgt(finstruments.getDevice(camera.instrument.targets, opts.getParamS("TRGT", defaultTargetApplied)));
+
+		if (opts.has("TCSE"))
+			throw std::runtime_error("No target centering (TCSE) for UV measurements, give the point a sigma instead.");
+
+		// optionally change target sigmas, in pixels
+		tgt.sigmaX = opts.getParamR("USE", tgt.sigmaX);
+		tgt.sigmaY = opts.getParamR("VSE", tgt.sigmaY);
+
+		// set measurement value
+		TUV uv(obspt, tgt);
+		uv.line = line;
+		uv.setActive(getCAM().uvActive && activeLine); // Active only if ROM is active as well
+		uv.obsID = std::string(opts.getParamS("ID", uv.obsID));
+
+		assignEOLCommentFromTokens(uv.eolcomment, tokens);
+
+		// Measured pixel coordinates, if given
+		if (hasAllParams)
+		{
+			const TReal u = std::stor(tokens.at(1)), v = std::stor(tokens.at(2));
+			if (!proj.getConfig().sim.isActive() && !camera.instrument.isOnSensor(u, v))
+				proj.getFileLogger()
+					<< TFileLogger::e_logType::LOG_WARNING
+					<< "Line " + std::to_string(line) + " : The UV measurement of " + obspt.getName() + " lies outside the sensor of the camera " + camera.instrument.ID + ".";
+			uv.setObsVector(Eigen::Vector2d(u, v));
+		}
+
+		// Store this UV measurement
+		getCAM().measUV.emplace_back(uv);
+	}
+}
+
 void TKeyUVD::parse(const std::vector<std::string> &tokens, bool activeLine, int line)
 {
 	bool firstline(tokens.size() > 0 && tokens.at(0) == "*");
 
 	if (firstline)
 	{ // If this is the line starting with *UVD, where only default target can be changed
+		if (getCAM().instrument.isPixelCamera)
+			throw std::runtime_error("UVD measurements cannot be made with a pixel camera instrument (*CAMPX), use *UV.");
+
 		TOptionHelper opts(tokens.cbegin() + 1, tokens.cend());
 		defaultTargetApplied = opts.getParamS("TRGT", getCAM().instrument.defTarget);
 		getCAM().uvdActive = getCAM().isActive() && activeLine; // Active only if station is active as well

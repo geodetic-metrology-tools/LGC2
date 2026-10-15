@@ -215,6 +215,8 @@ void TLSSimulation::updateResValues()
 void TLSSimulation::simulateValues()
 { // generate simulated values
 
+	updateIOPriorSimValues();
+
 	// Tteration through the tree nodes
 	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++)
 	{
@@ -255,6 +257,8 @@ void TLSSimulation::simulateValues()
 				updateUVDSimValues(*itCAM);
 			if (!itCAM->measUVEC.empty())
 				updateUVECSimValues(*itCAM);
+			if (!itCAM->measUV.empty())
+				updateUVSimValues(*itCAM, itTree);
 		}
 
 		// In every node iterate through the EDM's measurements
@@ -443,6 +447,35 @@ void TLSSimulation::updateUVECSimValues(TCAM &camera)
 
 		TFreeVector simVect(simX, simY, simZ, TCoordSysFactory::k3DCartesian);
 		itUVEC->setVectorMeasurement(simVect);
+	}
+}
+
+void TLSSimulation::updateUVSimValues(TCAM &camera, const TDataTreeIterator &cameraFrame)
+{
+	for (auto &itUV : camera.measUV)
+	{
+		const auto contrib = fCGenerator.getUVContrib(camera, cameraFrame, itUV);
+		if (contrib.fBehindCamera)
+			throw std::runtime_error("The point " + itUV.targetPos->getName() + " is behind the camera " + camera.instrument.ID + " on " + camera.instrumentPos->getName() + ".");
+		if (!camera.instrument.isOnSensor(contrib.fCalcMeas(0), contrib.fCalcMeas(1)))
+			throw std::runtime_error("The point " + itUV.targetPos->getName() + " is imaged outside the sensor of the camera " + camera.instrument.ID + " on "
+				+ camera.instrumentPos->getName() + ".");
+
+		TReal simU = getSimulatedValue(contrib.fCalcMeas(0), sqrt(contrib.fObsVariance(0)));
+		TReal simV = getSimulatedValue(contrib.fCalcMeas(1), sqrt(contrib.fObsVariance(1)));
+
+		itUV.setObsVector(Eigen::Vector2d(simU, simV));
+	}
+}
+
+void TLSSimulation::updateIOPriorSimValues()
+{
+	for (auto &instrIt : fData.getInstruments().fCAMD)
+	{
+		auto &instr = *instrIt.second;
+		for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+			if (instr.io[i].priorObsIndex >= 0)
+				instr.io[i].value = getSimulatedValue(instr.io[i].adjustable->getProvisionalValue(), instr.io[i].sigma);
 	}
 }
 

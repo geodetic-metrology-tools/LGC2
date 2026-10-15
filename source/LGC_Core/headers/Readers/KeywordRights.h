@@ -40,6 +40,7 @@ namespace
 #define UVD_X "UVD:X"
 #define UVD_Y "UVD:Y"
 #define UVD_DIST "UVD:DIST"
+#define UV "UV"
 #define DSPT "DSPT"
 #define DLEV "DLEV"
 #define DVER "DVER"
@@ -65,6 +66,8 @@ namespace
 // instruments
 #define POLAR "POLAR"
 #define CAMD "CAMD"
+#define CAMPX "CAMPX"
+#define CAMPX_IO "IO"
 #define EDM "EDM"
 #define LEVEL "LEVEL"
 #define SCALE "SCALE"
@@ -121,9 +124,10 @@ const int nb_allowed_dist = 26;
 const int nb_allowed_ecth = 26;
 const int nb_allowed_ecdir = 26;
 const int nb_allowed_dhor = 26;
-const int nb_allowed_cam = 2;
+const int nb_allowed_cam = 3;
 const int nb_allowed_uvec = 20;
 const int nb_allowed_uvd = 20;
+const int nb_allowed_uv = 19;
 const int nb_allowed_dspt = 19;
 const int nb_allowed_dlev = 18;
 const int nb_allowed_dver = 18;
@@ -146,14 +150,16 @@ const int nb_allowed_vxz = 24;
 const int nb_allowed_vyz = 24;
 const int nb_allowed_vz = 24;
 // instruments
-const int nb_allowed_polar = 30;
-const int nb_allowed_camd = 30;
-const int nb_allowed_edm = 30;
-const int nb_allowed_level = 30;
-const int nb_allowed_scale = 30;
-const int nb_allowed_incl = 30;
-const int nb_allowed_hlsr = 30;
-const int nb_allowed_wpsr = 30;
+const int nb_allowed_polar = 31;
+const int nb_allowed_camd = 31;
+const int nb_allowed_campx = 32;
+const int nb_allowed_campx_io = 31;
+const int nb_allowed_edm = 31;
+const int nb_allowed_level = 31;
+const int nb_allowed_scale = 31;
+const int nb_allowed_incl = 31;
+const int nb_allowed_hlsr = 31;
+const int nb_allowed_wpsr = 31;
 // referentials
 const int nb_allowed_oloc = 28;
 const int nb_allowed_rs2k = 28;
@@ -182,9 +188,9 @@ const int nb_allowed_json = 32;
 const int nb_allowed_lm = 32;
 
 // header
-const int nb_allowed_instr = 20; // instruments + points + frame + round of measurements without intruments
+const int nb_allowed_instr = 21; // instruments + points + frame + round of measurements without intruments
 const int nb_allowed_frame = 10;
-const int nb_allowed_sagelement = 34; // adjustable object: definition (after INSTR) and re-attachment of pairs (after measurement / point keywords)
+const int nb_allowed_sagelement = 35; // adjustable object: definition (after INSTR) and re-attachment of pairs (after measurement / point keywords)
 const int nb_allowed_ef = 25;
 const int nb_allowed_end = 0;
 const int nb_allowed_titr = 4;
@@ -256,9 +262,10 @@ const char *allowed_ECDIR[nb_allowed_ecdir] = {TSTN, PLR3D, ANGL, ZEND, DIST, EC
 const char *allowed_DHOR[nb_allowed_dhor] = {TSTN, PLR3D, ANGL, ZEND, DIST, ECTH, DHOR, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECDIR, ECVE, ORIE, RADI, OBSXYZ, FRAME,
 	ENDFRAME, END, INCLY, ROLLY, SAGELEMENT, ECWS, ECWI};
 // CAM measurments
-const char *allowed_CAM[nb_allowed_cam] = {UVEC, UVD};
+const char *allowed_CAM[nb_allowed_cam] = {UVEC, UVD, UV};
 const char *allowed_UVEC[nb_allowed_uvec] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ROLLY, SAGELEMENT, ECWS, ECWI};
 const char *allowed_UVD[nb_allowed_uvd] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UVEC, UVD, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ROLLY, SAGELEMENT, ECWS, ECWI};
+const char *allowed_UV[nb_allowed_uv] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, UV, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ROLLY, SAGELEMENT, ECWS, ECWI};
 // Others measurments
 const char *allowed_DSPT[nb_allowed_dspt] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, ENDFRAME, END, INCLY, ROLLY, SAGELEMENT, ECWS, ECWI};
 const char *allowed_DLEV[nb_allowed_dlev] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, FRAME, END, INCLY, ROLLY, SAGELEMENT, ECWS, ECWI};
@@ -290,22 +297,26 @@ const char *allowed_VZ[nb_allowed_vz] = {
 const char *allowed_PDOR[nb_allowed_pdor] = {
 	TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, END, INCLY, ROLLY, SAGELEMENT, ECWS, ECWI};
 // Instruments
-const char *allowed_POLAR[nb_allowed_polar] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
-const char *allowed_CAMD[nb_allowed_camd] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
-const char *allowed_EDM[nb_allowed_edm] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
-const char *allowed_LEVEL[nb_allowed_level] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
-const char *allowed_SCALE[nb_allowed_scale] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
-const char *allowed_INCL[nb_allowed_incl] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
-const char *allowed_HLSR[nb_allowed_hlsr] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
-const char *allowed_WPSR[nb_allowed_wpsr] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, EDM,
-	LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_POLAR[nb_allowed_polar] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_CAMD[nb_allowed_camd] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_CAMPX[nb_allowed_campx] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT, CAMPX_IO};
+const char *allowed_CAMPX_IO[nb_allowed_campx_io] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD,
+	CAMPX, EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_EDM[nb_allowed_edm] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_LEVEL[nb_allowed_level] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_SCALE[nb_allowed_scale] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_INCL[nb_allowed_incl] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_HLSR[nb_allowed_hlsr] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
+const char *allowed_WPSR[nb_allowed_wpsr] = {TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, POLAR, CAMD, CAMPX,
+	EDM, LEVEL, SCALE, INCL, FRAME, HLSR, WPSR, ECWS, ECWI, SAGELEMENT};
 
 // Reference systems
 const char *allowed_OLOC[nb_allowed_oloc] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, INSTR, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR, FMTP, NODUP, SOBS,
@@ -358,9 +369,9 @@ const char *allowed_JSON[nb_allowed_json] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, P
 const char *allowed_LM[nb_allowed_lm] = {DEFA, APRI, SIMU, LIBR, ALLFIXED, PREC, PRES, FAUT, PUNC, CALA, POIN, VXY, VXZ, VYZ, VZ, OLOC, RS2K, LEP, SPHE, INSTR, FRAME,
 	PDOR, FMTP, NODUP, HIST, SOBS, EREL, ERELFRAME, COVAR, CHABA, CONSI, JSON};
 // Others
-const char *allowed_INSTR[nb_allowed_instr] = {POLAR, CAMD, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI, SAGELEMENT};
-const char *allowed_SAGELEMENT[nb_allowed_sagelement] = {POLAR, CAMD, EDM, LEVEL, SCALE, INCL, HLSR, WPSR, FRAME, ENDFRAME, END, CALA, POIN, VXY, VXZ, VYZ, VZ, PDOR,
-	TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, INCLY, ROLLY, ECWS, ECWI, SAGELEMENT};
+const char *allowed_INSTR[nb_allowed_instr] = {POLAR, CAMD, CAMPX, EDM, LEVEL, SCALE, FRAME, PDOR, CALA, POIN, VXY, VXZ, VYZ, VZ, INCL, HLSR, WPSR, OBSXYZ, DVER, RADI, SAGELEMENT};
+const char *allowed_SAGELEMENT[nb_allowed_sagelement] = {POLAR, CAMD, CAMPX, EDM, LEVEL, SCALE, INCL, HLSR, WPSR, FRAME, ENDFRAME, END, CALA, POIN, VXY, VXZ, VYZ, VZ,
+	PDOR, TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, OBSXYZ, INCLY, ROLLY, ECWS, ECWI, SAGELEMENT};
 const char *allowed_FRAME[nb_allowed_frame] = {CAM, DSPT, CALA, POIN, FRAME, ENDFRAME, OBSXYZ, TSTN, INCLY, ROLLY};
 const char *allowed_ENDFRAME[nb_allowed_ef] = {
 	TSTN, CAM, DSPT, DLEV, DVER, ECHO, ECSP, ECVE, ORIE, RADI, CALA, POIN, VXY, VXZ, VYZ, VZ, FRAME, ENDFRAME, END, OBSXYZ, INCLY, ROLLY, ECWS, ECWI, SAGELEMENT};

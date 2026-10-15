@@ -12,6 +12,7 @@
 // LGC
 #include <Global.h>
 #include <TInstrumentData.h>
+#include <TUV.h>
 #include <TUVD.h>
 #include <TUVEC.h>
 
@@ -22,7 +23,8 @@ class LGCAdjustablePoint;
 /*!
 	\ingroup Measurements
 	\brief A camera station, camera positioned on a specific position,
-		   which can take multiple unit vector (TUVEC) and unit vector + distance (TUVD) measurements.
+		   which can take multiple unit vector (TUVEC) and unit vector + distance (TUVD) measurements,
+		   or pixel coordinate (TUV) measurements if the instrument is a pixel camera.
 */
 struct TCAM : public TStatusObject
 {
@@ -39,9 +41,12 @@ struct TCAM : public TStatusObject
 	std::list<TUVD> measUVD;
 	/// All UVEC measurments made by this camera
 	std::list<TUVEC> measUVEC;
+	/// All UV (pixel coordinates) measurements made by this camera
+	std::list<TUV> measUV;
 
 	bool uvdActive{true}; ///< activation status of the UVD rom
 	bool uvecActive{true}; ///< activation status of the UVEC rom
+	bool uvActive{true}; ///< activation status of the UV rom
 
 	/// The instrument that is used on this station
 	TInstrumentData::TCAMD instrument;
@@ -64,6 +69,9 @@ struct TCAM : public TStatusObject
 	/// \note This function can be called only when the calculation is finished and the residuals of the observations are already filled.
 	const TUVECObsSummary &getUVECObsSummary() const;
 	const TUVECObsSummary &getUVECObsSummary(std::string text) noexcept;
+	/// Summary of the u and v residuals [px] of the UV measurements, in the x and y components
+	const TUVECObsSummary &getUVObsSummary() const;
+	const TUVECObsSummary &getUVObsSummary(std::string text) noexcept;
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -75,6 +83,7 @@ private:
 
 	TUVDObsSummary uvdSummary_;
 	TUVECObsSummary uvecSummary_;
+	TUVECObsSummary uvSummary_;
 };
 
 #endif

@@ -25,6 +25,7 @@ set(tests_SOURCES
 	sources/testTLOR2LOR.cpp
 	sources/testFilesGlobalRF.cpp
 	sources/testCAM.cpp
+	sources/testCAMPX.cpp
 	sources/testNonTSTNmeas.cpp
 	sources/testMixingObservation.cpp
 	sources/testAppExecution.cpp
@@ -56,6 +57,7 @@ set(tests_INPUT
 	headers/testTLOR2LOR.h
 	headers/testNonTSTNmeas.h
 	headers/testCAM.h
+	headers/testCAMPX.h
 	headers/testMixingObservation.h
 	headers/testDVER.h
 	headers/tests_with_ScaleInstr.h

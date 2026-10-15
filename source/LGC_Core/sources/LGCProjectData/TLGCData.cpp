@@ -229,6 +229,9 @@ void TLGCData::addToMeasurementNum(TMeasurementsGlobal::EMeasurementType type)
 	case TMeasurementsGlobal::kECWI:
 		fMeasInfo.fNumECWI++;
 		break;
+	case TMeasurementsGlobal::kUV:
+		fMeasInfo.fNumUV++;
+		break;
 	}
 }
 
@@ -282,6 +285,8 @@ int TLGCData::getMeasurementDimension(TMeasurementsGlobal::EMeasurementType type
 		return fMeasInfo.fNumECWS;
 	case TMeasurementsGlobal::kECWI:
 		return fMeasInfo.fNumECWI;
+	case TMeasurementsGlobal::kUV:
+		return fMeasInfo.fNumUV;
 	default:
 		return 0;
 	}
@@ -322,6 +327,7 @@ void TLGCData::setDefaultValues()
 	fMeasInfo.fNumROLLY = 0;
 	fMeasInfo.fNumECWS = 0;
 	fMeasInfo.fNumECWI = 0;
+	fMeasInfo.fNumUV = 0;
 }
 
 const TSparseMatrix *TLGCData::getCovMatByConst() const noexcept
@@ -342,6 +348,9 @@ void TLGCData::reInitForSIMU()
 
 	for (auto &length : lengths)
 		length.reInitialise();
+
+	for (auto &scalar : scalars)
+		scalar.reInitialise();
 
 	for (auto &line : lines)
 		line.reInitialise();
@@ -368,6 +377,7 @@ std::shared_ptr<TLGCData> TLGCData::clone() const
 	d->planes = planes;
 	d->angles = angles;
 	d->lengths = lengths;
+	d->scalars = scalars;
 
 	// Copy tree and reset position:
 	copyTree(this, d.get());
@@ -520,6 +530,15 @@ void TLGCData::copyTree(TLGCData const *const src, TLGCData *tgt)
 		{
 			// Reset the pointers to point to objects in the target core:
 			cam.instrumentPos = &tgt->points.getObject(cam.instrumentPos->getName());
+
+			for (auto &param : cam.instrument.io)
+				if (param.adjustable)
+					param.adjustable = &tgt->scalars.getObject(param.adjustable->getName());
+
+			// UV
+			for (auto &meas : cam.measUV)
+				if (meas.targetPos)
+					meas.targetPos = &tgt->points.getObject(meas.targetPos->getName());
 
 			// UVD
 			for (auto &meas : cam.measUVD)
@@ -766,6 +785,10 @@ void TLGCData::copyInstruments(TLGCData const *const src, TLGCData *tgtData)
 		for (auto &tgt : camd.second->targets)
 			// Replace the target in the memory
 			tgt.second.reset(new TInstrumentData::TCAMD::TTarget(*tgt.second));
+
+		for (auto &param : camd.second->io)
+			if (param.adjustable)
+				param.adjustable = &tgtData->scalars.getObject(param.adjustable->getName());
 	}
 
 	for (auto &incl : tgtData->instruments.fINCL)
@@ -871,6 +894,7 @@ void TLGCData::serialize(ObjectSerializer &obj) const
 	obj.addProperty("planes", planes);
 	obj.addProperty("points", points);
 	obj.addProperty("sags", sags);
+	obj.addProperty("scalars", scalars);
 	obj.addProperty("stat", stat);
 	obj.addProperty("tree", tree);
 	obj.addProperty("slaveGroups", slaveGroups);
@@ -904,6 +928,7 @@ void TMeasurementsGlobal::serialize(ObjectSerializer &obj) const
 	obj.addProperty("fNumROLLY", fNumROLLY);
 	obj.addProperty("fNumECWS", fNumECWS);
 	obj.addProperty("fNumECWI", fNumECWI);
+	obj.addProperty("fNumUV", fNumUV);
 }
 
 void TPointGlobal::serialize(ObjectSerializer &obj) const
