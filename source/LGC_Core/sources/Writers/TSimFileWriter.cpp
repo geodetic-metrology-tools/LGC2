@@ -4,9 +4,24 @@
 
 #include "TSimFileWriter.h"
 
+#include <iomanip>
+#include <sstream>
+
 #include <TLGCData.h>
 
 #include "TSeparatedFormatTStream.h"
+
+namespace
+{
+/// Text of a value with its significant digits, independent of the fixed notation of the stream
+std::string fullPrecision(TReal value)
+{
+	std::ostringstream text;
+	text << std::setprecision(15) << value;
+	return text.str();
+}
+} // namespace
+
 //////////////////////////////////////////////////////////////////////
 // Definitions and Initialisations
 //////////////////////////////////////////////////////////////////////
@@ -194,6 +209,29 @@ void TSimFileWriter::writeInstrument()
 	(*stream) << "*INSTR" << endl;
 	for (auto &itCAMD : data->getInstruments().fCAMD)
 	{
+		const auto &camd = *itCAMD.second;
+		if (camd.isPixelCamera)
+		{
+			// Pixel camera: sigmas of the targets in pixels, followed by the interior orientation
+			(*stream) << "*CAMPX " << camd.ID << sep << camd.defTarget << sep;
+			if (camd.hasSensor())
+				(*stream) << "SENSOR" << sep << fullPrecision(camd.sensorSize[0]) << sep << fullPrecision(camd.sensorSize[1]) << sep;
+			(*stream) << endl;
+			for (auto &itTarget : camd.targets)
+				(*stream) << itTarget.second->ID << sep << itTarget.second->sigmaX << sep << itTarget.second->sigmaY << endl;
+
+			(*stream) << "*IO" << endl;
+			// the value of a parameter with an a priori sigma is its a priori value, which may be simulated
+			for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+			{
+				const auto &param = camd.io[i];
+				(*stream) << TInstrumentData::TCAMD::ioParamNames[i] << sep << fullPrecision(param.value) << sep;
+				(*stream) << (param.sigma > 0.0 ? "SE" + sep + fullPrecision(param.sigma) : param.free ? "FREE" : "") << endl;
+			}
+
+			continue;
+		}
+
 		(*stream) << "*CAMD " << itCAMD.second->ID << sep << itCAMD.second->defTarget << sep << itCAMD.second->sigmaInstrCentering.getMMetresValue() << sep << endl;
 		for (auto &itTarget : itCAMD.second->targets)
 			(*stream) << itTarget.second->ID << sep << itTarget.second->sigmaX * M2MM << sep << itTarget.second->sigmaY * M2MM << sep
@@ -674,6 +712,38 @@ void TSimFileWriter::writeCAMMeas(TCAM *meas)
 				(*stream) << "YSE" << sep << uvec.target.sigmaY * M2MM << sep;
 
 			writeObsID(uvec.obsID);
+
+			(*stream) << endl;
+		}
+	}
+
+	if (!meas->measUV.empty())
+	{
+		auto romDefTarget = *camDefTarget;
+
+		if (!meas->uvActive)
+			(*stream) << DEACTIVATION_CHAR;
+
+		(*stream) << "*UV" << endl;
+
+		for (auto &uv : meas->measUV)
+		{
+			if (!uv.isActive())
+				(*stream) << DEACTIVATION_CHAR;
+
+			const Eigen::VectorXd obs = uv.getObsVector();
+			(*stream) << uv.targetPos->getName() << sep << obs(0) << sep << obs(1) << sep;
+
+			if (uv.target.ID != romDefTarget.ID)
+				(*stream) << "TRGT" << sep << uv.target.ID << sep;
+
+			if (uv.target.sigmaX != romDefTarget.sigmaX)
+				(*stream) << "USE" << sep << uv.target.sigmaX << sep;
+
+			if (uv.target.sigmaY != romDefTarget.sigmaY)
+				(*stream) << "VSE" << sep << uv.target.sigmaY << sep;
+
+			writeObsID(uv.obsID);
 
 			(*stream) << endl;
 		}

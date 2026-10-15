@@ -82,7 +82,8 @@ struct TMeasurementsGlobal
 		kINCLY,
 		kROLLY,
 		kECWS,
-		kECWI
+		kECWI,
+		kUV
 	};
 
 	int fNumANGL;
@@ -109,6 +110,7 @@ struct TMeasurementsGlobal
 	int fNumROLLY;
 	int fNumECWS;
 	int fNumECWI;
+	int fNumUV;
 
 #if USE_SERIALIZER
 	// Inherited via Serializable
@@ -203,6 +205,10 @@ public:
 	TAdjustableLengthCollection &getLength() { return lengths; }
 	/// Returns a constant reference of the vector/ collection of all the adjustable lengths
 	TAdjustableLengthCollection const &getLength() const { return lengths; }
+	/// Returns the vector/ collection of all the adjustable scalars
+	TAdjustableScalarCollection &getScalars() { return scalars; }
+	/// Returns a constant reference of the vector/ collection of all the adjustable scalars
+	TAdjustableScalarCollection const &getScalars() const { return scalars; }
 
 	// Returns list of to the frame Constraint groups
 	std::list<TLGCFrameConstraintGroup> &getSlaveGroups() { return slaveGroups; }
@@ -339,6 +345,8 @@ private:
 	TAdjustableAngleCollection angles;
 	/// Adjustable lengths are collected globally
 	TAdjustableLengthCollection lengths;
+	/// Adjustable scalars are collected globally
+	TAdjustableScalarCollection scalars;
 	//@}
 	// vector containing data associated to frame constraint groups
 	std::list<TLGCFrameConstraintGroup> slaveGroups;

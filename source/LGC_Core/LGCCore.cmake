@@ -126,6 +126,7 @@ set(Core_HEADERS
 	${CORE_INCLUDE_PATH}/Measurements/TCAM.h
 	${CORE_INCLUDE_PATH}/Measurements/TUVEC.h
 	${CORE_INCLUDE_PATH}/Measurements/TUVD.h
+	${CORE_INCLUDE_PATH}/Measurements/TUV.h
 	${CORE_INCLUDE_PATH}/Measurements/TLGCObsSummary.h
 	${CORE_INCLUDE_PATH}/Measurements/MeasDef.h
 	${CORE_INCLUDE_PATH}/Measurements/RoundOfMeasurements.h

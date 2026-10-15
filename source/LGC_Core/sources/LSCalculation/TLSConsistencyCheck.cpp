@@ -754,6 +754,10 @@ void TLSConsCheck::initialize()
 	{
 		addObject(object, "Length");
 	}
+	for (auto &object : projData.getScalars())
+	{
+		addObject(object, "Scalar");
+	}
 	for (auto &object : projData.getSags())
 	{
 		addObject(object, "Sag");

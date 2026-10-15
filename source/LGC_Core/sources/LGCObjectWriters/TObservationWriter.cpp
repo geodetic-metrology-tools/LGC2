@@ -115,7 +115,7 @@ void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary &summa
 	return;
 }
 
-void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summary, std::string TABs)
+void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summary, std::string TABs, const std::string &unit)
 {
 	int obsResWidth = getObsResWidth();
 	int lengthResidualPrecision = std::max(getLengthResidualPrecision() - 3, 0);
@@ -131,7 +131,7 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summa
 	stream << getSeparator();
 
 	// mean residual statistical test limits
-	stream << " [] :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " " << unit << " :  LIMITES DE CONFIANCE A 95.0 = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMeanLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -147,7 +147,7 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summa
 	stream << getSeparator();
 
 	// variance of residuals statistical test limits
-	stream << " [] :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " " << unit << " :  LIMITES DE CONFIANCE A 95.0 = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -331,7 +331,7 @@ void TObservationWriter::writeReliabilityHeader(std::string name1, std::string n
 	return;
 }
 
-void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat)
+void TObservationWriter::writeReliability(int index, const TLGCStatistic &stat, TReal unitFactor, int decimals)
 {
 	TAStreamFormatter *stream = getStream();
 	int obsResWidth = getObsResWidth();
@@ -375,7 +375,7 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat
 		if (stat.getGToCompute(index))
 		{
 			(*stream).writeString(3, "**");
-			(*stream).writeDouble(obsResWidth, 2, stat.getGi().coeff(index) * RAD2CC);
+			(*stream).writeDouble(obsResWidth, decimals, stat.getGi().coeff(index) * unitFactor);
 		}
 		else
 		{
@@ -386,7 +386,7 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat
 		// get nabla
 		if (stat.getDeltaComputed(index))
 		{ // tests that the nabla has been correctly computed
-			(*stream).writeDouble(obsResWidth, 2, stat.getNabla().coeff(index) * RAD2CC);
+			(*stream).writeDouble(obsResWidth, decimals, stat.getNabla().coeff(index) * unitFactor);
 		}
 		else
 		{
@@ -422,95 +422,19 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat
 	(*stream) << endl;
 }
 
+void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat)
+{
+	writeReliability(index, stat, RAD2CC, 2);
+}
+
 void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic &stat)
 {
-	TAStreamFormatter *stream = getStream();
-	int obsResWidth = getObsResWidth();
-	std::string separator = getSeparator();
+	writeReliability(index, stat, M2MM, 2);
+}
 
-	// Test the computing: if it failed, write the corresponding error messages
-	if (stat.getAreDetermined(index))
-	{
-		// get zi
-		TReal z = stat.getZi().coeff(index);
-		stream->setf(std::ios::fixed, std::ios::floatfield);
-		// checks that z is between 25% and 60%, and if not, adds some symbols
-		(*stream).writeDouble(obsResWidth, 1, 100 * z);
-
-		if (z < LITERAL(0.25))
-		{
-			(*stream).writeString(3, "**");
-		}
-
-		if (z > LITERAL(0.60))
-		{
-			(*stream).writeString(3, "!");
-		}
-
-		if (z >= LITERAL(0.25) && z <= LITERAL(0.60))
-		{
-			(*stream).writeString(3, "");
-		}
-
-		// get wi
-		if (stat.getWToCompute())
-		{
-			(*stream).writeDouble(8, 2, stat.getWi().coeff(index));
-		}
-		else
-		{
-			(*stream).writeString(8, "");
-		}
-
-		// get gi
-		if (stat.getGToCompute(index))
-		{
-			(*stream).writeString(3, "**");
-			(*stream).writeDouble(obsResWidth, 2, stat.getGi().coeff(index) * M2MM);
-		}
-		else
-		{
-			(*stream).writeString(3, "");
-			(*stream).writeString(obsResWidth, "");
-		}
-
-		// get nabla
-		if (stat.getDeltaComputed(index))
-		{ // tests that the nabla has been correctly computed
-			(*stream).writeDouble(obsResWidth, 2, stat.getNabla().coeff(index) * M2MM);
-		}
-		else
-		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
-		}
-
-		// get T
-		(*stream).writeDouble(obsResWidth, 2, stat.getTi().coeff(index));
-
-		// get DELTY
-		stream->width(10);
-		if (stat.getDeltaComputed(index)) /*tests that the delty has been correctly computed*/
-		{
-			(*stream).writeDouble(obsResWidth, 2, stat.getDelty().coeff(index));
-		}
-		else
-		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
-		}
-	}
-	else
-	{
-		(*stream).writeString(obsResWidth, "0.0"); // z
-		(*stream).writeString(3, "");
-		(*stream).writeString(8, "INDETERMINE"); // wi
-		(*stream).writeString(0, "");
-		(*stream).writeString(obsResWidth, ""); // gi
-		(*stream).writeString(obsResWidth, ""); // nabla
-		(*stream).writeString(obsResWidth, "INFINI"); // T
-		(*stream).writeString(obsResWidth, ""); // DELTY
-	}
-
-	(*stream) << endl;
+void TObservationWriter::writeReliabilityPX(int index, const TLGCStatistic &stat)
+{
+	writeReliability(index, stat, 1.0, std::max(getLengthResidualPrecision() - 3, 0));
 }
 
 // Get the French version of the observation description
@@ -521,7 +445,7 @@ std::string TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObser
 		"DISTANCES MESUREES (DIST)", "ECART A UN PLAN VERTICAL (ECTH)", "ECART A UNE DIRECTION (ECDIR)", "DISTANCES HORIZONTALES (DHOR)", "DISTANCES SPATIALES (DSPT)",
 		"DISTANCES VERTICALES (DLEV)", "DISTANCES HORIZONTALES (DLEVDHOR)", "DISTANCES VERTICALES (DVER)", "ECARTS DANS LE PLAN HORIZONTAL (ECHO)", "ECARTS A UNE DROITE (ECSP)",
 		"ECARTS A UNE DROITE VERTICALE (ECVE)", "ORIENTATIONS (ORIE)", "POINT D'ORIENTATION (PDOR)", "CONTRAINTES RADIALES (RADI)", "CONTRAINTES 3D SUR UN POINT (OBSXYZ)",
-		"INCLINAISONS/VERTICALE-ASIN (INCLY)", "INCLINAISONS/VERTICALE-ATAN (ROLLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)"};
+		"INCLINAISONS/VERTICALE-ASIN (INCLY)", "INCLINAISONS/VERTICALE-ATAN (ROLLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)", "Coordonnees pixel (UV)"};
 
 	static_assert((sizeof(descriptions) / sizeof(descriptions[0])) == TALGCObjectWriter::ALWAYS_LAST, "Not enough description strings for enums");
 
@@ -533,11 +457,12 @@ std::string TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObser
 std::string TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key)
 {
 	static const char *descriptions[] = {
-		"PLR3D", "Unit Vector Measurment (UVEC)", "Unit Vector Measurement + Distance (UVD)", "HORIZONTAL ANGLE OBSERVATIONS (ANGL)", "ZENITHAL DISTANCE OBSERVATIONS (ZEND)",
-		"OBSERVED SPATIAL DISTANCES (DIST)", "OFFSETS TO A THEODOLITE PLAN (ECTH)", "OFFSETS TO A THEODOLITE DIRECTION (ECDIR)", "HORIZONTAL DISTANCES (DHOR)",
-		"SPATIAL DISTANCES (DSPT)", "VERTICAL DISTANCES (DLEV)", "HORIZONTAL DISTANCES (DLEVDHOR)", "VERTICAL DISTANCES (DVER)", "OFFSETS IN AN HORIZONTAL PLAN (ECHO)",
-		"OFFSETS TO A SPATIAL LINE (ECSP)", "OFFSETS TO A VERTICAL LINE (ECVE)", "ORIENTATIONS (ORIE)", "POINT OF ORIENTATION (PDOR)", "RADIAL CONSTRAINTS (RADI)",
-		"3D CONSTRAINTS FOR POINTS (OBSXYZ)", "ROTATIONS/GRAVITY-ASIN (INCLY)", "ROTATIONS/GRAVITY-ATAN (ROLLY)", "OFFSET TO WATER SURFACE (ECWS)", "OFFSET TO WIRE (ECWI)"
+		"PLR3D", "Unit Vector Measurment (UVEC)", "Unit Vector Measurement + Distance (UVD)", "HORIZONTAL ANGLE OBSERVATIONS (ANGL)",
+		"ZENITHAL DISTANCE OBSERVATIONS (ZEND)", "OBSERVED SPATIAL DISTANCES (DIST)", "OFFSETS TO A THEODOLITE PLAN (ECTH)", "OFFSETS TO A THEODOLITE DIRECTION (ECDIR)",
+		"HORIZONTAL DISTANCES (DHOR)", "SPATIAL DISTANCES (DSPT)", "VERTICAL DISTANCES (DLEV)", "HORIZONTAL DISTANCES (DLEVDHOR)", "VERTICAL DISTANCES (DVER)",
+		"OFFSETS IN AN HORIZONTAL PLAN (ECHO)", "OFFSETS TO A SPATIAL LINE (ECSP)", "OFFSETS TO A VERTICAL LINE (ECVE)", "ORIENTATIONS (ORIE)",
+		"POINT OF ORIENTATION (PDOR)", "RADIAL CONSTRAINTS (RADI)", "3D CONSTRAINTS FOR POINTS (OBSXYZ)", "ROTATIONS/GRAVITY-ASIN (INCLY)",
+		"ROTATIONS/GRAVITY-ATAN (ROLLY)", "OFFSET TO WATER SURFACE (ECWS)", "OFFSET TO WIRE (ECWI)", "Pixel Coordinates Measurement (UV)"
 		//"NoObs"
 	};
 

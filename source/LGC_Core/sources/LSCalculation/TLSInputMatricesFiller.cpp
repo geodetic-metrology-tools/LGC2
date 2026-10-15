@@ -86,6 +86,7 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 			{
 				addUVDContribution(itCAM, matrices);
 				addUVECContribution(itCAM, matrices);
+				addUVContribution(itCAM, itTree, matrices);
 			}
 
 			// In every node iterate through the EDM (TEDM) measurements
@@ -1799,6 +1800,74 @@ void TLSInputMatricesFiller::addUVECContribution(TCAM &camera, TLSInputMatrices 
 	}
 }
 
+void TLSInputMatricesFiller::addUVContribution(TCAM &camera, const TDataTreeIterator &cameraFrame, TLSInputMatrices *matrices)
+{
+	bool isProcessOK = true;
+
+	for (auto meas(camera.measUV.begin()); meas != camera.measUV.end(); ++meas)
+	{
+		const MatrixIndex firstEqIdx = meas->getFirstEquationIndex();
+		const MatrixIndex firstObsIdx = meas->getFirstObservationIndex();
+
+		const UVContrib contributions = fCGenerator.getUVContrib(camera, cameraFrame, *meas);
+
+		// Update the sigma, in pixels
+		meas->target.sigmaCombinedX = TLength(sqrt(contributions.fObsVariance[0]));
+		meas->target.sigmaCombinedY = TLength(sqrt(contributions.fObsVariance[1]));
+		// a target behind the camera is marked in the result file
+		meas->behindCamera = contributions.fBehindCamera;
+
+		const LGCAdjustablePoint &cameraPos = *camera.instrumentPos;
+		const LGCAdjustablePoint &targetPos = *meas->targetPos;
+		const Eigen::VectorXd obs = meas->getObsVector();
+
+		for (int eq = 0; eq < 2; eq++)
+		{
+			// Add contributions for CAMERA coordinates
+			if (!cameraPos.isFixed())
+				isProcessOK = isProcessOK && addPointContribution(cameraPos, TFreeVector(contributions.fStCoordContrib.row(eq)), firstEqIdx + eq, matrices);
+
+			// Add contributions for TARGET coordinates
+			if (!targetPos.isFixed())
+				isProcessOK = isProcessOK && addPointContribution(targetPos, TFreeVector(contributions.fTgCoordContrib.row(eq)), firstEqIdx + eq, matrices);
+
+			// Add contributions for the transformations parameters of the target and the station chains
+			for (const auto *transformContribs : {&contributions.fTgTransformContrib, &contributions.fStTransformContrib})
+			{
+				for (const auto &transform : *transformContribs)
+				{
+					if (!transform.first.isFixed())
+					{
+						const TransformationContrib &trContrib = (eq == 0) ? transform.second.firstEquationTransContrib : transform.second.secondEquationTransContrib;
+						isProcessOK = isProcessOK && addTransformationContribution(transform.first, trContrib, firstEqIdx + eq, matrices);
+					}
+				}
+			}
+
+			// Add contributions for the interior orientation of the camera
+			for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+			{
+				const TAdjustableScalar *ioAdj = camera.instrument.io[i].adjustable;
+				if (!ioAdj->isFixed())
+					isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + eq, ioAdj->getFirstUidx(), contributions.fIOContrib(eq, i));
+			}
+
+			// Setting the misclosure vector element
+			isProcessOK = isProcessOK && matrices->setMisclosureVectorElement(firstEqIdx + eq, contributions.fCalcMeas[eq] - obs[eq]);
+
+			// Add weight unknown matrix element
+			if (contributions.fObsVariance[eq] < nullLimit)
+				throw std::runtime_error("Error when filling UV contribution, variance is zero or too small, can not set weight matrix element.");
+
+			isProcessOK = isProcessOK && matrices->addWeightMtrxElement(firstObsIdx + eq, firstObsIdx + eq, 1.0 / contributions.fObsVariance[eq]);
+			isProcessOK = isProcessOK && matrices->addWeightInvMtrxElement(firstObsIdx + eq, firstObsIdx + eq, contributions.fObsVariance[eq]);
+		}
+
+		if (!isProcessOK)
+			throw std::runtime_error("Error when filling input design matrices of UV measurement occurred.");
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRIVATE - SUPPORTING FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1906,6 +1975,24 @@ bool TLSInputMatricesFiller::fillParameterWeights(TLGCData *projData, TLSInputMa
 				isProcessOK &= matrices->setCnstrMisclosureVectorElement(cIdx, contribution.misclosure(relRowIdx));
 				cIdx++;
 			}
+		}
+	}
+
+	// observations of the interior orientation parameters of pixel cameras with an a priori sigma
+	for (const auto &instrIt : projData->getInstruments().fCAMD)
+	{
+		const auto &instr = *instrIt.second;
+		for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+		{
+			const int obsIdx = instr.io[i].priorObsIndex;
+			if (obsIdx < 0)
+				continue;
+			const TAdjustableScalar &ioAdj = *instr.io[i].adjustable;
+			const TReal variance = pow2q(instr.io[i].sigma);
+			isProcessOK &= matrices->addFirstDgnMtrxElement(obsIdx, ioAdj.getFirstUidx(), 1.0);
+			isProcessOK &= matrices->setMisclosureVectorElement(obsIdx, ioAdj.getEstimatedValue() - instr.io[i].value);
+			isProcessOK &= matrices->addWeightMtrxElement(obsIdx, obsIdx, 1.0 / variance);
+			isProcessOK &= matrices->addWeightInvMtrxElement(obsIdx, obsIdx, variance);
 		}
 	}
 	return isProcessOK;

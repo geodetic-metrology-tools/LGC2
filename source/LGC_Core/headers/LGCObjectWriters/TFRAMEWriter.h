@@ -127,10 +127,11 @@ public:
 	void initialiseAllObsSummaries();
 
 	// all summaries
-	std::list<const TLGCObsSummary *> allRADISummaries_, allPlrANGLSummaries_, allPlrZENDSummaries_, allPlrDISTSummaries_, allANGLSummaries_, allZENDSummaries_, allDISTSummaries_,
-		allDHORSummaries_, allECTHSummaries_, allECDIRSummaries_, allDVERSummaries_, allUvdXSummaries_, allUvdYSummaries_, allUvdDSummaries_, allUvecXSummaries_,
-		allUvecYSummaries_, allDSPTSummaries_, allDLEVSummaries_, allDlevDHORSummaries_, allORIESummaries_, allECHOSummaries_, allECVESummaries_, allECSPSummaries_,
-		allINCLYSummaries_, allROLLYSummaries_, allECWSSummaries_, allEcwiXSummaries_, allEcwiZSummaries_, allObsxyzXSummaries_, allObsxyzYSummaries_, allObsxyzZSummaries_;
+	std::list<const TLGCObsSummary *> allRADISummaries_, allPlrANGLSummaries_, allPlrZENDSummaries_, allPlrDISTSummaries_, allANGLSummaries_, allZENDSummaries_,
+		allDISTSummaries_, allDHORSummaries_, allECTHSummaries_, allECDIRSummaries_, allDVERSummaries_, allUvdXSummaries_, allUvdYSummaries_, allUvdDSummaries_,
+		allUvecXSummaries_, allUvecYSummaries_, allUvUSummaries_, allUvVSummaries_, allDSPTSummaries_, allDLEVSummaries_, allDlevDHORSummaries_, allORIESummaries_,
+		allECHOSummaries_, allECVESummaries_, allECSPSummaries_, allINCLYSummaries_, allROLLYSummaries_, allECWSSummaries_, allEcwiXSummaries_, allEcwiZSummaries_,
+		allObsxyzXSummaries_, allObsxyzYSummaries_, allObsxyzZSummaries_;
 };
 
 #endif // SU_FRAME_WRITER

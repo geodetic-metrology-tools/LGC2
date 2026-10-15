@@ -92,6 +92,7 @@ void object::test<3>()
 	ensure("Test must hold a free length.", data.getLength().numUnknowns() > 0);
 	ensure("Test must hold a free plane.", data.getPlanes().numUnknowns() > 0);
 	ensure("Test must hold a free sag element.", data.getSags().numUnknowns() > 0);
+	ensure("Test must hold a free scalar.", data.getScalars().numUnknowns() > 0);
 	int frameUnknowns = 0;
 	for (auto it(data.getTree().begin()); it != data.getTree().end(); ++it)
 	{

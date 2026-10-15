@@ -16,6 +16,7 @@
 #include <TPointTransformer.h>
 #include <TTSTN.h>
 
+class TUV;
 class TUVEC;
 class TUVD;
 class TPdorObs;
@@ -92,6 +93,10 @@ public:
 
 	/// Returns the contribution for the TUVD measurement.
 	UVDContrib getUVDContrib(const TCAM &camera, const TUVD &uvd);
+
+	/// Returns the contribution for the TUV measurement (pixel coordinates).
+	/// The camera frame is the node in which the *CAM station is written, its axes are those of the camera
+	UVContrib getUVContrib(const TCAM &camera, const TDataTreeIterator &cameraFrame, const TUV &uv);
 
 	//@}
 

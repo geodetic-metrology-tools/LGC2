@@ -35,11 +35,12 @@ bool TLSResultsMatricesExtractor::extractResults(const TLSResultsMatrices &rm, T
 		bool angl = extractAngleParams(rm, convCrit);
 		bool pln = extractPlaneParams(rm, convCrit);
 		bool len = extractLengthParams(rm, convCrit);
+		bool scal = extractScalarParams(rm, convCrit);
 		bool trf = extractTransformationParams(rm, convCrit);
 		bool ln = extractLineParams(rm, convCrit);
 		bool sag = extractSagParams(rm, convCrit);
 
-		if ((pt && angl && pln && trf && len && ln && sag) || fDataSet->getConfig().allfixed.isActive())
+		if ((pt && angl && pln && trf && len && scal && ln && sag) || fDataSet->getConfig().allfixed.isActive())
 			fLastIteration = true;
 	}
 	catch (std::exception const &excp)
@@ -103,6 +104,9 @@ bool TLSResultsMatricesExtractor::extractResiduals(const TLSResultsMatrices &rm)
 
 				for (auto &itUVEC : itCAM->measUVEC)
 					extractUVECObs(rm, itUVEC);
+
+				for (auto &itUV : itCAM->measUV)
+					extractUVObs(rm, itUV);
 			}
 
 			// In every node iterate through the EDM's measurements
@@ -183,6 +187,7 @@ bool TLSResultsMatricesExtractor::extractVarCovarParams(const TLSResultsMatrices
 		extractPointVarCovar(rm);
 		extractAngleVar(rm);
 		extractLengthVar(rm);
+		extractScalarVar(rm);
 		extractPlaneVarCovar(rm);
 		extractTransformationVarCovar(rm);
 		extractSagVarCovar(rm);
@@ -350,6 +355,18 @@ void TLSResultsMatricesExtractor::extractUVECObs(const TLSResultsMatrices &rm, T
 		logCritical() << "UVEC observation (v), problem during extraction residuals : observation index exceeds matrix dimensions (input line number:" << uvecMeas.line << ")";
 		throw std::runtime_error("UVEC observation (v), problem during extraction residuals: observation index exceeds matrix dimensions");
 	}
+}
+
+void TLSResultsMatricesExtractor::extractUVObs(const TLSResultsMatrices &rm, TUV &uvMeas)
+{
+	MatrixIndex uIdx = uvMeas.getFirstObservationIndex();
+	if (uIdx + 1 >= rm.getResidualsVectByConst()->size())
+	{
+		logCritical() << "UV observation, problem during extraction residuals: observation index exceeds matrix dimensions (input line number:" << uvMeas.line << ")";
+		throw std::runtime_error("UV observation, problem during extraction residuals: observation index exceeds matrix dimensions");
+	}
+	uvMeas.setXVectorComponentResidual(rm.getResidualsVctrElmt(uIdx));
+	uvMeas.setYVectorComponentResidual(rm.getResidualsVctrElmt(uIdx + 1));
 }
 
 void TLSResultsMatricesExtractor::extractLEVELObs(const TLSResultsMatrices &rm, TLEVEL &levelMeas)
@@ -793,6 +810,29 @@ bool TLSResultsMatricesExtractor::extractLengthParams(const TLSResultsMatrices &
 	return critNotExceeded;
 }
 
+bool TLSResultsMatricesExtractor::extractScalarParams(const TLSResultsMatrices &rm, const TReal convCrit)
+{
+	logDebug() << "Extract parameters of the adjustable scalars from the calculated matrices";
+
+	bool critNotExceeded = true;
+	for (auto &scalar : fDataSet->getScalars())
+	{
+		if (!scalar.isFixed())
+		{
+			MatrixIndex unknIdx = scalar.getFirstUidx();
+
+			if (unknIdx >= rm.getSolutionVectByConst()->size())
+				throw std::runtime_error("Unknown index of a scalar: " + scalar.getName() + " exceeds matrix dimensions!");
+
+			TReal correction = rm.getSolutionVctrElmt(unknIdx);
+			scalar.setCorrection(unknIdx, correction);
+			if (fabsq(correction) > convCrit)
+				critNotExceeded = false;
+		}
+	}
+	return critNotExceeded;
+}
+
 bool TLSResultsMatricesExtractor::extractTransformationParams(const TLSResultsMatrices &rm, const TReal convCrit)
 {
 	logDebug() << "Extract parameters of the adjustable transformations from the calculated matrices";
@@ -901,6 +941,27 @@ void TLSResultsMatricesExtractor::extractLengthVar(const TLSResultsMatrices &rm)
 				throw std::runtime_error("Unknown index of a scalar: " + length.getName() + " exceeds matrix dimensions!");
 			else
 				length.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx))); // Set estimated precision in METRES
+		}
+	}
+}
+
+void TLSResultsMatricesExtractor::extractScalarVar(const TLSResultsMatrices &rm)
+{
+	for (auto &scalar : fDataSet->getScalars())
+	{
+		if (!scalar.isFixed())
+		{
+			// Filling standard deviations (estimated precision)
+			int unknIdx = scalar.getFirstUidx();
+
+			if (rm.getUnkCovarMtrxByConst()->rows() == 0)
+				// The unknown variance-covariance matrix has not been well calculated (not inverted for instance)
+				// -> Sets the values arbitrary to -1
+				scalar.setEstimatedPrecision(unknIdx, -1);
+			else if (unknIdx >= rm.getUnkCovarMtrxByConst()->rows())
+				throw std::runtime_error("Unknown index of a scalar: " + scalar.getName() + " exceeds matrix dimensions!");
+			else
+				scalar.setEstimatedPrecision(unknIdx, sqrtq(rm.getUnkCovarMtrxElmt(unknIdx, unknIdx)));
 		}
 	}
 }

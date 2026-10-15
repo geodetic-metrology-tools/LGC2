@@ -96,6 +96,9 @@ private:
 	void updateORIESimValues(const TORIEROM &orieROM, std::list<TORIE> &orie);
 	void updateUVDSimValues(TCAM &camera);
 	void updateUVECSimValues(TCAM &camera);
+	void updateUVSimValues(TCAM &camera, const TDataTreeIterator &cameraFrame);
+	/// Simulates the a priori values of the interior orientation parameters of pixel cameras
+	void updateIOPriorSimValues();
 
 	void updateINCLYSimValues(const TINCLYROM &inclyROM, std::list<TINCLY> &incly);
 	void updateROLLYSimValues(const TROLLYROM &rollyROM, std::list<TROLLY> &rolly);

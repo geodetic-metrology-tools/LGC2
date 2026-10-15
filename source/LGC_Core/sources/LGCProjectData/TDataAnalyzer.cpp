@@ -230,8 +230,10 @@ bool TDataAnalyzer::cleanDeactivated()
 				cam->measUVD.clear();
 			if (!cam->uvecActive)
 				cam->measUVEC.clear();
+			if (!cam->uvActive)
+				cam->measUV.clear();
 
-			if (!rmDeactivated_and_checkTargetPos(cam->measUVD) || !rmDeactivated_and_checkTargetPos(cam->measUVEC))
+			if (!rmDeactivated_and_checkTargetPos(cam->measUVD) || !rmDeactivated_and_checkTargetPos(cam->measUVEC) || !rmDeactivated_and_checkTargetPos(cam->measUV))
 				return false; // Target pos point deactivated from active measurement
 
 			++cam;
@@ -769,6 +771,22 @@ bool TDataAnalyzer::checkParameters()
 		}
 	}
 
+	// Run through scalar collection and check whether all objects were initialized, assign unknown indices
+	for (auto &scalar : fData.getScalars())
+	{
+		if (!scalar.isInitialized())
+		{
+			outputMessages << TFileLogger::e_logType::LOG_ERROR << "Scalar: " + scalar.getName() + " is not initialized!";
+			return false;
+		}
+
+		if (!scalar.isFixed())
+		{
+			scalar.setFirstUidx(lastUidx);
+			lastUidx = scalar.getLastUidx() + 1;
+		}
+	}
+
 	// Run through line collection and check whether all objects were initialized, assign unknown indices
 	for (auto &line : fData.getLines())
 	{
@@ -1169,6 +1187,23 @@ void TDataAnalyzer::assignEOIndices()
 		// CAM
 		for (auto &cam : measurements.fCAM)
 		{
+			// The interior orientation of a pixel camera: adjustable scalars shared by all the stations of the instrument, pointed to
+			// by the instrument and by the copies of it of the stations
+			if (cam.instrument.isPixelCamera)
+			{
+				auto &instr = *fData.getInstruments().fCAMD.at(cam.instrument.ID);
+				for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+					instr.io[i].adjustable = cam.instrument.io[i].adjustable = &fData.getScalars().addObject(
+						TAdjustableScalar(instr.io[i].value, !instr.io[i].free, instr.ioAdjustableName(i)));
+			}
+
+			// UV
+			for (auto &uv : cam.measUV)
+			{
+				assignEOIndex(uv);
+				fData.addToMeasurementNum(TMeasurementsGlobal::kUV);
+			}
+
 			// UVD
 			for (auto &uvd : cam.measUVD)
 			{
@@ -1334,6 +1369,23 @@ void TDataAnalyzer::assignEOIndices()
 			fData.fUEOIndices.OIndex += nObservations;
 			fData.fUEOIndices.EIndex += nObservations;
 			fData.fUEOIndices.CIndex += nConstraints;
+		}
+	}
+
+	// the interior orientation parameters of pixel cameras with an a priori sigma are observed, once per instrument in use
+	for (auto &instrIt : fData.getInstruments().fCAMD)
+	{
+		auto &instr = *instrIt.second;
+		for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+		{
+			instr.io[i].priorObsIndex = -1;
+			if (instr.io[i].sigma > 0.0 && instr.io[i].adjustable)
+			{
+				instr.io[i].priorObsIndex = fData.fUEOIndices.OIndex;
+				fData.fObsIndexToLineNumber[fData.fUEOIndices.OIndex] = instr.io[i].line;
+				fData.fUEOIndices.OIndex++;
+				fData.fUEOIndices.EIndex++;
+			}
 		}
 	}
 }

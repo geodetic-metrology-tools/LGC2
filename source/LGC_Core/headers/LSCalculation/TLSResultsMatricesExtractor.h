@@ -12,6 +12,7 @@
 
 class TLGCData;
 class TLSResultsMatrices;
+class TUV;
 class TUVD;
 class TUVEC;
 class TPdorObs;
@@ -83,6 +84,7 @@ private:
 	bool extractPointParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	bool extractAngleParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	bool extractLengthParams(const TLSResultsMatrices &rm, const TReal convCrit);
+	bool extractScalarParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	bool extractPlaneParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	bool extractTransformationParams(const TLSResultsMatrices &rm, const TReal convCrit);
 	bool extractLineParams(const TLSResultsMatrices &rm, const TReal convCrit);
@@ -95,6 +97,7 @@ private:
 	void extractPointVarCovar(const TLSResultsMatrices &rm);
 	void extractAngleVar(const TLSResultsMatrices &rm);
 	void extractLengthVar(const TLSResultsMatrices &rm);
+	void extractScalarVar(const TLSResultsMatrices &rm);
 	void extractPlaneVarCovar(const TLSResultsMatrices &rm);
 	void extractTransformationVarCovar(const TLSResultsMatrices &rm);
 	void extractLineVarCovar(const TLSResultsMatrices &rm);
@@ -119,6 +122,8 @@ private:
 	void extractUVDObs(const TLSResultsMatrices &rm, TUVD &uvdMeas);
 	/// Sets the UVEC measurement residual.
 	void extractUVECObs(const TLSResultsMatrices &rm, TUVEC &uvecMeas);
+	/// Sets the UV measurement residual.
+	void extractUVObs(const TLSResultsMatrices &rm, TUV &uvMeas);
 
 	/*OTHERS*/
 

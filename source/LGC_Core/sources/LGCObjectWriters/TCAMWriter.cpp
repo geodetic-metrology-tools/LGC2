@@ -4,6 +4,10 @@
 
 #include "TCAMWriter.h"
 
+#include <algorithm>
+#include <iomanip>
+#include <sstream>
+
 #include <Global.h>
 #include <TAMeas.h>
 
@@ -28,6 +32,9 @@ void TCAMWriter::writeCAMResults(const TCAM &camera)
 
 	if (camera.measUVEC.size() > 0)
 		writeUVECResults(camera.measUVEC);
+
+	if (camera.measUV.size() > 0)
+		writeUVResults(camera.measUV);
 }
 
 void TCAMWriter::writeCAMHeader(const TCAM &camera)
@@ -49,6 +56,74 @@ void TCAMWriter::writeCAMHeader(const TCAM &camera)
 	(*stream).writeStringLeft(nameWidth, camera.instrumentPos->getName());
 	(*stream) << endl << endl;
 	///////////////////////////////////////////////////////////////////////////////////
+
+	if (camera.instrument.isPixelCamera)
+		writeInteriorOrientation(camera);
+}
+
+void TCAMWriter::writeInteriorOrientation(const TCAM &camera)
+{
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsWidth = getObsWidth();
+	std::string TABs = stream->getCurrSpaceExtended(1);
+
+	// pixel parameters with the precision of the pixel coordinates, the unitless distortion, which spans orders of magnitude, in
+	// scientific notation with as many significant digits. The values are padded with spaces so that the decimal points of a
+	// column line up; a column holds a sign, five digits before the decimal point and the decimals of a coefficient with its exponent.
+	const int pixelPrecision = getLengthPrecision();
+	const int tailWidth = pixelPrecision + 3; // characters after the decimal point of a coefficient
+	const int valueWidth = std::max(obsWidth, 7 + tailWidth);
+	const int parameterWidth = 9, unitWidth = 4; // "PARAMETER", "UNIT"
+	auto aligned = [pixelPrecision, tailWidth](TReal value, bool inPixels) {
+		std::ostringstream text;
+		if (inPixels)
+			text << std::fixed << std::setprecision(pixelPrecision) << value;
+		else
+			text << std::scientific << std::setprecision(std::max(pixelPrecision - 1, 0)) << value;
+		const std::string number = text.str();
+		const size_t point = number.find('.');
+		const int tail = point == std::string::npos ? 0 : (int)(number.size() - point - 1);
+		return number + std::string(std::max(tailWidth - tail, 0), ' ');
+	};
+	auto significant = [](TReal value, int digits) {
+		std::ostringstream text;
+		text << std::setprecision(digits) << value;
+		return text.str();
+	};
+
+	(*stream) << TABs << "INTERIOR ORIENTATION" << endl;
+	(*stream) << TABs;
+	(*stream).writeStringLeft(parameterWidth, "PARAMETER");
+	(*stream).writeString(unitWidth, "UNIT");
+	(*stream).writeString(valueWidth, "PROVISIONAL");
+	(*stream).writeString(valueWidth, "ESTIMATED");
+	(*stream).writeString(valueWidth, "SIGMA");
+	(*stream).writeString(valueWidth, "SIGMA APRI");
+	(*stream) << endl;
+
+	for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+	{
+		const TAdjustableScalar *ioAdj = camera.instrument.io[i].adjustable;
+		const bool inPixels = TInstrumentData::TCAMD::ioParamInPixels(i);
+
+		(*stream) << TABs;
+		(*stream).writeStringLeft(parameterWidth, TInstrumentData::TCAMD::ioParamNames[i]);
+		(*stream).writeString(unitWidth, inPixels ? "(PX)" : "-");
+		(*stream).writeString(valueWidth, aligned(ioAdj->getProvisionalValue(), inPixels));
+		(*stream).writeString(valueWidth, aligned(ioAdj->getEstimatedValue(), inPixels));
+		(*stream).writeString(valueWidth, ioAdj->isFixed() ? std::string("FIXED") : aligned(ioAdj->getEstimatedPrecision(), inPixels));
+		(*stream).writeString(valueWidth, camera.instrument.io[i].sigma > 0.0 ? aligned(camera.instrument.io[i].sigma, inPixels) : std::string());
+		(*stream) << endl;
+	}
+	(*stream) << endl;
+
+	const auto &sensor = camera.instrument.sensorSize;
+	if (!camera.instrument.hasSensor())
+		return;
+	(*stream) << TABs;
+	(*stream).writeStringLeft(nameWidth, "SENSOR");
+	(*stream) << significant(sensor[0], 8) + " X " + significant(sensor[1], 8) + " PX" << endl << endl;
 }
 
 void TCAMWriter::writeUVDResultsHeader(int nOObs)
@@ -166,6 +241,50 @@ void TCAMWriter::writeUVECResultsHeader(int nOObs)
 	(*stream).writeString(obsResWidth, "()"); // sigma observed value
 	(*stream).writeString(obsWidth, "()"); // estimated
 	(*stream).writeString(obsResWidth, "()"); // residual
+
+	(*stream) << endl;
+}
+
+void TCAMWriter::writeUVResultsHeader(int nOObs)
+{
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsWidth = getObsWidth();
+	int obsResWidth = getObsResWidth();
+	int obsIdWidth = getObsIdWidth();
+	std::string TABs = stream->getCurrSpaceExtended(2);
+
+	////////////////////////////////////////////////////////////
+	// first line
+	(*stream) << TABs;
+	this->writeObsTitle(this->getObsDescriptionFR(TALGCObjectWriter::kUV), nOObs);
+	// second line
+	(*stream) << TABs;
+	(*stream).writeStringLeft(2, ""); // Marker of a target behind the camera
+	(*stream).writeStringLeft(nameWidth, "TRGT"); // Name of the target used
+	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the target
+
+	(*stream).writeString(obsWidth, "OBSU"); // mesured u pixel coordinate
+	(*stream).writeString(obsResWidth, "SU"); // sigma u
+	(*stream).writeString(obsWidth, "CALCU"); // estimated u
+	(*stream).writeString(obsResWidth, "RESU"); // residual
+
+	(*stream).writeString(obsWidth, "OBSV"); // mesured v pixel coordinate
+	(*stream).writeString(obsResWidth, "SV"); // sigma v
+	(*stream).writeString(obsWidth, "CALCV"); // estimated v
+	(*stream).writeString(obsResWidth, "RESV"); // residual
+
+	if (obsIdWidth != 0)
+		(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
+
+	(*stream) << endl;
+
+	(*stream) << TABs;
+	(*stream).writeStringLeft(2, ""); // MARKER
+	(*stream).writeStringLeft(nameWidth, ""); // TARGET ID
+	(*stream).writeStringLeft(nameWidth, ""); // POSITION
+	for (int i = 0; i < 8; i++)
+		(*stream).writeString(i % 2 == 0 ? obsWidth : obsResWidth, "(PX)");
 
 	(*stream) << endl;
 }
@@ -306,6 +425,59 @@ void TCAMWriter::writeUVECResults(const std::list<TUVEC> &measUVEC)
 	(*stream) << endl;
 }
 
+void TCAMWriter::writeUVResults(const std::list<TUV> &measUV)
+{
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsWidth = getObsWidth();
+	int obsIdWidth = getObsIdWidth();
+	int obsResWidth = getObsResWidth();
+	int pixelPrecision = getLengthPrecision();
+	int pixelResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+	std::string TABs = stream->getCurrSpaceExtended(2);
+
+	writeUVResultsHeader((int)measUV.size()); // write the title line for the observations
+	(*stream) << endl;
+	for (auto const &ItUV : measUV)
+	{
+		const Eigen::VectorXd obs = ItUV.getObsVector();
+		const TReal sigma[2] = {ItUV.target.sigmaCombinedX.getMetresValue(), ItUV.target.sigmaCombinedY.getMetresValue()};
+		const TReal residual[2] = {ItUV.getXCompVectorResidual(), ItUV.getYCompVectorResidual()};
+
+		(*stream) << TABs;
+		// mark a target behind the camera, explained below the table
+		(*stream).writeStringLeft(2, ItUV.behindCamera ? "*" : "");
+		// write TARGET ID
+		(*stream).writeStringLeft(nameWidth, ItUV.target.ID);
+		// write TARGET POSITION
+		(*stream).writeStringLeft(nameWidth, ItUV.targetPos->getName());
+
+		// u and v pixel coordinates
+		for (int i = 0; i < 2; i++)
+		{
+			// write the observed pixel coordinate
+			(*stream).writeDouble(obsWidth, pixelPrecision, obs[i]);
+
+			// write the sigma
+			(*stream).writeDouble(obsResWidth, pixelResPrecision, sigma[i]);
+
+			// write the estimated pixel coordinate
+			(*stream).writeDouble(obsWidth, pixelPrecision, obs[i] + residual[i]);
+
+			// write the residual
+			(*stream).writeDouble(obsResWidth, pixelResPrecision, residual[i]);
+		}
+
+		// Write the observation identifier
+		(*stream).writeString(obsIdWidth, ItUV.obsID);
+
+		(*stream) << endl;
+	}
+	if (std::any_of(measUV.begin(), measUV.end(), [](const TUV &uv) { return uv.behindCamera; }))
+		(*stream) << TABs << "* TARGET BEHIND THE CAMERA, PROJECTED MIRRORED THROUGH THE PROJECTION CENTRE" << endl;
+	(*stream) << endl;
+}
+
 //------------------ Simu data---------------------------------------------------------------------------
 
 void TCAMWriter::writeCAMResultsSIMU(const TCAM &camera)
@@ -332,6 +504,14 @@ void TCAMWriter::writeCAMResultsSIMU(const TCAM &camera)
 		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUVEC) + ": YVECT", (int)camera.measUVEC.size());
 		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs);
 	}
+	if (!camera.measUV.empty())
+	{
+		const auto &summary = camera.getUVObsSummary();
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUV) + ": U", (int)camera.measUV.size());
+		writeUnitlessResultsSummary(summary.xVectorCompObsSum, TABs, "[PX]");
+		this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kUV) + ": V", (int)camera.measUV.size());
+		writeUnitlessResultsSummary(summary.yVectorCompObsSum, TABs, "[PX]");
+	}
 }
 
 //------------------ Reliability header--------------------------------------------------------------------
@@ -339,6 +519,13 @@ void TCAMWriter::writeUVECReliabilityHeader()
 {
 	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_i", "[]", "[]");
 	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_j", "[]", "[]");
+	return;
+}
+
+void TCAMWriter::writeUVReliabilityHeader()
+{
+	this->TObservationWriter::writeReliabilityHeader("PIVOT", "TARGET", "", "OBS_u", "PX", "PX");
+	this->TObservationWriter::writeReliabilityHeader("", "", "", "OBS_v", "PX", "PX");
 	return;
 }
 
@@ -477,6 +664,41 @@ void TCAMWriter::writeUVDReliabilityData(const TCAM &fCam, const TLGCStatistic &
 	return;
 }
 
+void TCAMWriter::writeUVReliabilityData(const TCAM &fCam, const TLGCStatistic &stat)
+{
+	TAStreamFormatter *stream = getStream();
+	int nameWidth = getNameWidth();
+	int obsWidth = getObsWidth();
+	int obsResWidth = getObsResWidth();
+	int pixelPrecision = getLengthPrecision();
+	int pixelResPrecision = std::max(getLengthResidualPrecision() - 3, 0);
+
+	for (auto const &ItUV : fCam.measUV)
+	{
+		const Eigen::VectorXd obs = ItUV.getObsVector();
+		const TReal sigma[2] = {ItUV.target.sigmaCombinedX.getMetresValue(), ItUV.target.sigmaCombinedY.getMetresValue()};
+		const TReal residual[2] = {ItUV.getXCompVectorResidual(), ItUV.getYCompVectorResidual()};
+
+		// u and v pixel coordinates, the station and the target are written on the first line only
+		for (int i = 0; i < 2; i++)
+		{
+			// Observation index to take the right value in the statistic vector
+			int index = ItUV.getFirstObservationIndex() + i;
+
+			(*stream).writeStringLeft(nameWidth, i == 0 ? fCam.instrumentPos->getName() : "");
+			(*stream).writeStringLeft(nameWidth, i == 0 ? ItUV.targetPos->getName() : "");
+			(*stream).writeStringLeft(nameWidth, "");
+
+			(*stream).writeDouble(obsWidth, pixelPrecision, obs[i]);
+			(*stream).writeDouble(obsResWidth, pixelResPrecision, sigma[i]);
+			(*stream).writeDouble(obsResWidth, pixelResPrecision, residual[i]);
+
+			writeReliabilityPX(index, stat);
+		}
+	}
+	return;
+}
+
 //------------------ Synthesis header-------------------------------------------------------------------------
 void TCAMWriter::writeUVDSynthesisHeader()
 {
@@ -567,7 +789,7 @@ void TCAMWriter::writeUVECSynthesisHeader()
 	(*stream) << endl;
 }
 
-void TCAMWriter::writeResultsSynthesisHeaderUnitless()
+void TCAMWriter::writeResultsSynthesisHeaderUnitless(const std::string &unit)
 {
 	TAStreamFormatter *stream = getStream();
 	int nameWidth = getNameWidth();
@@ -589,10 +811,10 @@ void TCAMWriter::writeResultsSynthesisHeaderUnitless()
 	// second line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "");
-	(*stream).writeString(obsResWidth, "(--)");
-	(*stream).writeString(obsResWidth, "(--)");
-	(*stream).writeString(obsResWidth, "(--)");
-	(*stream).writeString(obsResWidth, "(--)");
+	(*stream).writeString(obsResWidth, unit);
+	(*stream).writeString(obsResWidth, unit);
+	(*stream).writeString(obsResWidth, unit);
+	(*stream).writeString(obsResWidth, unit);
 	(*stream) << endl;
 }
 

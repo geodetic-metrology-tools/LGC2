@@ -1805,7 +1805,7 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 }
 
 //////////////////////////////////////////////////////////////////////
-// CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD)
+// CONTRIBUTIONS CALCULATION -- CAMERA measurements (UVEC/UVD/UV)
 //////////////////////////////////////////////////////////////////////
 UVECContrib TContributionsGenerator::getUVECContrib(const TCAM &camera, const TUVEC &uvec)
 {
@@ -1880,6 +1880,89 @@ UVDContrib TContributionsGenerator::getUVDContrib(const TCAM &camera, const TUVD
 	contrib.fTgTransformContrib = targetTransfContributions;
 	contrib.fCalcMeas = Eigen::Vector3d(sign * rhat(0), sign * rhat(1), sign * d);
 	contrib.fObsVariance = obsVariance;
+
+	return contrib;
+}
+UVContrib TContributionsGenerator::getUVContrib(const TCAM &camera, const TDataTreeIterator &cameraFrame, const TUV &uv)
+{
+	typedef TInstrumentData::TCAMD IO;
+	fPointTransfo.setMLA(false); // TCAM measurements are never in MLA
+
+	// Target and station point in the camera frame, the frame in which the measurement is written (UVEC and UVD use the frame of the
+	// station point instead): its parameters are the exterior orientation
+	const TLOR2LOR &tg2camTrafo = fPointTransfo.getLORTransformation(uv.targetPos->getFrameTreePosition(), cameraFrame);
+	const TLOR2LOR &st2camTrafo = fPointTransfo.getLORTransformation(camera.instrumentPos->getFrameTreePosition(), cameraFrame);
+	TPositionVector targetPos = uv.targetPos->getEstimatedValue();
+	tg2camTrafo.transform(targetPos);
+	TPositionVector stationPos = camera.instrumentPos->getEstimatedValue();
+	st2camTrafo.transform(stationPos);
+
+	// Target relative to the projection centre. The camera looks along +z.
+	const Eigen::Vector3d p = (targetPos - stationPos).toRealVector();
+	// A target behind the camera is projected mirrored through the projection centre: allowed during the iterations, which
+	// may pass through such states, and marked in the result file; only a target in the plane of the projection centre has no projection.
+	if (fabsq(p(2)) < nullLimit)
+	{
+		generateContributionError("TContributionGenerator: Target in the plane of the projection centre, it has no projection (UV). Points: "
+			+ getNameAndLine(*camera.instrumentPos) + " and " + getNameAndLine(*uv.targetPos));
+	}
+
+	// Current estimates of the interior orientation
+	auto est = [&camera](int param) { return camera.instrument.io[param].adjustable->getEstimatedValue(); };
+	const TReal c = est(IO::kC), cx = est(IO::kCX), cy = est(IO::kCY), k1 = est(IO::kK1), k2 = est(IO::kK2), k3 = est(IO::kK3), p1 = est(IO::kP1), p2 = est(IO::kP2),
+				b1 = est(IO::kB1), b2 = est(IO::kB2);
+
+	// Functional model: pinhole projection with radial (k1,k2,k3) and tangential (p1,p2) distortion, affinity (b1) and shear (b2)
+	//   xn = px/pz, yn = py/pz, r2 = xn^2 + yn^2, L = 1 + k1*r2 + k2*r2^2 + k3*r2^3
+	//   xd = xn*L + 2*p1*xn*yn + p2*(r2 + 2*xn^2)
+	//   yd = yn*L + p1*(r2 + 2*yn^2) + 2*p2*xn*yn
+	//   u = cx + (c + b1)*xd + b2*yd
+	//   v = cy + c*yd
+	const TReal xn = p(0) / p(2);
+	const TReal yn = p(1) / p(2);
+	const TReal r2 = xn * xn + yn * yn;
+	const TReal L = 1.0 + r2 * (k1 + r2 * (k2 + r2 * k3));
+	const TReal dL = k1 + r2 * (2.0 * k2 + 3.0 * r2 * k3); // dL/dr2
+	const TReal xd = xn * L + 2.0 * p1 * xn * yn + p2 * (r2 + 2.0 * xn * xn);
+	const TReal yd = yn * L + p1 * (r2 + 2.0 * yn * yn) + 2.0 * p2 * xn * yn;
+
+	// Jacobian wrt p: J = K * D * N, with K = d(u,v)/d(xd,yd), D = d(xd,yd)/d(xn,yn), N = d(xn,yn)/dp
+	Eigen::Matrix2d K, D;
+	K << c + b1, b2, 0.0, c;
+	const TReal d01 = 2.0 * xn * yn * dL + 2.0 * p1 * xn + 2.0 * p2 * yn;
+	D << L + 2.0 * xn * xn * dL + 2.0 * p1 * yn + 6.0 * p2 * xn, d01, d01, L + 2.0 * yn * yn * dL + 6.0 * p1 * yn + 2.0 * p2 * xn;
+	Eigen::Matrix<double, 2, 3> N;
+	N << 1.0, 0.0, -xn, 0.0, 1.0, -yn;
+	N /= p(2);
+	const Eigen::Matrix<double, 2, 3> J = K * D * N;
+
+	UVContrib contrib;
+	contrib.fCalcMeas = Eigen::Vector2d(cx, cy) + K * Eigen::Vector2d(xd, yd);
+	contrib.fBehindCamera = p(2) < 0.0;
+
+	// Station contribution: -J * dS_cam/dS_0, target contribution: J * dT_cam/dT_0
+	contrib.fStCoordContrib = -J * st2camTrafo.getPartialDerivativeWrtPosition();
+	contrib.fTgCoordContrib = J * tg2camTrafo.getPartialDerivativeWrtPosition();
+
+	// Transformation contributions of the target and the station chains, by the 3D helper whose third equation stays zero
+	TFreeVector zeroVector(0.0, 0.0, 0.0, TCoordSysFactory::k3DCartesian);
+	addTransformationsContributions3D(tg2camTrafo, uv.targetPos->getEstimatedValue(), TFreeVector(J.row(0)), TFreeVector(J.row(1)), zeroVector, contrib.fTgTransformContrib);
+	addTransformationsContributions3D(st2camTrafo, camera.instrumentPos->getEstimatedValue(), TFreeVector(-J.row(0)), TFreeVector(-J.row(1)), zeroVector, contrib.fStTransformContrib);
+
+	// Interior orientation contributions
+	contrib.fIOContrib.col(IO::kC) << xd, yd;
+	contrib.fIOContrib.col(IO::kCX) << 1.0, 0.0;
+	contrib.fIOContrib.col(IO::kCY) << 0.0, 1.0;
+	contrib.fIOContrib.col(IO::kK1) = K * Eigen::Vector2d(xn, yn) * r2;
+	contrib.fIOContrib.col(IO::kK2) = contrib.fIOContrib.col(IO::kK1) * r2;
+	contrib.fIOContrib.col(IO::kK3) = contrib.fIOContrib.col(IO::kK2) * r2;
+	contrib.fIOContrib.col(IO::kP1) = K * Eigen::Vector2d(2.0 * xn * yn, r2 + 2.0 * yn * yn);
+	contrib.fIOContrib.col(IO::kP2) = K * Eigen::Vector2d(r2 + 2.0 * xn * xn, 2.0 * xn * yn);
+	contrib.fIOContrib.col(IO::kB1) << xd, 0.0;
+	contrib.fIOContrib.col(IO::kB2) << yd, 0.0;
+
+	// Stochastic model: the sigmas of the target in pixels
+	contrib.fObsVariance << pow2q(uv.target.sigmaX), pow2q(uv.target.sigmaY);
 
 	return contrib;
 }

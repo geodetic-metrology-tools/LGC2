@@ -202,6 +202,9 @@ void TResultsFileWriter::writeDataSummary()
 	if (fProjectData->getLength().numObjects() > 0)
 		writeAdjustableObjGeneralInfo("DISTANCES", (int)fProjectData->getLength().numObjects(), (int)fProjectData->getLength().numUnknowns());
 
+	if (fProjectData->getScalars().numObjects() > 0)
+		writeAdjustableObjGeneralInfo("SCALAIRES", (int)fProjectData->getScalars().numObjects(), (int)fProjectData->getScalars().numUnknowns());
+
 	int fNumFixedPoint = fProjectData->getPointsDimension(TSpatialStatus::kCala);
 	int fNumVxyzPoint = fProjectData->getPointsDimension(TSpatialStatus::kVxyz);
 	int fNumVyzPoint = fProjectData->getPointsDimension(TSpatialStatus::kVyz);
@@ -263,6 +266,7 @@ void TResultsFileWriter::writeDataSummary()
 	int fNumDSPT = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDSPT);
 	int fNumUVEC = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVEC);
 	int fNumUVD = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUVD);
+	int fNumUV = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUV);
 	int fNumDLEV = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEV);
 	int fNumDLEVDHOR = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEVDHOR);
 	int fNumDVER = fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDVER);
@@ -304,6 +308,9 @@ void TResultsFileWriter::writeDataSummary()
 
 	if (fNumUVD != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kUVD), fNumUVD);
+
+	if (fNumUV != 0)
+		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kUV), fNumUV);
 
 	if (fNumDSPT != 0)
 		writeMeasDataSummary(TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::kDSPT), fNumDSPT);

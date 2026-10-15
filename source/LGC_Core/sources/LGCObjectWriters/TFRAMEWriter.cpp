@@ -273,6 +273,15 @@ void TFRAMEWriter::writeHistogrammeRootOnly()
 		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvecYSummaries_), "UVEC: YVEC");
 	}
 
+	// UV
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUV) >= 5)
+	{
+		(*stream) << "\n";
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvUSummaries_), "UV: U");
+		(*stream) << "\n";
+		scaleWriter.writeHisto(TLGCObsSummary::merge(allUvVSummaries_), "UV: V");
+	}
+
 	// DLEV
 	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kDLEV) >= 5)
 	{
@@ -565,6 +574,11 @@ void TFRAMEWriter::initialiseAllObsSummaries()
 					allUvecXSummaries_.push_back(&itCAM.getUVECObsSummary(stationName).xVectorCompObsSum);
 					allUvecYSummaries_.push_back(&itCAM.getUVECObsSummary(stationName).yVectorCompObsSum);
 				}
+				if (!itCAM.measUV.empty())
+				{
+					allUvUSummaries_.push_back(&itCAM.getUVObsSummary(stationName).xVectorCompObsSum);
+					allUvVSummaries_.push_back(&itCAM.getUVObsSummary(stationName).yVectorCompObsSum);
+				}
 			}
 		}
 
@@ -756,6 +770,20 @@ void TFRAMEWriter::writeMeasurementsSummaryRootOnly()
 		camWriter.writeResultsSynthesisHeaderUnitless();
 		camWriter.writeDefResultsSynthesis(allUvecYSummaries_, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
 		camWriter.writeUnitlessResultsSummary(TLGCObsSummary::merge(allUvecYSummaries_), TABs);
+	}
+
+	// UV, residuals in pixels
+	if (fProjectData->getMeasurementDimension(TMeasurementsGlobal::kUV) > 0)
+	{
+		for (const auto &[title, summaries] : {std::make_pair("UV: U", &allUvUSummaries_), std::make_pair("UV: V", &allUvVSummaries_)})
+		{
+			(*stream) << TABs;
+			(*stream).writeStringLeft(nameWidth, title);
+			(*stream) << "\n";
+			camWriter.writeResultsSynthesisHeaderUnitless("(PX)");
+			camWriter.writeDefResultsSynthesis(*summaries, getObsResWidth(), std::max(getLengthResidualPrecision() - 3, 0));
+			camWriter.writeUnitlessResultsSummary(TLGCObsSummary::merge(*summaries), TABs, "[PX]");
+		}
 	}
 
 	// DLEV
@@ -1654,6 +1682,24 @@ void TFRAMEWriter::writeCAMReliability(TDataTreeIterator frameIt)
 				isuvd = true;
 			}
 			camWriter.writeUVDReliabilityData(itCAM, fProjectData->getStatistics());
+		}
+	}
+
+	// UV
+	bool isuv = false;
+	for (auto &itCAM : tmeas.fCAM)
+	{
+		if (itCAM.measUV.size() > 0)
+		{
+			if (isuv == false)
+			{
+				(*stream) << "\n"
+						  << "UV observations"
+						  << "\n";
+				camWriter.writeUVReliabilityHeader();
+				isuv = true;
+			}
+			camWriter.writeUVReliabilityData(itCAM, fProjectData->getStatistics());
 		}
 	}
 }

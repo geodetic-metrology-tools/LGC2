@@ -32,6 +32,8 @@ public:
 	void writeUVECReliabilityHeader();
 	/// Writes UVD measurement reliability header
 	void writeUVDReliabilityHeader();
+	/// Writes UV measurement reliability header
+	void writeUVReliabilityHeader();
 
 	/// Write the UVEC synthesis header
 	void writeUVECSynthesisHeader();
@@ -39,7 +41,7 @@ public:
 	void writeUVDSynthesisHeader();
 
 	/// Write the Unitless synthesis header
-	void writeResultsSynthesisHeaderUnitless();
+	void writeResultsSynthesisHeaderUnitless(const std::string &unit = "(--)");
 	/// Write the Distance synthesis header
 	void writeResultsSynthesisHeaderDistance();
 	//@}
@@ -56,6 +58,8 @@ public:
 	void writeUVECReliabilityData(const TCAM &fCam, const TLGCStatistic &stat);
 	/// Writes UVD measurement reliability data
 	void writeUVDReliabilityData(const TCAM &fCam, const TLGCStatistic &stat);
+	/// Writes UV measurement reliability data
+	void writeUVReliabilityData(const TCAM &fCam, const TLGCStatistic &stat);
 
 	/// Write Default results synthesis
 	void writeDefResultsSynthesis(std::list<const TLGCObsSummary *> &meassum, int obsResWidth, int ResPrecision);
@@ -66,12 +70,16 @@ private:
 	//@{
 	void writeUVDResultsHeader(int nOObs);
 	void writeUVECResultsHeader(int nOObs);
+	void writeUVResultsHeader(int nOObs);
 	//@}
 
 	/*!@name Write results */
 	//@{
 	void writeUVECResults(const std::list<TUVEC> &measUVEC);
 	void writeUVDResults(const std::list<TUVD> &measUVD);
+	void writeUVResults(const std::list<TUV> &measUV);
+	/// Writes the interior orientation of a pixel camera and the size of its sensor
+	void writeInteriorOrientation(const TCAM &camera);
 	//@}
 };
 
