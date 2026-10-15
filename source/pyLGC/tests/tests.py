@@ -410,3 +410,90 @@ def test_getEstVector_fixed_frame(ev):
     est_before = root.getEstVector()
     ev.setParameters(ev.getEstimatedParameters() + 99.0)
     assert norm(root.getEstVector() - est_before, np.inf) < 1e-10
+
+
+# --- Pixel camera (CAMPX, interior orientation, UV) ---
+
+# The network of test 4 of testCAMPX.cpp: its UV observations were generated with
+# CAMERA_TRUTH, the provisional values are displaced from it, K3 is fixed at its true value.
+CAMERA_FILE = "Pixel-Camera.lgc2"
+CAMERA_TRUTH = {
+    "C": 7246.4,
+    "CX": 2048.0,
+    "CY": 1900.0,
+    "K1": -0.12,
+    "K2": 0.15,
+    "K3": -0.05,
+    "P1": 3.0e-4,
+    "P2": -2.0e-4,
+    "B1": 0.8,
+    "B2": -0.3,
+}
+# 9 free camera parameters, 4 stations with 6 frame parameters, 13 free points
+CAMERA_UNKNOWNS = 9 + 4 * 6 + 13 * 3
+# 4 stations observing 20 targets, 2 pixel coordinates each
+CAMERA_OBSERVATIONS = 4 * 20 * 2
+
+
+@pytest.fixture
+def cam():
+    return pyLGC.Evaluator(CAMERA_FILE)
+
+
+def test_camera_dimensions(cam):
+    idx = cam.getProblemDimensions()
+    assert idx.UIndex == CAMERA_UNKNOWNS
+    assert idx.EIndex == CAMERA_OBSERVATIONS
+    assert idx.OIndex == CAMERA_OBSERVATIONS
+
+
+def test_camera_parameter_lookup(cam):
+    c = cam.getCameraParameter("CAMA", "C")
+    assert c.getName() == "Cam_CAMA_C"
+    assert list(c.getRelativeUnknIndices()) == [0]
+    # provisional value of the file, also found in the parameter vector
+    assert abs(c.getEstVector()[0] - 7200.0) < 1e-10
+    assert abs(cam.getEstimatedParameters()[c.getFirstUidx()] - 7200.0) < 1e-10
+
+
+def test_camera_parameters_have_distinct_indices(cam):
+    free = [p for p in CAMERA_TRUTH if p != "K3"]
+    indices = {cam.getCameraParameter("CAMA", p).getFirstUidx() for p in free}
+    assert len(indices) == len(free)
+
+
+def test_invalid_camera_parameter_raises(cam):
+    with pytest.raises(RuntimeError, match="not found"):
+        cam.getCameraParameter("CAMA", "F")
+    with pytest.raises(RuntimeError, match="not found"):
+        cam.getCameraParameter("NOCAM", "C")
+
+
+def test_camera_parameter_set_get(cam):
+    k1 = cam.getCameraParameter("CAMA", "K1")
+    params = cam.getEstimatedParameters()
+    params[k1.getFirstUidx()] = -0.1
+    cam.setParameters(params)
+    assert abs(k1.getEstVector()[0] + 0.1) < 1e-10
+
+
+def test_fixed_camera_parameter(cam):
+    """Fixed K3: no unknown, its value unchanged after setParameters."""
+    k3 = cam.getCameraParameter("CAMA", "K3")
+    assert len(k3.getRelativeUnknIndices()) == 0
+    cam.setParameters(cam.getEstimatedParameters() + 99.0)
+    assert abs(k3.getEstVector()[0] - CAMERA_TRUTH["K3"]) < 1e-10
+
+
+def test_camera_solve(cam):
+    """After solve() the free camera parameters hold their solution, which is the truth."""
+    ok, solution = cam.solve()
+    assert ok
+    for name in CAMERA_TRUTH:
+        param = cam.getCameraParameter("CAMA", name)
+        if len(param.getRelativeUnknIndices()) > 0:
+            assert abs(param.getEstVector()[0] - solution[param.getFirstUidx()]) < 1e-10
+    assert (
+        abs(cam.getCameraParameter("CAMA", "C").getEstVector()[0] - CAMERA_TRUTH["C"])
+        < 1e-5
+    )

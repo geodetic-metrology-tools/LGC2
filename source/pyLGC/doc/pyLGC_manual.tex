@@ -387,7 +387,7 @@ All require a preceding \code{evaluate()}.
     specific observations.
 \end{description}
 
-\subsubsection*{Point and Frame Access}
+\subsubsection*{Point, Frame and Camera Parameter Access}
 
 \begin{description}[style=nextline, leftmargin=1.5em]
 \item[\code{getPoint(name: str) -> AdjustableObject}]
@@ -397,22 +397,29 @@ All require a preceding \code{evaluate()}.
 \item[\code{getFrame(name: str) -> AdjustableObject}]
     Look up an adjustable reference frame by name. Raises
     \code{RuntimeError} if not found.
+
+\item[\code{getCameraParameter(instrument: str, parameter: str) -> AdjustableObject}]
+    Look up an interior orientation parameter (\code{C}, \code{CX},
+    \code{CY}, \code{K1}, \code{K2}, \code{K3}, \code{P1}, \code{P2},
+    \code{B1} or \code{B2}) of a pixel camera instrument, named
+    \code{Cam\_<instrument>\_<parameter>}. Raises \code{RuntimeError} if not found.
 \end{description}
 
-The two methods perform distinct lookups in the underlying engine
-(against \code{LGCAdjustablePoint} and
-\code{TAdjustableHelmertTransformation} respectively), but both return
-the same Python wrapper class (see Section~\ref{sec:adjobj}).
+The methods perform distinct lookups in the underlying engine
+(against \code{LGCAdjustablePoint},
+\code{TAdjustableHelmertTransformation} and \code{TAdjustableScalar}
+respectively), but all return the same Python wrapper class (see
+Section~\ref{sec:adjobj}).
 
 %--------------------------------------------------------------------------
 \subsection{Class \code{AdjustableObject}}
 \label{sec:adjobj}
 %--------------------------------------------------------------------------
 
-Represents an adjustable object in the network --- either a point or a
-reference frame. Instances are obtained via \code{Evaluator.getPoint()}
-or \code{Evaluator.getFrame()} and are valid as long as the parent
-\code{Evaluator} exists.
+Represents an adjustable object in the network --- a point, a
+reference frame or a camera parameter. Instances are obtained via
+\code{getPoint()}, \code{getFrame()} or \code{getCameraParameter()}
+of an \code{Evaluator} and are valid as long as it exists.
 
 \code{AdjustablePoint} and \code{AdjustableFrame} are retained as
 aliases for \code{AdjustableObject}, so existing code that references
@@ -434,13 +441,14 @@ those names continues to work.
     fixed point some components are absent; for a fully fixed object
     the array is empty.
     For an adjustable Helmert frame the indices select among up to
-    seven parameters (3 translations, 3 rotations, 1 scale).
+    seven parameters (3 translations, 3 rotations, 1 scale); for a
+    camera parameter it is \code{[0]}, or empty if the parameter is fixed.
 
 \item[\code{getEstVector() -> numpy.ndarray}]
     Return the current estimated parameter vector as a 1-D float array.
     For a 3D point this is always 3 elements regardless of which
     components are fixed; for a Helmert frame this is the current
-    transformation parameter vector.
+    transformation parameter vector; for a camera parameter its value.
 \end{description}
 
 %--------------------------------------------------------------------------
@@ -469,6 +477,8 @@ descriptive messages. Common error conditions:
         \code{Point NOPE not found} \\
     Unknown frame name &
         \code{Frame NOPE not found} \\
+    Unknown camera parameter &
+        \code{Parameter F of camera CAMA not found} \\
     \bottomrule
 \end{tabular}
 \end{center}

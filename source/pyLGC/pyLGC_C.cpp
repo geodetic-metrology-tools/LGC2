@@ -284,7 +284,7 @@ extern "C"
 		CATCH_ERR
 	}
 
-	// --- Adjustable-object access (points & frames) ---------------------------
+	// --- Adjustable-object access (points, frames & camera parameters) --------
 
 	LGCAdjObj lgcEvaluatorGetPoint(LGCEvaluator ev, const char *name)
 	{
@@ -307,6 +307,27 @@ extern "C"
 		{
 			auto iter = EV(ev).getData().locateNode(std::string(name));
 			return &(iter.node->data.get()->frame);
+		}
+		CATCH_NULL
+	}
+
+	LGCAdjObj lgcEvaluatorGetCameraParameter(LGCEvaluator ev, const char *instrumentId, const char *parameter)
+	{
+		try
+		{
+			const TLGCData &data = EV(ev).getData();
+			const auto camera = data.getInstruments().fCAMD.find(instrumentId);
+			if (camera != data.getInstruments().fCAMD.end())
+			{
+				for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+				{
+					const std::string name = camera->second->ioAdjustableName(i);
+					if (std::string(parameter) == TInstrumentData::TCAMD::ioParamNames[i] && data.getScalars().doesObjectExist(name))
+						return static_cast<TVAdjustableObject *>(const_cast<TAdjustableScalar *>(&data.getScalars().getObject(name)));
+				}
+			}
+			lastError = "Parameter " + std::string(parameter) + " of camera " + std::string(instrumentId) + " not found";
+			return nullptr;
 		}
 		CATCH_NULL
 	}
