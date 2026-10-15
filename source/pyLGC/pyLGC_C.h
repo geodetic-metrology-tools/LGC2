@@ -62,11 +62,14 @@ extern "C"
 	/* Obs-index-to-line-number mapping (parallel key/value arrays) */
 	PYLGC_API int lgcEvaluatorGetObsIndexToLineNumber(LGCEvaluator ev, int **outKeys, int **outValues, int *outLen);
 
-	/* Adjustable-object access (points & frames) — returns NULL on error
+	/* Adjustable-object access (points, frames & camera parameters) — returns NULL on error
 	   (check lgcGetLastError). Returned handle is borrowed (valid as long as the
 	   evaluator lives). */
 	PYLGC_API LGCAdjObj lgcEvaluatorGetPoint(LGCEvaluator ev, const char *name);
 	PYLGC_API LGCAdjObj lgcEvaluatorGetFrame(LGCEvaluator ev, const char *name);
+	/* Interior orientation parameter (C, CX, CY, K1, K2, K3, P1, P2, B1 or B2) of a
+	   pixel camera instrument (*CAMPX). */
+	PYLGC_API LGCAdjObj lgcEvaluatorGetCameraParameter(LGCEvaluator ev, const char *instrumentId, const char *parameter);
 	PYLGC_API const char *lgcAdjObjGetName(LGCAdjObj obj);
 	PYLGC_API int lgcAdjObjGetFirstUidx(LGCAdjObj obj);
 	PYLGC_API int lgcAdjObjGetRelativeUnknIndices(LGCAdjObj obj, int **outData, int *outLen);

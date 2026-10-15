@@ -81,6 +81,7 @@ _ev_obs_map = _sig("lgcEvaluatorGetObsIndexToLineNumber", _int, [_vp, _ipp, _ipp
 
 _ev_get_point = _sig("lgcEvaluatorGetPoint", _vp, [_vp, _cp])
 _ev_get_frame = _sig("lgcEvaluatorGetFrame", _vp, [_vp, _cp])
+_ev_get_camera_param = _sig("lgcEvaluatorGetCameraParameter", _vp, [_vp, _cp, _cp])
 _adj_get_name = _sig("lgcAdjObjGetName", _cp, [_vp])
 _adj_get_uidx = _sig("lgcAdjObjGetFirstUidx", _int, [_vp])
 _adj_get_rel = _sig("lgcAdjObjGetRelativeUnknIndices", _int, [_vp, _ipp, _ip])
@@ -179,7 +180,7 @@ UEOIndices = namedtuple("UEOIndices", ["UIndex", "EIndex", "OIndex", "CIndex"])
 
 class AdjustableObject:
     """Borrowed reference to an adjustable object (lifetime tied to Evaluator).
-    Works for both points and frames."""
+    Works for points, frames and camera parameters."""
 
     def __init__(self, handle):
         self._h = handle
@@ -290,4 +291,14 @@ class Evaluator:
 
     def getFrame(self, name):
         h = _check_ptr(_ev_get_frame(self._h, name.encode("utf-8")))
+        return AdjustableObject(h)
+
+    def getCameraParameter(self, instrument, parameter):
+        """Interior orientation parameter (C, CX, CY, K1, K2, K3, P1, P2, B1 or B2)
+        of a pixel camera instrument (*CAMPX)."""
+        h = _check_ptr(
+            _ev_get_camera_param(
+                self._h, instrument.encode("utf-8"), parameter.encode("utf-8")
+            )
+        )
         return AdjustableObject(h)
