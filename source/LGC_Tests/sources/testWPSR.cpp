@@ -771,4 +771,69 @@ void object::test<25>()
 	readTest(TestWPSR::ECWI_SIMU_1, "ECWI_SIMU_1");
 	ensure_equals("Reading Successfull : Simulation failed", succesReading, true);
 }
+
+template<>
+template<>
+void object::test<26>()
+{
+	set_test_name("Testing ECWI, wire sigma of a sensor rolled about the wire");
+	readTest(TestWPSR::ECWI_OLOC_19, "ECWI_OLOC_19");
+	ensure_equals("Reading Successfull", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// The wire sigma acts along the X and the Z axis of the wire independently: the rolled sensor gets it on both axes
+	TDataTree tree = projTest->getTree();
+	auto measIt = tree.begin().node->data->measurements.fECWI.begin()->measECWI.begin();
+	measIt++; // PT5
+	ensure_equals("Combined sigma X not matching on PT5", measIt->target.sigmaCombinedX.getMMetresValue(), sqrt(0.1 * 0.1 + 0.01 * 0.01), 1e-9);
+	ensure_equals("Combined sigma Z not matching on PT5", measIt->target.sigmaCombinedZ.getMMetresValue(), sqrt(0.1 * 0.1 + 0.01 * 0.01), 1e-9);
+}
+
+template<>
+template<>
+void object::test<27>()
+{
+	set_test_name("Testing ECWI, sensor frame rotated by 50 gon against the wire");
+	readTest(TestWPSR::ECWI_OLOC_20, "ECWI_OLOC_20");
+	ensure_equals("Reading Successfull", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	ensure_equals("S0 is not 0", projTest->getS0APosteriori(), 0, 1e-10);
+
+	// The intersection with the XZ plane of PT5 slides along the wire when the frame moves; with this slide in the derivatives
+	// the translations converge to the exact position
+	TDataTree tree = projTest->getTree();
+	TDataTreeIterator frameIt = tree.begin();
+	frameIt++; // FRAME_PT5
+	ensure_equals("Translation X not matching", frameIt.node->data->frame.getEstTranslation(0).getMetresValue(), 0, 1e-7);
+	ensure_equals("Translation Z not matching", frameIt.node->data->frame.getEstTranslation(2).getMetresValue(), 0, 1e-7);
+}
+
+template<>
+template<>
+void object::test<28>()
+{
+	set_test_name("Testing ECWI, sensor frame rotated against the wire and observed by OBSXYZ");
+	readTest(TestWPSR::ECWI_OLOC_21, "ECWI_OLOC_21");
+	ensure_equals("Reading Successfull", succesReading, true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+
+	// PT5 cuts the wire obliquely and sees a shift of its frame across the wire 1 / cos(50 gon) = sqrt(2) times larger, so its
+	// reading (TX = 0) gets twice the weight of the OBSXYZ (TX = 0.02 mm), both with a sigma of 0.01 mm: TX = 0.02 / 3 mm
+	TDataTree tree = projTest->getTree();
+	TDataTreeIterator frameIt = tree.begin();
+	frameIt++; // FRAME_PT5
+	ensure_equals("Translation X not matching", frameIt.node->data->frame.getEstTranslation(0).getMetresValue(), 0.00002 / 3, 1e-7);
+}
 } // namespace tut
