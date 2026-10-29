@@ -17,6 +17,21 @@ layers on top of it, so only C types ever cross the library boundary.
     pyMonitoring.py               Python ctypes wrapper (class Monitor)
     requirements.txt              Python dependencies (numpy)
 
+## Units
+
+All values passed to and returned by the API are in SI units, independent of the
+units used in the LGC input file: lengths in metres, angles in radians (not gon).
+This applies to observations and their sigmas (`updateMeas`, `setObsSigma`,
+`getMeas`, `getObsSigma`, `getEstimateResidual`, `getCalcMeas`) as well as to
+all estimates and precisions.
+
+    frame   [tx, ty, tz, rx, ry, rz, scale]   m, rad, scale factor (1 = no scale)
+            idx 0-2 translation, 3-5 rotation, 6 scale
+    point   [x, y, z]                         m
+    sag     [ZSag, ZCurv, XSag, XCurv]        m, idx 0-3
+    ECWI    [Dx, Dz, bearing, slope, sag]     m, m, rad, rad, m
+    ECWS    level                             m
+
 ## Python (plug and play)
 
     1. Keep pyMonitoring.py next to the native library (this folder).

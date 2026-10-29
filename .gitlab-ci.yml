@@ -197,8 +197,8 @@ windows64_pyLGC_release:
 # MONITORING BUNDLES (Python + C++) #
 ##################
 # Self-contained "plug and play" bundles of the monitoring library, built on
-# every branch push. Download the latest build of a branch via the permanent
-# latest-artifacts permalink (no tag / release needed):
+# every branch push and tag. Download the latest build of a branch via the
+# latest-artifacts permalink:
 #   <project>/-/jobs/artifacts/<branch>/download?job=linux_monitoring_library
 #   <project>/-/jobs/artifacts/<branch>/download?job=windows64_monitoring_library
 # Each bundle serves BOTH the Python ctypes wrapper and direct C/C++ linking
@@ -209,6 +209,7 @@ linux_monitoring_library:
     image: gitlab-registry.cern.ch/apc/common/docker-image-susoft-cpp:alma9-base-qt6
     rules:
         - if: '$CI_COMMIT_BRANCH'
+        - if: '$CI_COMMIT_TAG'
     dependencies: ["linux_build_and_test"]
     needs: ["linux_build_and_test"]
     script:
@@ -233,6 +234,7 @@ windows64_monitoring_library:
         - c++
     rules:
         - if: '$CI_COMMIT_BRANCH'
+        - if: '$CI_COMMIT_TAG'
     dependencies: ["windows64_build_and_test"]
     needs: ["windows64_build_and_test"]
     script:
@@ -249,3 +251,62 @@ windows64_monitoring_library:
         expire_in: never
         paths:
             - monitoring_library/
+
+# On a tag, both bundles are zipped into the Generic Package Registry and a
+# GitLab Release links them under URLs that carry the tag name:
+#   <project>/-/releases/<tag>/downloads/monitoring_library-linux-x86_64.zip
+#   <project>/-/releases/<tag>/downloads/monitoring_library-windows-x64.zip
+.monitoring_package:
+    variables:
+        PACKAGE_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/monitoring_library/${CI_COMMIT_TAG}"
+
+.upload_monitoring_bundle:
+    extends: .monitoring_package
+    stage: release
+    image: alpine:3.20
+    rules:
+        - if: '$CI_COMMIT_TAG'
+    script:
+        - apk add --no-cache curl zip
+        - zip -r "${BUNDLE}.zip" monitoring_library
+        - 'curl --fail --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${BUNDLE}.zip" "${PACKAGE_URL}/${BUNDLE}.zip"'
+
+upload_linux_monitoring_library:
+    extends: .upload_monitoring_bundle
+    needs: ["linux_monitoring_library"]
+    variables:
+        BUNDLE: "monitoring_library-linux-x86_64"
+
+upload_windows64_monitoring_library:
+    extends: .upload_monitoring_bundle
+    needs: ["windows64_monitoring_library"]
+    variables:
+        BUNDLE: "monitoring_library-windows-x64"
+
+monitoring_library_release:
+    extends: .monitoring_package
+    stage: release
+    image: registry.gitlab.com/gitlab-org/cli:latest
+    rules:
+        - if: '$CI_COMMIT_TAG'
+    needs:
+        - job: upload_linux_monitoring_library
+          artifacts: false
+        - job: upload_windows64_monitoring_library
+          artifacts: false
+    script:
+        - echo "Creating release ${CI_COMMIT_TAG}"
+    release:
+        tag_name: "${CI_COMMIT_TAG}"
+        name: "Monitoring library ${CI_COMMIT_TAG}"
+        description: "LGC monitoring library (LGC_API) bundles for Linux x86_64 and Windows x64. Each zip contains the native library, Monitor.h, Monitor_C.h, pyMonitoring.py and a README."
+        assets:
+            links:
+                - name: "monitoring_library-linux-x86_64.zip"
+                  url: "${PACKAGE_URL}/monitoring_library-linux-x86_64.zip"
+                  filepath: "/monitoring_library-linux-x86_64.zip"
+                  link_type: package
+                - name: "monitoring_library-windows-x64.zip"
+                  url: "${PACKAGE_URL}/monitoring_library-windows-x64.zip"
+                  filepath: "/monitoring_library-windows-x64.zip"
+                  link_type: package
