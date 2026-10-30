@@ -282,4 +282,35 @@ void object::test<8>()
 	ensure_equals("Calculation is expected to be aborted.", succesCalc.code(), Behavior::BehaviorCode::ERR_inputData);
 }
 
+template<>
+template<>
+void object::test<9>()
+{
+	set_test_name("Validate constraints after all independent point groups are filled");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/test.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(pointConstraintTest::constraintDetection_multipleGroups);
+	ensure_equals("Reading file successful", reader.read(infiler), true);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior result = calcul.computeResults(fileWriter);
+
+	const auto &groups = projTest->getPointGroups();
+	ensure_equals("Two independent point groups should be detected", groups.size(), 2);
+	for (auto group : groups)
+	{
+		const bool isTranslationGroup = group.getAffectedPoints().count("translationA") != 0;
+		const std::set<std::string> expectedPoints = isTranslationGroup ? std::set<std::string>{"translationA", "translationB", "translationC"}
+																		: std::set<std::string>{"rotationA", "rotationB", "rotationC"};
+		const std::array<bool, 7> expectedSignature = isTranslationGroup ? std::array<bool, 7>{true, true, true, false, false, false, false}
+																		 : std::array<bool, 7>{false, false, false, true, true, true, false};
+		ensure("Each group should contain its own frame's points", group.getAffectedPoints() == expectedPoints);
+		ensure("Each group should constrain its frame's free directions", group.getConstraintSignature() == expectedSignature);
+	}
+	ensure_equals("All six constraint equations should be present", projTest->fUEOIndices.CIndex, 6);
+	ensure_equals("Calculation with multiple groups should succeed", result.code(), Behavior::BehaviorCode::ERR_noError);
+}
+
 }; // namespace tut

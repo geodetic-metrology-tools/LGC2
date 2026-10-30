@@ -226,6 +226,32 @@ Top 1.224
 *END
 )";
 
+char const *const constraintDetection_multipleGroups = R"(*TITR
+Independent frames require separate translation and rotation constraint groups.
+*OLOC
+*CONSI LIBR
+*INSTR
+*CALA
+origin 0 0 0
+*OBSXYZ
+origin 0 0 0 1 1 1
+origin 0 0 0 1 1 1
+origin 0 0 0 1 1 1
+*FRAME translatingFrame 0 0 0 0 0 0 1 TX TY TZ
+*CALA
+translationA 1 2 3
+translationB 4 1 6
+translationC 6 7 1
+*ENDFRAME
+*FRAME rotatingFrame 0 0 0 0 0 0 1 RX RY RZ
+*CALA
+rotationA 1 2 3
+rotationB 4 1 6
+rotationC 6 7 1
+*ENDFRAME
+*END
+)";
+
 char const *const constraintDetection_emptyConstraint = R"(*TITR
 testing libr constraint choice. manually added constraint can lead to "empty" constraints. This should abort the calculation.
 *OLOC
