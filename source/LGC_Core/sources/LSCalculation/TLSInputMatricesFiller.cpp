@@ -138,6 +138,12 @@ bool TLSInputMatricesFiller::fillMatrices(TLGCData *projData, TLSInputMatrices *
 			if (itTree.node->data->measurements.fPDOR.isInitialised())
 				addPDORContributions(itTree.node->data->measurements.fPDOR, matrices);
 		}
+
+		// Check the complete constraint matrix only after all input filling is finished.
+		if (matrices->hasDegenerateConstraints())
+		{
+			throw std::runtime_error("A constraint that does not depend on any variable was added.");
+		}
 	}
 	catch (std::exception const &excp)
 	{
@@ -2060,12 +2066,6 @@ bool TLSInputMatricesFiller::fillPointGroupConstraints(TLGCData *projData, TLSIn
 						cIdx++;
 					}
 				}
-			}
-			// check if there is a constraint that does not depend on any parameter
-			// this can happen for example if a TX constraint was (manually) added but the only points defined are *VZ (they only vary in Z)
-			if (matrices->hasDegenerateConstraints())
-			{
-				throw std::runtime_error("A constraint that does not depend on any variable was added.");
 			}
 		}
 	}
