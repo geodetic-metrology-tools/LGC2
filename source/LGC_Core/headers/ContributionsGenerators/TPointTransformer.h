@@ -75,12 +75,6 @@ public:
 	/// Transform a position vector into a MLA system
 	void transform2MLA(TPositionVector &pv);
 
-	/// Transform a position vector XYZ into XYH, include a check if the fGeoidModel is a cartesian frame --> return the TPositionVector
-	void transformCCS22DH(TPositionVector &pv);
-
-	/// Transform a position vector XYH into XYZ, include a check if the fGeoidModel is not a cartesian frame --> return the TPositionVector
-	void transform2DH2CCS(TPositionVector &pv);
-
 	/// Transform a free vector into a MLA system
 	void transform2MLA(TFreeVector &pv);
 	// transform each column of a matrix to MLA, assume Cartesian Coord system
