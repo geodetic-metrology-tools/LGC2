@@ -357,7 +357,7 @@ Eigen::Vector3d pointSigmaData::calcRotOffset(const LGCAdjustablePoint &pt, cons
 	if (provVal.getCoordSys() == TCoordSysFactory::k2DPlusH)
 	{ // If position is given in 2D + H system transform it to CCS
 		TPointTransformer fPointTransfo(&fData->getTree(), fData->getConfig().referential);
-		fPointTransfo.transform2DH2CCS(provVal);
+		TXYH2CCS::XYH2CCS(provVal, fPointTransfo.getGeoid());
 	}
 
 	Eigen::Vector3d provValVect = provVal.toRealVector();
