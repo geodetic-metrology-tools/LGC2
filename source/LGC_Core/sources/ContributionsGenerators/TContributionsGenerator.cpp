@@ -1528,7 +1528,7 @@ ECWSContrib TContributionsGenerator::getECWSContrib(const TECWSROM &ecwsROM, con
 	// The WS Height is expressed in the root, can be either in a geodetic system or in a local reference frame
 	auto refFrame = fPointTransfo.getRefFrame();
 	TPositionVector wsPos(targetPointInRoot.getX(), targetPointInRoot.getY(), ecwsROM.fMeasuredWSHeight->getEstimatedValue().getMetresValue(), TCoordSysFactory::ECoordSys::k3DCartesian);
-	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame && fPointTransfo.getGeoid() != TRefSystemFactory::EGeoid::kNoGeoid)
+	if (refFrame != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		wsPos.setCoordSys(TCoordSysFactory::k2DPlusH);
 		TXYH2CCS::XYH2CCS(wsPos, fPointTransfo.getGeoid());

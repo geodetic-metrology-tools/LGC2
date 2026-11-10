@@ -491,7 +491,7 @@ bool TDataAnalyzer::checkParameters()
 
 					// The referencePoint is in XYZ, it should be transformed in the correct referential before inserted in the dataset to profit from all the pre-processing steps.
 					auto stationPoint = TPositionVector(referencePoint[0], referencePoint[1], referencePoint[2], TCoordSysFactory::ECoordSys::k3DCartesian);
-					fPointTransfo.transformCCS22DH(stationPoint);
+					TXYH2CCS::CCS2XYH(stationPoint, fPointTransfo.getGeoid());
 
 					// The Adjustable Point automated creation should be a POIN if IHFIX, otherwise should be a VXY
 					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(

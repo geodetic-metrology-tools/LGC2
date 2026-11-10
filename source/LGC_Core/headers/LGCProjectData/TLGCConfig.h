@@ -337,6 +337,7 @@ inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 	obj.addProperty("pdor", pdor);
 	obj.addProperty("pointNameWidth", pointNameWidth);
 	obj.addProperty("referential", referential);
+	obj.addProperty("geoid", geoid);
 	obj.addProperty("sim", sim);
 	obj.addProperty("title", title);
 
