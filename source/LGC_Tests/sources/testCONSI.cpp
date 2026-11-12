@@ -124,8 +124,37 @@ void object::test<4>()
 	// This can only be seen using the sparsity pattern because the derivative of all measurements with respect to the z coordinate of P2 is 0 (evaluated at the provisional values)
 	std::set<int> realGroup({0, 1, 2});
 	const auto &groups = consCheck.getConnectedNullspaceGroups();
+	ensure_equals("Number of groups should be 1.", groups.size(), 1);
 	bool allGood = groups.count(realGroup) > 0;
 	ensure_equals("Connections between objects not computed correct. ", true, allGood);
+}
+
+template<>
+template<>
+void object::test<5>()
+{
+	set_test_name("Testing a null direction next to many weakly determined directions");
+	projTest->getFileLogger().setOutputfileLocation("C:/Temp/CONSI_lever_arm.txt");
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+
+	std::stringstream infiler(Consi::CONSI_LeverArmTest);
+
+	bool succesReading = reader.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+
+	TLSInputMatricesFiller matrFiller(&projTest->getTree(), projTest->getConfig().referential, *projTest.get());
+	TLSInputMatrices im;
+	TDataAnalyzer analyzer(*projTest);
+	analyzer.dataConsistent();
+	im.initMatrices(projTest->fUEOIndices);
+	matrFiller.fillMatrices(projTest.get(), &im);
+	TLSConsCheck consCheck(*projTest.get(), im);
+	ensure_equals("Configuration should be identified as problematic", consCheck.getResultStatus(), false);
+
+	// only F2 and Q2 are unidentifiable, the frames G1-G5 are determined
+	const auto &groups = consCheck.getConnectedNullspaceGroups();
+	ensure_equals("Number of groups", groups.size(), 1);
+	ensure_equals("Objects in the group", groups.begin()->size(), 2);
 }
 
 }; // namespace tut

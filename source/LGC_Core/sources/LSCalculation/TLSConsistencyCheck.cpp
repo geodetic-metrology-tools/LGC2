@@ -21,6 +21,12 @@
 namespace
 {
 const std::array<std::string, 7> helmertNames = {"TX", "TY", "TZ", "RX", "RY", "RZ", "SCL"};
+// entries of the nullspace basis below this are rounding noise and set to zero
+const double nullspaceNoise = 1e-10;
+// an entry of the nullspace basis above this is nonzero
+const double nonzeroEntry = 1e-12;
+// a movement in Root above this is nonzero
+const double nonzeroMovement = 1e-12;
 } // namespace
 
 // constructor
@@ -62,8 +68,7 @@ void TLSConsCheck::generateErrorMessage()
 }
 void TLSConsCheck::generateGroupWarning(const std::set<int> &group, const TDenseMatrix &kernel, const int groupNumber)
 {
-	// list the objects of the group with their degrees of freedom and the directions corresponding to the degrees of freedom; ignore components below threshold
-	const double plottingThreshold = 1e-12;
+	// list the objects of the group with their degrees of freedom and the directions corresponding to the degrees of freedom; ignore zero components
 	logWarning() << std::string(100, '=');
 	int dimKernGroup = (int)kernel.cols();
 	std::set<int> pointsInGroup = getPoints(group);
@@ -95,7 +100,7 @@ void TLSConsCheck::generateGroupWarning(const std::set<int> &group, const TDense
 			for (int j = 0; j < dimKernGroup; j++)
 			{
 				double d = kernel(objectIndices[obj][k], j);
-				msg << std::setw(20) << d * (fabs(d) > plottingThreshold) << " | ";
+				msg << std::setw(20) << d * (fabs(d) > nonzeroEntry) << " | ";
 			}
 			logWarning() << msg.str();
 		}
@@ -182,7 +187,7 @@ std::set<std::string> TLSConsCheck::getAffectedPoints(const std::set<int> &group
 	for (auto &point : projData.getPoints())
 	{
 		const std::string &name = point.getName();
-		if (affected.count(name) == 0 && getAmbiguousDirectionsInRoot(name, kernel).cwiseAbs().maxCoeff() > 1e-12)
+		if (affected.count(name) == 0 && getAmbiguousDirectionsInRoot(name, kernel).cwiseAbs().maxCoeff() > nonzeroMovement)
 			affected.insert(name);
 	}
 	return affected;
@@ -212,7 +217,7 @@ TLSConsCheck::RootMovementAnalysis TLSConsCheck::analyseRootMovements(const std:
 	{
 		Eigen::VectorXd movement = movements.col(c);
 		double norm = movement.norm();
-		if (norm <= 1e-12)
+		if (norm <= nonzeroMovement)
 		{
 			// the Root coordinates are determined, the freedoms of subframes and frame parameters cancel out
 			analysis.labels.push_back("stationary");
@@ -234,7 +239,7 @@ TLSConsCheck::RootMovementAnalysis TLSConsCheck::analyseRootMovements(const std:
 	// orthonormal basis of the movements of the kernel basis; directions below the threshold do not move any point
 	Eigen::JacobiSVD<Eigen::MatrixXd> svdMovements(movements.rightCols(k), Eigen::ComputeThinU);
 	const Eigen::VectorXd &sigma = svdMovements.singularValues();
-	double cutoff = std::max(pivotThreshold * sigma(0), 1e-12);
+	double cutoff = std::max(pivotThreshold * sigma(0), nonzeroMovement);
 	analysis.dimRoot = (int)(sigma.array() > cutoff).count();
 	analysis.rootBasis = svdMovements.matrixU().leftCols(analysis.dimRoot);
 	if (analysis.dimRoot == 0)
@@ -371,7 +376,7 @@ TDenseMatrix TLSConsCheck::getAmbiguousDirectionsInRoot(const std::string &point
 	auto chain = sub2Root.getPartialDerivativesWrtHelmertParameters(positionInSubframe);
 
 	// short-circuit: if no relevant unknown overlaps with a nonzero nullspace entry, the result is zero
-	auto hasOverlap = [&](int firstUidx, int numUnkn) { return nullspaceBlock.middleRows(firstUidx, numUnkn).cwiseAbs().maxCoeff() > 1e-12; };
+	auto hasOverlap = [&](int firstUidx, int numUnkn) { return nullspaceBlock.middleRows(firstUidx, numUnkn).cwiseAbs().maxCoeff() > nonzeroEntry; };
 	bool overlap = (point.getNumUnkn() > 0 && hasOverlap(point.getFirstUidx(), point.getNumUnkn()));
 	if (!overlap)
 		for (const auto &[trafo, _] : chain)
@@ -539,8 +544,9 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 	const double sigmaMax = std::sqrt(lambdaMax);
 	const double sigmaCutoff = pivotThreshold * std::min(1.0, sigmaMax);
 
-	// shift: well below the null cutoff pivotThreshold^2 * lambdaMax and above the rounding level of A^T A
-	const double epsilon = std::max(1e-2 * pivotThreshold * pivotThreshold, 1e-14) * lambdaMax;
+	// shift at the rounding level of A^T A; directions with lambda up to about epsilon are amplified like the null directions
+	// and cannot be separated from them here
+	const double epsilon = 1e-14 * lambdaMax;
 	for (int i = 0; i < nCols; i++)
 		AtA.coeffRef(i, i) += epsilon;
 
@@ -552,14 +558,14 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 	if (solver.info() != Eigen::Success)
 	{
 		logWarning() << "Sparse Cholesky factorization failed in nullspace computation, falling back to dense method.";
-		// fallback: dense FullPivLU
-		Eigen::FullPivLU<Eigen::MatrixXd> lu{Eigen::MatrixXd(A)};
-		lu.setThreshold(pivotThreshold);
-		Vnull = (lu.dimensionOfKernel() > 0) ? Eigen::MatrixXd(lu.kernel()) : Eigen::MatrixXd(nCols, 0);
+		// fallback: SVD of the dense A, with the same null criterion as below
+		Eigen::BDCSVD<Eigen::MatrixXd> svd(Eigen::MatrixXd(A), Eigen::ComputeFullV);
+		int nNonNull = (int)(svd.singularValues().array() > sigmaCutoff).count();
+		Vnull = svd.matrixV().rightCols(nCols - nNonNull);
 	}
 	else
 	{
-		// block of random start vectors; it is doubled as long as all of its vectors turn out to be null
+		// block of random start vectors; it is doubled until it holds all directions that the inverse iteration amplifies like the null directions
 		int blockSize = std::min(15, nCols);
 		while (true)
 		{
@@ -588,7 +594,10 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 			int dim = (int)V.cols() - nNonNull;
 			Vnull = V * svd.matrixV().rightCols(dim);
 
-			if (dim < blockSize || blockSize == nCols)
+			// the block holds all amplified directions if the QR dropped columns or if it contains a direction
+			// that the inverse iteration has damped (lambda well above epsilon)
+			bool complete = V.cols() < blockSize || svd.singularValues()(0) * svd.singularValues()(0) > 100 * epsilon;
+			if (complete || blockSize == nCols)
 				break;
 			blockSize = std::min(2 * blockSize, nCols);
 		}
@@ -609,7 +618,7 @@ TDenseMatrix TLSConsCheck::computeNullspace()
 	Vnull = Vnull * Vpivot.fullPivLu().solve(Eigen::MatrixXd::Identity(k, k));
 	// clean rounding noise, which is of order 1e-12 while genuine entries are of order 1e-8 and above;
 	// an object takes part in the nullspace if one of its entries remains
-	Vnull = (Vnull.array().abs() < 1e-10).select(0.0, Vnull);
+	Vnull = (Vnull.array().abs() < nullspaceNoise).select(0.0, Vnull);
 
 	return Vnull;
 }

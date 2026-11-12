@@ -116,5 +116,62 @@ P0 1
 P1 1
 *END)";
 
+/* F2: TX and the x coordinate of Q2 only enter as their sum (one null direction). G1-G5: RX RY RZ determined by targets 1 mm from the
+origin (15 weakly determined directions). BIG: RZ with a lever arm of 10 km (large singular value). */
+char const *const CONSI_LeverArmTest = R"(*TITR
+Free frame next to a long lever arm and frames with targets 1 mm from their origin
+*OLOC
+*CONSI
+*INSTR
+*POLAR TS1 T1 0.0 0.1 0.1 0
+T1  5  5  0.5  0.005  0  0.0  0.0  0.0  0.0  0.0
+*FRAME BIG 0 0 0 0 0 0 1 RZ
+*CALA
+FAR 10000 0 0
+*ENDFRAME
+*FRAME G1 0 0 0 0 0 0 1 RX RY RZ
+*CALA
+G1A 0.001 0 0
+G1B 0 0.001 0
+*ENDFRAME
+*FRAME G2 0 0 0 0 0 0 1 RX RY RZ
+*CALA
+G2A 0.001 0 0
+G2B 0 0.001 0
+*ENDFRAME
+*FRAME G3 0 0 0 0 0 0 1 RX RY RZ
+*CALA
+G3A 0.001 0 0
+G3B 0 0.001 0
+*ENDFRAME
+*FRAME G4 0 0 0 0 0 0 1 RX RY RZ
+*CALA
+G4A 0.001 0 0
+G4B 0 0.001 0
+*ENDFRAME
+*FRAME G5 0 0 0 0 0 0 1 RX RY RZ
+*CALA
+G5A 0.001 0 0
+G5B 0 0.001 0
+*ENDFRAME
+*FRAME F2 0 0 0 0 0 0 1 TX
+*POIN
+Q2 5 5 5
+*ENDFRAME
+*OBSXYZ
+FAR 10000 0 0 0.1 0.1 0.1
+Q2 5 5 5 0.1 0.1 0.1
+G1A 0.001 0 0 0.1 0.1 0.1
+G1B 0 0.001 0 0.1 0.1 0.1
+G2A 0.001 0 0 0.1 0.1 0.1
+G2B 0 0.001 0 0.1 0.1 0.1
+G3A 0.001 0 0 0.1 0.1 0.1
+G3B 0 0.001 0 0.1 0.1 0.1
+G4A 0.001 0 0 0.1 0.1 0.1
+G4B 0 0.001 0 0.1 0.1 0.1
+G5A 0.001 0 0 0.1 0.1 0.1
+G5B 0 0.001 0 0.1 0.1 0.1
+*END)";
+
 } // namespace Consi
 #endif
