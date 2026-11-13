@@ -67,7 +67,7 @@ extern "C"
 	   evaluator lives). */
 	PYLGC_API LGCAdjObj lgcEvaluatorGetPoint(LGCEvaluator ev, const char *name);
 	PYLGC_API LGCAdjObj lgcEvaluatorGetFrame(LGCEvaluator ev, const char *name);
-	/* Interior orientation parameter (C, CX, CY, K1, K2, K3, P1, P2, B1 or B2) of a
+	/* Interior orientation parameter (C, CX, CY, K1, K2, K3, K4, K5, K6, P1, P2, B1 or B2) of a
 	   pixel camera instrument (*CAMPX). */
 	PYLGC_API LGCAdjObj lgcEvaluatorGetCameraParameter(LGCEvaluator ev, const char *instrumentId, const char *parameter);
 	PYLGC_API const char *lgcAdjObjGetName(LGCAdjObj obj);

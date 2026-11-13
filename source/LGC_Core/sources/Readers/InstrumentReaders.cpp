@@ -227,7 +227,7 @@ void TKeyCAMPX_IO::parse(const std::vector<std::string> &tokens, bool /*activeLi
 		param.line = line;
 		return;
 	}
-	throw std::runtime_error("Unknown interior orientation parameter " + tokens[0] + ", allowed are C, CX, CY, K1, K2, K3, P1, P2, B1 and B2.");
+	throw std::runtime_error("Unknown interior orientation parameter " + tokens[0] + ", allowed are C, CX, CY, K1, K2, K3, K4, K5, K6, P1, P2, B1 and B2.");
 }
 
 ////////////////////

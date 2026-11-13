@@ -1848,7 +1848,7 @@ void TLSInputMatricesFiller::addUVContribution(TCAM &camera, const TDataTreeIter
 			for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
 			{
 				const TAdjustableScalar *ioAdj = camera.instrument.io[i].adjustable;
-				if (!ioAdj->isFixed())
+				if (ioAdj && !ioAdj->isFixed())
 					isProcessOK = isProcessOK && matrices->addFirstDgnMtrxElement(firstEqIdx + eq, ioAdj->getFirstUidx(), contributions.fIOContrib(eq, i));
 			}
 

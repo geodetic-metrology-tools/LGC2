@@ -102,9 +102,14 @@ void TCAMWriter::writeInteriorOrientation(const TCAM &camera)
 	(*stream).writeString(valueWidth, "SIGMA APRI");
 	(*stream) << endl;
 
-	for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+	// the rational radial distortion parameters K4, K5, K6 are listed after K3
+	typedef TInstrumentData::TCAMD IO;
+	static constexpr int displayOrder[IO::kNumIOParams] = {IO::kC, IO::kCX, IO::kCY, IO::kK1, IO::kK2, IO::kK3, IO::kK4, IO::kK5, IO::kK6, IO::kP1, IO::kP2, IO::kB1, IO::kB2};
+	for (const int i : displayOrder)
 	{
 		const TAdjustableScalar *ioAdj = camera.instrument.io[i].adjustable;
+		if (!ioAdj)
+			continue; // a rational parameter K4, K5, K6 not given in the input is not used
 		const bool inPixels = TInstrumentData::TCAMD::ioParamInPixels(i);
 
 		(*stream) << TABs;
