@@ -247,21 +247,31 @@ public:
 			kC, ///< camera constant [px]
 			kCX, ///< principal point, u component [px]
 			kCY, ///< principal point, v component [px]
-			kK1, ///< radial distortion
+			kK1, ///< radial distortion, numerator of the radial factor
 			kK2,
 			kK3,
 			kP1, ///< decentring distortion
 			kP2,
 			kB1, ///< affinity [px]
 			kB2, ///< shear [px]
+			kK4, ///< rational radial distortion, denominator of the radial factor (OpenCV CALIB_RATIONAL_MODEL), optional
+			kK5,
+			kK6,
 			kNumIOParams
 		};
 
 		/// Names of the interior orientation parameters in the *IO block of the input file, in the order of EIOParam
-		static constexpr const char *ioParamNames[kNumIOParams] = {"C", "CX", "CY", "K1", "K2", "K3", "P1", "P2", "B1", "B2"};
+		static constexpr const char *ioParamNames[kNumIOParams] = {"C", "CX", "CY", "K1", "K2", "K3", "P1", "P2", "B1", "B2", "K4", "K5", "K6"};
 
 		/// TRUE for an interior orientation parameter in pixels, the others are unitless
 		static bool ioParamInPixels(int param) { return param == kC || param == kCX || param == kCY || param == kB1 || param == kB2; }
+
+		/// TRUE for the optional rational radial distortion parameters K4, K5 and K6
+		static bool isRationalIOParam(int param) { return param == kK4 || param == kK5 || param == kK6; }
+
+		/// TRUE if the interior orientation parameter takes part in the model: always, except the rational parameters K4, K5 and K6,
+		/// which only do when they are given in the *IO block. A parameter that does not take part is zero and has no adjustable scalar.
+		bool ioParamUsed(int param) const { return !isRationalIOParam(param) || io[param].line != 0; }
 
 		/// One parameter of the interior orientation of a pixel camera
 #if USE_SERIALIZER
@@ -275,7 +285,7 @@ public:
 			TReal sigma = 0.0; ///< a priori sigma, zero if none
 			int priorObsIndex = -1; ///< observation index of the a priori value, -1 if none
 			int line = 0; ///< line of the parameter in the *IO block, 0 if not given
-			TAdjustableScalar *adjustable = nullptr; ///< the unknown, fixed if not free, shared by all the stations of an instrument in use
+			TAdjustableScalar *adjustable = nullptr; ///< the unknown, fixed if not free, shared by all the stations of an instrument in use; null if the parameter is not used
 
 #if USE_SERIALIZER
 			// Inherited via Serializable

@@ -35,10 +35,11 @@ namespace
 {
 typedef TInstrumentData::TCAMD CamInstr;
 
-/// Interior orientation the observations of the network are generated with: C, CX, CY [px], K1, K2, K3, P1, P2 [-], B1, B2 [px]
-const double ioTruth[CamInstr::kNumIOParams] = {7246.4, 2048.0, 1900.0, -0.12, 0.15, -0.05, 3.0e-4, -2.0e-4, 0.8, -0.3};
+/// Interior orientation the observations of the network are generated with: C, CX, CY [px], K1, K2, K3, P1, P2 [-], B1, B2 [px],
+/// and the rational radial distortion K4, K5, K6 [-], zero here: the network uses the polynomial model unless a test sets them
+const double ioTruth[CamInstr::kNumIOParams] = {7246.4, 2048.0, 1900.0, -0.12, 0.15, -0.05, 3.0e-4, -2.0e-4, 0.8, -0.3, 0.0, 0.0, 0.0};
 /// Tolerances of the interior orientation estimated from error-free observations, each below about 1e-5 px in the image
-const double ioTolerance[CamInstr::kNumIOParams] = {1e-5, 1e-5, 1e-5, 1e-7, 1e-6, 1e-5, 1e-9, 1e-9, 1e-5, 1e-5};
+const double ioTolerance[CamInstr::kNumIOParams] = {1e-5, 1e-5, 1e-5, 1e-7, 1e-6, 1e-5, 1e-9, 1e-9, 1e-5, 1e-5, 1e-5, 1e-5, 1e-5};
 /// Sigma of the image measurement of a target of the network [px]
 const double targetSigma = 0.02;
 
@@ -61,8 +62,9 @@ struct Target
 	bool isControl;
 };
 
-/// 5 x 4 targets about 4 m in front of the stations and staggered in depth, every third one is a control point
-std::vector<Target> targetField(bool planar)
+/// 5 x 4 targets about 4 m in front of the stations and staggered in depth, every third one is a control point. A scale above 1
+/// spreads them sideways and up and down, for a wide angle field of view.
+std::vector<Target> targetField(bool planar, double scale = 1.0)
 {
 	std::vector<Target> targets;
 	for (int ix = 0; ix < 5; ix++)
@@ -71,7 +73,7 @@ std::vector<Target> targetField(bool planar)
 		{
 			const int n = ix * 4 + iz + 1;
 			const double depth = planar ? 0.0 : 0.6 * ((ix + 2 * iz) % 3 - 1);
-			targets.push_back({(n < 10 ? "T0" : "T") + std::to_string(n), Eigen::Vector3d(-0.9 + 0.45 * ix, 4.2 + depth, -0.6 + 0.4 * iz), n % 3 == 1});
+			targets.push_back({(n < 10 ? "T0" : "T") + std::to_string(n), Eigen::Vector3d(scale * (-0.9 + 0.45 * ix), 4.2 + depth, scale * (-0.6 + 0.4 * iz)), n % 3 == 1});
 		}
 	}
 	return targets;
@@ -91,10 +93,27 @@ Eigen::Vector2d project(const double io[], const double pose[6], const Eigen::Ve
 	// central projection, distortion and pixel mapping, implemented independently of the LGC observation model
 	const double xn = p(0) / p(2), yn = p(1) / p(2);
 	const double r2 = xn * xn + yn * yn;
-	const double radial = 1.0 + io[CamInstr::kK1] * r2 + io[CamInstr::kK2] * r2 * r2 + io[CamInstr::kK3] * r2 * r2 * r2;
+	const double radial = (1.0 + io[CamInstr::kK1] * r2 + io[CamInstr::kK2] * r2 * r2 + io[CamInstr::kK3] * r2 * r2 * r2)
+		/ (1.0 + io[CamInstr::kK4] * r2 + io[CamInstr::kK5] * r2 * r2 + io[CamInstr::kK6] * r2 * r2 * r2);
 	const double xd = xn * radial + 2.0 * io[CamInstr::kP1] * xn * yn + io[CamInstr::kP2] * (r2 + 2.0 * xn * xn);
 	const double yd = yn * radial + io[CamInstr::kP1] * (r2 + 2.0 * yn * yn) + 2.0 * io[CamInstr::kP2] * xn * yn;
 	return Eigen::Vector2d(io[CamInstr::kCX] + (io[CamInstr::kC] + io[CamInstr::kB1]) * xd + io[CamInstr::kB2] * yd, io[CamInstr::kCY] + io[CamInstr::kC] * yd);
+}
+
+/// TRUE for all the interior orientation parameters, except the rational parameters K4, K5, K6
+std::vector<bool> defaultIOFree()
+{
+	std::vector<bool> free(CamInstr::kNumIOParams, true);
+	for (int i = 0; i < CamInstr::kNumIOParams; i++)
+		free[i] = !CamInstr::isRationalIOParam(i);
+	return free;
+}
+
+/// An interior orientation of the given values, the missing ones zero: the initialiser lists of the tests give the first ten
+std::vector<double> ioValues(std::vector<double> values)
+{
+	values.resize(CamInstr::kNumIOParams, 0.0);
+	return values;
 }
 
 /// What differs between the input files of the tests. By default all the provisional values are the true ones.
@@ -103,13 +122,14 @@ struct NetworkSetup
 	std::string options; // option keywords, e.g. "*SIMU 1 3\n"
 	std::string sensor; // sensor option of the camera, e.g. " SENSOR 4096 3600"
 	std::vector<double> ioStart = std::vector<double>(ioTruth, ioTruth + CamInstr::kNumIOParams); // provisional interior orientation
-	std::vector<bool> ioFree = std::vector<bool>(CamInstr::kNumIOParams, true);
+	std::vector<bool> ioFree = defaultIOFree(); // all free, except the rational parameters K4, K5, K6, which are not given
 	std::vector<double> ioSigma = std::vector<double>(CamInstr::kNumIOParams, 0.0); // a priori sigmas, 0 for none
 	std::vector<double> ioGenerate = std::vector<double>(ioTruth, ioTruth + CamInstr::kNumIOParams); // interior orientation the observations are generated with
 	std::vector<double> poseOffset = std::vector<double>(6, 0.0); // added to the true frame parameters of the stations [m, gon]
 	double pointOffset = 0.0; // size of the offsets added to the true coordinates of the free points [m]
 	int numStationsUsed = numStations;
 	bool planarControlField = false; // all the targets are control points in a plane perpendicular to the optical axis of S1
+	double fieldScale = 1.0; // scale of the target field across the viewing direction, see targetField()
 	bool withObservations = true; // FALSE: only the observed points are given, which is allowed for simulations
 	bool stationPointsInRoot = false; // TRUE: the station points are free points of ROOT and the camera frames have only their rotations free
 };
@@ -126,15 +146,20 @@ NetworkSetup displacedSetup()
 /// Input file of the network, with the observations generated from setup.ioGenerate, by default the true interior orientation
 std::string networkInput(const NetworkSetup &setup)
 {
-	const std::vector<Target> targets = targetField(setup.planarControlField);
+	const std::vector<Target> targets = targetField(setup.planarControlField, setup.fieldScale);
+	const std::vector<double> ioGenerate = ioValues(setup.ioGenerate);
 
 	std::ostringstream in;
 	in << std::setprecision(15);
 	in << "*TITR\nPixel camera network\n*OLOC\n*PREC 7\n" << setup.options;
 	in << "*INSTR\n*CAMPX CAMA TG" << setup.sensor << "\nTG " << targetSigma << " " << targetSigma << "\n*IO\n";
+	const std::vector<double> ioStart = ioValues(setup.ioStart);
 	for (int i = 0; i < CamInstr::kNumIOParams; i++)
 	{
-		in << CamInstr::ioParamNames[i] << " " << setup.ioStart[i] << (setup.ioFree[i] ? " FREE" : "");
+		// the rational parameters K4, K5, K6 are only given when they are free or not zero
+		if (CamInstr::isRationalIOParam(i) && !setup.ioFree[i] && ioStart[i] == 0.0 && setup.ioSigma[i] == 0.0)
+			continue;
+		in << CamInstr::ioParamNames[i] << " " << ioStart[i] << (setup.ioFree[i] ? " FREE" : "");
 		if (setup.ioSigma[i] > 0.0)
 			in << " SE " << setup.ioSigma[i];
 		in << "\n";
@@ -192,7 +217,7 @@ std::string networkInput(const NetworkSetup &setup)
 			in << target.name;
 			if (setup.withObservations)
 			{
-				const Eigen::Vector2d uv = project(setup.ioGenerate.data(), station.pose, target.pos);
+				const Eigen::Vector2d uv = project(ioGenerate.data(), station.pose, target.pos);
 				in << " " << uv(0) << " " << uv(1);
 			}
 			in << "\n";
@@ -285,6 +310,17 @@ struct test_CAMPX
 		}
 		TLGCApp app(workFile(name + ".lgc2"), workFile(name + ".res"));
 		ensure_equals("Application run of " + name, app.exec().code(), Behavior::BehaviorCode::ERR_noError);
+	}
+
+	/// TRUE if the interior orientation parameter of the camera CAMA is used: the rational parameters K4, K5, K6 only are when
+	/// they are given, the others always are
+	bool ioParamUsed(const TLGCData &data, int param) const
+	{
+		const bool used = data.getInstruments().fCAMD.at("CAMA")->ioParamUsed(param);
+		ensure("Only K4, K5, K6 may be unused", used || CamInstr::isRationalIOParam(param));
+		ensure_equals(std::string("Adjustable scalar of a used parameter ") + CamInstr::ioParamNames[param],
+			data.getScalars().doesObjectExist(std::string("Cam_CAMA_") + CamInstr::ioParamNames[param]), used);
+		return used;
 	}
 
 	/// Adjustable scalar of an interior orientation parameter of the camera CAMA
@@ -451,7 +487,8 @@ void object::test<4>()
 
 	// the interior orientation the observations were generated with is found
 	for (int i = 0; i < CamInstr::kNumIOParams; i++)
-		ensure_equals(std::string("Estimated ") + CamInstr::ioParamNames[i], ioParam(*data, i).getEstimatedValue(), ioTruth[i], ioTolerance[i]);
+		if (ioParamUsed(*data, i))
+			ensure_equals(std::string("Estimated ") + CamInstr::ioParamNames[i], ioParam(*data, i).getEstimatedValue(), ioTruth[i], ioTolerance[i]);
 
 	// ... and so are the free points and the stations
 	for (const auto &target : targetField(false))
@@ -525,6 +562,8 @@ void object::test<5>()
 	// the estimated interior orientation agrees with the true one within 5 times its estimated precision
 	for (int i = 0; i < CamInstr::kNumIOParams; i++)
 	{
+		if (!ioParamUsed(*data, i))
+			continue;
 		const TAdjustableScalar &param = ioParam(*data, i);
 		if (param.isFixed())
 			continue;
@@ -573,6 +612,8 @@ void object::test<6>()
 		ensure_equals(std::string("Free state of ") + CamInstr::ioParamNames[i], instrument.io[i].free, setup.ioFree[i]);
 		if (i != CamInstr::kC)
 			ensure_equals(std::string("Provisional ") + CamInstr::ioParamNames[i], instrument.io[i].value, ioTruth[i], 1e-12 * std::max(1.0, fabs(ioTruth[i])));
+		if (!ioParamUsed(*again, i))
+			continue;
 		const TAdjustableScalar &param = ioParam(*again, i);
 		if (!param.isFixed())
 			ensure(std::string("Estimated ") + CamInstr::ioParamNames[i] + " should agree with the truth within 5 sigma",
@@ -714,6 +755,171 @@ void object::test<12>()
 
 	// a target in the plane of the projection centre has no projection
 	misclosureAtProvisionalValues(CAMPX_TARGET_IN_PLANE, false);
+}
+
+template<>
+template<>
+void object::test<13>()
+{
+	set_test_name("Testing UV with the rational radial distortion K4, K5, K6 against OpenCV cv2.projectPoints");
+
+	// the observations are the pixel coordinates computed by OpenCV with the 8 coefficient model: LGC computes the same
+	const Eigen::VectorXd misclosure = misclosureAtProvisionalValues(CAMPX_OPENCV_RATIONAL);
+	ensure_equals("Number of observations", (int)misclosure.size(), 2 * 12);
+	ensure("Pixel coordinates should be those of OpenCV within 1e-10 px, largest difference " + std::to_string(misclosure.cwiseAbs().maxCoeff()),
+		misclosure.cwiseAbs().maxCoeff() < 1e-10);
+
+	// ... and so does the independent projection of the tests
+	const double io[CamInstr::kNumIOParams] = {2900.0, 2010.25, 1495.75, 0.12, -0.31, 0.05, 4.0e-4, -3.0e-4, 3.5, 0.0, 0.09, -0.25, 0.03};
+	const double pose[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	const Eigen::Vector2d p10 = project(io, pose, Eigen::Vector3d(1.4, -0.95, 2.0));
+	ensure_equals("u of P10 by the projection of the tests", p10(0), 4036.3129573824335, 1e-9);
+	ensure_equals("v of P10 by the projection of the tests", p10(1), 122.98649084071621, 1e-9);
+
+	// the derivatives wrt all 13 interior orientation parameters
+	ensureJacobianMatchesFiniteDifferences(CAMPX_OPENCV_RATIONAL, 13);
+
+	// ... and in the network, with all the parameters free and K4, K5, K6 away from zero
+	NetworkSetup setup = displacedSetup();
+	setup.ioFree = std::vector<bool>(CamInstr::kNumIOParams, true);
+	setup.ioStart[CamInstr::kK4] = 0.08;
+	setup.ioStart[CamInstr::kK5] = -0.1;
+	setup.ioStart[CamInstr::kK6] = 0.2;
+	ensureJacobianMatchesFiniteDifferences(networkInput(setup), 13 + 6 * numStations + 3 * 13);
+}
+
+template<>
+template<>
+void object::test<14>()
+{
+	set_test_name("Testing UV, interior orientation with free K4, K5, K6 estimated from generated observations");
+
+	// observations generated with the rational model. The six radial terms need targets far from the principal point: in the
+	// target field of the other tests (r < 0.4) they are not separable, so the field is spread to a wide angle view (r up to 0.7).
+	// Numerator and denominator still nearly cancel along a valley of the least-squares problem, and Gauss-Newton started at
+	// K4 = K5 = K6 = 0 runs into the pole of the radial factor: the estimation starts 10 % off the true K4, K5, K6, as from the
+	// rational values of a preliminary OpenCV calibration in practice, with C, CX, CY, the stations and the free points displaced
+	const double rational[3] = {0.08, -0.1, 0.2};
+	NetworkSetup setup = displacedSetup();
+	setup.fieldScale = 2.5;
+	setup.ioFree = std::vector<bool>(CamInstr::kNumIOParams, true);
+	for (int k = 0; k < 3; k++)
+	{
+		setup.ioGenerate[CamInstr::kK4 + k] = rational[k];
+		setup.ioStart[CamInstr::kK4 + k] = 0.9 * rational[k];
+	}
+	setup.ioStart[CamInstr::kC] = 7230.0;
+	setup.ioStart[CamInstr::kCX] = 2045.0;
+	setup.ioStart[CamInstr::kCY] = 1905.0;
+	const auto data = compute(networkInput(setup), "CAMPX_rational");
+	ensure_equals("Number of unknowns", data->fUEOIndices.UIndex, 13 + 6 * numStations + 3 * 13);
+
+	// the observations are reproduced
+	for (auto frameIt = ++data->getTree().begin(); frameIt != data->getTree().end(); ++frameIt)
+	{
+		for (const auto &uv : frameIt.node->data->measurements.fCAM.front().measUV)
+		{
+			ensure_equals("Residual of u", uv.getXCompVectorResidual(), 0.0, 1e-6);
+			ensure_equals("Residual of v", uv.getYCompVectorResidual(), 0.0, 1e-6);
+		}
+	}
+
+	// the interior orientation the observations were generated with is found
+	for (int i = 0; i < CamInstr::kNumIOParams; i++)
+	{
+		ensure(std::string("Parameter used: ") + CamInstr::ioParamNames[i], ioParamUsed(*data, i));
+		ensure_equals(std::string("Estimated ") + CamInstr::ioParamNames[i], ioParam(*data, i).getEstimatedValue(), setup.ioGenerate[i], ioTolerance[i]);
+	}
+	for (const auto &target : targetField(false, setup.fieldScale))
+	{
+		if (target.isControl)
+			continue;
+		const TPositionVector estimated = data->getPoints().getObject(target.name).getEstimatedValue();
+		ensure_equals(target.name + " x coordinate", estimated.getX().getMetresValue(), target.pos(0), 1e-8);
+		ensure_equals(target.name + " y coordinate", estimated.getY().getMetresValue(), target.pos(1), 1e-8);
+		ensure_equals(target.name + " z coordinate", estimated.getZ().getMetresValue(), target.pos(2), 1e-8);
+	}
+
+	// with K4, K5, K6 given but fixed at zero the result is bit-identical to that of the polynomial model, without them
+	const NetworkSetup polynomial = displacedSetup();
+	const std::string withoutInput = networkInput(polynomial);
+	const auto without = compute(withoutInput, "CAMPX_polynomial");
+	std::string withZeros = withoutInput;
+	withZeros.insert(withZeros.find("*CALA"), "K4 0\nK5 0\nK6 0\n");
+	const auto with = compute(withZeros, "CAMPX_polynomial_zeros");
+	for (int i = 0; i < CamInstr::kNumIOParams; i++)
+	{
+		if (CamInstr::isRationalIOParam(i))
+		{
+			ensure("K4, K5, K6 given are used", ioParamUsed(*with, i));
+			ensure_equals("K4, K5, K6 given as zero stay zero", ioParam(*with, i).getEstimatedValue(), 0.0);
+			ensure("K4, K5, K6 not given are not used", !ioParamUsed(*without, i));
+			continue;
+		}
+		ensure_equals(std::string("Bit-identical ") + CamInstr::ioParamNames[i], ioParam(*with, i).getEstimatedValue(), ioParam(*without, i).getEstimatedValue());
+		ensure_equals(std::string("Bit-identical precision of ") + CamInstr::ioParamNames[i], ioParam(*with, i).getEstimatedPrecision(),
+			ioParam(*without, i).getEstimatedPrecision());
+	}
+	ensure_equals("Bit-identical sigma zero", with->getS0APosteriori(), without->getS0APosteriori());
+}
+
+template<>
+template<>
+void object::test<15>()
+{
+	set_test_name("Testing CAMPX application run with K4, K5, K6: result file, JSON file and simulated observation file");
+
+	// does the result file list the parameter in its interior orientation table?
+	auto listsParameter = [](const std::string &path, const std::string &name) {
+		std::istringstream lines(fileText(path));
+		std::string line;
+		while (std::getline(lines, line))
+		{
+			std::istringstream tokens(line);
+			std::string first;
+			if (tokens >> first && first == name)
+				return true;
+		}
+		return false;
+	};
+
+	// without K4, K5, K6 in the input neither the result file nor the JSON file have them
+	NetworkSetup setup;
+	setup.options = "*JSON\n";
+	runApp(networkInput(setup), "CAMPX_app_polynomial");
+	ensure("Result file should list K3", listsParameter(workFile("CAMPX_app_polynomial.res"), "K3"));
+	ensure("Result file should not list K4", !listsParameter(workFile("CAMPX_app_polynomial.res"), "K4"));
+	ensure("JSON file should contain Cam_CAMA_K3", fileContains(workFile("CAMPX_app_polynomial.json"), "Cam_CAMA_K3"));
+	ensure("JSON file should not contain Cam_CAMA_K4", !fileContains(workFile("CAMPX_app_polynomial.json"), "Cam_CAMA_K4"));
+
+	// with them free, they are in both
+	setup.ioFree = std::vector<bool>(CamInstr::kNumIOParams, true);
+	runApp(networkInput(setup), "CAMPX_app_rational");
+	for (const char *name : {"K4", "K5", "K6"})
+	{
+		ensure(std::string("Result file should list ") + name, listsParameter(workFile("CAMPX_app_rational.res"), name));
+		ensure(std::string("JSON file should contain Cam_CAMA_") + name, fileContains(workFile("CAMPX_app_rational.json"), std::string("Cam_CAMA_") + name));
+	}
+
+	// a simulation keeps the given ones in the simulated input file, which can be read and computed again
+	setup = NetworkSetup();
+	setup.options = "*SIMU 1 5\n*SOBS\n";
+	setup.ioFree[CamInstr::kK3] = false;
+	setup.ioFree[CamInstr::kK4] = true;
+	setup.ioStart[CamInstr::kK5] = 0.01; // fixed, not zero
+	setup.ioGenerate[CamInstr::kK5] = 0.01;
+	setup.withObservations = false;
+	runApp(networkInput(setup), "CAMPX_sobs_rational");
+	const auto again = compute(fileText(workFile("CAMPX_sobs_rational.sim")), "CAMPX_sobs_rational_again");
+	const CamInstr &instrument = *again->getInstruments().fCAMD.at("CAMA");
+	ensure("K4 is used", ioParamUsed(*again, CamInstr::kK4));
+	ensure_equals("K4 is free", instrument.io[CamInstr::kK4].free, true);
+	ensure("K5 is used", ioParamUsed(*again, CamInstr::kK5));
+	ensure_equals("K5 is fixed", instrument.io[CamInstr::kK5].free, false);
+	ensure_equals("Value of K5", instrument.io[CamInstr::kK5].value, 0.01, 1e-15);
+	ensure("K6 is not used", !ioParamUsed(*again, CamInstr::kK6));
+	const TAdjustableScalar &k4 = ioParam(*again, CamInstr::kK4);
+	ensure("Estimated K4 should agree with the truth within 5 sigma", fabs(k4.getEstimatedValue()) < 5.0 * k4.getEstimatedPrecision());
 }
 
 }; // namespace tut

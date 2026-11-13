@@ -497,3 +497,89 @@ def test_camera_solve(cam):
         abs(cam.getCameraParameter("CAMA", "C").getEstVector()[0] - CAMERA_TRUTH["C"])
         < 1e-5
     )
+
+
+# --- Pixel camera with the rational radial distortion K4, K5, K6 ---
+
+# The input of test 13 of testCAMPX.cpp: a camera at the origin of ROOT looking along z,
+# all 13 interior orientation parameters free, and the UV values that OpenCV 4.13
+# cv2.projectPoints computes with the 8 coefficient model (CALIB_RATIONAL_MODEL).
+RATIONAL_FILE = "Pixel-Camera-Rational.lgc2"
+RATIONAL_IO = {
+    "C": 2900.0,
+    "CX": 2010.25,
+    "CY": 1495.75,
+    "K1": 0.12,
+    "K2": -0.31,
+    "K3": 0.05,
+    "K4": 0.09,
+    "K5": -0.25,
+    "K6": 0.03,
+    "P1": 4.0e-4,
+    "P2": -3.0e-4,
+    "B1": 3.5,
+    "B2": 0.0,
+}
+
+
+def _rational_points_and_uv():
+    """Points and observed pixel coordinates of the *CALA and *UV blocks of RATIONAL_FILE."""
+    points, uv, block = {}, [], None
+    with open(RATIONAL_FILE) as f:
+        for line in f:
+            tokens = line.split()
+            if not tokens:
+                continue
+            if tokens[0].startswith("*"):
+                block = tokens[0]
+                continue
+            if block == "*CALA" and tokens[0] != "C1":
+                points[tokens[0]] = [float(t) for t in tokens[1:4]]
+            elif block == "*UV":
+                uv.append((tokens[0], float(tokens[1]), float(tokens[2])))
+    return points, uv
+
+
+@pytest.fixture
+def rational():
+    return pyLGC.Evaluator(RATIONAL_FILE)
+
+
+def test_rational_camera_parameters(rational):
+    for name, value in RATIONAL_IO.items():
+        param = rational.getCameraParameter("CAMA", name)
+        assert param.getName() == "Cam_CAMA_" + name
+        assert len(param.getRelativeUnknIndices()) == 1
+        assert abs(param.getEstVector()[0] - value) < 1e-12
+    assert rational.getProblemDimensions().UIndex == 13
+
+
+def test_rational_projection_equals_opencv_file(rational):
+    """The pixel coordinates of LGC are those OpenCV computed, stored in the file."""
+    assert rational.evaluate()
+    assert norm(rational.getMisclosure(), np.inf) < 1e-10
+
+
+def test_rational_projection_equals_cv2(rational):
+    """The pixel coordinates of LGC equal cv2.projectPoints with 8 coefficients, computed here."""
+    cv2 = pytest.importorskip("cv2")
+    io = {name: rational.getCameraParameter("CAMA", name).getEstVector()[0] for name in RATIONAL_IO}
+    camera = np.array(
+        [[io["C"] + io["B1"], 0.0, io["CX"]], [0.0, io["C"], io["CY"]], [0.0, 0.0, 1.0]]
+    )
+    dist = np.array([io[k] for k in ("K1", "K2", "P1", "P2", "K3", "K4", "K5", "K6")])
+    points, uv = _rational_points_and_uv()
+    xyz = np.array([points[name] for name, _, _ in uv])
+    projected, _ = cv2.projectPoints(xyz, np.zeros(3), np.zeros(3), camera, dist)
+    projected = projected.reshape(-1)
+    assert rational.evaluate()
+    # misclosure = computed - observed, in the order u, v of the *UV lines
+    computed = rational.getMisclosure() + np.array([c for _, u, v in uv for c in (u, v)])
+    assert norm(computed - projected, np.inf) < 1e-10
+
+
+def test_rational_parameters_absent_from_polynomial_camera(cam):
+    """K4, K5, K6 not given in *IO are not part of the model: no parameter."""
+    for name in ("K4", "K5", "K6"):
+        with pytest.raises(RuntimeError, match="not found"):
+            cam.getCameraParameter("CAMA", name)

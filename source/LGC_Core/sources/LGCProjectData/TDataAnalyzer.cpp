@@ -1188,13 +1188,18 @@ void TDataAnalyzer::assignEOIndices()
 		for (auto &cam : measurements.fCAM)
 		{
 			// The interior orientation of a pixel camera: adjustable scalars shared by all the stations of the instrument, pointed to
-			// by the instrument and by the copies of it of the stations
+			// by the instrument and by the copies of it of the stations. The optional rational parameters K4, K5 and K6 only have one
+			// when they are given in the *IO block, otherwise they are zero.
 			if (cam.instrument.isPixelCamera)
 			{
 				auto &instr = *fData.getInstruments().fCAMD.at(cam.instrument.ID);
 				for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
+				{
+					if (!instr.ioParamUsed(i))
+						continue;
 					instr.io[i].adjustable = cam.instrument.io[i].adjustable = &fData.getScalars().addObject(
 						TAdjustableScalar(instr.io[i].value, !instr.io[i].free, instr.ioAdjustableName(i)));
+				}
 			}
 
 			// UV

@@ -225,6 +225,8 @@ void TSimFileWriter::writeInstrument()
 			for (int i = 0; i < TInstrumentData::TCAMD::kNumIOParams; i++)
 			{
 				const auto &param = camd.io[i];
+				if (!camd.ioParamUsed(i))
+					continue; // a rational parameter K4, K5, K6 not given in the input is not used
 				(*stream) << TInstrumentData::TCAMD::ioParamNames[i] << sep << fullPrecision(param.value) << sep;
 				(*stream) << (param.sigma > 0.0 ? "SE" + sep + fullPrecision(param.sigma) : param.free ? "FREE" : "") << endl;
 			}

@@ -1908,12 +1908,17 @@ UVContrib TContributionsGenerator::getUVContrib(const TCAM &camera, const TDataT
 	}
 
 	// Current estimates of the interior orientation
-	auto est = [&camera](int param) { return camera.instrument.io[param].adjustable->getEstimatedValue(); };
+	// (a parameter that is not used, i.e. K4, K5 or K6 not given in *IO, has no adjustable scalar and is zero)
+	auto est = [&camera](int param) {
+		const TAdjustableScalar *adjustable = camera.instrument.io[param].adjustable;
+		return adjustable ? adjustable->getEstimatedValue() : TReal(0.0);
+	};
 	const TReal c = est(IO::kC), cx = est(IO::kCX), cy = est(IO::kCY), k1 = est(IO::kK1), k2 = est(IO::kK2), k3 = est(IO::kK3), p1 = est(IO::kP1), p2 = est(IO::kP2),
-				b1 = est(IO::kB1), b2 = est(IO::kB2);
+				b1 = est(IO::kB1), b2 = est(IO::kB2), k4 = est(IO::kK4), k5 = est(IO::kK5), k6 = est(IO::kK6);
 
-	// Functional model: pinhole projection with radial (k1,k2,k3) and tangential (p1,p2) distortion, affinity (b1) and shear (b2)
-	//   xn = px/pz, yn = py/pz, r2 = xn^2 + yn^2, L = 1 + k1*r2 + k2*r2^2 + k3*r2^3
+	// Functional model (OpenCV, with CALIB_RATIONAL_MODEL): pinhole projection with rational radial (k1..k6) and tangential (p1,p2)
+	// distortion, affinity (b1) and shear (b2)
+	//   xn = px/pz, yn = py/pz, r2 = xn^2 + yn^2, L = (1 + k1*r2 + k2*r2^2 + k3*r2^3) / (1 + k4*r2 + k5*r2^2 + k6*r2^3)
 	//   xd = xn*L + 2*p1*xn*yn + p2*(r2 + 2*xn^2)
 	//   yd = yn*L + p1*(r2 + 2*yn^2) + 2*p2*xn*yn
 	//   u = cx + (c + b1)*xd + b2*yd
@@ -1921,8 +1926,11 @@ UVContrib TContributionsGenerator::getUVContrib(const TCAM &camera, const TDataT
 	const TReal xn = p(0) / p(2);
 	const TReal yn = p(1) / p(2);
 	const TReal r2 = xn * xn + yn * yn;
-	const TReal L = 1.0 + r2 * (k1 + r2 * (k2 + r2 * k3));
-	const TReal dL = k1 + r2 * (2.0 * k2 + 3.0 * r2 * k3); // dL/dr2
+	// With k4 = k5 = k6 = 0 the denominator is exactly 1 and L, dL are bit-identical to the polynomial model
+	const TReal Lnum = 1.0 + r2 * (k1 + r2 * (k2 + r2 * k3));
+	const TReal Lden = 1.0 + r2 * (k4 + r2 * (k5 + r2 * k6));
+	const TReal L = Lnum / Lden;
+	const TReal dL = (k1 + r2 * (2.0 * k2 + 3.0 * r2 * k3) - L * (k4 + r2 * (2.0 * k5 + 3.0 * r2 * k6))) / Lden; // dL/dr2
 	const TReal xd = xn * L + 2.0 * p1 * xn * yn + p2 * (r2 + 2.0 * xn * xn);
 	const TReal yd = yn * L + p1 * (r2 + 2.0 * yn * yn) + 2.0 * p2 * xn * yn;
 
@@ -1953,9 +1961,13 @@ UVContrib TContributionsGenerator::getUVContrib(const TCAM &camera, const TDataT
 	contrib.fIOContrib.col(IO::kC) << xd, yd;
 	contrib.fIOContrib.col(IO::kCX) << 1.0, 0.0;
 	contrib.fIOContrib.col(IO::kCY) << 0.0, 1.0;
-	contrib.fIOContrib.col(IO::kK1) = K * Eigen::Vector2d(xn, yn) * r2;
+	// d(u,v)/dki = K * (xn, yn) * dL/dki with dL/dki = r2^i / Lden for the numerator and dL/dk(3+i) = -L * r2^i / Lden for the denominator
+	contrib.fIOContrib.col(IO::kK1) = K * Eigen::Vector2d(xn, yn) * (r2 / Lden);
 	contrib.fIOContrib.col(IO::kK2) = contrib.fIOContrib.col(IO::kK1) * r2;
 	contrib.fIOContrib.col(IO::kK3) = contrib.fIOContrib.col(IO::kK2) * r2;
+	contrib.fIOContrib.col(IO::kK4) = contrib.fIOContrib.col(IO::kK1) * -L;
+	contrib.fIOContrib.col(IO::kK5) = contrib.fIOContrib.col(IO::kK4) * r2;
+	contrib.fIOContrib.col(IO::kK6) = contrib.fIOContrib.col(IO::kK5) * r2;
 	contrib.fIOContrib.col(IO::kP1) = K * Eigen::Vector2d(2.0 * xn * yn, r2 + 2.0 * yn * yn);
 	contrib.fIOContrib.col(IO::kP2) = K * Eigen::Vector2d(r2 + 2.0 * xn * xn, 2.0 * xn * yn);
 	contrib.fIOContrib.col(IO::kB1) << xd, 0.0;

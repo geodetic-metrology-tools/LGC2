@@ -294,8 +294,9 @@ class Evaluator:
         return AdjustableObject(h)
 
     def getCameraParameter(self, instrument, parameter):
-        """Interior orientation parameter (C, CX, CY, K1, K2, K3, P1, P2, B1 or B2)
-        of a pixel camera instrument (*CAMPX)."""
+        """Interior orientation parameter (C, CX, CY, K1, K2, K3, K4, K5, K6, P1, P2, B1 or B2)
+        of a pixel camera instrument (*CAMPX). The rational distortion parameters
+        K4, K5 and K6 exist only if they are given in the *IO block."""
         h = _check_ptr(
             _ev_get_camera_param(
                 self._h, instrument.encode("utf-8"), parameter.encode("utf-8")
