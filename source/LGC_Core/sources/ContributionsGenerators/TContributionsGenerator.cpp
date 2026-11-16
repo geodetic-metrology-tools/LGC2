@@ -1618,25 +1618,24 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 	TTransformation secondWire2FirstWire;
 	secondWire2FirstWire.setTransformation(wireDRefX, 0, wireDRefZ, wireSlope, 0, 0, 1);
 	TTransformation firstWire2SecondWire = secondWire2FirstWire.getInversedTransformation();
+	TTransformation secondWire2Root = firstWire2Root * secondWire2FirstWire;
 
-	// Construct the wire objects defined in the secondWire frame
-	TPositionVector wireZero(0, 0, 0, TCoordSysFactory::k3DCartesian); // The oigin of the secondWire frame
-	TFreeVector wireY(0, 1, 0, TCoordSysFactory::k3DCartesian); // The orientation vector of the wire along the secondWire Y-axis
+	// Construct the wire objects defined in the secondWire frame and express them in the root frame
+	TPositionVector wireZeroRoot(0, 0, 0, TCoordSysFactory::k3DCartesian); // The oigin of the secondWire frame
+	TFreeVector wireYRoot(0, 1, 0, TCoordSysFactory::k3DCartesian); // The orientation vector of the wire along the secondWire Y-axis
+	secondWire2Root.transform(wireZeroRoot);
+	secondWire2Root.transform(wireYRoot);
 
 	/// First step : compute the modeled observation in the station frame without the SAG
 	// Express the wire parameters in the station frame
+	TPositionVector wireZeroStation = wireZeroRoot;
+	TFreeVector wireYStation = wireYRoot;
+	Root2StLorTrafo.transform(wireZeroStation);
+	Root2StLorTrafo.transform(wireYStation);
 
-	secondWire2FirstWire.transform(wireZero);
-	firstWire2Root.transform(wireZero);
-	Root2StLorTrafo.transform(wireZero);
-
-	secondWire2FirstWire.transform(wireY);
-	firstWire2Root.transform(wireY);
-	Root2StLorTrafo.transform(wireY);
-
-	// Compute the intersection with the X and Z vectors
+	// Compute the intersection with the X and Z vectors, the wire being expressed in the frame of the point
 	TFreeVector XZPlaneNormal(0, 1, 0, TCoordSysFactory::k3DCartesian);
-	auto projPointOnWire = [&ecwiROM, &wireY, &wireZero, &XZPlaneNormal](const TPositionVector &stPoint2Project) {
+	auto projPointOnWire = [&ecwiROM, &XZPlaneNormal](const TPositionVector &stPoint2Project, const TPositionVector &wireZero, const TFreeVector &wireY) {
 		TReal numerator = (TFreeVector(stPoint2Project) - TFreeVector(wireZero)).dot(XZPlaneNormal);
 		TReal denominator = wireY.dot(XZPlaneNormal);
 		if (abs(denominator) < nullLimit)
@@ -1648,7 +1647,7 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 	};
 
 	// Compute the projection of the station onto the wire in the station system
-	auto [projSt, projStNumerator, projStDenominator] = projPointOnWire(ecwi.targetPos->getEstimatedValue());
+	auto [projSt, projStNumerator, projStDenominator] = projPointOnWire(ecwi.targetPos->getEstimatedValue(), wireZeroStation, wireYStation);
 	TReal componentX = projSt.getX().getMetresValue();
 	TReal componentZ = projSt.getZ().getMetresValue();
 
@@ -1657,39 +1656,35 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 	// Intersect the wire in the anchor frames
 	TPositionVector A1 = ecwiROM.anchorPtFirst->getEstimatedValue();
 	TPositionVector A2 = ecwiROM.anchorPtSecond->getEstimatedValue();
-	StLor2RootTrafo.transform(wireY);
-	StLor2RootTrafo.transform(wireZero);
 
 	// Transformation needed
 	const TLOR2LOR &Root2AnchorFirstLorTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecwiROM.anchorPtFirst->getFrameTreePosition());
-	const TLOR2LOR &AnchorFirstLor2AnchorSecondLorTrafo = fPointTransfo.getLORTransformation(
-		ecwiROM.anchorPtFirst->getFrameTreePosition(), ecwiROM.anchorPtSecond->getFrameTreePosition());
+	const TLOR2LOR &AnchorFirstLor2RootTrafo = fPointTransfo.getLORTransformation(ecwiROM.anchorPtFirst->getFrameTreePosition(), fPointTransfo.getTree()->begin());
+	const TLOR2LOR &Root2AnchorSecondLorTrafo = fPointTransfo.getLORTransformation(fPointTransfo.getTree()->begin(), ecwiROM.anchorPtSecond->getFrameTreePosition());
 	const TLOR2LOR &AnchorSecondLor2RootTrafo = fPointTransfo.getLORTransformation(ecwiROM.anchorPtSecond->getFrameTreePosition(), fPointTransfo.getTree()->begin());
 
 	// First Anchor
-	Root2AnchorFirstLorTrafo.transform(wireY);
-	Root2AnchorFirstLorTrafo.transform(wireZero);
-	auto [projA1, projA1Numerator, projA1Denominator] = projPointOnWire(A1);
+	TPositionVector wireZeroFirstAnchor = wireZeroRoot;
+	TFreeVector wireYFirstAnchor = wireYRoot;
+	Root2AnchorFirstLorTrafo.transform(wireYFirstAnchor);
+	Root2AnchorFirstLorTrafo.transform(wireZeroFirstAnchor);
+	auto [projA1, projA1Numerator, projA1Denominator] = projPointOnWire(A1, wireZeroFirstAnchor, wireYFirstAnchor);
 
 	// Second Anchor
-	AnchorFirstLor2AnchorSecondLorTrafo.transform(wireY);
-	AnchorFirstLor2AnchorSecondLorTrafo.transform(wireZero);
-	AnchorFirstLor2AnchorSecondLorTrafo.transform(projA1);
-	auto [projA2, projA2Numerator, projA2Denominator] = projPointOnWire(A2);
-
-	// put again the wire in the station Frame
-	AnchorSecondLor2RootTrafo.transform(wireY);
-	AnchorSecondLor2RootTrafo.transform(wireZero);
-	Root2StLorTrafo.transform(wireY);
-	Root2StLorTrafo.transform(wireZero);
+	TPositionVector wireZeroSecondAnchor = wireZeroRoot;
+	TFreeVector wireYSecondAnchor = wireYRoot;
+	Root2AnchorSecondLorTrafo.transform(wireYSecondAnchor);
+	Root2AnchorSecondLorTrafo.transform(wireZeroSecondAnchor);
+	auto [projA2, projA2Numerator, projA2Denominator] = projPointOnWire(A2, wireZeroSecondAnchor, wireYSecondAnchor);
 
 	// compute the SAG : need PA1, PA2 and PSt to be in the root frame
-	AnchorSecondLor2RootTrafo.transform(projA1);
+	AnchorFirstLor2RootTrafo.transform(projA1);
 	AnchorSecondLor2RootTrafo.transform(projA2);
-	StLor2RootTrafo.transform(projSt);
+	TPositionVector projStRoot = projSt;
+	StLor2RootTrafo.transform(projStRoot);
 
 	TFreeVector vectorL = projA2 - projA1;
-	TFreeVector vectorDi = projSt - projA1;
+	TFreeVector vectorDi = projStRoot - projA1;
 
 	// Handling the case where a station point is situates before the projected A1 on the wire
 	TReal scalar = vectorL.dot(vectorDi);
@@ -1707,26 +1702,26 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 
 	TReal ratioLength = factor * di / l;
 	TReal riOver100 = 4 * sag * (pow2(ratioLength) - ratioLength);
-
-	// Transform the SAG vector and associated precision in the station frame
-	TFreeVector sagVector(0, 0, riOver100, TCoordSysFactory::k3DCartesian);
-
 	TReal sigmaRiOver100 = 4 * ecwiROM.instrument.sigmaSagWire.getMetresValue() * (pow2(ratioLength) - ratioLength);
-	TFreeVector sigmaSagVector(0, 0, sigmaRiOver100, TCoordSysFactory::k3DCartesian);
+
+	// The SAG vector and its precision act along the vertical, the Z axis of the root frame
+	TFreeVector sagDirectionRoot(0, 0, 1, TCoordSysFactory::k3DCartesian);
 
 	// Express te local vertical  in the CCS if MLA is used, maximal SAG in the middle of the ancor points projected on the wire
 	if (fPointTransfo.getRefFrame() != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 	{
 		TPositionVector averageAnchors = (TFreeVector(projA1) + TFreeVector(projA2)) * 0.5;
 		fPointTransfo.set2MLATransformation(averageAnchors);
-		fPointTransfo.transformMLA2CGRF(sagVector);
-		fPointTransfo.transformCGRF2CCS(sagVector);
-		fPointTransfo.transformMLA2CGRF(sigmaSagVector);
-		fPointTransfo.transformCGRF2CCS(sigmaSagVector);
+		fPointTransfo.transformMLA2CGRF(sagDirectionRoot);
+		fPointTransfo.transformCGRF2CCS(sagDirectionRoot);
 	}
+	const TFreeVector sagVectorRoot = sagDirectionRoot * riOver100;
 
-	Root2StLorTrafo.transform(sagVector);
-	Root2StLorTrafo.transform(sigmaSagVector);
+	// Transform the SAG vector and associated precision in the station frame
+	TFreeVector sagDirection = sagDirectionRoot;
+	Root2StLorTrafo.transform(sagDirection);
+	const TFreeVector sagVector = sagDirection * riOver100;
+	const TFreeVector sigmaSagVector = sagDirection * sigmaRiOver100;
 
 	/// CalcMeas
 	TReal dx = componentX - ecwi.targetPos->getEstimatedValue().getX().getMetresValue() + sagVector.getX().getMetresValue();
@@ -1741,37 +1736,40 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 	};
 
 	// Station contributions
-	TReal stYContribX = wireY.getX().getMetresValue() / projStDenominator;
-	TReal stYContribZ = wireY.getZ().getMetresValue() / projStDenominator;
-	TFreeVector stFirstEqContrib(-1, stYContribX, 0, TCoordSysFactory::k3DCartesian);
-	TFreeVector stSecondEqContrib(0, stYContribZ, -1, TCoordSysFactory::k3DCartesian);
+	TReal stYContribX = wireYStation.getX().getMetresValue() / projStDenominator;
+	TReal stYContribZ = wireYStation.getZ().getMetresValue() / projStDenominator;
+	const TFreeVector stFirstEqContrib(-1, stYContribX, 0, TCoordSysFactory::k3DCartesian);
+	const TFreeVector stSecondEqContrib(0, stYContribZ, -1, TCoordSysFactory::k3DCartesian);
+
+	// A displacement d of the wire, in the station frame, moves its intersection with the XZ plane of the station by
+	// d - wireY * d.y / wireY.y, the displacement plus a slide along the wire: it changes the observations like a displacement -d
+	// of the station
+	auto alongWire = [&stFirstEqContrib, &stSecondEqContrib](const TFreeVector &d) { return TEqContrib{-d.dot(stFirstEqContrib), -d.dot(stSecondEqContrib)}; };
 
 	// Compute SAG Contributions
 	TReal sagDeriv = 4 * (pow2(ratioLength) - ratioLength);
-	TFreeVector sagVectorDeriv(0, 0, sagDeriv, TCoordSysFactory::k3DCartesian);
-	Root2StLorTrafo.transform(sagVectorDeriv);
+	const TFreeVector sagVectorDeriv = sagDirection * sagDeriv;
 	TEqContrib sagContrib{sagVectorDeriv.getX().getMetresValue(), sagVectorDeriv.getZ().getMetresValue()};
 
 	// Compute dRefZ Contributions
 	TFreeVector dRefZContribWireZero(0, 0, 1, TCoordSysFactory::k3DCartesian);
 	firstWire2Root.transform(dRefZContribWireZero);
 	Root2StLorTrafo.transform(dRefZContribWireZero);
-	TEqContrib dRefZContrib{dRefZContribWireZero.getX().getMetresValue(), dRefZContribWireZero.getZ().getMetresValue()};
+	TEqContrib dRefZContrib = alongWire(dRefZContribWireZero);
 
 	// Compute dRefX Contributions
 	TFreeVector dRefXContribWireZero(1, 0, 0, TCoordSysFactory::k3DCartesian);
 	firstWire2Root.transform(dRefXContribWireZero);
 	Root2StLorTrafo.transform(dRefXContribWireZero);
-	TEqContrib dRefXContrib{dRefXContribWireZero.getX().getMetresValue(), dRefXContribWireZero.getZ().getMetresValue()};
+	TEqContrib dRefXContrib = alongWire(dRefXContribWireZero);
 
 	// Compute  Contributions
-	TPositionVector stationVector(componentX, ecwi.targetPos->getEstimatedValue().getY().getMetresValue(), componentZ, TCoordSysFactory::k3DCartesian);
-	StLor2RootTrafo.transform(stationVector);
+	TPositionVector stationVector = projStRoot;
 	root2FirstWire.transform(stationVector);
 	TFreeVector bearingContribVector(-sinq(wireBearing) * (stationVector.getX().getMetresValue()) + cosq(wireBearing) * stationVector.getY().getMetresValue(),
 		-cosq(wireBearing) * (stationVector.getX().getMetresValue()) - sinq(wireBearing) * stationVector.getY().getMetresValue(), 0, TCoordSysFactory::k3DCartesian);
 	Root2StLorTrafo.transform(bearingContribVector);
-	TEqContrib bearingContrib{bearingContribVector.getX().getMetresValue(), bearingContribVector.getZ().getMetresValue()};
+	TEqContrib bearingContrib = alongWire(bearingContribVector);
 
 	// Compute Slope Contributions
 	firstWire2SecondWire.transform(stationVector);
@@ -1779,25 +1777,30 @@ ECWIContrib TContributionsGenerator::getECWIContrib(const TECWIROM &ecwiROM, con
 		-cosq(wireSlope) * stationVector.getY().getMetresValue() - sinq(wireSlope) * stationVector.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian);
 	firstWire2Root.transform(slopeContribVector);
 	Root2StLorTrafo.transform(slopeContribVector);
-	TEqContrib slopeContrib{slopeContribVector.getX().getMetresValue(), slopeContribVector.getZ().getMetresValue()};
+	TEqContrib slopeContrib = alongWire(slopeContribVector);
 
 	// Compute Tranformation contributions
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransfContributionsDx;
 	std::vector<std::pair<TAdjustableHelmertTransformation, TransformationContrib>> TransfContributionsDz;
-	TPositionVector transfoContrib(componentX + sagVector.getX().getMetresValue(), ecwi.targetPos->getEstimatedValue().getY().getMetresValue() + sagVector.getY().getMetresValue(),
-		componentZ + sagVector.getZ().getMetresValue(), TCoordSysFactory::k3DCartesian);
-	StLor2RootTrafo.transform(transfoContrib);
+	const TPositionVector transfoContrib = TFreeVector(projStRoot) + sagVectorRoot;
 	addTransformationsContributions(Root2StLorTrafo, transfoContrib, 1, 0, 0, TransfContributionsDx);
 	addTransformationsContributions(Root2StLorTrafo, transfoContrib, 0, 0, 1, TransfContributionsDz);
+	// The station frame moves the XZ plane of the station as well: the intersection slides along the straight wire
+	addTransformationsContributions(Root2StLorTrafo, projStRoot, 0, -stYContribX, 0, TransfContributionsDx);
+	addTransformationsContributions(Root2StLorTrafo, projStRoot, 0, -stYContribZ, 0, TransfContributionsDz);
 
-	// Compute the variances
-	TFreeVector sigmaWireVector(ecwiROM.instrument.sigmaWire, 0, ecwiROM.instrument.sigmaWire, TCoordSysFactory::k3DCartesian);
-	secondWire2FirstWire.transform(sigmaWireVector);
-	firstWire2Root.transform(sigmaWireVector);
-	Root2StLorTrafo.transform(sigmaWireVector);
+	// Compute the variances; the wire sigma acts independently along the X and the Z axis of the wire
+	TFreeVector sigmaWireX(ecwiROM.instrument.sigmaWire, 0, 0, TCoordSysFactory::k3DCartesian);
+	TFreeVector sigmaWireZ(0, 0, ecwiROM.instrument.sigmaWire, TCoordSysFactory::k3DCartesian);
+	for (TFreeVector *sigmaWireVector : {&sigmaWireX, &sigmaWireZ})
+	{
+		secondWire2Root.transform(*sigmaWireVector);
+		Root2StLorTrafo.transform(*sigmaWireVector);
+	}
+	const TEqContrib wireErrX = alongWire(sigmaWireX), wireErrZ = alongWire(sigmaWireZ);
 	TEqContrib varianceObs{
-		pow2(ecwi.target.sigmaX) + pow2(ecwi.target.sigmaInstrCenteringX) + pow2(sigmaSagVector.getX().getMetresValue()) + pow2(sigmaWireVector.getX().getMetresValue()),
-		pow2(ecwi.target.sigmaZ) + pow2(ecwi.target.sigmaInstrCenteringZ) + pow2(sigmaSagVector.getZ().getMetresValue()) + pow2(sigmaWireVector.getZ().getMetresValue())};
+		pow2(ecwi.target.sigmaX) + pow2(ecwi.target.sigmaInstrCenteringX) + pow2(sigmaSagVector.getX().getMetresValue()) + pow2(wireErrX.eqX) + pow2(wireErrZ.eqX),
+		pow2(ecwi.target.sigmaZ) + pow2(ecwi.target.sigmaInstrCenteringZ) + pow2(sigmaSagVector.getZ().getMetresValue()) + pow2(wireErrX.eqZ) + pow2(wireErrZ.eqZ)};
 
 	return {{dx, dz}, {stFirstEqContrib, stSecondEqContrib}, {bearingContrib.eqX, bearingContrib.eqZ}, {slopeContrib.eqX, slopeContrib.eqZ},
 		{dRefXContrib.eqX, dRefXContrib.eqZ}, {dRefZContrib.eqX, dRefZContrib.eqZ}, {sagContrib.eqX, sagContrib.eqZ}, TransfContributionsDx, TransfContributionsDz,
