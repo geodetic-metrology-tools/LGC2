@@ -204,6 +204,27 @@ void object::test<3>()
 	TKeySOBS f3(proj);
 	f3.parse(tokenizefileString("*SOBS"), true, -1);
 	ensure("New LGC file must be on with measurement values disabled", cfg.sim.writeLGCFile);
+	//
+	TKeySIMU f4(proj);
+	f4.parse(tokenizefileString("*SIMU 10 42"), true, -1);
+	ensure_equals("Number of simulations must match input", cfg.sim.numSims, 10);
+	ensure_equals("Seed must match input", cfg.sim.numSeed, 42);
+	ensure("Noise must be on without NONOISE", !cfg.sim.noNoise);
+	ensure("SIMU must keep the SOBS setting", cfg.sim.writeLGCFile);
+	f4.parse(tokenizefileString("*SIMU 10 42 NONOISE % comment"), true, -1);
+	ensure_equals("Number of simulations must match input", cfg.sim.numSims, 10);
+	ensure_equals("Seed must match input", cfg.sim.numSeed, 42);
+	ensure("Noise must be off with NONOISE", cfg.sim.noNoise);
+	f4.parse(tokenizefileString("*SIMU 3 NONOISE"), true, -1);
+	ensure_equals("Number of simulations must match input", cfg.sim.numSims, 3);
+	ensure("Noise must be off with NONOISE", cfg.sim.noNoise);
+	f4.parse(tokenizefileString("*SIMU 5 % comment"), true, -1);
+	ensure_equals("Number of simulations must match input", cfg.sim.numSims, 5);
+	ensure("Noise must be on without NONOISE", !cfg.sim.noNoise);
+	ensure_THROW(f4.parse(tokenizefileString("*SIMU NONOISE 3"), true, -1), std::runtime_error);
+	ensure_THROW(f4.parse(tokenizefileString("*SIMU 10 NONOISE 42"), true, -1), std::runtime_error);
+	ensure_THROW(f4.parse(tokenizefileString("*SIMU 10 42 7"), true, -1), std::runtime_error);
+	ensure_THROW(f4.parse(tokenizefileString("*SIMU % comment"), true, -1), std::runtime_error);
 }
 
 template<>

@@ -611,5 +611,7 @@ void TLSSimulation::updateOBSXYZSimValues(std::list<TOBSXYZ> &obsxyz)
 
 TReal TLSSimulation::getSimulatedValue(const TReal val, const TReal sigma)
 {
+	if (fData.getConfig().sim.noNoise)
+		return val;
 	return val + std::normal_distribution<double>(0, sigma)(engine);
 }

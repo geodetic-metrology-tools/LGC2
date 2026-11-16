@@ -7,6 +7,8 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
+#include <filesystem>
+
 #include <TLGCApp.h>
 #include <TLGCData.h>
 #include <TReader.h>
@@ -89,6 +91,56 @@ void object::test<1>()
 	ensure_equals("Estimated TX should be around 1 m", trafoPar.tX.getMetresValue(), 1.0, 1e-4);
 	ensure_equals("Estimated TY should be around 2 m", trafoPar.tY.getMetresValue(), 3.0, 1e-4);
 	ensure_equals("Estimated TZ should be around 3 m", trafoPar.tZ.getMetresValue(), 7.0, 1e-4);
+}
+
+template<>
+template<>
+void object::test<2>()
+{
+	set_test_name("Testing OBSXYZ Simulation without noise");
+
+	std::stringstream infiler(Simu::OBSXYZ_NONOISE);
+	projTest->getFileLogger().writeReportHeader("LGC output file");
+	bool succesReading = r.read(infiler);
+	ensure_equals("Reading file successful", succesReading, true);
+	ensure("NONOISE must be set", projTest->getConfig().sim.noNoise);
+
+	std::string infileLocation = "dummy_string";
+	std::string outfileLocation = (std::filesystem::temp_directory_path() / "SIMU_OBSXYZ_NONOISE_test.txt").string();
+
+	TLGCApp testApp(infileLocation, outfileLocation, 80);
+
+	std::shared_ptr<TAStreamFormatter> streamFormatter;
+	testApp.initializeStream(projTest, outfileLocation, streamFormatter);
+
+	auto writerPointer = std::make_shared<TSimulationOutputFileWriter>(streamFormatter.get(), projTest.get());
+	TLGCCalculation calcul(projTest);
+	Behavior success = calcul.computeResults(writerPointer);
+	ensure("Simulation successful", static_cast<bool>(success));
+
+	TDataTreeIterator frameIterator = projTest->getTree().begin();
+	frameIterator++;
+	const std::list<TOBSXYZ> &obsxyzMeasurements = frameIterator.node->data->measurements.fOBSXYZ;
+	// root points UX, UY, UZ in a frame shifted by (1, 3, 7): observation = root coordinates - (1, 3, 7)
+	auto it = obsxyzMeasurements.begin();
+	ensure_equals("Observed x of UX", it->obsValue.getX(), 0.0, 1e-12);
+	ensure_equals("Observed y of UX", it->obsValue.getY(), -3.0, 1e-12);
+	ensure_equals("Observed z of UX", it->obsValue.getZ(), -7.0, 1e-12);
+	it++;
+	ensure_equals("Observed x of UY", it->obsValue.getX(), -1.0, 1e-12);
+	ensure_equals("Observed y of UY", it->obsValue.getY(), -2.0, 1e-12);
+	ensure_equals("Observed z of UY", it->obsValue.getZ(), -7.0, 1e-12);
+	it++;
+	ensure_equals("Observed x of UZ", it->obsValue.getX(), -1.0, 1e-12);
+	ensure_equals("Observed y of UZ", it->obsValue.getY(), -3.0, 1e-12);
+	ensure_equals("Observed z of UZ", it->obsValue.getZ(), -6.0, 1e-12);
+
+	// noise-free observations reproduce the provisional frame parameters
+	TAdjustableHelmertTransformation frameTrafo(frameIterator.node->data.get()->frame);
+	TransformParameters trafoPar = frameTrafo.getEstParam();
+	ensure_equals("Estimated TX", trafoPar.tX.getMetresValue(), 1.0, 1e-10);
+	ensure_equals("Estimated TY", trafoPar.tY.getMetresValue(), 3.0, 1e-10);
+	ensure_equals("Estimated TZ", trafoPar.tZ.getMetresValue(), 7.0, 1e-10);
 }
 
 } // namespace tut

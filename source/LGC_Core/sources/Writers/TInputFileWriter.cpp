@@ -100,7 +100,10 @@ void TInputFileWriter::writeHeader()
 		if (!config.sim.isActive())
 			(*stream) << DEACTIVATION_CHAR;
 
-		(*stream) << "*SIMU " << config.sim.numSims << endl;
+		(*stream) << "*SIMU " << config.sim.numSims;
+		if (config.sim.noNoise)
+			(*stream) << " NONOISE";
+		(*stream) << endl;
 	}
 
 	// Output options:
