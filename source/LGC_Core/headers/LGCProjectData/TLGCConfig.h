@@ -62,10 +62,12 @@ struct TLGCConfig
 		int numSeed;
 		/// write an output file that can be used as an imput file again
 		bool writeLGCFile;
+		/// generate the observations without random noise (tag NONOISE of *SIMU)
+		bool noNoise;
 
 		/// The default constructor disables simulations.
 		// Disable simulation means that ignoreMeasurements should be, by default, set to FALSE not TRUE!
-		TSimulation() : TBinaryOption(), numSims(0), numSeed(0), writeLGCFile(false) {}
+		TSimulation() : TBinaryOption(), numSims(0), numSeed(0), writeLGCFile(false), noNoise(false) {}
 		/*!
 		\brief This constructor sets the default values for enabled simulations.
 
@@ -73,8 +75,9 @@ struct TLGCConfig
 		\param s The seed number
 		\param ignoreMeas The measurement values in the input file are ignored
 		\param writeFile Whether to write LGC file
+		\param noNoiseIn Whether the observations are generated without noise
 		*/
-		TSimulation(int n, int s, bool writeFile) : TBinaryOption(true), numSims(n), numSeed(s), writeLGCFile(writeFile) {}
+		TSimulation(int n, int s, bool writeFile, bool noNoiseIn = false) : TBinaryOption(true), numSims(n), numSeed(s), writeLGCFile(writeFile), noNoise(noNoiseIn) {}
 
 #if USE_SERIALIZER
 		// Inherited via Serializable
@@ -348,6 +351,7 @@ inline void TLGCConfig::TSimulation::serialize(ObjectSerializer &obj) const
 	obj.addProperty("numSims", numSims);
 	obj.addProperty("numSeed", numSeed);
 	obj.addProperty("writeLGCFile", writeLGCFile);
+	obj.addProperty("noNoise", noNoise);
 }
 
 inline void TLGCConfig::TFautDetect::serialize(ObjectSerializer &obj) const

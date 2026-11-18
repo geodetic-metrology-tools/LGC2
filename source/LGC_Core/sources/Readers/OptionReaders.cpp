@@ -4,6 +4,7 @@
 
 #include "OptionReaders.h"
 
+#include <algorithm>
 #include <chrono>
 
 ///////////////////////////////////////////////////////
@@ -144,56 +145,46 @@ void TKeyPDOR::parse(const std::vector<std::string> &tokens, bool activeLine, in
 			+ std::to_string(numtok) + ".");
 }
 
-void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, int)
+void TKeySIMU::parse(const std::vector<std::string> &tokens, bool activeLine, int lineNumber)
 {
-	auto numTokens = tokens.size();
+	// Arguments after "*SIMU" without the end-of-line comment: N [seed] [NONOISE]
+	auto argsEnd = tokens.end();
+	if (tokens.size() > 2 && (tokens.back().at(0) == '$' || tokens.back().at(0) == '%'))
+		--argsEnd;
+	std::vector<std::string> args(tokens.begin() + 2, argsEnd);
 
-	// (VV) Get the number of the simulation: numSimulation (tokens.at(2))
-	int numSimulation = std::stoi(tokens.at(2));
+	// Optional tag NONOISE as last argument: the observations are generated without noise
+	const bool noNoise = !args.empty() && args.back() == "NONOISE";
+	if (noNoise)
+		args.pop_back();
 
-	// (VV) Use a time difference to create a seed (randomSeedNum) for the pseudo-random number generator/engine
-	typedef std::chrono::high_resolution_clock myclock;
-	myclock::time_point time1 = myclock::now(); // (VV) current timestamp
-	myclock::time_point time0 = myclock::time_point::min(); // (VV) reference timestamp
-	myclock::duration d = time1 - time0; // (VV) time difference
-	int randomSeedNum = d.count();
+	if (args.empty() || args.size() > 2 || std::find(args.begin(), args.end(), "NONOISE") != args.end())
+		throw std::runtime_error("*SIMU expects the number of simulations, an optional seed and the optional tag NONOISE as last argument.");
 
-	// (VV) If the last token starts with a comment character, the variable existComment becomes true
-	const char fOfLastToken = tokens.back().at(0);
-	bool existComment = false;
-	if (fOfLastToken == '$' || fOfLastToken == '%')
-	{
-		existComment = true;
-	}
+	if (noNoise && activeLine)
+		proj.getFileLogger()
+			<< TFileLogger::e_logType::LOG_WARNING
+			<< "Line " + std::to_string(lineNumber) + " : *SIMU NONOISE generates the observations without noise. All simulations give the same result and the seed has no effect.";
 
-	// (VV) If the tokens are more than five, e.g., "*SIMU N S %comment" or
-	// (VV) if the tokens are four without a comment at the end, e.g., "*SIMU N S",
-	// (VV) then create a simulation object with the number of simulations and the seed number provided by the user
+	// (VV) Get the number of the simulation
+	const int numSimulation = std::stoi(args.at(0));
 
-	if (numTokens >= 5 || (numTokens == 4 && !(fOfLastToken == '$' || fOfLastToken == '%')))
-	{
+	int seedNum;
+	if (args.size() == 2)
 		// (VV) Get the seed number from the input file
-		int inputSeedNum = std::stoi(tokens.at(3));
-		// (VV) Create a simulation object with the number of simulations and the seed number provided by the user
-		fconfig.sim = TLGCConfig::TSimulation(numSimulation, inputSeedNum, fconfig.sim.writeLGCFile);
-		fconfig.sim.setActive(activeLine);
-	}
-	// (VV) If the tokens are four with a comment, e.g., "*SIMU N %comment" or
-	// (VV) if the tokens are three without a comment at the end, e.g., "*SIMU N",
-	// (VV) then create a simulation object with the number of simulations and the seed number randomly generated
-
-	else if (numTokens == 4 || (numTokens == 3 && !(fOfLastToken == '$' || fOfLastToken == '%')))
-	{
-		fconfig.sim = TLGCConfig::TSimulation(numSimulation, randomSeedNum, fconfig.sim.writeLGCFile);
-		fconfig.sim.setActive(activeLine);
-	}
-	// (VV) If the tokens are three with a comment, e.g., "*SIMU %comment" or
-	// (VV) if the tokens are less than three, e.g., "*SIMU",
-	// (VV) then throw an error message
+		seedNum = std::stoi(args.at(1));
 	else
 	{
-		throw std::runtime_error("*SIMU accepts either 1 or 2 arguments but zero (0) arguments were provided.");
+		// (VV) Use a time difference to create a seed for the pseudo-random number generator/engine
+		typedef std::chrono::high_resolution_clock myclock;
+		myclock::time_point time1 = myclock::now(); // (VV) current timestamp
+		myclock::time_point time0 = myclock::time_point::min(); // (VV) reference timestamp
+		myclock::duration d = time1 - time0; // (VV) time difference
+		seedNum = d.count();
 	}
+
+	fconfig.sim = TLGCConfig::TSimulation(numSimulation, seedNum, fconfig.sim.writeLGCFile, noNoise);
+	fconfig.sim.setActive(activeLine);
 }
 
 ////////////////////

@@ -105,7 +105,7 @@ private:
 
 	void updateECWISimValues(const TECWIROM &ecwiROM, std::list<TECWI> &ecws);
 
-	/// Return a biased value (correct measurement + small error)
+	/// Return a biased value (correct measurement + small error), or the correct measurement if the SIMU tag NONOISE is set
 	TReal getSimulatedValue(const TReal val, const TReal sigma);
 
 	/// Reinitialised simulated observation for the next iteration/ simulation
