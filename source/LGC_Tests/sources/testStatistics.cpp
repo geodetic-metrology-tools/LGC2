@@ -7,6 +7,8 @@
 #include <tut/tut.hpp>
 #pragma warning(pop)
 
+#include <cmath>
+
 #include <TLGCCalculation.h>
 #include <TLGCData.h>
 #include <TReader.h>
@@ -102,6 +104,69 @@ void object::test<2>()
 	ensure_equals("wi of y observation should be -2.326 ", wy, -2.326, 1e-3);
 	ensure_equals("nabla of y observation should be approximately 3.168mm", M2MM * nablaY, 3.168, 1e-2);
 	ensure_equals("deltY of y observation should be 0 (observation between two fixed points)", deltY, 0.0);
+}
+
+template<>
+template<>
+void object::test<3>()
+{
+	std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+	set_test_name("statistics of undetermined observations are NO_VAL");
+	TReader r(projTest);
+
+	// origin is only observed by its own OBSXYZ: no redundancy, so its 3 observations are undetermined
+	std::stringstream infiler(Statistics::alpha_beta_default);
+	r.read(infiler);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	const TLGCStatistic &stat = calcul.getData().getStatistics();
+	ensure_equals("6 observations expected", static_cast<int>(stat.getWi().size()), 6);
+
+	for (int i = 0; i < 3; i++)
+		ensure("refPt observations should be determined", stat.getAreDetermined(i));
+	// x observation of refPt is not flagged, so its G value is not computed
+	ensure("G of a non flagged observation should be NO_VAL", std::isnan(stat.getGi()(0)));
+
+	for (int i = 3; i < 6; i++)
+	{
+		ensure("origin observations should be undetermined", !stat.getAreDetermined(i));
+		ensure("G should not be computed", !stat.getGToCompute(i));
+		ensure("Delta should not be computed", !stat.getDeltaComputed(i));
+		ensure("Z should be NO_VAL", std::isnan(stat.getZi()(i)));
+		ensure("W should be NO_VAL", std::isnan(stat.getWi()(i)));
+		ensure("T should be NO_VAL", std::isnan(stat.getTi()(i)));
+		ensure("DELTY should be NO_VAL", std::isnan(stat.getDelty()(i)));
+		ensure("NABLA should be NO_VAL", std::isnan(stat.getNabla()(i)));
+		ensure("G should be NO_VAL", std::isnan(stat.getGi()(i)));
+	}
+}
+
+template<>
+template<>
+void object::test<4>()
+{
+	std::shared_ptr<TLGCData> projTest(new TLGCData);
+
+	set_test_name("global statistics are NO_VAL without *FAUT");
+	TReader r(projTest);
+
+	std::stringstream infiler(Statistics::no_faut);
+	r.read(infiler);
+
+	TLGCCalculation calcul(projTest);
+	std::shared_ptr<TSimulationOutputFileWriter> fileWriter(nullptr);
+	Behavior succesCalc = calcul.computeResults(fileWriter);
+	ensure_equals("Calculation successful", succesCalc.code(), Behavior::BehaviorCode::ERR_noError);
+	const TLGCData &dataset = calcul.getData();
+	ensure("Statistics should not be active.", !dataset.getConfig().faut.isActive());
+
+	const TLGCStatistic &stat = dataset.getStatistics();
+	ensure("OVERALL should be NO_VAL", std::isnan(stat.getOVERALL()));
+	ensure("DOF should be NO_VAL", std::isnan(stat.getDOF()));
 }
 
 } // namespace tut

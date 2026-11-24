@@ -45,6 +45,21 @@ refPt 0.002325 0.002327 0 1 1 1 % x should not be flagged y should be flagged
 origin 0 0 0 1 1 1
 *END
 )";
+char const *const no_faut = R"(*TITR
+same network as alpha_beta_default but without *FAUT: no statistics are computed
+*OLOC
+*APRI
+*PREC 6
+*INSTR
+*CALA
+refPt 0 0 0
+*POIN
+origin 0 0 0
+*OBSXYZ
+refPt 0.00257 0.00258 0 1 1 1
+origin 0 0 0 1 1 1
+*END
+)";
 
 } // namespace Statistics
 #endif

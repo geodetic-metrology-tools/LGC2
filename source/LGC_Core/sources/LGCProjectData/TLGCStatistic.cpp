@@ -22,7 +22,19 @@
 // no argument constructor
 //////////////////////////
 TLGCStatistic::TLGCStatistic() :
-	fError(""), fWToCompute(true), fAreDetermined(nullptr), fGToCompute(nullptr), fDeltaComputed(nullptr), fZ(nullptr), fW(nullptr), fT(nullptr), fDelty(nullptr), fNablaValue(nullptr), fGValue(nullptr)
+	fError(""),
+	fZ(nullptr),
+	fW(nullptr),
+	fT(nullptr),
+	fDelty(nullptr),
+	fNablaValue(nullptr),
+	fGValue(nullptr),
+	fOverall(NO_VALf),
+	fDegreesOfFreedom(NO_VALf),
+	fAreDetermined(nullptr),
+	fWToCompute(true),
+	fGToCompute(nullptr),
+	fDeltaComputed(nullptr)
 {
 }
 
@@ -54,16 +66,16 @@ void TLGCStatistic::serialize(ObjectSerializer &obj) const
 void TLGCStatistic::initialiseStatVector(const TLSInputMatrices *im)
 {
 	int nbObs = im->getNbrObservations();
-	fZ.reset(new TVector(nbObs));
-	fW.reset(new TVector(nbObs));
-	fT.reset(new TVector(nbObs));
-	fDelty.reset(new TVector(nbObs));
-	fNablaValue.reset(new TVector(nbObs));
-	fGValue.reset(new TVector(nbObs));
+	fZ = std::make_unique<TVector>(TVector::Constant(nbObs, NO_VALf));
+	fW = std::make_unique<TVector>(TVector::Constant(nbObs, NO_VALf));
+	fT = std::make_unique<TVector>(TVector::Constant(nbObs, NO_VALf));
+	fDelty = std::make_unique<TVector>(TVector::Constant(nbObs, NO_VALf));
+	fNablaValue = std::make_unique<TVector>(TVector::Constant(nbObs, NO_VALf));
+	fGValue = std::make_unique<TVector>(TVector::Constant(nbObs, NO_VALf));
 
-	fAreDetermined.reset(new TVector(nbObs));
-	fGToCompute.reset(new TVector(nbObs));
-	fDeltaComputed.reset(new TVector(nbObs));
+	fAreDetermined = std::make_unique<TVector>(TVector::Zero(nbObs));
+	fGToCompute = std::make_unique<TVector>(TVector::Zero(nbObs));
+	fDeltaComputed = std::make_unique<TVector>(TVector::Zero(nbObs));
 }
 
 void TLGCStatistic::clearVectors()
