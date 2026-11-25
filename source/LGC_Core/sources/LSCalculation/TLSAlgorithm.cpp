@@ -25,6 +25,8 @@ Behavior TLSAlgorithm::run(TLGCData &data, int fMaxIterations)
 
 	// use the universal LS algorithm for parametric, combined and constrained case.
 	computer.reset(new TLSUniversalMtdComputer());
+	// the residual covariance matrix is only needed for the reliability statistics
+	computer->setComputeResCovariance(data.getConfig().faut.isActive());
 
 	Behavior computationIsOK;
 	bool useLM = data.getConfig().useRegularization.isActive();
