@@ -494,8 +494,8 @@ bool TDataAnalyzer::checkParameters()
 					TXYH2CCS::CCS2XYH(stationPoint, fPointTransfo.getGeoid());
 
 					// The Adjustable Point automated creation should be a POIN if IHFIX, otherwise should be a VXY
-					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(
-						stationPoint, false, false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line), fData.getConfig().referential, fData.getConfig().geoid, fTree.begin());
+					LGCAdjustablePoint fRefPt = LGCAdjustablePoint(stationPoint, false, false, !itLEVEL->ihfix, "DLEV_line" + std::to_string(itLEVEL->line),
+						fData.getConfig().referential, fData.getConfig().geoid, fTree.begin());
 
 					// Add the line number of the DLEV for this point.
 					fRefPt.line = itLEVEL->line;

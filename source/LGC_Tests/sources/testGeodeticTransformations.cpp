@@ -273,30 +273,30 @@ void object::test<5>()
 {
 	set_test_name("Testing transformations between XYH systems and CCS.");
 
-		TPositionVector posit1(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k2DPlusH);
-		TXYH2CCS::XYH2CCS(posit1, TRefSystemFactory::EGeoid::kCG2000Machine);
-		ensure_equals("Transformed value should match", posit1.getZ().getMetresValue(), 2049.34656894826, 1e-9);
+	TPositionVector posit1(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k2DPlusH);
+	TXYH2CCS::XYH2CCS(posit1, TRefSystemFactory::EGeoid::kCG2000Machine);
+	ensure_equals("Transformed value should match", posit1.getZ().getMetresValue(), 2049.34656894826, 1e-9);
 
-		TPositionVector posit2(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k2DPlusH);
-		TXYH2CCS::XYH2CCS(posit2, TRefSystemFactory::EGeoid::kCG1985Machine);
-		ensure_equals("Transformed value should match", posit2.getZ().getMetresValue(), 2049.3495494283, 1e-9);
+	TPositionVector posit2(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k2DPlusH);
+	TXYH2CCS::XYH2CCS(posit2, TRefSystemFactory::EGeoid::kCG1985Machine);
+	ensure_equals("Transformed value should match", posit2.getZ().getMetresValue(), 2049.3495494283, 1e-9);
 
-		TPositionVector posit3(1.0, 1.0, -1949.34193663989, TCoordSysFactory::ECoordSys::k2DPlusH);
-		TXYH2CCS::XYH2CCS(posit3, TRefSystemFactory::EGeoid::kCGSphere);
-		ensure_equals("Transformed value should match", posit3.getZ().getMetresValue(), 50.0, 1e-9);
+	TPositionVector posit3(1.0, 1.0, -1949.34193663989, TCoordSysFactory::ECoordSys::k2DPlusH);
+	TXYH2CCS::XYH2CCS(posit3, TRefSystemFactory::EGeoid::kCGSphere);
+	ensure_equals("Transformed value should match", posit3.getZ().getMetresValue(), 50.0, 1e-9);
 
-		TPositionVector posit1inv(1.0, 1.0, 100.0, TCoordSysFactory::ECoordSys::k3DCartesian);
-		TXYH2CCS::CCS2XYH(posit1inv, TRefSystemFactory::EGeoid::kCG2000Machine);
-		ensure_equals("Transformed value should match",posit1inv.getH().getMetresValue(),-1899.34636845479 ,1e-9);
+	TPositionVector posit1inv(1.0, 1.0, 100.0, TCoordSysFactory::ECoordSys::k3DCartesian);
+	TXYH2CCS::CCS2XYH(posit1inv, TRefSystemFactory::EGeoid::kCG2000Machine);
+	ensure_equals("Transformed value should match", posit1inv.getH().getMetresValue(), -1899.34636845479, 1e-9);
 
-		TPositionVector posit2inv(1.0, 1.0, 100.0,TCoordSysFactory::ECoordSys::k3DCartesian);
-		TXYH2CCS::CCS2XYH(posit2inv, TRefSystemFactory::EGeoid::kCG1985Machine);
-		ensure_equals("Transformed value should match",posit2inv.getH().getMetresValue(), -1899.34934893453,1e-9);
+	TPositionVector posit2inv(1.0, 1.0, 100.0, TCoordSysFactory::ECoordSys::k3DCartesian);
+	TXYH2CCS::CCS2XYH(posit2inv, TRefSystemFactory::EGeoid::kCG1985Machine);
+	ensure_equals("Transformed value should match", posit2inv.getH().getMetresValue(), -1899.34934893453, 1e-9);
 
-		TPositionVector posit3inv(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k3DCartesian);
-		TXYH2CCS::CCS2XYH(posit3inv, TRefSystemFactory::EGeoid::kCGSphere);
-		ensure_equals("Transformed value should match", posit3inv.getH().getMetresValue(), -1949.34193663989, 1e-9);
-	}
+	TPositionVector posit3inv(1.0, 1.0, 50.0, TCoordSysFactory::ECoordSys::k3DCartesian);
+	TXYH2CCS::CCS2XYH(posit3inv, TRefSystemFactory::EGeoid::kCGSphere);
+	ensure_equals("Transformed value should match", posit3inv.getH().getMetresValue(), -1949.34193663989, 1e-9);
+}
 
 template<>
 template<>
