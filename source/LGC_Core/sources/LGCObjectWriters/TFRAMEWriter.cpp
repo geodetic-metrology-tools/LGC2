@@ -2214,23 +2214,3 @@ void TFRAMEWriter::writeEllipsoidData(AdjPointIter &pt)
 	stream->writeStringLeft(nameWidth, pt->getFrameTreePosition().node->data->frame.getName());
 	*stream << "\n";
 }
-
-void TFRAMEWriter::transfXYH2XYZ(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf)
-{
-	if (rf == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-		TXYH2CCS::XYHs2CCS(pv);
-	else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-		TXYH2CCS::XYHg2000Machine2CCS(pv);
-	else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-		TXYH2CCS::XYHg1985Machine2CCS(pv);
-}
-
-void TFRAMEWriter::transfXYZ2XYH(TPositionVector &pv, const TRefSystemFactory::ERefFrame &rf)
-{
-	if (rf == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-		TXYH2CCS::CCS2XYHs(pv);
-	else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-		TXYH2CCS::CCS2XYHg2000Machine(pv);
-	else if (rf == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-		TXYH2CCS::CCS2XYHg1985Machine(pv);
-}

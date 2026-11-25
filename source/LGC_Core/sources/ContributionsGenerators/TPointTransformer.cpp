@@ -177,37 +177,3 @@ const TLOR2LOR &TPointTransformer::getLORTransformation(TDataTreeIterator origin
 		return it->second;
 	}
 }
-
-void TPointTransformer::transformCCS22DH(TPositionVector &pv)
-{
-	// check if the position vector is defined in 3d cartesian system, the k2DCartesian is not used in LGC
-	if (pv.getCoordSys() != TCoordSysFactory::ECoordSys::k3DCartesian)
-		throw std::runtime_error("TPointTransformer::transformCCS22DH attempting to transform a 2D+H vector instead of a 3D vector");
-
-	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
-	{
-		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-			TXYH2CCS::CCS2XYHs(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
-			TXYH2CCS::CCS2XYHg2000Machine(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
-			TXYH2CCS::CCS2XYHg1985Machine(pv);
-	}
-}
-
-void TPointTransformer::transform2DH2CCS(TPositionVector &pv)
-{
-	// check if the position vector is defined in 2D+H, the other TCoordSysFactory::ECoordSys are not used in LGC
-	if (pv.getCoordSys() != TCoordSysFactory::ECoordSys::k2DPlusH)
-		throw std::runtime_error("TPointTransformer::transform2DH2CCS attempting to transform a 3D vector instead of a 2D+H vector");
-
-	if (fGeoidModel != TRefSystemFactory::EGeoid::kNoGeoid)
-	{
-		if (fGeoidModel == TRefSystemFactory::EGeoid::kCGSphere)
-			TXYH2CCS::XYHs2CCS(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG2000Machine)
-			TXYH2CCS::XYHg2000Machine2CCS(pv);
-		else if (fGeoidModel == TRefSystemFactory::EGeoid::kCG1985Machine)
-			TXYH2CCS::XYHg1985Machine2CCS(pv);
-	}
-}

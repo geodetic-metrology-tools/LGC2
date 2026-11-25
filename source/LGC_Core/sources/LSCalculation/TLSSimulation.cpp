@@ -185,12 +185,7 @@ void TLSSimulation::updateResValues()
 		{
 			if (globalRef != TRefSystemFactory::ERefFrame::kLocalRefFrame)
 			{
-				if (globalRef == TRefSystemFactory::ERefFrame::kCERNXYHsSphereSPS)
-					TXYH2CCS::XYHs2CCS(provisionalValue);
-				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg00Machine)
-					TXYH2CCS::XYHg2000Machine2CCS(provisionalValue);
-				else if (globalRef == TRefSystemFactory::ERefFrame::kCernXYHg85Machine)
-					TXYH2CCS::XYHg1985Machine2CCS(provisionalValue);
+				TXYH2CCS::XYH2CCS(provisionalValue, fData.getConfig().geoid);
 			}
 		}
 
