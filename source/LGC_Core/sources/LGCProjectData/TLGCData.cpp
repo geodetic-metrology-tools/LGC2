@@ -11,6 +11,7 @@ TLGCData::TLGCData() : fileLogger(std::make_shared<TFileLogger>()), fUEOIndices(
 	fLSRelatedInfo.fNumberOfLSIterations = 0;
 	setDefaultValues();
 	config.referential = TRefSystemFactory::ERefFrame::kNotInGraph;
+	config.geoid = TRefSystemFactory::EGeoid::kNoGeoid;
 
 	// Create an empty root node
 	tree.insert(tree.begin(), TDataSPtr(new TTreeEntry()));

@@ -233,6 +233,8 @@ struct TLGCConfig
 	TFautDetect faut;
 	/// See \ref TRefSystemFactory
 	TRefSystemFactory::ERefFrame referential;
+	/// See \ref TRefSystemFactory
+	TRefSystemFactory::EGeoid geoid;
 
 	/// Sets all points to be fixed points in spite of their configuration
 	TBinaryOption allfixed;
@@ -335,6 +337,7 @@ inline void TLGCConfig::serialize(ObjectSerializer &obj) const
 	obj.addProperty("pdor", pdor);
 	obj.addProperty("pointNameWidth", pointNameWidth);
 	obj.addProperty("referential", referential);
+	obj.addProperty("geoid", geoid);
 	obj.addProperty("sim", sim);
 	obj.addProperty("title", title);
 

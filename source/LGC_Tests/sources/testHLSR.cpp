@@ -178,21 +178,21 @@ void object::test<6>()
 
 	// Check the Z coordinate of a point in the root
 	TPositionVector PT1 = dataset.getPoints().getObject("LHC.WATER3001.MQXA.3L8.E.").getEstimatedValue();
-	TXYH2CCS::CCS2XYHg1985Machine(PT1);
+	TXYH2CCS::CCS2XYH(PT1, TRefSystemFactory::EGeoid::kCG1985Machine);
 	ensure_equals("LHC.WATER3001.MQXA.3L8.E. H coordinate should match", PT1.getH().getMetresValue(), 330, 1e-7);
 
 	// Check the Z coordinate of a point with a 0gon subframe rotation
 	TLOR2LOR PT2locToROOT(tree, "Reel", "ROOT", "LOCTOROOT");
 	TPositionVector PT2 = dataset.getPoints().getObject("LHC.WATER3001.MQXB.B2L8.T.").getEstimatedValue();
 	PT2locToROOT.transform(PT2);
-	TXYH2CCS::CCS2XYHg1985Machine(PT2);
+	TXYH2CCS::CCS2XYH(PT2, TRefSystemFactory::EGeoid::kCG1985Machine);
 	ensure_equals("LHC.WATER3001.MQXB.B2L8.T. H coordinate should match", PT2.getH().getMetresValue(), 329.5, 1e-7);
 
 	// Check the Z coordinate of a point with a 200gon subframe rotation
 	TLOR2LOR PT3locToROOT(tree, "Reel2", "ROOT", "LOC3TOROOT");
 	TPositionVector PT3 = dataset.getPoints().getObject("LHC.WATER3001.MQXB.B2L8.Z.").getEstimatedValue();
 	PT3locToROOT.transform(PT3);
-	TXYH2CCS::CCS2XYHg1985Machine(PT3);
+	TXYH2CCS::CCS2XYH(PT3, TRefSystemFactory::EGeoid::kCG1985Machine);
 	ensure_equals("LHC.WATER3001.MQXB.B2L8.Z. H coordinate should match", PT3.getH().getMetresValue(), 330.5, 1e-7);
 
 	// testing all the options changes
