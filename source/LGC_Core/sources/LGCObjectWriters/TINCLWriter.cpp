@@ -35,10 +35,10 @@ void TINCLWriter::writeINCLResultsHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the scale
-	(*stream).writeString(obsWidth, "OBSERVE"); // mesured offset
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured offset
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma DIST
-	(*stream).writeString(obsWidth, "CALCULE"); // estimated offset
-	(*stream).writeString(obsResWidth, "RESIDU"); // residual
+	(*stream).writeString(obsWidth, "CALC"); // estimated offset
+	(*stream).writeString(obsResWidth, "RES"); // residual
 	(*stream).writeString(obsResWidth, "RES/SIG"); // residual/sigma
 	(*stream).writeString(nameWidth, "INCL ID"); // inclinometer ID
 	(*stream).writeString(obsResWidth, "OBSE"); // OBSE value
@@ -114,8 +114,10 @@ void TINCLWriter::writeINCLResultsHelper(const MeasurementList &measurements, co
 	(*stream) << "\n";
 	(*stream) << TABs << sectionTitle << "\n";
 
+	// data summury
+
 	// Write observation summary and column headers
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(obsType), (int)measurements.size());
+	this->writeObsTitle(TABs + this->getObsDescription(obsType), (int)measurements.size());
 	writeINCLResultsHeader(); // Write the title line for the observations
 
 	// Process each measurement in the list
@@ -205,7 +207,7 @@ void TINCLWriter::writeROLLYSIMUResults(const TROLLYROM &rollyrom)
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
 	// Write observation title with measurement count for simulation context
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kROLLY), (int)rollyrom.measROLLY.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kROLLY), (int)rollyrom.measROLLY.size());
 
 	// Write simulation section header
 	(*stream) << TABs << "ROLLY" << "\n";
@@ -222,7 +224,7 @@ void TINCLWriter::writeINCLYSIMUResults(const TINCLYROM &inclyrom)
 	std::string separator = getSeparator();
 	std::string TABs = stream->getCurrSpaceExtended(1);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kINCLY), (int)inclyrom.measINCLY.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kINCLY), (int)inclyrom.measINCLY.size());
 	(*stream) << TABs << "INCLY" << "\n";
 
 	writeAngleResultsSummary(inclyrom.getINCLYObsSummary(), stream->getCurrSpaceExtended(2));
@@ -315,10 +317,10 @@ void TINCLWriter::writeINCLSynthesisHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "STATION"); // plane name
-	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); // residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MAX"); // residual max
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // std dev
 	(*stream) << "\n";
 
 	///////////////////////////////////////////////////////////////////////////////////

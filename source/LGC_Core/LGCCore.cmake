@@ -2,7 +2,7 @@
 # /!\ IMPORTANT : Modify it int ../CMakeLists.txt AS WELL !
 set (LGC_VERSION_MAJOR "2")
 set (LGC_VERSION_MINOR "11")
-set (LGC_VERSION_PATCH "1")
+set (LGC_VERSION_PATCH "1-eng")
 
 # Versions files
 configure_file (

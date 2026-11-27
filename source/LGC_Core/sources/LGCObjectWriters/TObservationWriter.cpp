@@ -25,7 +25,7 @@ void TObservationWriter::writeObsTitle(const std::string &description, const int
 {
 	TAStreamFormatter &stream = getStreamRef();
 	// Title
-	stream << description << getSeparator() << "(NB. = " << numObs << " )" << getSeparator() << endl;
+	stream << description << getSeparator() << "(COUNT = " << numObs << " )" << getSeparator() << endl;
 
 	return;
 }
@@ -39,14 +39,14 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary &summary,
 	// Write statistic
 	//  mean residual
 	stream << TABs;
-	stream << "RESIDU MOYEN =  ";
+	stream << "MEAN RES =  ";
 	stream.width(obsResWidth);
 	stream.precision(angleResidualPrecision);
 	stream << summary.getMean();
 	stream << getSeparator();
 
 	// mean residual statistical test limits
-	stream << " CC :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " CC :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(angleResidualPrecision);
 	stream << summary.getMeanLoLimit() << ", ";
 	stream.precision(angleResidualPrecision);
@@ -55,14 +55,14 @@ void TObservationWriter::writeAngleResultsSummary(const TLGCObsSummary &summary,
 
 	// variance of residuals
 	stream << TABs;
-	stream << "ECART-TYPE   =  ";
+	stream << "STD DEV  =  ";
 	stream.width(obsResWidth);
 	stream.precision(angleResidualPrecision);
 	stream << summary.getStdev();
 	stream << getSeparator();
 
 	// variance of residuals statistical test limits
-	stream << " CC :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " CC :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(angleResidualPrecision);
 	stream << summary.getStdLoLimit() << ", ";
 	stream.precision(angleResidualPrecision);
@@ -80,14 +80,14 @@ void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary &summa
 	stream << TABs;
 
 	// mean residual
-	stream << "RESIDU MOYEN =  ";
+	stream << "MEAN RES =  ";
 	stream.width(obsResWidth);
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMean();
 	stream << getSeparator();
 
 	// mean residual statistical test limits
-	stream << " MM :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " MM :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMeanLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -96,14 +96,14 @@ void TObservationWriter::writeDistanceResultsSummary(const TLGCObsSummary &summa
 
 	stream << TABs;
 	// variance of residuals
-	stream << "ECART-TYPE   =  ";
+	stream << "STD DEV  =  ";
 	stream.width(obsResWidth);
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdev();
 	stream << getSeparator();
 
 	// variance of residuals statistical test limits
-	stream << " MM :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " MM :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -124,14 +124,14 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summa
 	stream << TABs;
 
 	// mean residual
-	stream << "RESIDU MOYEN =  ";
+	stream << "MEAN RES =  ";
 	stream.width(obsResWidth);
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMean();
 	stream << getSeparator();
 
 	// mean residual statistical test limits
-	stream << " [] :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " [] :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getMeanLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -140,14 +140,14 @@ void TObservationWriter::writeUnitlessResultsSummary(const TLGCObsSummary &summa
 
 	stream << TABs;
 	// variance of residuals
-	stream << "ECART-TYPE   =  ";
+	stream << "STD DEV  =  ";
 	stream.width(obsResWidth);
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdev();
 	stream << getSeparator();
 
 	// variance of residuals statistical test limits
-	stream << " [] :  LIMITES DE CONFIANCE A 95.0 = (";
+	stream << " [] :  95.0 CONFIDENCE LIMITS = (";
 	stream.precision(lengthResidualPrecision);
 	stream << summary.getStdLoLimit() << ", ";
 	stream.precision(lengthResidualPrecision);
@@ -211,7 +211,7 @@ void TObservationWriter::writeHisto(const TLGCObsSummary &summary, std::string d
 					break;
 				}
 			}
-			stream << "REPARTITION DES " << description << getSeparator() << ech;
+			stream << "DISTRIBUTION OF " << description << getSeparator() << ech;
 			stream << endl << endl;
 		}
 
@@ -276,7 +276,7 @@ void TObservationWriter::writeHisto(const TLGCObsSummary &summary, std::string d
 			}
 
 			// write the number of pointsthat don't lie within the histogram limits
-			stream << "NOMBRE DE POINTS HORS-HISTOGRAMME" << getSeparator() << summary.getNumBeyondHistoLimits();
+			stream << "NUMBER OF POINTS OUTSIDE HISTOGRAM" << getSeparator() << summary.getNumBeyondHistoLimits();
 			stream << endl << endl << endl;
 		}
 	}
@@ -298,9 +298,9 @@ void TObservationWriter::writeReliabilityHeader(std::string name1, std::string n
 	(*stream).writeStringLeft(nameWidth, name1); // name of the first point
 	(*stream).writeStringLeft(nameWidth, name2); // name of the second point
 	(*stream).writeStringLeft(nameWidth, name3); // name of the third point
-	(*stream).writeString(obsWidth, Observation); // mesured
+	(*stream).writeString(obsWidth, Observation); // measured
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma
-	(*stream).writeString(obsResWidth, "RESIDU"); // residue
+	(*stream).writeString(obsResWidth, "RES"); // residual
 	(*stream).writeString(obsResWidth, "ZI"); // local reliability statistic zi
 	(*stream).writeString(3, ""); // zi flag
 	(*stream).writeString(8, "WI"); // Gross-error detection statistics wi
@@ -316,9 +316,9 @@ void TObservationWriter::writeReliabilityHeader(std::string name1, std::string n
 	(*stream).writeString(nameWidth, ""); // name of the first point
 	(*stream).writeString(nameWidth, ""); // name of the second point
 	(*stream).writeString(nameWidth, ""); // name of the third point (third point's name vs third point name)
-	(*stream).writeString(obsWidth, unit1); // mesured
+	(*stream).writeString(obsWidth, unit1); // measured
 	(*stream).writeString(obsResWidth, unit2); // sigma
-	(*stream).writeString(obsResWidth, unit2); // residue
+	(*stream).writeString(obsResWidth, unit2); // residual
 	(*stream).writeString(obsResWidth, "(%)"); // local reliability statistic zi
 	(*stream).writeString(3, ""); // zi flag
 	(*stream).writeString(8, ""); // Gross-error detection statistics wi
@@ -390,7 +390,7 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat
 		}
 		else
 		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
+			(*stream).writeString(obsResWidth, "UND");
 		}
 
 		// get T
@@ -404,18 +404,18 @@ void TObservationWriter::writeReliabilityCC(int index, const TLGCStatistic &stat
 		}
 		else
 		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
+			(*stream).writeString(obsResWidth, "UND");
 		}
 	}
 	else
 	{
 		(*stream).writeString(obsResWidth, "0.0"); // z
 		(*stream).writeString(3, "");
-		(*stream).writeString(8, "INDETERMINE"); // wi
+		(*stream).writeString(8, "UNDETERMINED"); // wi
 		(*stream).writeString(0, "");
 		(*stream).writeString(obsResWidth, ""); // gi
 		(*stream).writeString(obsResWidth, ""); // nabla
-		(*stream).writeString(obsResWidth, "INFINI"); // T
+		(*stream).writeString(obsResWidth, "INFINITE"); // T
 		(*stream).writeString(obsResWidth, ""); // DELTY
 	}
 
@@ -481,7 +481,7 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic &stat
 		}
 		else
 		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
+			(*stream).writeString(obsResWidth, "UND");
 		}
 
 		// get T
@@ -495,49 +495,35 @@ void TObservationWriter::writeReliabilityMM(int index, const TLGCStatistic &stat
 		}
 		else
 		{
-			(*stream).writeString(obsResWidth, "INDTMNE");
+			(*stream).writeString(obsResWidth, "UND");
 		}
 	}
 	else
 	{
 		(*stream).writeString(obsResWidth, "0.0"); // z
 		(*stream).writeString(3, "");
-		(*stream).writeString(8, "INDETERMINE"); // wi
+		(*stream).writeString(8, "UNDETERMINED"); // wi
 		(*stream).writeString(0, "");
 		(*stream).writeString(obsResWidth, ""); // gi
 		(*stream).writeString(obsResWidth, ""); // nabla
-		(*stream).writeString(obsResWidth, "INFINI"); // T
+		(*stream).writeString(obsResWidth, "INFINITE"); // T
 		(*stream).writeString(obsResWidth, ""); // DELTY
 	}
 
 	(*stream) << endl;
 }
 
-// Get the French version of the observation description
+// Get the observation description
 // returns a string with the description
-std::string TObservationWriter::getObsDescriptionFR(TALGCObjectWriter::ELGCObservations key)
-{
-	static const char *descriptions[] = {"PLR3D", "Vecteur directeur (UVEC)", "Vecteur directeur + Distance (UVD)", "ANGLES HORIZONTAUX (ANGL)", "DISTANCES ZENITHALES (ZEND)",
-		"DISTANCES MESUREES (DIST)", "ECART A UN PLAN VERTICAL (ECTH)", "ECART A UNE DIRECTION (ECDIR)", "DISTANCES HORIZONTALES (DHOR)", "DISTANCES SPATIALES (DSPT)",
-		"DISTANCES VERTICALES (DLEV)", "DISTANCES HORIZONTALES (DLEVDHOR)", "DISTANCES VERTICALES (DVER)", "ECARTS DANS LE PLAN HORIZONTAL (ECHO)", "ECARTS A UNE DROITE (ECSP)",
-		"ECARTS A UNE DROITE VERTICALE (ECVE)", "ORIENTATIONS (ORIE)", "POINT D'ORIENTATION (PDOR)", "CONTRAINTES RADIALES (RADI)", "CONTRAINTES 3D SUR UN POINT (OBSXYZ)",
-		"INCLINAISONS/VERTICALE-ASIN (INCLY)", "INCLINAISONS/VERTICALE-ATAN (ROLLY)", "ECART SURFACE D'EAU (ECWS)", "ECART FIL (ECWI)"};
-
-	static_assert((sizeof(descriptions) / sizeof(descriptions[0])) == TALGCObjectWriter::ALWAYS_LAST, "Not enough description strings for enums");
-
-	return descriptions[key];
-}
-
-// Get the English version of the observation description
-// returns a string with the description
-std::string TObservationWriter::getObsDescriptionEN(TALGCObjectWriter::ELGCObservations key)
+std::string TObservationWriter::getObsDescription(TALGCObjectWriter::ELGCObservations key)
 {
 	static const char *descriptions[] = {
-		"PLR3D", "Unit Vector Measurment (UVEC)", "Unit Vector Measurement + Distance (UVD)", "HORIZONTAL ANGLE OBSERVATIONS (ANGL)", "ZENITHAL DISTANCE OBSERVATIONS (ZEND)",
-		"OBSERVED SPATIAL DISTANCES (DIST)", "OFFSETS TO A THEODOLITE PLAN (ECTH)", "OFFSETS TO A THEODOLITE DIRECTION (ECDIR)", "HORIZONTAL DISTANCES (DHOR)",
-		"SPATIAL DISTANCES (DSPT)", "VERTICAL DISTANCES (DLEV)", "HORIZONTAL DISTANCES (DLEVDHOR)", "VERTICAL DISTANCES (DVER)", "OFFSETS IN AN HORIZONTAL PLAN (ECHO)",
-		"OFFSETS TO A SPATIAL LINE (ECSP)", "OFFSETS TO A VERTICAL LINE (ECVE)", "ORIENTATIONS (ORIE)", "POINT OF ORIENTATION (PDOR)", "RADIAL CONSTRAINTS (RADI)",
-		"3D CONSTRAINTS FOR POINTS (OBSXYZ)", "ROTATIONS/GRAVITY-ASIN (INCLY)", "ROTATIONS/GRAVITY-ATAN (ROLLY)", "OFFSET TO WATER SURFACE (ECWS)", "OFFSET TO WIRE (ECWI)"
+		"PLR3D OBSERVATIONS", "UNIT VECTOR MEASUREMENTS (UVEC)", "UNIT VECTOR MEASUREMENT + DISTANCE (UVD)", "HORIZONTAL ANGLE OBSERVATIONS (ANGL)",
+		"ZENITHAL ANGLE OBSERVATIONS (ZEND)", "SPATIAL DISTANCE OBSERVATIONS (DIST)", "OFFSETS TO A THEODOLITE PLANE (ECTH)", "OFFSETS TO A THEODOLITE DIRECTION (ECDIR)",
+		"HORIZONTAL DISTANCES (DHOR)", "SPATIAL DISTANCES (DSPT)", "VERTICAL DISTANCES (DLEV)", "HORIZONTAL DISTANCES (DLEVDHOR)", "VERTICAL DISTANCES (DVER)",
+		"HORIZONTAL OFFSETS TO A VERTICAL PLANE (ECHO)", "OFFSETS TO A SPATIAL LINE (ECSP)", "OFFSETS TO A VERTICAL LINE (ECVE)", "ORIENTATIONS (ORIE)",
+		"POINT OF ORIENTATION (PDOR)", "RADIAL CONSTRAINTS (RADI)", "3D CONSTRAINTS FOR POINTS (OBSXYZ)", "ROTATIONS/GRAVITY-ASIN (INCLY)",
+		"ROTATIONS/GRAVITY-ATAN (ROLLY)", "OFFSET TO WATER SURFACE (ECWS)", "OFFSET TO WIRE (ECWI)"
 		//"NoObs"
 	};
 

@@ -54,7 +54,7 @@ public:
 	/// Write header for distance and offset synthesis
 	void writeDISTHeaderSynthesis();
 	/// Write header for plr synthesis
-	void writePLRRHeaderynthesis();
+	void writePLRHeaderSynthesis();
 	//@}
 
 	/*!@name Results */

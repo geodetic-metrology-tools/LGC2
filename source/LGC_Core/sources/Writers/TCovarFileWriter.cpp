@@ -72,7 +72,7 @@ void TCovarFileWriter::writeTitle(const TLGCData &project)
 	fStream->writeStringLeft(8, "FILE OF COVARIANCE MATRICES: ");
 	fStream->writeStringLeft(8, project.getConfig().title);
 	*fStream << endl;
-	fStream->writeStringLeft(8, "S0 a posteriori = ");
+	fStream->writeStringLeft(8, "A POSTERIORI SIGMA ZERO = ");
 	fStream->writeDouble(15, 8, project.getS0APosteriori());
 	*fStream << endl;
 }

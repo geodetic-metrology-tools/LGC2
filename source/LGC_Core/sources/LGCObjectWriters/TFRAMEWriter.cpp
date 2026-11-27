@@ -104,20 +104,14 @@ void TFRAMEWriter::writeFRAMEAll(TDataTreeIterator frameIt)
 	if (frameIt->get()->isROOTNode())
 	{
 		initialiseAllObsSummaries();
-		(*stream) << TABs << "*** RESUME DES MESURES ***"
-				  << "\n"
-				  << "\n";
+		(*stream) << TABs << "*** MEASUREMENTS SUMMARY ***" << "\n" << "\n";
 		writeMeasurementsSummaryRootOnly();
 		if (fProjectData->getConfig().histo.isActive())
 			writeHistogrammeRootOnly();
 	}
 
 	// Measures
-	(*stream) << "\n"
-			  << "\n"
-			  << TABs << "*** MESURES ***"
-			  << "\n"
-			  << "\n";
+	(*stream) << endl << endl << TABs << "*** MEASUREMENTS ***" << "\n" << "\n";
 	for (auto &itTSTN : tmeas.fTSTN)
 		tstnWriter.writeTSTNResults(itTSTN);
 
@@ -477,7 +471,7 @@ void TFRAMEWriter::initialiseAllObsSummaries()
 	allObsxyzYSummaries_.clear();
 	allObsxyzZSummaries_.clear();
 
-	// Tteration through the tree nodes
+	// Iteration through the tree nodes
 	for (TDataTreeIterator itTree = fProjectData->getTree().begin(); itTree != fProjectData->getTree().end(); itTree++)
 	{
 		auto &tmeas = (*itTree)->measurements;
@@ -982,11 +976,7 @@ void TFRAMEWriter::writeFRAMESimu(TDataTreeIterator frameIt)
 		otherMeasWriter.writePDORResults(tmeas.fPDOR);
 
 	// Measures
-	(*stream) << "\n"
-			  << "\n"
-			  << TABs << "*** MESURES ***"
-			  << "\n"
-			  << "\n";
+	(*stream) << "\n" << "\n" << TABs << "*** MEASUREMENTS ***" << "\n" << "\n";
 	for (auto &itTSTN : tmeas.fTSTN)
 		tstnWriter.writeTSTNResultsSIMU(itTSTN);
 
@@ -1161,7 +1151,7 @@ void TFRAMEWriter::writeFRAMEHeader(const std::string &name, const std::vector<i
 		(*stream).writeStringLeft(nameWidth, "PARAMETER");
 		(*stream).writeString(obsWidth, "UNIT");
 		(*stream).writeString(obsWidth, "INITIAL");
-		(*stream).writeString(obsWidth, "CALCULE");
+		(*stream).writeString(obsWidth, "CALC");
 		(*stream).writeString(obsWidth, "SUNIT");
 		(*stream).writeString(obsWidth, "SIGMA");
 		(*stream).writeString(obsWidth, "FIXED");
@@ -1916,27 +1906,27 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	std::string title = "";
 	if (status == TSpatialStatus::kCala)
 	{
-		title = "POINTS DE CALAGE";
+		title = "FIXED POINTS";
 	}
 	if (status == TSpatialStatus::kVz)
 	{
-		title = "POINTS VARIABLES EN Z UNIQUEMENT";
+		title = "VARIABLE POINTS IN Z ONLY";
 	}
 	if (status == TSpatialStatus::kVxy)
 	{
-		title = "POINTS INVARIABLES EN Z";
+		title = "VARIABLE POINTS IN XY ONLY";
 	}
 	if (status == TSpatialStatus::kVxz)
 	{
-		title = "POINTS INVARIABLES EN Y";
+		title = "VARIABLE POINTS IN XZ ONLY";
 	}
 	if (status == TSpatialStatus::kVyz)
 	{
-		title = "POINTS INVARIABLES EN X";
+		title = "VARIABLE POINTS IN YZ ONLY";
 	}
 	if (status == TSpatialStatus::kVxyz)
 	{
-		title = "POINTS VARIABLES EN XYZ";
+		title = "VARIABLE POINTS IN XYZ";
 	}
 
 	(*stream) << "\n";
@@ -1958,14 +1948,14 @@ void TFRAMEWriter::writeResultsPtsHeader(const TSpatialStatus::ESpatialStatus st
 	}
 
 	if (!localFRAME)
-		(*stream) << "(NB. = " << ptNumber << ",  REFERENTIEL = " << referentialName << " )";
+		(*stream) << "(COUNT = " << ptNumber << ",  REFERENCE FRAME = " << referentialName << " )";
 
 	(*stream) << "\n";
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line
 	(*stream).writeString(3, "SFP"); // tell if point defined in subframe
-	(*stream).writeString(nameWidth, "NOM"); // Nom
+	(*stream).writeString(nameWidth, "NAME"); // Nom
 	(*stream).writeString(coordWidth, "X "); // X
 	(*stream).writeString(coordWidth, "Y "); // Y
 	(*stream).writeString(coordWidth, "Z "); // Z
@@ -2022,11 +2012,11 @@ void TFRAMEWriter::writeEllipsHeader()
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line
-	stream->writeStringLeft(nameWidth, "NOM");
+	stream->writeStringLeft(nameWidth, "NAME");
 	stream->writeString(coordWidth, "SEMI-MAJ.(A)");
 	stream->writeString(coordWidth, "SEMI-MIN.(B)");
 	stream->writeString(coordWidth, "ORIE. OF (A)");
-	stream->writeStringLeft(nameWidth, "SYSTEME");
+	stream->writeStringLeft(nameWidth, "SYSTEM");
 
 	*stream << "\n";
 
@@ -2056,16 +2046,16 @@ void TFRAMEWriter::writeEllipsoidHeader()
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	// First line
-	stream->writeStringLeft(nameWidth, "NOM");
+	stream->writeStringLeft(nameWidth, "NAME");
 	// Direction vectors: (+0.000, -0.000, +0.000) => 24
 	const int vecwidth(24);
-	stream->writeString(vecwidth, "DIRECTION X");
-	stream->writeString(vecwidth, "DIRECTION Y");
-	stream->writeString(vecwidth, "DIRECTION Z");
-	stream->writeString(coordWidth, "LONGUEUR X");
-	stream->writeString(coordWidth, "LONGUEUR Y");
-	stream->writeString(coordWidth, "LONGUEUR Z");
-	stream->writeStringLeft(nameWidth, "SYSTEME");
+	stream->writeString(vecwidth, "UNIT VECT X");
+	stream->writeString(vecwidth, "UNIT VECT Y");
+	stream->writeString(vecwidth, "UNIT VECT Z");
+	stream->writeString(coordWidth, "LENGTH X");
+	stream->writeString(coordWidth, "LENGTH Y");
+	stream->writeString(coordWidth, "LENGTH Z");
+	stream->writeStringLeft(nameWidth, "SYSTEM");
 	*stream << "\n";
 
 	/////////////////////////////////////////////////////////////////////////////////////////////

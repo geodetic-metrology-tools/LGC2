@@ -89,7 +89,7 @@ void TFautFileWriter::writeTitle()
 	(*stream) << endl;
 
 	// write date and time
-	(*stream) << "CALCULATED " << TLGCApp::getStartProcessingTimestamp() << ". PROCESSING ELAPSED SECONDS " << TLGCApp::getProcessingElapsedSeconds() << endl;
+	(*stream) << "COMPUTED ON " << TLGCApp::getStartProcessingTimestamp() << ". ELAPSED TIME: " << TLGCApp::getProcessingElapsedSeconds() << " s" << endl;
 	(*stream) << "*********************************************************************************************************************************** " << endl
 			  << endl
 			  << endl
@@ -105,12 +105,12 @@ void TFautFileWriter::writeDataSummary()
 	TReal S0LowLimit = fProjectData->getChiS0LowLimit();
 	TReal S0UpLimit = fProjectData->getChiS0UpLimit();
 
-	// SIGMA ZERO A POSTERIORI
+	// A POSTERIORI SIGMA ZERO
 	stream->precision(5);
 	stream->width(stream->getObsFormat()->getObsResidualWidth());
-	(*stream) << "SIGMA ZERO A POSTERIORI =" << S0Aposteriori;
+	(*stream) << "A POSTERIORI SIGMA ZERO =" << S0Aposteriori;
 
-	(*stream) << ", VALEUR CRITIQUE = (";
+	(*stream) << ", CRITICAL VALUE = (";
 	stream->precision(5);
 	stream->width(stream->getObsFormat()->getObsResidualWidth());
 	(*stream) << S0LowLimit << ", ";
@@ -126,7 +126,7 @@ void TFautFileWriter::writeDataSummary()
 	stream->width(5);
 	stream->precision(1);
 	(*stream) << right << fAlpha * 100 << " %" << separator;
-	(*stream) << "OR EXPRESSED AS CONFIDENCE LEVEL, (1-ALPHA) = ";
+	(*stream) << " OR EXPRESSED AS CONFIDENCE LEVEL, (1-ALPHA) = ";
 	stream->width(5);
 	stream->precision(1);
 	(*stream) << right << (100 - (fAlpha * 100)) << " %";

@@ -210,7 +210,7 @@ void TLSSimulation::updateResValues()
 void TLSSimulation::simulateValues()
 { // generate simulated values
 
-	// Tteration through the tree nodes
+	// Iteration through the tree nodes
 	for (TDataTreeIterator itTree = fData.getTree().begin(); itTree != fData.getTree().end(); itTree++)
 	{
 		if (itTree.node->data->isROOTNode())

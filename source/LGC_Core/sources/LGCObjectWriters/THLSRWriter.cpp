@@ -35,16 +35,18 @@ void THLSRWriter::writeHLSRResultsHeader()
 	// First line
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "POSITION"); // Position of the hlsr
-	(*stream).writeString(obsWidth, "OBSERVE"); // mesured ws distance
+	(*stream).writeString(obsWidth, "OBSERVED"); // measured ws distance
 	(*stream).writeString(obsResWidth, "SIGMA"); // sigma DIST
-	(*stream).writeString(obsWidth, "CALCULE"); // estimated offset
-	(*stream).writeString(obsResWidth, "RESIDU"); // residual
+	(*stream).writeString(obsWidth, "CALC"); // estimated offset
+	(*stream).writeString(obsResWidth, "RES"); // residual
 	(*stream).writeString(obsResWidth, "RES/SIG"); // residual/sigma
 	(*stream).writeString(obsResWidth, "OBSE"); // OBSE value
 	(*stream).writeString(obsResWidth, "IHSE"); // IHSE value
 	(*stream).writeString(obsResWidth, "ICSE"); // ICSE value
 	(*stream).writeString(obsResWidth, "WSSE"); // WSSE value
 	(*stream).writeString(nameWidth, "HLSR ID"); // hlsr ID
+	if (obsIdWidth != 0)
+		(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	if (obsIdWidth != 0)
 		(*stream).writeString(obsIdWidth, "ID"); // Observation identifier
 	(*stream) << endl;
@@ -82,8 +84,8 @@ void THLSRWriter::writeECWSResults(const TECWSROM &ecwsrom)
 	// write header
 	writeHLSRHeader(ecwsrom);
 
-	// data summury
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
+	// data summary
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
 	writeHLSRResultsHeader(); // write the title line for the observations
 
 	for (auto const &ItECWS : ecwsrom.measECWS)
@@ -138,7 +140,7 @@ void THLSRWriter::writeECWSSIMUResults(const TECWSROM &ecwsrom)
 
 	writeHLSRHeader(ecwsrom);
 
-	this->writeObsTitle(TABs + this->getObsDescriptionFR(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
+	this->writeObsTitle(TABs + this->getObsDescription(TALGCObjectWriter::kECWS), (int)ecwsrom.measECWS.size());
 	(*stream) << TABs << "ECWS" << endl;
 
 	if (ecwsrom.measECWS.size() > 0)
@@ -160,13 +162,13 @@ void THLSRWriter::writeHLSRHeader(const TECWSROM &ecwsrom)
 	// write header
 	(*stream) << "\n";
 	(*stream) << TABs << "ECWS" << "\n";
-	(*stream) << TABs << "NOM SURFACE D'EAU:" << TABs;
+	(*stream) << TABs << "WATER SURFACE NAME:" << TABs;
 	(*stream).writeStringLeft(nameWidth, ecwsrom.fMeasuredWSHeight->getName());
 	(*stream) << "\n";
-	(*stream) << TABs << "HAUTEUR SURFACE D'EAU (M):" << TABs;
+	(*stream) << TABs << "WATER SURFACE HEIGHT (M):" << TABs;
 	(*stream).writeDouble(obsWidth, lengthPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedValue().getMetresValue()); // Output value in meters [m], stored in [m]
 	(*stream) << "\n";
-	(*stream) << TABs << "PRECISION HAUTEUR SURFACE D'EAU (MM):" << TABs;
+	(*stream) << TABs << "WATER SURFACE HEIGHT PREC. (MM):" << TABs;
 	(*stream).writeDouble(obsResWidth, lengthResPrecision, ecwsrom.fMeasuredWSHeight->getEstimatedPrecision().getMMetresValue()); // Output value in milimeters [mm], stored in [m]
 	(*stream) << endl;
 }
@@ -186,9 +188,9 @@ void THLSRWriter::writeHLSRSynthesisHeader()
 	(*stream) << TABs;
 	(*stream).writeStringLeft(nameWidth, "REF. POINT"); // plane name
 	(*stream).writeString(obsResWidth, "RES_MAX"); // residi max
-	(*stream).writeString(obsResWidth, "RES_MIN"); // residu min
-	(*stream).writeString(obsResWidth, "RES_MOY"); // residu mean
-	(*stream).writeString(obsResWidth, "ECART_TYPE"); // ecart type
+	(*stream).writeString(obsResWidth, "RES_MIN"); // residual min
+	(*stream).writeString(obsResWidth, "RES_MEAN"); // residual mean
+	(*stream).writeString(obsResWidth, "STD_DEV"); // ecart type
 	(*stream) << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -212,10 +214,10 @@ void THLSRWriter::writeDefResultsSynthesis(std::list<const TLGCObsSummary *> &me
 	{
 		(*stream) << TABs;
 		(*stream).writeStringLeft(nameWidth, ItMEAS->getObsText()); // Reference point
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residu max
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residu min
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // residu moy
-		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // ecart type
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMax()); // residual max
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getResMin()); // residual min
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getMean()); // mean residual
+		(*stream).writeDouble(obsResWidth, ResPrecision, ItMEAS->getStdev()); // std dev
 		(*stream) << endl;
 	}
 }
